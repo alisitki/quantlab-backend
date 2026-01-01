@@ -80,7 +80,7 @@ export class RemoteJobRunner {
       
       // 3. Install dependencies
       console.log('[RemoteJobRunner] Installing dependencies...');
-      await this.#exec(conn, 'cd /workspace/quantlab/api && npm install --no-audit --no-fund');
+      await this.#exec(conn, 'cd /workspace/quantlab/core && npm install --no-audit --no-fund');
       logs.push({ step: 'install', status: 'success' });
       
       // 4. Write job spec to file
@@ -112,7 +112,7 @@ export class RemoteJobRunner {
       // 6. Execute training job
       console.log('[RemoteJobRunner] Executing training job...');
       const trainCmd = [
-        'cd /workspace/quantlab/api',
+        'cd /workspace/quantlab/core',
         envSetup,
         'node ml/runtime/run-job.js /workspace/job.json'
       ].filter(Boolean).join(' && ');
@@ -122,7 +122,7 @@ export class RemoteJobRunner {
       
       // 7. Read metrics from remote
       console.log('[RemoteJobRunner] Reading metrics...');
-      const metricsRaw = await this.#exec(conn, `cat /workspace/quantlab/api/${jobSpec.output.metricsPath}`);
+      const metricsRaw = await this.#exec(conn, `cat /workspace/quantlab/core/${jobSpec.output.metricsPath}`);
       const metrics = JSON.parse(metricsRaw);
       logs.push({ step: 'read_metrics', status: 'success' });
       
@@ -404,7 +404,7 @@ export class RemoteJobRunner {
       try {
         let remotePath = file.name === 'job.json' 
           ? '/workspace/job.json'
-          : `/workspace/quantlab/api/ml/artifacts/jobs/${jobSpec.id || jobSpec.jobId}/${file.name}`;
+          : `/workspace/quantlab/core/ml/artifacts/jobs/${jobSpec.id || jobSpec.jobId}/${file.name}`;
 
         console.log(`[RemoteJobRunner] Uploading ${file.name} to ${bucket}/${s3Prefix}/${file.name}...`);
         

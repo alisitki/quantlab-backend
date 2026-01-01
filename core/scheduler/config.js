@@ -46,7 +46,7 @@ export const SCHEDULER_CONFIG = {
   
   // GitHub repo for cloning on GPU
   repo: {
-    url: process.env.REPO_URL || 'https://github.com/alisitki/quantlab.git',
+    url: process.env.REPO_URL || 'https://github.com/alisitki/quantlab-backend.git',
     branch: process.env.REPO_BRANCH || 'main',
     commit: process.env.REPO_COMMIT || null
   },

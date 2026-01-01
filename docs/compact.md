@@ -1,0 +1,3 @@
+# Compact
+
+Compaction pipeline documentation.

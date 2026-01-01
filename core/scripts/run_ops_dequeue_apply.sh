@@ -2,7 +2,7 @@
 # scripts/run_ops_dequeue_apply.sh: Apply runner for ops dequeue outbox (Telegram) with failure visibility.
 set -euo pipefail
 
-APP_DIR="/home/deploy/quantlab/api/core"
+APP_DIR="/home/deploy/quantlab/core"
 LOGDIR="$APP_DIR/logs"
 mkdir -p "$LOGDIR"
 

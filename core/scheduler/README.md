@@ -56,7 +56,7 @@ The training flow now prioritizes pre-calculated features:
 
 ### Dry Run (No GPU)
 ```bash
-cd /home/deploy/quantlab/api/core
+cd /home/deploy/quantlab/core
 node scheduler/run_daily_ml.js --dry-run --symbol btcusdt
 ```
 
@@ -89,7 +89,7 @@ Add to crontab (`crontab -e`):
 
 ```cron
 # Daily ML Training - Runs at 00:15 UTC
-15 0 * * * cd /home/deploy/quantlab/api/core && node scheduler/run_daily_ml.js >> /var/log/quantlab-ml.log 2>&1
+15 0 * * * cd /home/deploy/quantlab/core && node scheduler/run_daily_ml.js >> /var/log/quantlab-ml.log 2>&1
 ```
 
 ## Configuration

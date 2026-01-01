@@ -6,15 +6,15 @@ After=network.target
 Type=simple
 User=deploy
 Group=deploy
-WorkingDirectory=/home/deploy/quantlab/api/core/observer-api
+WorkingDirectory=/home/deploy/quantlab/core/observer-api
 Environment=OBSERVER_MODE=1
 Environment=OBSERVER_PORT=3000
 # Using absolute path to node and tsx
-ExecStart=/usr/bin/node /home/deploy/quantlab/api/core/observer-api/node_modules/.bin/tsx index.ts
+ExecStart=/usr/bin/node /home/deploy/quantlab/core/observer-api/node_modules/.bin/tsx index.ts
 Restart=always
 RestartSec=5
-StandardOutput=append:/home/deploy/quantlab/api/core/observer-api/server.log
-StandardError=append:/home/deploy/quantlab/api/core/observer-api/server.log
+StandardOutput=append:/home/deploy/quantlab/core/observer-api/server.log
+StandardError=append:/home/deploy/quantlab/core/observer-api/server.log
 
 [Install]
 WantedBy=multi-user.target

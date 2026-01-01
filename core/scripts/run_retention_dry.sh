@@ -2,7 +2,7 @@
 set -euo pipefail
 
 LOCKFILE="/tmp/quantlab_retention.lock"
-APP_DIR="/home/deploy/quantlab/core"
+APP_DIR="/home/deploy/quantlab-backend/core"
 LOGDIR="$APP_DIR/logs"
 LOGFILE="$LOGDIR/retention_cron.log"
 

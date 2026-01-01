@@ -80,7 +80,7 @@ To automate daily LIVE training with lockfile and alerting:
 
 ```cron
 # Every day at 02:00 AM UTC
-0 2 * * * /home/deploy/quantlab/core/scripts/run_daily_live.sh >> /home/deploy/quantlab/core/logs/cron_daily.log 2>&1
+0 2 * * * /home/deploy/quantlab-backend/core/scripts/run_daily_live.sh >> /home/deploy/quantlab-backend/core/logs/cron_daily.log 2>&1
 ```
 
 Features:
@@ -90,7 +90,7 @@ Features:
 
 ### Manual LIVE Run
 ```bash
-cd /home/deploy/quantlab/core && \
+cd /home/deploy/quantlab-backend/core && \
 PSEUDO_PROBA=0 node scheduler/run_daily_prod.js --mode live --symbol btcusdt --ensure-features
 ```
 

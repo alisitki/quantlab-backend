@@ -2,7 +2,7 @@
 # scripts/run_ops_dequeue.sh: Dry-run runner for ops dequeue outbox.
 set -euo pipefail
 
-APP_DIR="/home/deploy/quantlab/core"
+APP_DIR="/home/deploy/quantlab-backend/core"
 LOGDIR="$APP_DIR/logs"
 mkdir -p "$LOGDIR"
 

@@ -8,11 +8,11 @@
 #   - Triggers alert on failure (not on SKIP)
 #
 # Cron example:
-#   0 2 * * * /home/deploy/quantlab/core/scripts/run_daily_live.sh >> /home/deploy/quantlab/core/logs/cron_daily.log 2>&1
+#   0 2 * * * /home/deploy/quantlab-backend/core/scripts/run_daily_live.sh >> /home/deploy/quantlab-backend/core/logs/cron_daily.log 2>&1
 
 set -uo pipefail
 
-WORKDIR="/home/deploy/quantlab/core"
+WORKDIR="/home/deploy/quantlab-backend/core"
 LOCKFILE="/tmp/quantlab_daily_live.lock"
 LOGDIR="$WORKDIR/logs"
 SYMBOL="${1:-btcusdt}"

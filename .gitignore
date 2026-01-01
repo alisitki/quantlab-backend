@@ -6,6 +6,7 @@ node_modules/
 
 # Operational Data & Logs
 logs/
+*.log
 ops/messages/
 ops/outbox/
 cleanup/

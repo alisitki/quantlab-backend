@@ -1,0 +1,23 @@
+{
+  "jobId": "test-job-001",
+  "dataset": {
+    "symbol": "btcusdt",
+    "dateRange": {
+      "date": "20251225"
+    }
+  },
+  "model": {
+    "type": "xgboost",
+    "params": {
+      "nround": 10
+    }
+  },
+  "runtime": {
+    "backend": "cpu"
+  },
+  "output": {
+    "artifactPath": "./ml/artifacts/jobs/test-job-001/model.bin",
+    "metricsPath": "./ml/artifacts/jobs/test-job-001/metrics.json"
+  },
+  "hash": "4755fc08ae59f3306d585344b725751797c244efa7d6f6669570f6b47effdca9"
+}

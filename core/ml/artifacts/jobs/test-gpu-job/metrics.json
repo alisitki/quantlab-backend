@@ -1,0 +1,6 @@
+{
+  "accuracy": 0.85,
+  "directionalHitRate": 0.65,
+  "sampleSize": 1000,
+  "directionalSampleSize": 400
+}

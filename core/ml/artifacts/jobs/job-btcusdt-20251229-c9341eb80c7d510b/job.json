@@ -1,0 +1,40 @@
+{
+  "jobId": "job-btcusdt-20251229-c9341eb80c7d510b",
+  "dataset": {
+    "symbol": "btcusdt",
+    "exchange": "binance",
+    "stream": "bbo",
+    "dateRange": {
+      "date": "20251229",
+      "windowSize": 1
+    }
+  },
+  "model": {
+    "type": "xgboost",
+    "params": {
+      "nround": 100,
+      "maxDepth": 6,
+      "eta": 0.1,
+      "objective": "multi:softmax",
+      "numClass": 3
+    },
+    "featureParams": {
+      "enabledFeatures": [
+        "mid_price",
+        "spread",
+        "return_1",
+        "volatility_10"
+      ]
+    }
+  },
+  "runtime": {
+    "backend": "gpu",
+    "gpuType": "RTX_3090",
+    "maxRuntimeMin": 60
+  },
+  "output": {
+    "artifactPath": "./ml/artifacts/jobs/job-btcusdt-20251229-c9341eb80c7d510b/model.bin",
+    "metricsPath": "./ml/artifacts/jobs/job-btcusdt-20251229-c9341eb80c7d510b/metrics.json"
+  },
+  "hash": "44cfcf7518f678da69ef74fccf4f11a4b8b93b83f68d28eab06734e079ec6576"
+}

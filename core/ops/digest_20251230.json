@@ -1,0 +1,12 @@
+{
+  "date": "20251230",
+  "generated_at": "2025-12-31T09:11:37.890Z",
+  "health_status": "SKIPPED_WAITING_FOR_COMPACT",
+  "compact_ready": false,
+  "run_attempted": false,
+  "run_status": "SKIPPED",
+  "job_id": null,
+  "promotion_result": "N/A",
+  "alert_count": 0,
+  "summary": "⏭️ Skipped: waiting for compact data"
+}

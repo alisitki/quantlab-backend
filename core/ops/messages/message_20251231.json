@@ -1,0 +1,37 @@
+{
+  "date": "20251231",
+  "generated_at": "2025-12-31T15:06:12.596Z",
+  "status": {
+    "health_status": "UNKNOWN",
+    "run_status": "UNKNOWN",
+    "promotion_result": "UNKNOWN",
+    "compact_state": "UNKNOWN"
+  },
+  "alerts": {
+    "count": 2,
+    "types": [
+      "CRON_FAILURE"
+    ],
+    "alert_ids": [
+      "560b59471a122781",
+      "cafc4c718b9b1a1f"
+    ]
+  },
+  "retention": {
+    "plan_found": true,
+    "plan_timestamp": "2025-12-31T15:00:01.658Z",
+    "candidates_total": 1,
+    "by_label": {
+      "Local Cron Logs": 1
+    }
+  },
+  "summary_lines": [
+    "❌ UNKNOWN: Summary unavailable",
+    "⚠️ 2 alerts detected (CRON_FAILURE)",
+    "🧹 Retention DRY-RUN: 1 candidates (plan @ 2025-12-31T15:00:01.658Z)"
+  ],
+  "errors": [
+    "Health file missing for 20251231",
+    "Ops digest missing for 20251231"
+  ]
+}

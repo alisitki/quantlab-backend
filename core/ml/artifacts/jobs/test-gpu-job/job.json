@@ -1,0 +1,24 @@
+{
+  "jobId": "test-gpu-job",
+  "dataset": {
+    "symbol": "btcusdt",
+    "dateRange": {
+      "date": "20251225"
+    }
+  },
+  "model": {
+    "type": "xgboost",
+    "params": {
+      "nround": 10
+    }
+  },
+  "runtime": {
+    "backend": "gpu",
+    "gpuType": "T4"
+  },
+  "output": {
+    "artifactPath": "./ml/artifacts/jobs/test-gpu-job/model.bin",
+    "metricsPath": "./ml/artifacts/jobs/test-gpu-job/metrics.json"
+  },
+  "hash": "4f0e7e9ad206acf4e257fbceeeeefa54468e3cbbc6a5df9fa65ffe7ce1d3b162"
+}

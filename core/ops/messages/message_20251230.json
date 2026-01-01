@@ -1,0 +1,31 @@
+{
+  "date": "20251230",
+  "generated_at": "2025-12-31T10:51:33.499Z",
+  "status": {
+    "health_status": "SKIPPED_WAITING_FOR_COMPACT",
+    "run_status": "SKIPPED",
+    "promotion_result": "N/A",
+    "compact_state": "NOT_READY"
+  },
+  "alerts": {
+    "count": 10,
+    "types": [
+      "CRON_FAILURE",
+      "OPS_DEQUEUE_FAILURE",
+      "RETENTION_DRIFT_DETECTED",
+      "RETENTION_RUNNER_FAILURE"
+    ]
+  },
+  "retention": {
+    "plan_found": false,
+    "plan_timestamp": null,
+    "candidates_total": 0,
+    "by_label": {}
+  },
+  "summary_lines": [
+    "⏭️ Skipped: waiting for compact data",
+    "⚠️ 10 alerts detected (CRON_FAILURE, OPS_DEQUEUE_FAILURE, RETENTION_DRIFT_DETECTED, RETENTION_RUNNER_FAILURE)",
+    "🧹 Retention: No dry-run in last 36h"
+  ],
+  "errors": []
+}

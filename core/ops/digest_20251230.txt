@@ -1,0 +1,12 @@
+══════════════════════════════════════════════════════════════
+QUANTLAB DAILY OPS DIGEST — 2025-12-30
+══════════════════════════════════════════════════════════════
+Status:     SKIPPED_WAITING_FOR_COMPACT
+Compact:    NOT_READY
+Run:        SKIPPED
+Job ID:     N/A
+Promotion:  N/A
+Alerts:     0
+
+⏭️ Skipped: waiting for compact data
+══════════════════════════════════════════════════════════════

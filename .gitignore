@@ -1,0 +1,20 @@
+# Credentials
+.env
+
+# Dependencies
+node_modules/
+
+# Operational Data & Logs
+logs/
+ops/messages/
+ops/outbox/
+cleanup/
+health/
+daily_runs/
+reports/
+
+# IDE
+.vscode/
+
+# OS files
+.DS_Store

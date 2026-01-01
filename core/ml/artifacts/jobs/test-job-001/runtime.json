@@ -1,0 +1,7 @@
+{
+  "backend": "cpu",
+  "hostname": "test-host",
+  "startTimestamp": "2025-12-29T16:38:40.873Z",
+  "endTimestamp": "2025-12-29T16:38:40.975Z",
+  "durationMs": 102
+}

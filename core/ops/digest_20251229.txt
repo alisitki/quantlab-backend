@@ -1,0 +1,12 @@
+══════════════════════════════════════════════════════════════
+QUANTLAB DAILY OPS DIGEST — 2025-12-29
+══════════════════════════════════════════════════════════════
+Status:     HEALTHY
+Compact:    READY
+Run:        SUCCESS
+Job ID:     job-btcusdt-20251229-c9341eb8
+Promotion:  REJECTED
+Alerts:     0
+
+✅ ML training completed successfully. Promotion: REJECTED
+══════════════════════════════════════════════════════════════

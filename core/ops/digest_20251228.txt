@@ -1,0 +1,12 @@
+══════════════════════════════════════════════════════════════
+QUANTLAB DAILY OPS DIGEST — 2025-12-28
+══════════════════════════════════════════════════════════════
+Status:     FAILED_INFRA
+Compact:    READY
+Run:        FAILED
+Job ID:     job-btcusdt-20251228-b9687fb1
+Promotion:  N/A
+Alerts:     0
+
+❌ Failed: infrastructure error (SSH_HARD_TIMEOUT: Instance failed SSH readiness after 45s)
+══════════════════════════════════════════════════════════════

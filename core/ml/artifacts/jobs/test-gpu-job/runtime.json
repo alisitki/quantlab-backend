@@ -1,0 +1,7 @@
+{
+  "backend": "gpu",
+  "hostname": "test-host",
+  "startTimestamp": "2025-12-29T16:38:40.977Z",
+  "endTimestamp": "2025-12-29T16:38:41.079Z",
+  "durationMs": 102
+}

@@ -1,0 +1,12 @@
+{
+  "date": "20251228",
+  "generated_at": "2025-12-31T09:11:37.211Z",
+  "health_status": "FAILED_INFRA",
+  "compact_ready": true,
+  "run_attempted": true,
+  "run_status": "FAILED",
+  "job_id": "job-btcusdt-20251228-b9687fb1",
+  "promotion_result": "N/A",
+  "alert_count": 0,
+  "summary": "❌ Failed: infrastructure error (SSH_HARD_TIMEOUT: Instance failed SSH readiness after 45s)"
+}

@@ -1,0 +1,28 @@
+{
+  "date": "20251229",
+  "generated_at": "2025-12-31T10:51:32.196Z",
+  "status": {
+    "health_status": "HEALTHY",
+    "run_status": "SUCCESS",
+    "promotion_result": "REJECTED",
+    "compact_state": "READY"
+  },
+  "alerts": {
+    "count": 0,
+    "types": []
+  },
+  "retention": {
+    "plan_found": true,
+    "plan_timestamp": "2025-12-31T10:43:27.027Z",
+    "candidates_total": 1,
+    "by_label": {
+      "Local Cron Logs": 1
+    }
+  },
+  "summary_lines": [
+    "✅ ML training completed successfully. Promotion: REJECTED",
+    "🔔 No alerts detected",
+    "🧹 Retention DRY-RUN: 1 candidates (plan @ 2025-12-31T10:43:27.027Z)"
+  ],
+  "errors": []
+}

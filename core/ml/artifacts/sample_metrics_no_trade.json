@@ -1,0 +1,14 @@
+{
+  "accuracy": 0,
+  "directionalHitRate": null,
+  "maxDrawdown": null,
+  "totalTrades": 0,
+  "sampleSize": 100,
+  "label_distribution": {
+    "label_1": 50,
+    "label_0": 50,
+    "total": 100
+  },
+  "evaluation_status": "no_trades",
+  "reason": "model produced no executable signals"
+}

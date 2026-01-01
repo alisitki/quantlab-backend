@@ -1,0 +1,1 @@
+soon gunun datasını replayde ayrı sekilde alıcaz sanırım unutma

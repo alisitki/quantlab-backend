@@ -1,0 +1,29 @@
+{"id":"opsmsg-test-fail-123","date":"20251231","failed_at":"2025-12-31T09:52:57.364Z","channel":"ops","transport":"stub","error":"SIMULATED_FAILED_SAFETY","body":"Test Failure Line"}
+{"id":"opsmsg-test-fail-123","date":"20251231","failed_at":"2025-12-31T09:54:13.048Z","channel":"ops","transport":"stub","reason":"SIMULATED_FAILED_SAFETY","body":"Test Failure Line"}
+{"id":"opsmsg-test-fail-456","date":"20251231","failed_at":"2025-12-31T09:54:13.048Z","channel":"ops","transport":"stub","reason":"SIMULATED_FAILED_SAFETY","body":"Body Verification Line"}
+{"id":"opsmsg-test-fail-123","date":"20251231","failed_at":"2025-12-31T10:14:05.679Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251228-413c807f","date":"20251228","failed_at":"2025-12-31T10:21:57.539Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251229-2069d108","date":"20251229","failed_at":"2025-12-31T10:21:57.540Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251230-a194a557","date":"20251230","failed_at":"2025-12-31T10:21:57.540Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251228-784cbce2","date":"20251228","failed_at":"2025-12-31T10:21:57.540Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251229-dc66aa12","date":"20251229","failed_at":"2025-12-31T10:21:57.540Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251230-ecf30833","date":"20251230","failed_at":"2025-12-31T10:21:57.540Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-test-fail-123","date":"20251231","failed_at":"2025-12-31T10:21:57.541Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-test-fail-456","date":"20251231","failed_at":"2025-12-31T10:21:57.541Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251228-413c807f","date":"20251228","failed_at":"2025-12-31T10:36:42.196Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251228-413c807f","date":"20251228","failed_at":"2025-12-31T10:36:42.248Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251229-dc66aa12","date":"20251229","failed_at":"2025-12-31T10:40:53.338Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251230-ecf30833","date":"20251230","failed_at":"2025-12-31T10:40:53.339Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-test-fail-123","date":"20251231","failed_at":"2025-12-31T10:40:53.339Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-test-fail-456","date":"20251231","failed_at":"2025-12-31T10:40:53.340Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-legacy-test","date":"20251231","failed_at":"2025-12-31T10:40:53.340Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251229-dc66aa12","date":"20251229","failed_at":"2025-12-31T10:40:54.357Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251230-ecf30833","date":"20251230","failed_at":"2025-12-31T10:40:54.358Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-test-fail-123","date":"20251231","failed_at":"2025-12-31T10:40:54.359Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-test-fail-456","date":"20251231","failed_at":"2025-12-31T10:40:54.359Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-legacy-test","date":"20251231","failed_at":"2025-12-31T10:40:54.359Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251229-dc66aa12","date":"20251229","failed_at":"2025-12-31T10:41:00.196Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-20251230-ecf30833","date":"20251230","failed_at":"2025-12-31T10:41:00.196Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-test-fail-123","date":"20251231","failed_at":"2025-12-31T10:41:00.197Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-test-fail-456","date":"20251231","failed_at":"2025-12-31T10:41:00.197Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}
+{"id":"opsmsg-legacy-test","date":"20251231","failed_at":"2025-12-31T10:41:00.197Z","adapter":"telegram","reason":"MISSING_TELEGRAM_ENV"}

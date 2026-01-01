@@ -1,0 +1,12 @@
+{
+  "date": "20251229",
+  "generated_at": "2025-12-31T09:11:37.603Z",
+  "health_status": "HEALTHY",
+  "compact_ready": true,
+  "run_attempted": true,
+  "run_status": "SUCCESS",
+  "job_id": "job-btcusdt-20251229-c9341eb8",
+  "promotion_result": "REJECTED",
+  "alert_count": 0,
+  "summary": "✅ ML training completed successfully. Promotion: REJECTED"
+}

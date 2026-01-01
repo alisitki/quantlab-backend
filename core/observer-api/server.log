@@ -3,7 +3,7 @@ QuantLab Observer API
 Mode: READ-ONLY (Verified)
 Listening on http://0.0.0.0:3000
 ============================================================
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -24,7 +24,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -45,7 +45,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -66,7 +66,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -87,7 +87,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -108,7 +108,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -129,7 +129,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -150,7 +150,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -171,7 +171,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -192,7 +192,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -213,7 +213,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -234,7 +234,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -255,7 +255,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 node:events:502
       throw er; // Unhandled 'error' event
       ^
@@ -276,7 +276,7 @@ Emitted 'error' event on Server instance at:
 }
 
 Node.js v20.19.6
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 ============================================================
 QuantLab Observer API
 Mode: READ-ONLY (Verified)
@@ -352,7 +352,7 @@ Listening on http://0.0.0.0:3000
 [REQ] a897ae94-2605-46d1-92e1-c6a836ba19b2 | GET / | date=N/A | status=200 | 5ms
 Shutting down Observer API...
 Server closed.
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 ============================================================
 QuantLab Observer API
 Mode: READ-ONLY (Verified)
@@ -360,7 +360,7 @@ Listening on http://0.0.0.0:3000
 ============================================================
 Shutting down Observer API...
 Server closed.
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 ============================================================
 QuantLab Observer API
 Mode: READ-ONLY (Verified)
@@ -368,7 +368,7 @@ Listening on http://0.0.0.0:3000
 ============================================================
 Shutting down Observer API...
 Server closed.
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 ============================================================
 QuantLab Observer API
 Mode: READ-ONLY (Verified)
@@ -376,7 +376,7 @@ Listening on http://0.0.0.0:3000
 ============================================================
 Shutting down Observer API...
 Server closed.
-[CONFIG] Loaded .env from: /home/deploy/quantlab/api/.env
+[CONFIG] Loaded .env from: /home/deploy/quantlab/api/core/.env
 ============================================================
 QuantLab Observer API
 Mode: READ-ONLY (Verified)

@@ -5,8 +5,8 @@ After=network.target
 [Service]
 Type=oneshot
 User=deploy
-WorkingDirectory=/home/deploy/quantlab/api
-ExecStart=/usr/bin/python3 /home/deploy/quantlab/api/compressor/run.py
+WorkingDirectory=/home/deploy/quantlab/api/core
+ExecStart=/usr/bin/python3 /home/deploy/quantlab/api/core/compressor/run.py
 StandardOutput=journal
 StandardError=journal
 Restart=no

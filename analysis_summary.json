@@ -1,0 +1,19 @@
+{
+  "paired_runs": [],
+  "metrics_off": null,
+  "metrics_on": null,
+  "deltas": null,
+  "ml_quality": {
+    "count_pairs": 0,
+    "count_runs_off": 0,
+    "count_runs_on": 0,
+    "confidence_histogram": null,
+    "win_rate_by_confidence": null,
+    "false_positive_rate": null,
+    "applied_weight_histogram": null,
+    "avg_abs_weight_delta": null,
+    "daily_cap_hits": null
+  },
+  "verdict": "EDGE_YOK",
+  "verdict_reason": "insufficient_data"
+}

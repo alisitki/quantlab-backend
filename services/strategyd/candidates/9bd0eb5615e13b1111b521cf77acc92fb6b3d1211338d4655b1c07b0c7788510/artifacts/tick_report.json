@@ -1,0 +1,52 @@
+{
+  "run_id": "eval_1769765635468",
+  "strategy_id": "ema_cross",
+  "strategy_version": "v1.0.0",
+  "dataset": {
+    "exchange": "binance",
+    "stream": "bbo",
+    "symbol": "BTCUSDT",
+    "date_range": "2024-01-19"
+  },
+  "data_mode": "tick_full",
+  "validation_status": "not_required",
+  "params_hash": "dc15932fa48a27724f6acfe9f32058a91d1cc6729b4428819d340fa34c6f347b",
+  "input_fingerprint": "eyJ2IjoxLCJ0c19ldmVudCI6IjE3MDAwMDE1OTkwMDAiLCJzZXEiOiIxMjAwIn0=",
+  "results": {
+    "equity_start": 10000,
+    "equity_end": 10398.48604,
+    "pnl_abs": 398.48604,
+    "pnl_pct": 0.0398486,
+    "max_drawdown_pct": -0.0005,
+    "win_rate": 1,
+    "trades_count": 29,
+    "avg_trade_pnl": 13.49116,
+    "avg_holding_time_sec": 21,
+    "fees_total": 71.06396,
+    "exposure_time_pct": 0.50792327,
+    "sharpe_like": 79.69770443
+  },
+  "determinism": {
+    "state_hash": "e65ef8bd5b48d2eea3a000de94dcd2a31b0fbc3950c33e592da8d236929081c6",
+    "fills_hash": "39dc2270d998ad34ea7f0ae44b66751a2e6966cb1b68fcb4357e41471061d6be"
+  },
+  "timings": {
+    "duration_ms": 1200,
+    "events_processed": 1200
+  },
+  "artifacts": {
+    "report_path": "/home/deploy/quantlab-backend/services/strategyd/reports/eval_1769764767055_tick_report.json",
+    "logs_ref": "strategyd.log",
+    "validation_report_path": null
+  },
+  "provenance": {
+    "git_commit": "a300430160dbcc2822141fd56dd26ff841c00c42",
+    "git_dirty": true,
+    "strategyd_version": "1.0.0",
+    "replayd_version": "1.2",
+    "node_version": "v20.19.6",
+    "lockfile_hash": "3144e780340010036418e76a7cf3f50957a7240ccd087e9af7585e71e7f9d9bb",
+    "strategy_artifact_path": "/home/deploy/quantlab-backend/services/strategyd/strategy_registry/artifacts/ema_cross/v1.0.0.json",
+    "strategy_artifact_sha256": "e5ac9f743ab1e5b4d2585d4737e3a0b50b6c005293e2fd2e37504301935d1f54"
+  }
+}

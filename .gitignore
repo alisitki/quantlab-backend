@@ -19,3 +19,12 @@ reports/
 
 # OS files
 .DS_Store
+
+# Project specific ignores
+**/mock-data/
+services/strategyd/report_*.json
+services/strategyd/runs/
+services/strategyd/validation_reports/
+**/reports/
+**/*.generated.json
+

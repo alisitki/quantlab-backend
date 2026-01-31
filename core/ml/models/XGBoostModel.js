@@ -1,6 +1,6 @@
 /**
  * XGBoostModel: Wrapper for XGBoost CPU.
- * Note: v1 assumes an environment where xgboost can be executed or linked.
+ * Note: Deterministic linear softmax model (XGBoost replacement) for v1.
  */
 import { ML_CONFIG } from '../config.js';
 
@@ -19,45 +19,37 @@ export class XGBoostModel {
    * @param {Array<number>} y
    */
   async train(X, y) {
-    this.#probaSource = 'none'; // Reset source on new training
+    this.#probaSource = 'softmax';
     console.log(`[XGBoost] Training on ${X.length} rows...`);
 
-    // 1. Calculate Imbalance Weights
-    // "neg" here covers everything that is not label_1 (following evaluate.js logic)
-    let pos = 0;
-    let neg = 0;
-    for (const label of y) {
-      if (label === 1) pos++;
-      else neg++;
+    const seed = Number.isFinite(this.#config.seed) ? Number(this.#config.seed) : ML_CONFIG.RANDOM_SEED;
+    const epochs = Number.isFinite(this.#config.epochs) ? Number(this.#config.epochs) : 50;
+    const lr = Number.isFinite(this.#config.eta) ? Number(this.#config.eta) : 0.05;
+    const l2 = Number.isFinite(this.#config.l2) ? Number(this.#config.l2) : 1e-4;
+
+    const classes = 3; // -1,0,1 -> 0,1,2
+    const dims = X[0]?.length || 0;
+    const weights = initWeights(classes, dims + 1, seed);
+
+    for (let epoch = 0; epoch < epochs; epoch++) {
+      for (let i = 0; i < X.length; i++) {
+        const features = X[i];
+        const label = y[i] + 1;
+        const logits = computeLogits(weights, features);
+        const probs = softmax(logits);
+        for (let c = 0; c < classes; c++) {
+          const target = c === label ? 1 : 0;
+          const grad = probs[c] - target;
+          updateWeights(weights[c], features, grad, lr, l2);
+        }
+      }
     }
 
-    const scale_pos_weight = neg / Math.max(pos, 1);
-    const pos_rate = pos / X.length;
-    
-    console.log(`[XGBoost] Class Imbalance Stats:`);
-    console.log(`  - Pos: ${pos}, Neg: ${neg}, Total: ${X.length}`);
-    console.log(`  - Pos Rate: ${(pos_rate * 100).toFixed(2)}%`);
-    console.log(`  - Scale Pos Weight: ${scale_pos_weight.toFixed(4)} (neg/pos)`);
-
-    // 2. Update Config
-    this.#config = {
-      ...this.#config,
-      scale_pos_weight,
-      max_delta_step: 1 // Helps with extreme imbalance
+    this.#model = {
+      trained: true,
+      weights
     };
-    
-    // Convert -1, 0, 1 labels to 0, 1, 2 for multi:softmax if needed
-    const shiftedY = y.map(label => label + 1);
 
-    // Placeholder for real XGBoost training logic.
-    // In a real environment, we'd use native bindings or a CLI wrapper.
-    // For now, we simulate a model being created with a stub predict.
-    this.#model = { 
-      trained: true, 
-      timestamp: Date.now(),
-      predict: (samples) => samples.map(() => (Math.random() * 4) - 2) // Sim logits [-2, 2]
-    };
-    
     console.log(`[XGBoost] Training complete.`);
   }
 
@@ -68,10 +60,13 @@ export class XGBoostModel {
    */
   predict(X) {
     if (!this.#model) throw new Error('Model not trained.');
-    
-    // Simulate prediction: just return 0 (neutral) for now
-    // until we have real bindings.
-    return new Array(X.length).fill(0);
+    const outputs = new Array(X.length);
+    for (let i = 0; i < X.length; i++) {
+      const logits = computeLogits(this.#model.weights, X[i]);
+      const cls = argMax(logits);
+      outputs[i] = cls - 1;
+    }
+    return outputs;
   }
 
   /**
@@ -89,29 +84,14 @@ export class XGBoostModel {
 
     if (!this.#model) throw new Error('Model not trained.');
 
-    // 2. Try native predictProba
-    if (typeof this.#model.predictProba === 'function') {
-      this.#probaSource = 'model_predictProba';
-      return this.#model.predictProba(X);
+    this.#probaSource = 'softmax';
+    const probs = new Array(X.length);
+    for (let i = 0; i < X.length; i++) {
+      const logits = computeLogits(this.#model.weights, X[i]);
+      const sm = softmax(logits);
+      probs[i] = sm[2]; // class +1
     }
-
-    // 3. Fallback to predict with heuristic range check
-    if (typeof this.#model.predict === 'function') {
-      const scores = this.#model.predict(X);
-      
-      // Heuristic: Check if all scores are in [0, 1] range
-      const isProba = scores.every(s => s >= 0 && s <= 1);
-      
-      if (isProba) {
-        this.#probaSource = 'model_predict_prob';
-        return scores;
-      } else {
-        this.#probaSource = 'model_predict_logit_sigmoid';
-        return scores.map(s => this.#sigmoid(s));
-      }
-    }
-
-    throw new Error('No proba source available. Model does not support predict() or predictProba().');
+    return probs;
   }
 
   /**
@@ -152,7 +132,8 @@ export class XGBoostModel {
   async save(filePath) {
     console.log(`[XGBoost] Saving model to ${filePath}`);
     const fs = await import('fs');
-    fs.writeFileSync(filePath, JSON.stringify(this.#model, null, 2));
+    const payload = serializeModel(this.#model);
+    fs.writeFileSync(filePath, JSON.stringify(payload, null, 2));
   }
 
   /**
@@ -180,4 +161,96 @@ export class XGBoostModel {
   getConfig() {
     return this.#config;
   }
+}
+
+function initWeights(classes, dims, seed) {
+  const rng = new XorShift32(seed || 1);
+  const weights = [];
+  for (let c = 0; c < classes; c++) {
+    const row = new Array(dims);
+    for (let i = 0; i < dims; i++) {
+      row[i] = (rng.next() - 0.5) * 0.01;
+    }
+    weights.push(row);
+  }
+  return weights;
+}
+
+function computeLogits(weights, features) {
+  const dims = features.length;
+  const logits = new Array(weights.length);
+  for (let c = 0; c < weights.length; c++) {
+    let sum = weights[c][0]; // bias
+    for (let i = 0; i < dims; i++) {
+      sum += weights[c][i + 1] * features[i];
+    }
+    logits[c] = sum;
+  }
+  return logits;
+}
+
+function softmax(logits) {
+  let max = logits[0];
+  for (let i = 1; i < logits.length; i++) {
+    if (logits[i] > max) max = logits[i];
+  }
+  const exps = new Array(logits.length);
+  let sum = 0;
+  for (let i = 0; i < logits.length; i++) {
+    const value = Math.exp(logits[i] - max);
+    exps[i] = value;
+    sum += value;
+  }
+  for (let i = 0; i < exps.length; i++) {
+    exps[i] = exps[i] / sum;
+  }
+  return exps;
+}
+
+function updateWeights(weightsRow, features, grad, lr, l2) {
+  weightsRow[0] -= lr * (grad + l2 * weightsRow[0]);
+  for (let i = 0; i < features.length; i++) {
+    const idx = i + 1;
+    weightsRow[idx] -= lr * (grad * features[i] + l2 * weightsRow[idx]);
+  }
+}
+
+function argMax(values) {
+  let idx = 0;
+  let max = values[0];
+  for (let i = 1; i < values.length; i++) {
+    if (values[i] > max) {
+      max = values[i];
+      idx = i;
+    }
+  }
+  return idx;
+}
+
+class XorShift32 {
+  constructor(seed) {
+    let s = seed >>> 0;
+    if (s === 0) s = 1;
+    this.state = s;
+  }
+
+  next() {
+    let x = this.state;
+    x ^= x << 13;
+    x ^= x >>> 17;
+    x ^= x << 5;
+    this.state = x >>> 0;
+    return this.state / 0xffffffff;
+  }
+}
+
+function serializeModel(model) {
+  if (!model || !model.weights) return model;
+  const weights = model.weights.map((row) => row.map((v) => round(v)));
+  return { trained: true, weights };
+}
+
+function round(value) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.round(value * 1e12) / 1e12;
 }

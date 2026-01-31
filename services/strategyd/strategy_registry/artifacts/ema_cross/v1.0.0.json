@@ -1,0 +1,6 @@
+{
+  "name": "EMA Cross",
+  "description": "Dummy builder export for registry test",
+  "nodes": [{"id":"n1"},{"id":"n2"}],
+  "edges": [{"from":"n1","to":"n2"}]
+}

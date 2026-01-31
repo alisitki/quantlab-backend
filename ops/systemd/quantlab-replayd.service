@@ -1,0 +1,18 @@
+[Unit]
+Description=QuantLab Replayd
+After=network.target
+
+[Service]
+Type=simple
+User=deploy
+Group=deploy
+WorkingDirectory=/home/deploy/quantlab-backend/services/replayd
+EnvironmentFile=/etc/quantlab/replayd.env
+ExecStart=/usr/bin/node /home/deploy/quantlab-backend/services/replayd/server.js
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { requestLogger } from './middleware/logger.js';
+import { authGuard } from './middleware/auth.js';
 
 // ENV must be loaded before routes
 import './config.js';
@@ -11,6 +12,10 @@ import healthRoutes from './routes/health.js';
 import gateRoutes from './routes/gates.js';
 import decisionRoutes from './routes/decisions.js';
 import alertRoutes from './routes/alerts.js';
+import jobsRoutes from './routes/jobs.js';
+import experimentsRoutes from './routes/experiments.js';
+import candidatesRoutes from './routes/candidates.js';
+import apiRoutes from './routes/api.js';
 
 // ENV GUARD
 if (process.env.OBSERVER_MODE !== '1') {
@@ -24,7 +29,7 @@ const host = '0.0.0.0';
 
 app.use(cors({
     origin: '*',
-    methods: ['GET'],
+    methods: ['GET', 'POST'],
 }));
 
 app.use(requestLogger);
@@ -37,6 +42,15 @@ app.use('/gates', gateRoutes);
 app.use('/decisions', decisionRoutes);
 app.use('/alerts', alertRoutes);
 app.use('/debug', healthRoutes); // debug endpoint is in health.ts
+
+// v1 API (secured)
+app.use('/v1', authGuard);
+app.use('/v1', jobsRoutes);
+app.use('/v1', experimentsRoutes);
+app.use('/v1', candidatesRoutes);
+
+app.use('/api', authGuard);
+app.use('/api', apiRoutes);
 
 app.get('/ping', (req: Request, res: Response) => {
     res.json({ status: 'pong', mode: 'READ-ONLY', time: new Date().toISOString() });

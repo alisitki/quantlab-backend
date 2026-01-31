@@ -1,0 +1,19 @@
+[Unit]
+Description=QuantLab Console UI (Next.js)
+After=network.target
+
+[Service]
+Type=simple
+User=deploy
+Group=deploy
+WorkingDirectory=/home/deploy/quantlab-backend/console-ui
+EnvironmentFile=/etc/quantlab/console.env
+ExecStart=/usr/bin/env npm run start
+Restart=always
+RestartSec=2
+StandardOutput=journal
+StandardError=journal
+LimitNOFILE=104857
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,81 @@
+{
+  "exp_id": "ledger_sweep2",
+  "strategy_id": "ema_cross",
+  "dataset": {
+    "stream": "bbo",
+    "symbol": "BTCUSDT",
+    "date": "2024-01-19"
+  },
+  "total_jobs": 4,
+  "done_jobs": 4,
+  "skipped_jobs": 0,
+  "validated_jobs": 3,
+  "rows": [
+    {
+      "rank": 1,
+      "params_hash": "5eedc87ac74fd6afcdda0072c0794ac51fef4dbdb3ec547faba5636610af7f4d",
+      "params_short": "ema_fast=1;ema_slow=2;fastPeriod=1;slowPeriod=2",
+      "snapshot": {
+        "pnl_pct": 0.04507412,
+        "max_dd": -0.00020051,
+        "trades": 30
+      },
+      "tick": {
+        "pnl_pct": 0.04507412
+      },
+      "validation_status": "passed",
+      "pnl_diff": 0,
+      "report_path": "/home/deploy/quantlab-backend/services/strategyd/reports/eval_1769766145478_snapshot_report.json",
+      "validation_report_path": "/home/deploy/quantlab-backend/services/strategyd/validation_reports/validation_report_6805fcfea9719d45.json"
+    },
+    {
+      "rank": 2,
+      "params_hash": "811b1dfaef6a2749283071e83493dde8509830831226f4d3f4922e7b10b25140",
+      "params_short": "ema_fast=1;ema_slow=3;fastPeriod=1;slowPeriod=3",
+      "snapshot": {
+        "pnl_pct": 0.0398486,
+        "max_dd": -0.0005,
+        "trades": 29
+      },
+      "tick": {
+        "pnl_pct": 0.0398486
+      },
+      "validation_status": "passed",
+      "pnl_diff": 0,
+      "report_path": "/home/deploy/quantlab-backend/services/strategyd/reports/eval_1769766147883_snapshot_report.json",
+      "validation_report_path": "/home/deploy/quantlab-backend/services/strategyd/validation_reports/validation_report_cb39af43133e5d68.json"
+    },
+    {
+      "rank": 3,
+      "params_hash": "70e81bf621bb701f31bb7b749d3039ad55c163dd84800b4ce9d03bd3462b0146",
+      "params_short": "ema_fast=2;ema_slow=3;fastPeriod=2;slowPeriod=3",
+      "snapshot": {
+        "pnl_pct": 0.03544804,
+        "max_dd": -0.00059987,
+        "trades": 29
+      },
+      "tick": {
+        "pnl_pct": 0.03544804
+      },
+      "validation_status": "passed",
+      "pnl_diff": 0,
+      "report_path": "/home/deploy/quantlab-backend/services/strategyd/reports/eval_1769766151310_snapshot_report.json",
+      "validation_report_path": "/home/deploy/quantlab-backend/services/strategyd/validation_reports/validation_report_71d45ab66f82f30d.json"
+    },
+    {
+      "rank": 4,
+      "params_hash": "b0377bc0fccb88eca97788c789c16895aabf9ea09bbb36d5cea57d21105c0af8",
+      "params_short": "ema_fast=2;ema_slow=2;fastPeriod=2;slowPeriod=2",
+      "snapshot": {
+        "pnl_pct": 0,
+        "max_dd": 0,
+        "trades": 0
+      },
+      "tick": null,
+      "validation_status": "not_required",
+      "pnl_diff": null,
+      "report_path": "/home/deploy/quantlab-backend/services/strategyd/reports/eval_1769766150168_snapshot_report.json",
+      "validation_report_path": null
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "strategy_id": "ema_cross",
+  "dataset": {
+    "stream": "bbo",
+    "symbol": "BTCUSDT",
+    "date": "2024-01-19"
+  },
+  "mode": "snapshot",
+  "aggregate": "1s",
+  "grid": {
+    "ema_fast": [
+      1,
+      2
+    ],
+    "ema_slow": [
+      2,
+      3
+    ]
+  },
+  "top_k": 5,
+  "validate_with_tick": true
+}

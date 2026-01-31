@@ -12,7 +12,8 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
     res.on('finish', () => {
         const duration = Date.now() - start;
         const dateParam = req.query.date || 'N/A';
-        console.log(`[REQ] ${requestId} | ${req.method} ${req.path} | date=${dateParam} | status=${res.statusCode} | ${duration}ms`);
+        const resultCount = (res.locals as any).resultCount ?? 'n/a';
+        console.log(`[REQ] ${requestId} | ${req.method} ${req.path} | date=${dateParam} | status=${res.statusCode} | ${duration}ms | result_count=${resultCount}`);
     });
 
     next();

@@ -1,0 +1,8 @@
+{
+  "ema_cross": {
+    "latest_version": "v1.0.0",
+    "artifact_path": "/home/deploy/quantlab-backend/services/strategyd/strategy_registry/artifacts/ema_cross/v1.0.0.json",
+    "artifact_sha256": "e5ac9f743ab1e5b4d2585d4737e3a0b50b6c005293e2fd2e37504301935d1f54",
+    "updated_at": "2026-01-30T09:33:37.214Z"
+  }
+}

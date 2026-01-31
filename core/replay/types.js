@@ -30,6 +30,14 @@
  * @property {number} rowsEmitted - Total rows yielded
  * @property {number} batchesProcessed - Number of batches completed
  * @property {number} elapsedMs - Total replay time in milliseconds
+ * @property {import('./CursorCodec.js').ReplayCursorV1} [lastCursor] - Cursor for resume
+ */
+
+/**
+ * @typedef {Object} ReplayCursorV1
+ * @property {1} v - Cursor version
+ * @property {number} ts_event - Last processed ts_event (nanoseconds)
+ * @property {number} seq - Last processed seq
  */
 
 export {};

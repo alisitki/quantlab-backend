@@ -2,17 +2,19 @@
  * QuantLab Replay Engine v1.1 — Parquet Reader
  * DuckDB-based streaming reader with cursor-based pagination.
  * Uses ts_event + seq for deterministic ordering.
+ * 
+ * See ORDERING_CONTRACT.js for ordering rules.
  */
 
 import duckdb from 'duckdb';
 import dotenv from 'dotenv';
+import { SQL_ORDER_CLAUSE, buildCursorWhereClause } from './ORDERING_CONTRACT.js';
 
 dotenv.config();
 
 /**
  * @typedef {Object} Cursor
- * @property {bigint|number} ts_event - Last seen ts_event
- * @property {bigint|number} seq - Last seen seq
+ * @description Cursor containing all fields defined in ORDERING_CONTRACT
  */
 
 /**
@@ -29,10 +31,21 @@ export class ParquetReader {
   #initialized = false;
 
   /**
-   * @param {string} parquetPath - Absolute path to data.parquet or s3:// URI
+   * @param {string|string[]} parquetPath - Absolute path to data.parquet, s3:// URI, or array of paths
    */
   constructor(parquetPath) {
     this.#parquetPath = parquetPath;
+  }
+
+  /**
+   * Get formatted parquet source for DuckDB SQL
+   * @returns {string}
+   */
+  #getParquetSource() {
+    if (Array.isArray(this.#parquetPath)) {
+      return "[" + this.#parquetPath.map(p => `'${p}'`).join(', ') + "]";
+    }
+    return `'${this.#parquetPath}'`;
   }
 
   /**
@@ -48,11 +61,24 @@ export class ParquetReader {
         if (err) return reject(new Error(`DUCKDB_INIT_FAILED: ${err.message}`));
         this.#conn = this.#db.connect();
 
+        // Check if any path is S3
+        const paths = Array.isArray(this.#parquetPath) ? this.#parquetPath : [this.#parquetPath];
+        const hasS3 = paths.some(p => p.startsWith('s3://'));
+
         // If S3 path, configure DuckDB
-        if (this.#parquetPath.startsWith('s3://')) {
-          const endpoint = (process.env.S3_COMPACT_ENDPOINT || process.env.S3_ENDPOINT || '').replace('https://', '');
-          const accessKey = process.env.S3_COMPACT_ACCESS_KEY || process.env.S3_ACCESS_KEY;
-          const secretKey = process.env.S3_COMPACT_SECRET_KEY || process.env.S3_SECRET_KEY;
+        if (hasS3) {
+          const endpointRaw = process.env.S3_COMPACT_ENDPOINT;
+          const accessKey = process.env.S3_COMPACT_ACCESS_KEY;
+          const secretKey = process.env.S3_COMPACT_SECRET_KEY;
+
+          if (!endpointRaw || !accessKey || !secretKey) {
+            return reject(new Error(
+              `CREDENTIAL_ERROR: Missing required S3_COMPACT_* variables for DuckDB S3 access. ` +
+              `Required: [S3_COMPACT_ENDPOINT, S3_COMPACT_ACCESS_KEY, S3_COMPACT_SECRET_KEY]`
+            ));
+          }
+
+          const endpoint = endpointRaw.replace('https://', '');
 
           const setupQueries = [
             "INSTALL httpfs",
@@ -87,12 +113,13 @@ export class ParquetReader {
   }
 
   /**
-   * Get total row count from parquet file
+   * Get total row count from parquet file(s)
    * @returns {Promise<number>}
    */
   async getRowCount() {
     await this.init();
-    const sql = `SELECT COUNT(*) as cnt FROM '${this.#parquetPath}'`;
+    const source = this.#getParquetSource();
+    const sql = `SELECT COUNT(*) as cnt FROM read_parquet(${source})`;
     return new Promise((resolve, reject) => {
       this.#conn.all(sql, (err, rows) => {
         if (err) return reject(new Error(`PARQUET_COUNT_FAILED: ${err.message}`));
@@ -114,29 +141,30 @@ export class ParquetReader {
 
     const conditions = [];
 
-    // Cursor condition: (ts_event > last) OR (ts_event = last AND seq > last_seq)
+    // Cursor condition: EXCLUSIVE - events strictly AFTER cursor position
+    // Uses buildCursorWhereClause from ORDERING_CONTRACT for consistency
     if (cursor !== null) {
-      const ts = cursor.ts_event.toString();
-      const sq = cursor.seq.toString();
-      conditions.push(`((ts_event > ${ts}) OR (ts_event = ${ts} AND seq > ${sq}))`);
-    } else if (startTs !== undefined) {
-      // Time filter: startTs (only applies if no cursor)
-      conditions.push(`ts_event >= ${startTs}`);
+      conditions.push(buildCursorWhereClause(cursor));
+    }
+
+    if (startTs !== undefined) {
+      conditions.push(`ts_event >= CAST('${startTs}' AS UBIGINT)`);
     }
 
     // Time filter: endTs always applies
     if (endTs !== undefined) {
-      conditions.push(`ts_event <= ${endTs}`);
+      conditions.push(`ts_event <= CAST('${endTs}' AS UBIGINT)`);
     }
 
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    // FINAL Production Query Template
-    // ORDER BY ts_event, seq ASC guarantees deterministic replay
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const source = this.#getParquetSource();
+
+    // Use SQL_ORDER_CLAUSE from ORDERING_CONTRACT for deterministic replay
     const sql = `
-      SELECT * FROM read_parquet('${this.#parquetPath}')
+      SELECT * FROM read_parquet(${source})
       ${whereClause}
-      ORDER BY ts_event ASC, seq ASC
+      ${SQL_ORDER_CLAUSE}
       LIMIT ${limit}
     `;
 
@@ -159,11 +187,13 @@ export class ParquetReader {
 
     let whereClause = '';
     const conditions = [];
-    if (startTs !== undefined) conditions.push(`ts_event >= ${startTs}`);
-    if (endTs !== undefined) conditions.push(`ts_event <= ${endTs}`);
+    if (startTs !== undefined) conditions.push(`ts_event >= CAST('${startTs}' AS UBIGINT)`);
+    if (endTs !== undefined) conditions.push(`ts_event <= CAST('${endTs}' AS UBIGINT)`);
     if (conditions.length > 0) whereClause = `WHERE ${conditions.join(' AND ')}`;
 
-    const sql = `SELECT COUNT(*) as cnt FROM read_parquet('${this.#parquetPath}') ${whereClause}`;
+
+    const source = this.#getParquetSource();
+    const sql = `SELECT COUNT(*) as cnt FROM read_parquet(${source}) ${whereClause}`;
     return new Promise((resolve, reject) => {
       this.#conn.all(sql, (err, rows) => {
         if (err) return reject(new Error(`PARQUET_COUNT_FAILED: ${err.message}`));

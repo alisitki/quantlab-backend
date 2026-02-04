@@ -193,7 +193,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 - [x] HTTP API for live run management — ✅ DONE (Gap 2)
 - [x] Exchange execution bridge — ✅ DONE (2026-02-04)
 - [x] Position reconciliation service — ✅ DONE (2026-02-04)
-- [ ] Live monitoring dashboard
+- [x] Live monitoring dashboard — ✅ DONE (2026-02-04)
 - [x] Kill switch endpoint — ✅ DONE (2026-02-04)
 - [x] Pre-flight verification checks — ✅ DONE (2026-02-04)
 - [x] Gradual rollout mechanism (canary → shadow → active) — ✅ DONE (2026-02-04)
@@ -204,7 +204,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 |---------|-------------|
 | ~~No execution bridge~~ | ✅ RESOLVED - `core/exchange/` module with Binance adapter |
 | ~~No API exposure~~ | ✅ RESOLVED - strategyd /live/* endpoints |
-| No monitoring | ObserverRegistry exists but no real-time dashboard |
+| ~~No monitoring~~ | ✅ RESOLVED - `/v1/monitor/*` endpoints in strategyd |
 
 ### Safety Requirements (Before Activation)
 
@@ -232,7 +232,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 
 - [ ] Unified observability dashboard
 - [x] Alerting integration (Slack) — ✅ DONE (2026-02-04)
-- [ ] Metrics aggregation (Prometheus/Grafana)
+- [x] Metrics aggregation (Prometheus/Grafana) — ✅ DONE (2026-02-04)
 - [ ] SLO/SLA monitoring
 - [ ] Runbook automation
 - [ ] Incident response tooling

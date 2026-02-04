@@ -18,6 +18,7 @@ import candidatesRoutes from './routes/candidates.js';
 import apiRoutes from './routes/api.js';
 import runsRoutes from './routes/runs.js';
 import mlRoutes from './routes/ml.js';
+import metricsRoutes from './routes/metrics.js';
 
 // ENV GUARD
 if (process.env.OBSERVER_MODE !== '1') {
@@ -45,6 +46,7 @@ app.use('/decisions', decisionRoutes);
 app.use('/alerts', alertRoutes);
 app.use('/debug', healthRoutes); // debug endpoint is in health.ts
 app.use('/', runsRoutes); // run monitoring (migrated from core/observer)
+app.use('/', metricsRoutes); // Prometheus metrics (public, no auth)
 
 // v1 API (secured)
 app.use('/v1', authGuard);

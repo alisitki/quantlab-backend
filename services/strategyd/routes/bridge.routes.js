@@ -63,6 +63,14 @@ export function setPaperPositionsProvider(provider) {
   paperPositionsProvider = provider;
 }
 
+/**
+ * Get bridge singleton instances for monitoring.
+ * Used by monitor.routes.js to access bridge state.
+ */
+export function getBridgeSingletons() {
+  return { bridge, healthMonitor, slippageAnalyzer, lifecycleManager, adapter };
+}
+
 export default async function bridgeRoutes(fastify, options) {
 
   /**

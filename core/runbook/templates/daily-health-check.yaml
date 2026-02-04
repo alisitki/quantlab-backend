@@ -1,0 +1,59 @@
+name: Daily Health Check
+description: Check all services and alert on failures
+schedule: "0 6 * * *"
+
+steps:
+  - name: Check replayd
+    task: health-check
+    params:
+      service: replayd
+      url: http://localhost:3030/health
+      timeout: 5000
+    onFailure: continue
+
+  - name: Check strategyd
+    task: health-check
+    params:
+      service: strategyd
+      url: http://localhost:3031/health
+      timeout: 5000
+    onFailure: continue
+
+  - name: Check backtestd
+    task: health-check
+    params:
+      service: backtestd
+      url: http://localhost:3041/health
+      timeout: 5000
+    onFailure: continue
+
+  - name: Check featurexd
+    task: health-check
+    params:
+      service: featurexd
+      url: http://localhost:3051/health
+      timeout: 5000
+    onFailure: continue
+
+  - name: Check labeld
+    task: health-check
+    params:
+      service: labeld
+      url: http://localhost:3061/health
+      timeout: 5000
+    onFailure: continue
+
+  - name: Check observer-api
+    task: health-check
+    params:
+      service: observer-api
+      url: http://localhost:3000/ping
+      timeout: 5000
+    onFailure: continue
+
+  - name: Alert if unhealthy
+    task: alert
+    condition: "{{ failures > 0 }}"
+    params:
+      severity: warning
+      message: "Daily health check: {{ failures }} services unhealthy"

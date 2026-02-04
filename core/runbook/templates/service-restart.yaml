@@ -1,0 +1,63 @@
+name: Service Restart
+description: Restart a single service with health verification
+schedule: manual
+
+steps:
+  - name: Alert restart starting
+    task: alert
+    params:
+      severity: info
+      message: "Service restart initiated for {{ variables.service }}"
+
+  - name: Pre-restart health check
+    task: health-check
+    params:
+      service: "{{ variables.service }}"
+      url: "{{ variables.healthUrl }}"
+      timeout: 5000
+    onFailure: continue
+
+  - name: Restart service
+    task: restart-service
+    params:
+      service: "{{ variables.service }}"
+      type: "{{ variables.type }}"
+      unit: "{{ variables.unit }}"
+      waitAfterMs: 5000
+    onFailure: abort
+
+  - name: Post-restart health check
+    task: health-check
+    params:
+      service: "{{ variables.service }}"
+      url: "{{ variables.healthUrl }}"
+      timeout: 10000
+    onFailure: continue
+
+  - name: Wait for stabilization
+    task: wait
+    params:
+      durationMs: 3000
+      reason: Allow service to stabilize
+
+  - name: Final health check
+    task: health-check
+    params:
+      service: "{{ variables.service }}"
+      url: "{{ variables.healthUrl }}"
+      timeout: 5000
+    onFailure: continue
+
+  - name: Alert restart success
+    task: alert
+    condition: "{{ failures == 0 }}"
+    params:
+      severity: info
+      message: "Service {{ variables.service }} restarted successfully"
+
+  - name: Alert restart failure
+    task: alert
+    condition: "{{ failures > 0 }}"
+    params:
+      severity: error
+      message: "Service {{ variables.service }} restart had {{ failures }} failures"

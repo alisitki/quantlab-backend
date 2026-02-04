@@ -234,7 +234,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 - [x] Alerting integration (Slack) — ✅ DONE (2026-02-04)
 - [x] Metrics aggregation (Prometheus/Grafana) — ✅ DONE (2026-02-04)
 - [x] SLO/SLA monitoring — ✅ DONE (2026-02-04)
-- [ ] Runbook automation
+- [x] Runbook automation — ✅ DONE (2026-02-04)
 - [ ] Incident response tooling
 - [ ] Cost tracking for GPU usage
 

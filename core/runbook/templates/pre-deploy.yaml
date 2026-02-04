@@ -1,0 +1,53 @@
+name: Pre-Deploy Verification
+description: Run all checks before deployment
+schedule: manual
+
+steps:
+  - name: Check all services healthy
+    task: health-check
+    params:
+      service: replayd
+      url: http://localhost:3030/health
+      timeout: 5000
+    onFailure: abort
+
+  - name: Run config check
+    task: run-script
+    params:
+      script: tools/go-live-check.js
+      args:
+        - --check
+        - config
+      timeout: 30000
+    onFailure: abort
+
+  - name: Run self-test
+    task: run-script
+    params:
+      script: tools/go-live-check.js
+      args:
+        - --check
+        - self-test
+      timeout: 60000
+    onFailure: abort
+
+  - name: Verify audit trail
+    task: run-script
+    params:
+      script: tools/verify-audit-trail.js
+      timeout: 30000
+    onFailure: continue
+
+  - name: Alert deployment ready
+    task: alert
+    condition: "{{ failures == 0 }}"
+    params:
+      severity: info
+      message: "Pre-deploy checks passed. Ready for deployment."
+
+  - name: Alert deployment blocked
+    task: alert
+    condition: "{{ failures > 0 }}"
+    params:
+      severity: error
+      message: "Pre-deploy checks failed. Deployment blocked."

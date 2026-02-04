@@ -1,0 +1,71 @@
+name: Emergency Recovery
+description: Kill switch activation and service restart sequence
+schedule: manual
+
+steps:
+  - name: Alert recovery starting
+    task: alert
+    params:
+      severity: critical
+      message: "Emergency recovery initiated"
+
+  - name: Activate kill switch via API
+    task: http-call
+    params:
+      url: http://localhost:3031/v1/bridge/stop
+      method: POST
+      timeout: 10000
+    onFailure: continue
+
+  - name: Wait for bridge shutdown
+    task: wait
+    params:
+      durationMs: 5000
+      reason: Wait for bridge to fully stop
+
+  - name: Restart replayd
+    task: restart-service
+    params:
+      service: replayd
+      type: systemd
+      waitAfterMs: 5000
+    onFailure: continue
+
+  - name: Check replayd health
+    task: health-check
+    params:
+      service: replayd
+      url: http://localhost:3030/health
+      timeout: 10000
+    onFailure: continue
+
+  - name: Restart observer-api
+    task: restart-service
+    params:
+      service: observer
+      type: systemd
+      unit: quantlab-observer.service
+      waitAfterMs: 5000
+    onFailure: continue
+
+  - name: Check observer-api health
+    task: health-check
+    params:
+      service: observer-api
+      url: http://localhost:3000/ping
+      timeout: 10000
+    onFailure: continue
+
+  - name: Alert recovery complete
+    task: alert
+    condition: "{{ failures == 0 }}"
+    params:
+      severity: info
+      message: "Emergency recovery completed successfully"
+
+  - name: Alert recovery failed
+    task: alert
+    condition: "{{ failures > 0 }}"
+    params:
+      severity: critical
+      message: "Emergency recovery completed with {{ failures }} failures. Manual intervention required."

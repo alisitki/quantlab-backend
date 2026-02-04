@@ -233,7 +233,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 - [ ] Unified observability dashboard
 - [x] Alerting integration (Slack) — ✅ DONE (2026-02-04)
 - [x] Metrics aggregation (Prometheus/Grafana) — ✅ DONE (2026-02-04)
-- [ ] SLO/SLA monitoring
+- [x] SLO/SLA monitoring — ✅ DONE (2026-02-04)
 - [ ] Runbook automation
 - [ ] Incident response tooling
 - [ ] Cost tracking for GPU usage

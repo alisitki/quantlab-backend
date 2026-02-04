@@ -17,6 +17,7 @@ import { getBridgeSingletons } from './bridge.routes.js';
 import { readAlertSummary } from './monitor.routes.js';
 import { observerRegistry } from '../../../core/observer/ObserverRegistry.js';
 import { loadKillSwitchFromEnv } from '../../../core/futures/kill_switch.js';
+import { SLOCalculator, SLO_DEFINITIONS } from '../../../core/slo/index.js';
 
 /**
  * Render bridge and system metrics in Prometheus format
@@ -181,6 +182,137 @@ function renderBridgeMetrics() {
   return lines.join('\n');
 }
 
+/**
+ * Create metrics provider for SLO calculator
+ */
+function createSLOMetricsProvider() {
+  return {
+    getBridgeMetrics() {
+      const { bridge, slippageAnalyzer } = getBridgeSingletons();
+      const killSwitch = loadKillSwitchFromEnv();
+      if (!bridge) {
+        return { active: false, killSwitchActive: killSwitch.global_kill };
+      }
+      const stats = bridge.getStats();
+      const slippage = slippageAnalyzer?.getAggregateStats() ?? {};
+      return {
+        active: true,
+        killSwitchActive: killSwitch.global_kill,
+        ordersToday: stats.ordersToday || 0,
+        maxOrdersPerDay: stats.maxOrdersPerDay || 100,
+        notionalToday: stats.notionalToday || 0,
+        maxNotionalPerDay: stats.maxNotionalPerDay || 100000,
+        slippageAvgBps: slippage.avgSlippageBps || 0,
+        slippageWeightedBps: slippage.weightedSlippageBps || 0
+      };
+    },
+    getExchangeMetrics() {
+      const { healthMonitor } = getBridgeSingletons();
+      const status = healthMonitor?.getLastStatus();
+      return {
+        healthy: status?.healthy ?? false,
+        pingMs: status?.pingMs ?? 0,
+        driftMs: status?.serverTimeDriftMs ?? 0
+      };
+    },
+    getObserverMetrics() {
+      const health = observerRegistry.getHealth();
+      return {
+        activeRuns: health.active_runs || 0,
+        lastEventAgeMs: health.last_event_age_ms || 0,
+        budgetPressure: health.budget_pressure || 0
+      };
+    },
+    getAlertMetrics() {
+      const summary = readAlertSummary(24 * 60 * 60 * 1000);
+      return {
+        recentCount: summary.recentCount || 0,
+        criticalCount: summary.criticalCount || 0
+      };
+    }
+  };
+}
+
+// Singleton SLO calculator
+let sloCalculator = null;
+function getSLOCalculator() {
+  if (!sloCalculator) {
+    sloCalculator = new SLOCalculator(createSLOMetricsProvider());
+  }
+  return sloCalculator;
+}
+
+/**
+ * Render SLO metrics in Prometheus format
+ */
+function renderSLOMetrics() {
+  const calc = getSLOCalculator();
+  const statuses = calc.evaluateAll();
+  const lines = [];
+
+  // SLO Status (1=OK, 0.5=WARNING, 0=BREACHED)
+  lines.push('# HELP strategyd_slo_status SLO status (1=OK, 0.5=WARNING, 0=BREACHED)');
+  lines.push('# TYPE strategyd_slo_status gauge');
+  for (const s of statuses) {
+    const value = s.status === 'OK' ? 1 : s.status === 'WARNING' ? 0.5 : 0;
+    lines.push(`strategyd_slo_status{slo="${s.slo_id}",tier="${s.tier}"} ${value}`);
+  }
+  lines.push('');
+
+  // SLO Target
+  lines.push('# HELP strategyd_slo_target SLO target value');
+  lines.push('# TYPE strategyd_slo_target gauge');
+  for (const s of statuses) {
+    lines.push(`strategyd_slo_target{slo="${s.slo_id}"} ${s.target}`);
+  }
+  lines.push('');
+
+  // SLO Current Value
+  lines.push('# HELP strategyd_slo_current Current SLO metric value');
+  lines.push('# TYPE strategyd_slo_current gauge');
+  for (const s of statuses) {
+    if (s.current_value !== null) {
+      lines.push(`strategyd_slo_current{slo="${s.slo_id}"} ${s.current_value}`);
+    }
+  }
+  lines.push('');
+
+  // Error Budget (for availability SLOs)
+  lines.push('# HELP strategyd_slo_error_budget_remaining Remaining error budget (ratio)');
+  lines.push('# TYPE strategyd_slo_error_budget_remaining gauge');
+  for (const s of statuses) {
+    if (SLO_DEFINITIONS[s.slo_id]?.unit === 'ratio') {
+      lines.push(`strategyd_slo_error_budget_remaining{slo="${s.slo_id}"} ${s.error_budget_remaining}`);
+    }
+  }
+  lines.push('');
+
+  // Error Budget Consumed Percentage
+  lines.push('# HELP strategyd_slo_error_budget_consumed_pct Error budget consumed percentage');
+  lines.push('# TYPE strategyd_slo_error_budget_consumed_pct gauge');
+  for (const s of statuses) {
+    if (SLO_DEFINITIONS[s.slo_id]?.unit === 'ratio') {
+      lines.push(`strategyd_slo_error_budget_consumed_pct{slo="${s.slo_id}"} ${s.error_budget_consumed_pct}`);
+    }
+  }
+  lines.push('');
+
+  // Overall Health
+  const health = calc.getOverallHealth();
+  lines.push('# HELP strategyd_slo_overall_healthy Overall system SLO health (1=healthy, 0=degraded)');
+  lines.push('# TYPE strategyd_slo_overall_healthy gauge');
+  lines.push(`strategyd_slo_overall_healthy ${health.healthy ? 1 : 0}`);
+  lines.push('');
+
+  lines.push('# HELP strategyd_slo_count_by_status Count of SLOs by status');
+  lines.push('# TYPE strategyd_slo_count_by_status gauge');
+  lines.push(`strategyd_slo_count_by_status{status="ok"} ${health.ok}`);
+  lines.push(`strategyd_slo_count_by_status{status="warning"} ${health.warning}`);
+  lines.push(`strategyd_slo_count_by_status{status="breached"} ${health.breached}`);
+
+  return lines.join('\n');
+}
+
 export default async function metricsRoutes(fastify, options) {
   const { runner } = options;
 
@@ -193,6 +325,9 @@ export default async function metricsRoutes(fastify, options) {
     // Bridge and system metrics
     const bridgeMetrics = renderBridgeMetrics();
 
-    return runnerMetrics + '\n\n' + bridgeMetrics;
+    // SLO metrics
+    const sloMetrics = renderSLOMetrics();
+
+    return runnerMetrics + '\n\n' + bridgeMetrics + '\n\n' + sloMetrics;
   });
 }

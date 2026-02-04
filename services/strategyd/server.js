@@ -22,6 +22,7 @@ import metricsRoutes from './routes/metrics.js';
 import liveRoutes from './routes/live.routes.js';
 import bridgeRoutes from './routes/bridge.routes.js';
 import monitorRoutes from './routes/monitor.routes.js';
+import sloRoutes from './routes/slo.routes.js';
 import { ReplaySeekHelper } from './runtime/ReplaySeekHelper.js';
 import authMiddleware from './middleware/auth.js';
 
@@ -130,6 +131,7 @@ fastify.register(metricsRoutes, { runner });
 fastify.register(liveRoutes);
 fastify.register(bridgeRoutes);
 fastify.register(monitorRoutes);
+fastify.register(sloRoutes);
 
 runner.startMonitoring();
 

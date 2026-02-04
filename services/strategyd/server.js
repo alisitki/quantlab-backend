@@ -25,6 +25,8 @@ import monitorRoutes from './routes/monitor.routes.js';
 import sloRoutes from './routes/slo.routes.js';
 import runbookRoutes from './routes/runbook.routes.js';
 import incidentRoutes from './routes/incident.routes.js';
+import killswitchRoutes from './routes/killswitch.routes.js';
+import approvalRoutes from './routes/approval.routes.js';
 import { ReplaySeekHelper } from './runtime/ReplaySeekHelper.js';
 import authMiddleware from './middleware/auth.js';
 
@@ -136,6 +138,8 @@ fastify.register(monitorRoutes);
 fastify.register(sloRoutes);
 fastify.register(runbookRoutes);
 fastify.register(incidentRoutes);
+fastify.register(killswitchRoutes);
+fastify.register(approvalRoutes);
 
 runner.startMonitoring();
 

@@ -11,8 +11,8 @@ This document identifies engineering gaps and organizes them by implementation p
 | Phase 0 — Data Integrity | STABLE | Collector, compaction, S3 storage |
 | Phase 1 — Strategy Runtime | STABLE | Replay, execution, strategy interface |
 | Phase 2 — Safety Guards | STABLE | Ordering guard, error containment |
-| Phase 3 — ML Advisory | PARTIAL | XGBoost training, advisory mode only |
-| Phase 4 — Live Trading | EXPERIMENTAL | LiveStrategyRunner exists but not wired |
+| Phase 3 — ML Advisory | STABLE | XGBoost training, advisory mode, metrics dashboard |
+| Phase 4 — Live Trading | ACTIVE | Exchange bridge, kill switch, approval gate |
 | Phase 5 — Ops & Monitoring | STABLE | Prometheus, SLO, Runbook, Incident Response |
 
 ---
@@ -116,7 +116,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 
 ---
 
-### Gap 5: Live Trading Safety Path Incomplete
+### Gap 5: Live Trading Safety Path — ✅ DONE
 
 **Components Exist:**
 - `LiveStrategyRunner`
@@ -126,14 +126,15 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 - `LiveEventSequencer`
 - `AuditWriter`
 
-**Components Missing:**
-- Pre-flight checks service
-- Real exchange execution bridge
-- Position reconciliation
-- Live risk monitoring dashboard
-- Kill switch HTTP endpoint
+**Resolution (2026-02-04):**
+- ✅ Pre-flight checks service (`tools/go-live-check.js`)
+- ✅ Exchange execution bridge (`core/exchange/` - Binance, Bybit, OKX)
+- ✅ Position reconciliation (`core/exchange/reconciliation/`)
+- ✅ Live monitoring dashboard (`/v1/monitor/*` endpoints)
+- ✅ Kill switch HTTP endpoint (`/v1/kill-switch/*`)
+- ✅ Human approval gate (`/v1/approval/*`)
 
-**Current State:** `live_trading_path: "INACTIVE"` in system state.
+**Current State:** `live_trading_path: "ACTIVE"` in system state.
 
 ---
 
@@ -149,7 +150,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 
 ---
 
-## Phase 3: ML Advisory (PARTIAL)
+## Phase 3: ML Advisory (STABLE)
 
 ### Completed
 
@@ -176,7 +177,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 
 ---
 
-## Phase 4: Live Trading (EXPERIMENTAL)
+## Phase 4: Live Trading (ACTIVE)
 
 ### Completed
 
@@ -217,7 +218,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 
 ---
 
-## Phase 5: Ops & Monitoring (PARTIAL)
+## Phase 5: Ops & Monitoring (STABLE)
 
 ### Completed
 
@@ -280,15 +281,16 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 
 ### Long Term (High Risk)
 
-5. **Exchange execution bridge**
-   - Requires extensive testing
-   - Gradual rollout (paper → canary → live)
-   - Full audit trail
+5. ~~**Exchange execution bridge**~~ — ✅ DONE (2026-02-04)
+   - `core/exchange/` module with Binance, Bybit, OKX adapters
+   - Gradual rollout implemented (CANARY default mode)
+   - Full audit trail via AuditWriter
 
-6. **Autonomous ML**
+6. **Autonomous ML** — BLOCKED
    - Only after all safety gates proven
    - Budget limits enforced
    - Kill switch tested
+   - Currently in ADVISORY_ONLY mode
 
 ---
 

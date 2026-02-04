@@ -38,6 +38,14 @@ export const AlertType = {
   // System alerts
   KILL_SWITCH_ACTIVATED: 'KILL_SWITCH_ACTIVATED',
   KILL_SWITCH_DEACTIVATED: 'KILL_SWITCH_DEACTIVATED',
+  EMERGENCY_STOP: 'EMERGENCY_STOP',
+
+  // Approval gate alerts
+  APPROVAL_PENDING: 'APPROVAL_PENDING',
+  APPROVAL_GRANTED: 'APPROVAL_GRANTED',
+  APPROVAL_REJECTED: 'APPROVAL_REJECTED',
+  APPROVAL_EXPIRING: 'APPROVAL_EXPIRING',
+  APPROVAL_EXPIRED: 'APPROVAL_EXPIRED',
 
   // Live run alerts
   LIVE_RUN_STARTED: 'LIVE_RUN_STARTED',
@@ -301,4 +309,5 @@ export function sendAlert(payload) {
   return alertManager.send(payload);
 }
 
+export { AlertManager };
 export default AlertManager;

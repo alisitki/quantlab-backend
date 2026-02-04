@@ -18,6 +18,7 @@ import { RunBudgetManager } from '../limits/RunBudgetManager.js';
 import { observerRegistry, RUN_STATUS } from '../../observer/ObserverRegistry.js';
 import { emitAudit } from '../../audit/AuditWriter.js';
 import { RiskManager } from '../../risk/RiskManager.js';
+import { getKillSwitchManager } from '../../futures/KillSwitchManager.js';
 
 export class LiveStrategyRunner {
   /** @type {StrategyRuntime} */
@@ -70,6 +71,10 @@ export class LiveStrategyRunner {
   #budgetName = null;
   /** @type {number|null} */
   #budgetValue = null;
+  /** @type {import('../../futures/KillSwitchManager.js').KillSwitchManager} */
+  #killSwitchManager;
+  /** @type {string|null} */
+  #killSwitchReason = null;
 
   /**
    * @param {Object} options
@@ -128,6 +133,7 @@ export class LiveStrategyRunner {
     this.#consumer = new LiveWSConsumer({ exchange, symbols });
     this.#guardManager = PromotionGuardManager.fromEnv(guardConfig || {});
     this.#budgetManager = RunBudgetManager.fromEnv(budgetConfig || {});
+    this.#killSwitchManager = getKillSwitchManager();
 
     this.#config = {
       dataset,
@@ -191,14 +197,27 @@ export class LiveStrategyRunner {
   get decisionCount() { return this.#runtime.decisions.length; }
   get decisionHash() { return this.#runtime.decisionHash; }
 
-  stop() {
+  stop(reason = 'MANUAL_STOP') {
     this.#stopRequested = true;
-    this.#stopReason = 'MANUAL_STOP';
+    // Preserve existing stop reason if already set (e.g., KILL_SWITCH)
+    if (this.#stopReason === 'STREAM_END') {
+      this.#stopReason = reason;
+    }
     if (this.#consumer) this.#consumer.stop();
     observerRegistry.updateRun(this.#liveRunId, {
       status: RUN_STATUS.STOPPED,
       stop_reason: this.#stopReason
     });
+  }
+
+  /**
+   * Stop due to kill switch activation
+   * @param {string} reason - Kill switch reason
+   */
+  #stopForKillSwitch(reason) {
+    this.#stopReason = 'KILL_SWITCH';
+    this.#killSwitchReason = reason;
+    this.stop('KILL_SWITCH');
   }
 
   #installSigintHandler() {
@@ -216,6 +235,17 @@ export class LiveStrategyRunner {
   async run({ handleSignals = true, eventStream = null, strategyPath = null } = {}) {
     this.#startedAt = Date.now();
     if (handleSignals) this.#installSigintHandler();
+
+    // Check kill switch before starting
+    if (this.#killSwitchManager.isGlobalActive()) {
+      const status = this.#killSwitchManager.getStatus();
+      throw new Error(`KILL_SWITCH_ACTIVE: ${status.reason}`);
+    }
+
+    // Register with kill switch manager for emergency stops
+    this.#killSwitchManager.registerRun(this.#liveRunId, () => {
+      this.#stopForKillSwitch(this.#killSwitchManager.getStatus().reason);
+    });
 
     try {
       if (!this.#runtime || strategyPath) {
@@ -315,7 +345,8 @@ export class LiveStrategyRunner {
           strategy_id: this.#runtime.config.strategy?.id || null,
           stop_reason: this.#stopReason,
           guard_name: this.#guardName,
-          budget_name: this.#budgetName
+          budget_name: this.#budgetName,
+          kill_switch_reason: this.#killSwitchReason
         }
       });
     } catch (err) {
@@ -341,6 +372,7 @@ export class LiveStrategyRunner {
     } finally {
       this.#finishedAt = Date.now();
       this.#removeSigintHandler();
+      this.#killSwitchManager.unregisterRun(this.#liveRunId);
       await this.#archive();
     }
 
@@ -350,6 +382,18 @@ export class LiveStrategyRunner {
   async *#wrapStream(eventStream) {
     for await (const event of eventStream) {
       if (this.#stopRequested) break;
+
+      // Check kill switch on every event
+      if (this.#killSwitchManager.isGlobalActive()) {
+        this.#stopForKillSwitch(this.#killSwitchManager.getStatus().reason);
+        break;
+      }
+
+      // Check symbol-specific kill switch if event has symbol
+      if (event?.symbol && this.#killSwitchManager.isSymbolKilled(event.symbol)) {
+        this.#stopForKillSwitch(`Symbol ${event.symbol} killed`);
+        break;
+      }
 
       if (this.#executionEngine && typeof this.#executionEngine.onEvent === 'function') {
         this.#executionEngine.onEvent(event);
@@ -439,7 +483,8 @@ export class LiveStrategyRunner {
           budget_name: this.#budgetName,
           budget_value: this.#budgetValue,
           budget_evaluated_count: this.#budgetManager.stats.evaluated_count,
-          budget_exceeded_count: this.#budgetManager.stats.exceeded_count
+          budget_exceeded_count: this.#budgetManager.stats.exceeded_count,
+          kill_switch_reason: this.#killSwitchReason
         }
       };
       await writer.write(run);

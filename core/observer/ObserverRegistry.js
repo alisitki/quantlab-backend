@@ -2,6 +2,8 @@
  * Observer Registry (in-memory)
  */
 
+import { getKillSwitchManager } from '../futures/KillSwitchManager.js';
+
 const RUN_STATUS = {
   RUNNING: 'RUNNING',
   STOPPED: 'STOPPED',
@@ -70,11 +72,32 @@ class ObserverRegistry {
         ? 'MED'
         : 'LOW';
 
+    // Get kill switch status
+    let killSwitchStatus = {
+      active: false,
+      reason: null,
+      symbols: []
+    };
+    try {
+      const killSwitchManager = getKillSwitchManager();
+      const status = killSwitchManager.getStatus();
+      killSwitchStatus = {
+        active: status.is_active,
+        reason: status.reason || null,
+        symbols: status.symbol_kill || []
+      };
+    } catch {
+      // KillSwitchManager not available, use defaults
+    }
+
     return {
       active_runs: active.length,
       ws_connected: active.length > 0,
       last_event_age_ms: lastEventAgeMs,
-      budget_pressure: budgetPressure
+      budget_pressure: budgetPressure,
+      kill_switch_active: killSwitchStatus.active,
+      kill_switch_reason: killSwitchStatus.reason,
+      killed_symbols: killSwitchStatus.symbols
     };
   }
 }

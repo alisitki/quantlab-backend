@@ -16,6 +16,8 @@ import { LiveStrategyRunner } from '../../../core/strategy/live/LiveStrategyRunn
 import { observerRegistry } from '../../../core/observer/ObserverRegistry.js';
 import { emitAudit } from '../../../core/audit/AuditWriter.js';
 import { sendAlert, AlertType, AlertSeverity } from '../../../core/alerts/index.js';
+import { getKillSwitchManager } from '../../../core/futures/KillSwitchManager.js';
+import { getApprovalManager } from '../../../core/approval/ApprovalManager.js';
 
 // Default configurations
 const DEFAULT_EXECUTION_CONFIG = {
@@ -33,14 +35,6 @@ const DEFAULT_RISK_CONFIG = {
 };
 
 const VALID_EXCHANGES = ['binance', 'bybit', 'okx'];
-
-// Kill switch state
-let killSwitchState = {
-  active: false,
-  activatedAt: null,
-  activatedBy: null,
-  reason: null
-};
 
 // In-memory runner storage (keyed by live_run_id)
 const activeRunners = new Map();
@@ -66,13 +60,61 @@ export default async function liveRoutes(fastify, options) {
     } = request.body || {};
 
     // Kill switch check
-    if (killSwitchState.active) {
+    const killSwitchManager = getKillSwitchManager();
+    if (killSwitchManager.isGlobalActive()) {
+      const status = killSwitchManager.getStatus();
       return reply.code(503).send({
         error: 'KILL_SWITCH_ACTIVE',
         message: 'Live trading is currently disabled by kill switch',
-        activatedAt: killSwitchState.activatedAt,
-        reason: killSwitchState.reason
+        activatedAt: status.activated_at,
+        reason: status.reason
       });
+    }
+
+    // Approval gate check (skip if bypass_approval is true and env allows)
+    const bypassApproval = request.body?.bypass_approval === true &&
+      process.env.APPROVAL_BYPASS_ALLOWED === '1';
+
+    if (!bypassApproval) {
+      const approvalManager = getApprovalManager();
+      if (approvalManager.isApprovalRequired()) {
+        const absoluteStrategyPath = path.isAbsolute(strategyPath)
+          ? strategyPath
+          : path.resolve(process.cwd(), strategyPath);
+
+        const approvalCheck = approvalManager.checkApproval({
+          exchange,
+          symbols,
+          strategy_path: absoluteStrategyPath
+        });
+
+        if (!approvalCheck.valid) {
+          return reply.code(403).send({
+            error: 'APPROVAL_REQUIRED',
+            message: 'Live trading requires human approval. Submit canary run for approval first.',
+            reason: approvalCheck.reason,
+            approval: approvalCheck.approval ? {
+              approval_id: approvalCheck.approval.approval_id,
+              state: approvalCheck.approval.state
+            } : null
+          });
+        }
+
+        // Log approved live run start
+        emitAudit({
+          actor: 'http_client',
+          action: 'LIVE_RUN_WITH_APPROVAL',
+          target_type: 'live_run',
+          target_id: null,
+          reason: 'Starting live run with valid approval',
+          metadata: {
+            approval_id: approvalCheck.approval.approval_id,
+            exchange,
+            symbols,
+            ip: request.ip
+          }
+        });
+      }
     }
 
     // Required field validation
@@ -320,13 +362,13 @@ export default async function liveRoutes(fastify, options) {
   /**
    * POST /live/kill-switch - Activate or deactivate kill switch
    *
-   * When activated:
-   * - All running live runs are immediately stopped
-   * - New live runs cannot be started
-   * - Remains active until explicitly deactivated
+   * DEPRECATED: Use /v1/kill-switch/* endpoints instead.
+   * This endpoint is kept for backward compatibility.
    */
   fastify.post('/live/kill-switch', async (request, reply) => {
     const { activate, reason } = request.body || {};
+    const killSwitchManager = getKillSwitchManager();
+    const actor = `http:${request.ip}`;
 
     if (typeof activate !== 'boolean') {
       return reply.code(400).send({
@@ -335,129 +377,71 @@ export default async function liveRoutes(fastify, options) {
       });
     }
 
-    const previousState = { ...killSwitchState };
-
     if (activate) {
-      // Activate kill switch
-      killSwitchState = {
-        active: true,
-        activatedAt: new Date().toISOString(),
-        activatedBy: request.ip,
-        reason: reason || 'Manual activation'
-      };
-
-      // Stop all local runners
-      const stoppedRuns = [];
-      for (const [liveRunId, runner] of activeRunners) {
-        try {
-          runner.stop();
-          stoppedRuns.push(liveRunId);
-        } catch (err) {
-          console.error(`[KILL_SWITCH] Failed to stop runner ${liveRunId}: ${err.message}`);
-        }
-      }
-
-      // Stop all runs in observer registry
-      const runs = observerRegistry.listRuns();
-      for (const run of runs) {
-        if (run.status === 'RUNNING') {
-          try {
-            observerRegistry.stopRun(run.live_run_id, 'KILL_SWITCH');
-            if (!stoppedRuns.includes(run.live_run_id)) {
-              stoppedRuns.push(run.live_run_id);
-            }
-          } catch (err) {
-            console.error(`[KILL_SWITCH] Failed to stop run ${run.live_run_id}: ${err.message}`);
-          }
-        }
-      }
-
-      // Audit log
-      emitAudit({
-        actor: 'http_client',
-        action: 'KILL_SWITCH_ACTIVATED',
-        target_type: 'system',
-        target_id: 'live_trading',
-        reason: killSwitchState.reason,
-        metadata: {
-          ip: request.ip,
-          stoppedRuns,
-          stoppedCount: stoppedRuns.length
-        }
+      const result = killSwitchManager.activateGlobal({
+        reason: reason || 'Manual activation via /live/kill-switch',
+        actor,
+        stopAllRuns: true
       });
-
-      console.log(`[KILL_SWITCH] ACTIVATED by ${request.ip}. Stopped ${stoppedRuns.length} runs. Reason: ${killSwitchState.reason}`);
 
       // Send critical alert
       sendAlert({
         type: AlertType.KILL_SWITCH_ACTIVATED,
         severity: AlertSeverity.CRITICAL,
-        message: `Kill switch activated. ${stoppedRuns.length} runs stopped. Reason: ${killSwitchState.reason}`,
+        message: `Kill switch activated. Reason: ${reason || 'Manual activation'}`,
         source: 'strategyd',
-        metadata: {
-          ip: request.ip,
-          stoppedRuns,
-          stoppedCount: stoppedRuns.length
-        }
-      }).catch(err => console.error('[ALERT] Failed to send kill switch alert:', err.message));
+        metadata: { ip: request.ip }
+      }).catch(err => console.error('[ALERT] Failed:', err.message));
 
+      const status = killSwitchManager.getStatus();
       return reply.send({
         status: 'KILL_SWITCH_ACTIVATED',
-        stoppedRuns,
-        stoppedCount: stoppedRuns.length,
-        state: killSwitchState
+        state: {
+          active: status.is_active,
+          activatedAt: status.activated_at ? new Date(status.activated_at).toISOString() : null,
+          activatedBy: status.activated_by,
+          reason: status.reason
+        }
       });
 
     } else {
-      // Deactivate kill switch
-      killSwitchState = {
-        active: false,
-        activatedAt: null,
-        activatedBy: null,
-        reason: null
-      };
-
-      // Audit log
-      emitAudit({
-        actor: 'http_client',
-        action: 'KILL_SWITCH_DEACTIVATED',
-        target_type: 'system',
-        target_id: 'live_trading',
-        reason: reason || 'Manual deactivation',
-        metadata: {
-          ip: request.ip,
-          previousState
-        }
-      });
-
-      console.log(`[KILL_SWITCH] DEACTIVATED by ${request.ip}`);
+      killSwitchManager.deactivateGlobal({ actor });
 
       // Send info alert
       sendAlert({
         type: AlertType.KILL_SWITCH_DEACTIVATED,
         severity: AlertSeverity.INFO,
-        message: `Kill switch deactivated. Live trading re-enabled.`,
+        message: 'Kill switch deactivated. Live trading re-enabled.',
         source: 'strategyd',
-        metadata: {
-          ip: request.ip,
-          previousActivatedAt: previousState.activatedAt
-        }
-      }).catch(err => console.error('[ALERT] Failed to send kill switch alert:', err.message));
+        metadata: { ip: request.ip }
+      }).catch(err => console.error('[ALERT] Failed:', err.message));
 
       return reply.send({
         status: 'KILL_SWITCH_DEACTIVATED',
-        previousState,
-        state: killSwitchState
+        state: {
+          active: false,
+          activatedAt: null,
+          activatedBy: null,
+          reason: null
+        }
       });
     }
   });
 
   /**
    * GET /live/kill-switch/status - Get current kill switch status
+   *
+   * DEPRECATED: Use /v1/kill-switch/status instead.
    */
   fastify.get('/live/kill-switch/status', async (request, reply) => {
+    const killSwitchManager = getKillSwitchManager();
+    const status = killSwitchManager.getStatus();
+
     return {
-      ...killSwitchState,
+      active: status.is_active,
+      activatedAt: status.activated_at ? new Date(status.activated_at).toISOString() : null,
+      activatedBy: status.activated_by,
+      reason: status.reason,
       activeRunners: activeRunners.size,
       registryRuns: observerRegistry.listRuns().filter(r => r.status === 'RUNNING').length
     };
@@ -483,12 +467,15 @@ export default async function liveRoutes(fastify, options) {
     let allPassed = true;
 
     // 1. Kill Switch Check
+    const killSwitchManager = getKillSwitchManager();
+    const killSwitchStatus = killSwitchManager.getStatus();
     const killSwitchCheck = {
       name: 'kill_switch',
-      status: killSwitchState.active ? 'FAIL' : 'PASS',
-      message: killSwitchState.active
-        ? `Kill switch is active (activated at ${killSwitchState.activatedAt})`
-        : 'Kill switch is not active'
+      status: killSwitchStatus.is_active ? 'FAIL' : 'PASS',
+      message: killSwitchStatus.is_active
+        ? `Kill switch is active (reason: ${killSwitchStatus.reason})`
+        : 'Kill switch is not active',
+      details: killSwitchStatus
     };
     checks.push(killSwitchCheck);
     if (killSwitchCheck.status === 'FAIL') allPassed = false;
@@ -597,7 +584,27 @@ export default async function liveRoutes(fastify, options) {
     };
     checks.push(observerCheck);
 
-    // 8. Active Runners Check
+    // 8. Approval Gate Check
+    const approvalManager = getApprovalManager();
+    const approvalRequired = approvalManager.isApprovalRequired();
+    const pendingApprovals = approvalManager.listPending();
+    const approvalStats = approvalManager.getStats();
+
+    const approvalCheck = {
+      name: 'approval_gate',
+      status: approvalRequired ? 'INFO' : 'WARN',
+      message: approvalRequired
+        ? `Approval gate enabled (${pendingApprovals.length} pending)`
+        : 'Approval gate disabled (APPROVAL_GATE_ENABLED=0)',
+      details: {
+        enabled: approvalRequired,
+        pending_count: pendingApprovals.length,
+        stats: approvalStats
+      }
+    };
+    checks.push(approvalCheck);
+
+    // 9. Active Runners Check
     const activeRunnersCheck = {
       name: 'active_runners',
       status: 'INFO',

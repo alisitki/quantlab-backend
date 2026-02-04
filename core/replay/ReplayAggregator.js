@@ -9,6 +9,8 @@
  *   - 'trade-only': (Planned if stream contains trades)
  */
 
+import { compareOrdering } from './ORDERING_CONTRACT.js';
+
 export class ReplayAggregator {
   /** @type {string|null} */
   #mode;
@@ -18,6 +20,8 @@ export class ReplayAggregator {
   #currentIntervalStart = null;
   /** @type {bigint} 1s in ms */
   #intervalMs = 1000n;
+  /** @type {boolean} */
+  #tradeValidated = false;
 
   /**
    * @param {string} mode - '1s', 'trade-only', or null
@@ -48,8 +52,9 @@ export class ReplayAggregator {
 
       // Check if we crossed the interval boundary
       if (ts >= this.#currentIntervalStart + this.#intervalMs) {
-        // Yield buffered records for the previous interval(s)
-        for (const buffered of this.#buffer.values()) {
+        // Yield buffered records for the previous interval(s), ordered by ORDERING_CONTRACT
+        const ordered = Array.from(this.#buffer.values()).sort(compareOrdering);
+        for (const buffered of ordered) {
           yield buffered;
         }
         this.#buffer.clear();
@@ -61,6 +66,13 @@ export class ReplayAggregator {
       // Buffer the latest for this second
       this.#buffer.set(symbol, row);
     } else if (this.#mode === 'trade-only') {
+      if (!this.#tradeValidated) {
+        const hasTradeFields = row.trade_price !== undefined || row.side !== undefined || row.trade_qty !== undefined;
+        if (!hasTradeFields) {
+          throw new Error('TRADE_ONLY_INVALID_STREAM: trade fields missing');
+        }
+        this.#tradeValidated = true;
+      }
       // Logic: Only emit if it's a trade event.
       // In BBO dataset, there are no trades, so this might be for specialized datasets.
       // v1: bypass if not a known trade field
@@ -77,7 +89,8 @@ export class ReplayAggregator {
    */
   async *flush() {
     if (this.#mode === '1s' && this.#buffer.size > 0) {
-      for (const buffered of this.#buffer.values()) {
+      const ordered = Array.from(this.#buffer.values()).sort(compareOrdering);
+      for (const buffered of ordered) {
         yield buffered;
       }
       this.#buffer.clear();

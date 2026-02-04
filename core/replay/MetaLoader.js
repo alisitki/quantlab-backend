@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import dotenv from 'dotenv';
-import { metaCache } from './ReplayCache.js';
+import { metaCache, pageCache } from './ReplayCache.js';
 import crypto from 'node:crypto';
 import { replayMetrics } from '../../services/replayd/metrics.js';
 
@@ -29,7 +29,6 @@ export async function loadMeta(metaPath, identity = {}) {
   // Preliminary lookup with path only (to avoid S3/FS hit if possible)
   const pathHash = getPathHash(metaPath);
   const quickCached = metaCache.get(`meta:path:${pathHash}`);
-  if (quickCached) return quickCached;
 
   let content;
   // ... reading logic ...
@@ -101,6 +100,11 @@ export async function loadMeta(metaPath, identity = {}) {
     manifest_id // Add internal fingerprint
   };
 
+  if (quickCached && quickCached.manifest_id && quickCached.manifest_id !== result.manifest_id) {
+    metaCache.invalidateAll();
+    pageCache.invalidateAll();
+  }
+
   // Full production key: meta:{stream}:{date}:{symbol}:{schema_version}:{manifest_id}
   const fullKey = `meta:${stream}:${date}:${symbol}:${result.schema_version}:${manifest_id}`;
   metaCache.set(fullKey, result);
@@ -144,7 +148,7 @@ function validateMultiMetaConsistency(metas) {
  * @param {string[]} metaPaths
  * @returns {Promise<import('./types.js').MetaData>}
  */
-export async function loadMultiMeta(metaPaths) {
+export async function loadMultiMeta(metaPaths, identity = {}) {
   if (!Array.isArray(metaPaths) || metaPaths.length === 0) {
     throw new Error('MULTI_META_INVALID: metaPaths must be a non-empty array');
   }
@@ -155,7 +159,7 @@ export async function loadMultiMeta(metaPaths) {
     return cached;
   }
 
-  const metas = await Promise.all(metaPaths.map(path => loadMeta(path)));
+  const metas = await Promise.all(metaPaths.map(path => loadMeta(path, identity)));
   
   // Validate consistency
   validateMultiMetaConsistency(metas);
@@ -174,4 +178,3 @@ export async function loadMultiMeta(metaPaths) {
   metaCache.set(`multiMeta:${multiHash}`, result);
   return result;
 }
-

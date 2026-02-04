@@ -14,12 +14,22 @@ const sleep = promisify(setTimeout);
 class RealtimeClock {
   /** @type {bigint|number|null} */
   #prevTs = null;
+  /** @type {boolean} */
+  #requireBigInt = true;
+
+  constructor() {
+    this.#prevTs = null;
+    this.#requireBigInt = true;
+  }
 
   /**
    * Initialize with first event timestamp.
    * @param {bigint|number} firstTs
    */
   init(firstTs) {
+    if (this.#requireBigInt && typeof firstTs !== 'bigint') {
+      throw new Error('CLOCK_TS_EVENT_NOT_BIGINT: RealtimeClock requires BigInt ts_event');
+    }
     this.#prevTs = BigInt(firstTs);
   }
 
@@ -29,6 +39,9 @@ class RealtimeClock {
    * @returns {Promise<void>}
    */
   async wait(ts_event) {
+    if (this.#requireBigInt && typeof ts_event !== 'bigint') {
+      throw new Error('CLOCK_TS_EVENT_NOT_BIGINT: RealtimeClock requires BigInt ts_event');
+    }
     const currentTs = BigInt(ts_event);
     
     if (this.#prevTs !== null) {

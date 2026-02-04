@@ -64,6 +64,17 @@ class ReplayCache {
     this.cache.delete(key);
   }
 
+  invalidateByPrefix(prefix) {
+    if (!prefix) return;
+    for (const key of this.cache.keys()) {
+      if (key.startsWith(prefix)) this.cache.delete(key);
+    }
+  }
+
+  invalidateAll() {
+    this.cache.clear();
+  }
+
   getMetrics() {
     return { ...this.metrics, size: this.cache.size };
   }

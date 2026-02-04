@@ -22,6 +22,9 @@ class ScaledClock {
    * @param {number} options.speed - Speed multiplier (default: 1.0)
    */
   constructor({ speed = 1.0 } = {}) {
+    if (!Number.isFinite(speed) || speed <= 0) {
+      throw new Error('CLOCK_INVALID_SPEED: speed must be a positive number');
+    }
     this.#speed = speed;
   }
 

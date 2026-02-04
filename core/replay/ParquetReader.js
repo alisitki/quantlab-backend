@@ -29,6 +29,60 @@ export class ParquetReader {
   #parquetPath;
   /** @type {boolean} */
   #initialized = false;
+  /**
+   * Classify DuckDB/parquet errors
+   * @param {string} message
+   * @returns {{category: string, code: string}}
+   */
+  #classifyError(message) {
+    const msg = message.toLowerCase();
+    if (msg.includes('snappy')) return { category: 'snappy', code: 'PARQUET_SNAPPY_CORRUPTION' };
+    if (msg.includes('corrupt') || msg.includes('parquet') || msg.includes('footer') || msg.includes('magic') || msg.includes('metadata')) {
+      return { category: 'corruption', code: 'PARQUET_CORRUPTION' };
+    }
+    if (msg.includes('schema') || msg.includes('column') || msg.includes('type') || msg.includes('cast')) {
+      return { category: 'schema', code: 'PARQUET_SCHEMA' };
+    }
+    if (msg.includes('no such file') || msg.includes('not found') || msg.includes('permission') || msg.includes('i/o') || msg.includes('io error') || msg.includes('read error')) {
+      return { category: 'io', code: 'PARQUET_IO' };
+    }
+    return { category: 'unknown', code: 'PARQUET_ERROR' };
+  }
+
+  /**
+   * Wrap DuckDB error into classified error
+   * @param {Error} err
+   * @param {string} operation
+   */
+  #wrapDuckdbError(err, operation) {
+    const { category, code } = this.#classifyError(err.message || String(err));
+    const parquetPath = this.#parquetPath;
+    if (category === 'corruption' || category === 'snappy') {
+      console.error(JSON.stringify({
+        event: 'parquet_quarantine',
+        code: 'QUARANTINED_FILE',
+        reason: code,
+        error_type: category,
+        action: 'quarantine',
+        stream: 'unknown',
+        date: 'unknown',
+        symbol: 'unknown',
+        parquet_path: parquetPath,
+        operation,
+        detail: err.message || String(err)
+      }));
+      const e = new Error(`QUARANTINED_FILE: ${code}: ${err.message || String(err)}`);
+      e.code = 'QUARANTINED_FILE';
+      e.reason = code;
+      e.parquet_path = parquetPath;
+      return e;
+    }
+
+    const e = new Error(`${code}: ${err.message || String(err)}`);
+    e.code = code;
+    e.parquet_path = parquetPath;
+    return e;
+  }
 
   /**
    * @param {string|string[]} parquetPath - Absolute path to data.parquet, s3:// URI, or array of paths
@@ -122,7 +176,7 @@ export class ParquetReader {
     const sql = `SELECT COUNT(*) as cnt FROM read_parquet(${source})`;
     return new Promise((resolve, reject) => {
       this.#conn.all(sql, (err, rows) => {
-        if (err) return reject(new Error(`PARQUET_COUNT_FAILED: ${err.message}`));
+        if (err) return reject(this.#wrapDuckdbError(err, 'count'));
         resolve(Number(rows[0].cnt));
       });
     });
@@ -170,7 +224,7 @@ export class ParquetReader {
 
     return new Promise((resolve, reject) => {
       this.#conn.all(sql, (err, rows) => {
-        if (err) return reject(new Error(`PARQUET_QUERY_FAILED: ${err.message}`));
+        if (err) return reject(this.#wrapDuckdbError(err, 'query'));
         resolve(rows);
       });
     });
@@ -196,7 +250,7 @@ export class ParquetReader {
     const sql = `SELECT COUNT(*) as cnt FROM read_parquet(${source}) ${whereClause}`;
     return new Promise((resolve, reject) => {
       this.#conn.all(sql, (err, rows) => {
-        if (err) return reject(new Error(`PARQUET_COUNT_FAILED: ${err.message}`));
+        if (err) return reject(this.#wrapDuckdbError(err, 'filtered_count'));
         resolve(Number(rows[0].cnt));
       });
     });

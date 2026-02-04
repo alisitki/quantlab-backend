@@ -18,6 +18,7 @@ import { pageCache, filesCache } from './ReplayCache.js';
 import { replayMetrics } from '../../services/replayd/metrics.js';
 import { ReplayAggregator } from './ReplayAggregator.js';
 import AsapClock from './clock/AsapClock.js';
+import { enforceOrderingProgress } from './ORDERING_CONTRACT.js';
 import crypto from 'node:crypto';
 
 /** Default batch size for streaming */
@@ -84,7 +85,20 @@ export class ReplayEngine {
     return this.#meta;
   }
 
-  // ... getMeta same ...
+  /**
+   * Load meta.json without touching parquet.
+   * @returns {Promise<import('./types.js').MetaData>}
+   */
+  async getMeta() {
+    if (this.#meta) return this.#meta;
+
+    if (Array.isArray(this.#metaPath)) {
+      this.#meta = await loadMultiMeta(this.#metaPath, this.#identity);
+    } else {
+      this.#meta = await loadMeta(this.#metaPath, this.#identity);
+    }
+    return this.#meta;
+  }
 
   /**
    * Stream replay events as an AsyncGenerator using cursor-based pagination.
@@ -98,7 +112,7 @@ export class ReplayEngine {
       clock = new AsapClock()
     } = opts;
 
-    await this.validate();
+    const runId = crypto.randomUUID();
 
     let cursor = cursorBase64 ? decodeCursor(cursorBase64) : null;
     let rowsEmitted = 0;
@@ -107,80 +121,137 @@ export class ReplayEngine {
     const startTime = Date.now();
     let lastCursor = null;
     let isFirstEvent = true;
+    let lastOrdering = null;
+    let stopReason = 'EOF';
+    let errorCode = null;
+    let errorMessage = null;
+    let normalCompletion = false;
+    let fatalError = null;
 
     // Determinism fingerprint: hash of (ts_event + seq) for all emitted events
     const fingerprintHash = crypto.createHash('sha256');
 
     const aggregator = opts.aggregate ? new ReplayAggregator(opts.aggregate) : null;
+    try {
+      await this.validate();
+      while (true) {
+        const cursorKey = cursor ? `${cursor.ts_event}:${cursor.seq}` : 'start';
+        // Production page key includes manifest_id
+        const pageKey = `page:${this.#partitionId}:${cursorKey}:${batchSize}:${this.#meta.schema_version}:${this.#meta.manifest_id}:${startTs || 'none'}:${endTs || 'none'}`;
+        
+        const batchStartNs = process.hrtime.bigint();
+        let batch = pageCache.get(pageKey);
+        if (batch) {
+          cacheHits++;
+          replayMetrics.cacheHitsTotal++;
+        } else {
+          batch = await this.#reader.queryBatchCursor(batchSize, cursor, startTs, endTs);
+          if (batch.length > 0) pageCache.set(pageKey, batch);
+        }
 
-    while (true) {
-      const cursorKey = cursor ? `${cursor.ts_event}:${cursor.seq}` : 'start';
-      // Production page key includes manifest_id
-      const pageKey = `page:${this.#partitionId}:${cursorKey}:${batchSize}:${this.#meta.schema_version}:${this.#meta.manifest_id}:${startTs || 'none'}:${endTs || 'none'}`;
-      
-      const batchStartNs = process.hrtime.bigint();
-      let batch = pageCache.get(pageKey);
-      if (batch) {
-        cacheHits++;
-        replayMetrics.cacheHitsTotal++;
-      } else {
-        batch = await this.#reader.queryBatchCursor(batchSize, cursor, startTs, endTs);
-        if (batch.length > 0) pageCache.set(pageKey, batch);
-      }
-
-      if (batch.length === 0) break;
+        if (batch.length === 0) {
+          normalCompletion = true;
+          break;
+        }
 
       for (const row of batch) {
+        const currentOrdering = createCursor(row);
+        enforceOrderingProgress(lastOrdering, currentOrdering);
+        lastOrdering = currentOrdering;
+        const cursorEncoded = encodeCursor(currentOrdering);
+
         if (isFirstEvent) {
           if (typeof clock.init === 'function') clock.init(row.ts_event);
           isFirstEvent = false;
         }
 
-        if (typeof clock.wait === 'function') await clock.wait(row.ts_event);
+          if (typeof clock.wait === 'function') await clock.wait(row.ts_event);
 
-        // Update fingerprint for determinism
-        fingerprintHash.update(`${row.ts_event}:${row.seq}`);
+          // Update fingerprint for determinism
+          fingerprintHash.update(`${row.ts_event}:${row.seq}`);
 
         if (aggregator) {
           for await (const aggRow of aggregator.process(row)) {
+            aggRow.cursor = encodeCursor(createCursor(aggRow));
             yield aggRow;
             rowsEmitted++;
             lastCursor = createCursor(aggRow);
           }
         } else {
+          row.cursor = cursorEncoded;
           yield row;
           rowsEmitted++;
           lastCursor = createCursor(row);
         }
-        cursor = createCursor(row); // Update reader position
+          cursor = currentOrdering; // Update reader position
+        }
+
+        batchesProcessed++;
+        replayMetrics.replayEngineCyclesTotal++;
+        replayMetrics.replayProcessingLatencyMs = Number(process.hrtime.bigint() - batchStartNs) / 1e6;
+        if (batch.length < batchSize) {
+          normalCompletion = true;
+          break;
+        }
       }
 
-      batchesProcessed++;
-      replayMetrics.replayEngineCyclesTotal++;
-      replayMetrics.replayProcessingLatencyMs = Number(process.hrtime.bigint() - batchStartNs) / 1e6;
-      if (batch.length < batchSize) break;
-    }
-
-    // Flush aggregator
-    if (aggregator) {
-      for await (const aggRow of aggregator.flush()) {
-        yield aggRow;
-        rowsEmitted++;
-        lastCursor = createCursor(aggRow);
+      // Flush aggregator only on normal completion
+      if (normalCompletion && aggregator) {
+        for await (const aggRow of aggregator.flush()) {
+          yield aggRow;
+          rowsEmitted++;
+          lastCursor = createCursor(aggRow);
+        }
       }
+    } catch (err) {
+      if (err && err.code === 'QUARANTINED_FILE') {
+        stopReason = 'QUARANTINE';
+        errorCode = err.code;
+        errorMessage = err.message;
+      } else {
+        stopReason = 'ERROR';
+        errorCode = err && err.code ? err.code : 'ERROR';
+        errorMessage = err && err.message ? err.message : String(err);
+        fatalError = err;
+      }
+    } finally {
+      if (typeof clock.onEnd === 'function') clock.onEnd();
     }
 
-    if (typeof clock.onEnd === 'function') clock.onEnd();
-
-    return {
+    const stats = {
+      run_id: runId,
+      manifest_id: this.#meta ? this.#meta.manifest_id : null,
+      parquet_path: this.#parquetPath,
+      batch_size: batchSize,
       rowsEmitted,
       batchesProcessed,
       cacheHits,
       fingerprint: fingerprintHash.digest('hex'), // Determinism check
       elapsedMs: Date.now() - startTime,
       lastCursor,
-      lastCursorEncoded: lastCursor ? encodeCursor(lastCursor) : null
+      lastCursorEncoded: lastCursor ? encodeCursor(lastCursor) : null,
+      stop_reason: stopReason,
+      error_code: errorCode,
+      error_message: errorMessage
     };
+
+    console.log(JSON.stringify({
+      event: 'replay_stats',
+      run_id: stats.run_id,
+      manifest_id: stats.manifest_id,
+      parquet_path: stats.parquet_path,
+      batch_size: stats.batch_size,
+      emitted_rows: stats.rowsEmitted,
+      duration_ms: stats.elapsedMs,
+      stop_reason: stats.stop_reason
+    }));
+
+    if (fatalError) {
+      fatalError.replay_stats = stats;
+      throw fatalError;
+    }
+
+    return stats;
   }
 
   /**

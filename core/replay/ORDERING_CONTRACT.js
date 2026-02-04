@@ -70,6 +70,48 @@ export const SQL_ORDER_CLAUSE = 'ORDER BY ts_event ASC, seq ASC';
 export const ORDERING_VERSION = 1;
 
 /**
+ * Compare two ordering tuples based on ORDERING_COLUMNS.
+ * Returns -1 if a < b, 0 if equal, 1 if a > b.
+ * @param {Object} a
+ * @param {Object} b
+ * @returns {number}
+ */
+export function compareOrdering(a, b) {
+  for (const col of ORDERING_COLUMNS) {
+    let av;
+    let bv;
+    try {
+      av = BigInt(a[col]);
+      bv = BigInt(b[col]);
+    } catch (err) {
+      throw new Error(`ORDERING_COMPARE_FAILED: '${col}' must be a valid integer`);
+    }
+    if (av < bv) return -1;
+    if (av > bv) return 1;
+  }
+  return 0;
+}
+
+/**
+ * Validate monotonic progress between previous and current rows.
+ * Throws on duplicate or out-of-order.
+ * @param {Object|null} prev
+ * @param {Object} curr
+ */
+export function enforceOrderingProgress(prev, curr) {
+  if (!prev) return;
+  const cmp = compareOrdering(prev, curr);
+  const formatTuple = (obj) =>
+    ORDERING_COLUMNS.map((col) => `${col}=${obj[col]}`).join(',');
+  if (cmp === 0) {
+    throw new Error(`ORDERING_VIOLATION_DUPLICATE: duplicate ordering tuple ${formatTuple(curr)}`);
+  }
+  if (cmp > 0) {
+    throw new Error(`ORDERING_VIOLATION_OUT_OF_ORDER: ordering tuple decreased prev=${formatTuple(prev)} curr=${formatTuple(curr)}`);
+  }
+}
+
+/**
  * Build SQL WHERE clause for exclusive cursor resume.
  * Returns clause that selects events AFTER the given cursor position.
  * Dynamically builds the clause based on ORDERING_COLUMNS.
@@ -107,4 +149,3 @@ export function buildCursorWhereClause(cursor) {
 
   return `(${buildRecursive(0)})`;
 }
-

@@ -191,18 +191,18 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 ### Outstanding
 
 - [x] HTTP API for live run management — ✅ DONE (Gap 2)
-- [ ] Exchange execution bridge
-- [ ] Position reconciliation service
+- [x] Exchange execution bridge — ✅ DONE (2026-02-04)
+- [x] Position reconciliation service — ✅ DONE (2026-02-04)
 - [ ] Live monitoring dashboard
 - [x] Kill switch endpoint — ✅ DONE (2026-02-04)
 - [x] Pre-flight verification checks — ✅ DONE (2026-02-04)
-- [ ] Gradual rollout mechanism (canary → shadow → active)
+- [x] Gradual rollout mechanism (canary → shadow → active) — ✅ DONE (2026-02-04)
 
 ### Critical Blockers
 
 | Blocker | Description |
 |---------|-------------|
-| No execution bridge | LiveStrategyRunner has no real exchange connection |
+| ~~No execution bridge~~ | ✅ RESOLVED - `core/exchange/` module with Binance adapter |
 | ~~No API exposure~~ | ✅ RESOLVED - strategyd /live/* endpoints |
 | No monitoring | ObserverRegistry exists but no real-time dashboard |
 

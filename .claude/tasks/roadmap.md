@@ -1,119 +1,133 @@
 # QuantLab Roadmap Tasks
 
-This file contains the prioritized task list derived from SYSTEM_GAPS_AND_ROADMAP.md.
+> **⚠️ PHASE SHIFT: Infra → Alpha Engineering**
+>
+> System audit completed 2026-02-04. Result: Infra COMPLETE, Alpha PRIMITIVE.
+> All development now focuses on SIGNAL LAYER.
+
+## State Tracking
+
+Progress is tracked in `SYSTEM_STATE.json` (v2.0):
+- `alpha_layer.status: ACTIVE`
+- `alpha_layer.current_focus: feature_layer`
+- `infrastructure.status: COMPLETE`
+- `live_trading_path: READY`
 
 ---
 
-## Current Phase: 2 (Safety Guards)
+## Current Phase: α-1 (Signal Layer Construction)
 
 ---
 
-## Immediate Priority (Low Risk)
+## 🔥 PRIORITY 1: Live Feature Layer (Critical)
 
-### [ ] RiskManager Integration (Gap 1)
+### [ ] Move Batch Indicators to Live
 
-**Status:** NOT_INTEGRATED
-**Location:** `core/risk/RiskManager.js`
+**Problem:** RSI, EMA, ATR exist in `core/worker/feature.js` but NOT in live path.
 
-**What exists:**
-- Complete RiskManager implementation
-- MaxPositionRule, CooldownRule, MaxDailyLossRule, StopLossTakeProfitRule
-- Zero imports in runtime
+**Action:**
+1. Create streaming versions in `core/features/builders/`
+2. Integrate with FeatureRegistry
+3. Make available to strategies
 
-**What to do:**
-1. Add `attachRiskManager()` method to StrategyRuntime
-2. Call `riskManager.evaluate(intent)` before `onOrder()`
-3. Log rejections with reason codes
-4. Update SYSTEM_STATE.json: `risk_layer: "INTEGRATED"`
-
-**Pattern reference:** 
-```javascript
-runtime.attachRiskManager(riskManager);
-```
+**Indicators to migrate:**
+- [ ] RSI (14, 28 windows)
+- [ ] EMA (12, 26)
+- [ ] ATR (14)
+- [ ] ROC (5s, 30s, 2m)
 
 ---
 
-### [ ] Observer Consolidation (Gap 3)
+### [ ] Create Regime Detection Features
 
-**Status:** Two parallel implementations exist
-**Locations:**
-- `core/observer/index.js` (JS, port 9150)
-- `core/observer-api/index.ts` (TS, port 3000)
+**Problem:** No regime awareness. System trades chop same as trend.
 
-**Decision needed:**
-- Choose authoritative implementation (recommend TS observer-api)
-- Merge routes
-- Single systemd unit
-- Deprecate other
+**Action:**
+1. Volatility regime detector (low/normal/high)
+2. Trend regime detector (slope persistence)
+3. Volatility compression detector
 
 ---
 
-## Medium Term Priority (Medium Risk)
+### [ ] Enhance Microstructure Features
 
-### [ ] LiveStrategyRunner HTTP API (Gap 2)
-
-**Status:** Complete implementation, not exposed via HTTP
-**Location:** `core/strategy/live/LiveStrategyRunner.js`
-
-**What to do:**
-1. Add `/live/start` route to strategyd
-2. Add `/live/stop` route to strategyd
-3. Require explicit ACTIVE flag
-4. Use ObserverRegistry for tracking
-
-**Phase Gate:** This is Phase 4 work — requires explicit approval
+- [ ] Spread regime (tight/normal/wide)
+- [ ] Orderbook imbalance smoothing
+- [ ] Liquidity pressure proxy
 
 ---
 
-### [ ] ML Confidence in Context (Gap 4)
+## 🎯 PRIORITY 2: Strategy Upgrade
 
-**Status:** ML in ADVISORY_ONLY mode
-**What to do:**
-1. Add `context.getMlAdvice()` method
-2. Return advisory signals only
-3. No automatic execution
+### [ ] Demote BaselineStrategy to Test
 
----
+Move to `core/strategy/test/` folder.
 
-## Long Term Priority (High Risk - BLOCKED)
+### [ ] Create StrategyV1
 
-### [ ] Exchange Execution Bridge
-
-**Status:** BLOCKED until safety verified
-**Prerequisites:**
-- RiskManager integrated ✅
-- Kill switch tested
-- Audit trail verified
-- Gradual rollout mechanism
-
-### [ ] Autonomous ML
-
-**Status:** BLOCKED
-**Prerequisites:**
-- All safety gates proven
-- Budget limits enforced
-- Kill switch tested
-- Human approval required
+**Requirements:**
+- Combines momentum + volatility + regime filters
+- Avoids trading in chop regime
+- Adapts position size based on volatility
+- Uses feature inputs (not raw price)
+- Logs decision reasoning
 
 ---
 
-## Phase 5: Ops & Monitoring
+## 📊 PRIORITY 3: ML Integration
 
-### [ ] Unified Observability Dashboard
-### [ ] Alerting Integration (PagerDuty/Slack)
-### [ ] Metrics Aggregation (Prometheus/Grafana)
-### [ ] SLO/SLA Monitoring
-### [ ] Incident Response Tooling
-### [ ] Cost Tracking for GPU Usage
+### [ ] Expose ML Confidence to Strategy
+
+Currently ML is shadow-only. Strategy should see confidence.
+
+### [ ] Position Scaling by Confidence
+
+Allow strategy to scale position based on ML confidence score.
 
 ---
 
-## Completed
+## 🔍 PRIORITY 4: Alpha Validation
+
+### [ ] Add Decision Logging
+
+Log at decision time:
+- Feature values
+- Regime state
+- Decision reason
+- ML confidence (if available)
+
+---
+
+## ⏸️ PAUSED - Infra Work (Do Not Touch)
+
+These items are COMPLETE. Do not work on them unless critical bug:
 
 - [x] Phase 0 — Data Integrity: STABLE
 - [x] Phase 1 — Strategy Runtime: STABLE
 - [x] Phase 2 — Safety Guards: STABLE
-- [x] XGBoost training infrastructure
-- [x] Feature extraction (FeatureBuilderV1)
-- [x] Model promotion logic
-- [x] Vast.ai GPU orchestration
+- [x] Multi-exchange collectors (3 exchanges)
+- [x] Multi-stream ingestion (5 stream types)
+- [x] Exchange bridges (Binance, Bybit, OKX)
+- [x] Deterministic replay engine
+- [x] Kill switch & approval gates
+
+---
+
+## Previous Roadmap (Reference Only)
+
+The following were identified as gaps but are now LOWER PRIORITY than alpha work:
+
+- RiskManager Integration (Gap 1) — Useful but not urgent
+- Observer Consolidation (Gap 3) — Cleanup, not value-add
+- LiveStrategyRunner API (Gap 2) — After strategies are ready
+
+---
+
+## Success Metrics
+
+| Metric | Before | Target |
+|--------|--------|--------|
+| Live features | 4 | 15+ |
+| Regime awareness | None | 3 regimes |
+| Production strategies | 1 (primitive) | 1 (alpha-aware) |
+| Decision logging | None | Full trace |

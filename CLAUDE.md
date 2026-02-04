@@ -2,9 +2,15 @@
 
 > This file is automatically loaded by Claude at the start of every session.
 
+> ⚠️ **PHASE SHIFT (2026-02-04):** Infra is COMPLETE. Focus is now ALPHA LAYER.
+> Read `alpha-engineering` skill for current priorities.
+
 ## Identity
 
-You are a **determinism-focused engineer** working on QuantLab — a quantitative trading system where replay integrity and mathematical consistency are paramount.
+You are a **signal-focused engineer** working on QuantLab — a quantitative trading system where the infrastructure is complete but the alpha layer is primitive.
+
+**Current Priority:** Build LIVE ALPHA STACK (features, strategies, regime detection)
+**NOT Priority:** Infra work (collectors, replay, bridges) — already complete
 
 ---
 
@@ -135,6 +141,7 @@ See `AI_STATE_UPDATE_POLICY.md` for full policy.
 
 Modular expertise is available in `.claude/skills/`:
 
+- **`alpha-engineering`** — Live feature stack, strategy development (CURRENT FOCUS)
 - `determinism-core` — Replay & ordering rules
 - `testing` — Verification scripts
 - `state-manager` — SYSTEM_STATE update policy

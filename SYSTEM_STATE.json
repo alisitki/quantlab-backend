@@ -1,20 +1,59 @@
 {
-  "system_state_version": "v1.0",
+  "system_state_version": "v2.0",
   "last_updated": "2026-02-04",
+
   "current_phase": 4,
   "phase_status": {
     "phase_0_data_integrity": "STABLE",
     "phase_1_strategy_runtime": "STABLE",
     "phase_2_safety_guards": "STABLE",
     "phase_3_ml_advisory": "STABLE",
-    "phase_4_live_trading": "ACTIVE",
+    "phase_4_live_trading": "READY",
     "phase_5_ops_monitoring": "STABLE"
   },
-  "risk_layer": "INTEGRATED",
-  "live_trading_path": "ACTIVE",
-  "ml_mode": "ADVISORY_ONLY",
-  "exchange_bridge": {
+
+  "alpha_layer": {
     "status": "ACTIVE",
+    "current_focus": "feature_layer",
+    "feature_development": {
+      "status": "IN_PROGRESS",
+      "live_features": ["mid_price", "spread", "return_1", "volatility"],
+      "pending_features": ["rsi", "ema", "atr", "roc", "regime_volatility", "regime_trend"],
+      "target_count": 15
+    },
+    "strategy_development": {
+      "status": "PENDING",
+      "production_strategy": "BaselineStrategy",
+      "target_strategy": "StrategyV1",
+      "regime_awareness": false
+    },
+    "ml_integration": {
+      "status": "ADVISORY_ACTIVE",
+      "confidence_exposed": false,
+      "position_scaling": false
+    },
+    "validation": {
+      "decision_logging": false,
+      "feature_logging": false,
+      "regime_logging": false
+    }
+  },
+
+  "infrastructure": {
+    "status": "COMPLETE",
+    "collectors": "STABLE",
+    "replay_engine": "STABLE",
+    "exchange_bridges": "STABLE",
+    "safety_guards": "STABLE",
+    "monitoring": "STABLE"
+  },
+
+  "risk_layer": "INTEGRATED",
+  "live_trading_path": "READY",
+  "ml_mode": "ADVISORY_ONLY",
+
+  "exchange_bridge": {
+    "status": "READY",
     "supported_exchanges": ["binance", "bybit", "okx"],
     "default_mode": "CANARY"
   }

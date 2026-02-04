@@ -17,23 +17,37 @@ All sessions must:
 
 ---
 
-## Current State Structure
+## Current State Structure (v2.0)
 
 ```json
 {
-  "system_state_version": "v1.0",
-  "last_updated": "2026-02-03",
-  "current_phase": 2,
+  "system_state_version": "v2.0",
+  "last_updated": "2026-02-04",
+  "current_phase": 4,
   "phase_status": {
     "phase_0_data_integrity": "STABLE",
     "phase_1_strategy_runtime": "STABLE",
     "phase_2_safety_guards": "STABLE",
-    "phase_3_ml_advisory": "PARTIAL",
-    "phase_4_live_trading": "EXPERIMENTAL",
-    "phase_5_ops_monitoring": "PARTIAL"
+    "phase_3_ml_advisory": "STABLE",
+    "phase_4_live_trading": "READY",
+    "phase_5_ops_monitoring": "STABLE"
   },
-  "risk_layer": "NOT_INTEGRATED",
-  "live_trading_path": "INACTIVE",
+  "alpha_layer": {
+    "status": "ACTIVE",
+    "current_focus": "feature_layer",
+    "feature_development": { "status": "IN_PROGRESS", "live_features": [...], "pending_features": [...] },
+    "strategy_development": { "status": "PENDING", "production_strategy": "BaselineStrategy" },
+    "ml_integration": { "status": "ADVISORY_ACTIVE", "confidence_exposed": false },
+    "validation": { "decision_logging": false, "feature_logging": false }
+  },
+  "infrastructure": {
+    "status": "COMPLETE",
+    "collectors": "STABLE",
+    "replay_engine": "STABLE",
+    "exchange_bridges": "STABLE"
+  },
+  "risk_layer": "INTEGRATED",
+  "live_trading_path": "READY",
   "ml_mode": "ADVISORY_ONLY"
 }
 ```
@@ -75,7 +89,7 @@ Only increment if fields added/removed/renamed.
 | Field | Valid Values |
 |-------|--------------|
 | `risk_layer` | `NOT_INTEGRATED`, `INTEGRATED`, `ACTIVE` |
-| `live_trading_path` | `INACTIVE`, `DRY_RUN`, `ACTIVE` |
+| `live_trading_path` | `INACTIVE`, `DRY_RUN`, `READY`, `ACTIVE` |
 | `ml_mode` | `DISABLED`, `ADVISORY_ONLY`, `WEIGHT_ADJUSTMENT`, `AUTONOMOUS` |
 
 ---
@@ -113,6 +127,31 @@ If state doesn't match observed reality:
 2. Report discrepancy to user
 3. Propose the correct state
 4. Wait for user confirmation
+
+---
+
+## Alpha Layer State
+
+v2.0 introduces `alpha_layer` section for tracking signal development:
+
+| Field | Values | Purpose |
+|-------|--------|---------|
+| `alpha_layer.status` | `NOT_STARTED`, `ACTIVE`, `COMPLETE` | Overall alpha development status |
+| `alpha_layer.current_focus` | `feature_layer`, `strategy_upgrade`, `ml_integration`, `validation` | Current task group |
+| `alpha_layer.feature_development.status` | `NOT_STARTED`, `IN_PROGRESS`, `COMPLETE` | Feature work status |
+| `alpha_layer.strategy_development.status` | `PENDING`, `IN_PROGRESS`, `COMPLETE` | Strategy work status |
+| `alpha_layer.ml_integration.status` | `DISABLED`, `ADVISORY_ACTIVE`, `CONFIDENCE_EXPOSED`, `SCALING_ENABLED` | ML integration level |
+
+## Infrastructure State
+
+`infrastructure` section tracks infra completion:
+
+| Field | Values |
+|-------|--------|
+| `infrastructure.status` | `PARTIAL`, `COMPLETE` |
+| `infrastructure.collectors` | `STABLE`, `DEGRADED` |
+| `infrastructure.replay_engine` | `STABLE`, `DEGRADED` |
+| `infrastructure.exchange_bridges` | `STABLE`, `DEGRADED` |
 
 ---
 

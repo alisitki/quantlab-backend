@@ -60,8 +60,27 @@ For fields like `risk_layer`, `live_trading_path`, `ml_mode`:
 | Field | Valid Values |
 |-------|--------------|
 | `risk_layer` | `NOT_INTEGRATED`, `INTEGRATED`, `ACTIVE` |
-| `live_trading_path` | `INACTIVE`, `DRY_RUN`, `ACTIVE` |
+| `live_trading_path` | `INACTIVE`, `DRY_RUN`, `READY`, `ACTIVE` |
 | `ml_mode` | `DISABLED`, `ADVISORY_ONLY`, `WEIGHT_ADJUSTMENT`, `AUTONOMOUS` |
+
+### 5. Alpha Layer Updates
+
+| Field | Update When |
+|-------|-------------|
+| `alpha_layer.status` | Alpha development phase changes |
+| `alpha_layer.current_focus` | Focus shifts between task groups |
+| `alpha_layer.feature_development.*` | Feature development milestones |
+| `alpha_layer.strategy_development.*` | Strategy work begins/completes |
+| `alpha_layer.ml_integration.*` | ML integration milestones |
+| `alpha_layer.validation.*` | Logging capabilities added |
+
+### 6. Infrastructure Status
+
+The `infrastructure` section should only change when:
+- A component status degrades (bug/outage)
+- Overall status changes from COMPLETE to PARTIAL
+
+This section is rarely updated - infra is considered stable.
 
 ---
 

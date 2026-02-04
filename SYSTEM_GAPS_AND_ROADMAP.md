@@ -12,7 +12,7 @@ This document identifies engineering gaps and organizes them by implementation p
 | Phase 1 — Strategy Runtime | STABLE | Replay, execution, strategy interface |
 | Phase 2 — Safety Guards | STABLE | Ordering guard, error containment |
 | Phase 3 — ML Advisory | STABLE | XGBoost training, advisory mode, metrics dashboard |
-| Phase 4 — Live Trading | ACTIVE | Exchange bridge, kill switch, approval gate |
+| Phase 4 — Live Trading | READY | Exchange bridge ready, awaiting alpha layer |
 | Phase 5 — Ops & Monitoring | STABLE | Prometheus, SLO, Runbook, Incident Response |
 
 ---
@@ -320,6 +320,50 @@ Phase 5 Completion:
 ├── ✅ GPU cost tracking (DONE)
 └── ✅ Incident response (DONE)
 ```
+
+---
+
+---
+
+## Alpha Layer Development
+
+> **Current Focus:** Signal Layer Construction (`alpha_layer.status: ACTIVE`)
+>
+> Infrastructure is COMPLETE. Development focus is now on SIGNAL/ALPHA layer.
+
+### Feature Development (IN_PROGRESS)
+
+| Feature | Location | Status |
+|---------|----------|--------|
+| mid_price | core/features/builders/MidPriceFeature.js | LIVE |
+| spread | core/features/builders/SpreadFeature.js | LIVE |
+| return_1 | core/features/builders/ReturnFeature.js | LIVE |
+| volatility | core/features/builders/VolatilityFeature.js | LIVE |
+| RSI | pending | PLANNED |
+| EMA | pending | PLANNED |
+| ATR | pending | PLANNED |
+| Regime detection | pending | PLANNED |
+
+**Target:** 15+ live features (currently 4)
+
+### Strategy Development (PENDING)
+
+- Current: `BaselineStrategy` (primitive, noise-trading)
+- Target: `StrategyV1` (regime-aware, adaptive sizing)
+- Awaiting feature layer completion
+
+### ML Integration (ADVISORY_ACTIVE)
+
+ML operates in advisory mode. Next steps:
+- [ ] Expose confidence to strategy
+- [ ] Enable position scaling based on confidence
+
+### Validation (NOT_STARTED)
+
+Decision logging not yet implemented:
+- [ ] Feature values at decision time
+- [ ] Regime state logging
+- [ ] Decision reasoning traces
 
 ---
 

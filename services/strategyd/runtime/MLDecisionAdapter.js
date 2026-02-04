@@ -35,6 +35,8 @@ export class MLDecisionAdapter {
   #decision = null;
   #decisionPath = null;
   #modelPath = null;
+  #jobId = null;
+  #jobHash = null;
   #featureState = new FeatureState();
   #lastResult = null;
   #computing = false;
@@ -47,6 +49,14 @@ export class MLDecisionAdapter {
 
   getLastResult() {
     return this.#lastResult;
+  }
+
+  getJobInfo() {
+    return {
+      job_id: this.#jobId,
+      job_hash: this.#jobHash,
+      decision_path: this.#decisionPath
+    };
   }
 
   computeWeight(confidence) {
@@ -137,6 +147,8 @@ export class MLDecisionAdapter {
 
       this.#decision = decision;
       this.#model = model;
+      this.#jobId = decision?.jobId || decision?.job_id || null;
+      this.#jobHash = decision?.hash || decision?.configHash || null;
       this.#loaded = true;
       return true;
     } catch (err) {

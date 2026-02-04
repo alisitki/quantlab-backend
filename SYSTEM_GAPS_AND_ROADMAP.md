@@ -101,6 +101,8 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 - XGBoost model training (via Vast.ai GPU)
 - Model promotion with metrics comparison
 - Feature extraction (`FeatureBuilderV1`)
+- Model version tracking in run manifests (job_id, job_hash, decision_path) — ✅ DONE (2026-02-04)
+- ML metrics dashboard API endpoints — ✅ DONE (2026-02-04)
 
 **What's Missing for Autonomous:**
 - ML model integration into runtime decision path
@@ -163,8 +165,8 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 - [x] Integrate RiskManager into runtime — ✅ DONE (Gap 1)
 - [x] Add ML confidence to context object — ✅ DONE (2026-02-04)
 - [x] Create ML backtest comparison tooling — ✅ DONE (2026-02-04)
-- [ ] Add model version tracking in runs
-- [ ] Build ML metrics dashboard
+- [x] Add model version tracking in runs — ✅ DONE (2026-02-04)
+- [x] Build ML metrics dashboard API — ✅ DONE (2026-02-04)
 
 ### Entry Points
 
@@ -295,7 +297,9 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 Phase 3 Completion:
 ├── ✅ RiskManager integration (DONE)
 ├── ✅ ML confidence API (DONE)
-└── ✅ ML backtest tooling (DONE)
+├── ✅ ML backtest tooling (DONE)
+├── ✅ Model version tracking (DONE)
+└── ✅ ML metrics dashboard API (DONE)
 
 Phase 4 Preparation:
 ├── ✅ HTTP API for live runs (DONE)

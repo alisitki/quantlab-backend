@@ -17,6 +17,7 @@ import experimentsRoutes from './routes/experiments.js';
 import candidatesRoutes from './routes/candidates.js';
 import apiRoutes from './routes/api.js';
 import runsRoutes from './routes/runs.js';
+import mlRoutes from './routes/ml.js';
 
 // ENV GUARD
 if (process.env.OBSERVER_MODE !== '1') {
@@ -50,6 +51,7 @@ app.use('/v1', authGuard);
 app.use('/v1', jobsRoutes);
 app.use('/v1', experimentsRoutes);
 app.use('/v1', candidatesRoutes);
+app.use('/v1', mlRoutes);
 
 app.use('/api', authGuard);
 app.use('/api', apiRoutes);

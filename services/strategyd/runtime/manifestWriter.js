@@ -16,7 +16,10 @@ export function attachMlExtra(manifest, mlResult, options = {}) {
     active_applied: options.active_applied === true,
     active_reason: options.active_reason || null,
     applied_weight: options.applied_weight ?? null,
-    active_mode: options.active_mode === true
+    active_mode: options.active_mode === true,
+    job_id: options.job_id || null,
+    job_hash: options.job_hash || null,
+    decision_path: options.decision_path || null
   };
 
   manifest.extra = extra;

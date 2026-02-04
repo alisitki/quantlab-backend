@@ -428,12 +428,16 @@ export class SSEStrategyRunner {
     const mlMode = ML_ACTIVE_ENABLED && !ML_ACTIVE_KILL
       ? 'active'
       : (process.env.ML_SHADOW_ENABLED === '1' ? 'shadow' : 'off');
+    const jobInfo = this.#mlDecisionAdapter.getJobInfo();
     attachMlExtra(manifest, this.#lastMlResult, {
       applied_weight: this.#lastMlAppliedWeight,
       active_mode: ML_ACTIVE_ENABLED && !ML_ACTIVE_KILL,
       active_applied: this.#lastActiveApplied,
       active_reason: this.#lastActiveReason,
-      mode: mlMode
+      mode: mlMode,
+      job_id: jobInfo.job_id,
+      job_hash: jobInfo.job_hash,
+      decision_path: jobInfo.decision_path
     });
 
     ensureLastCursor(

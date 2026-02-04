@@ -17,6 +17,7 @@ import { observerRegistry } from '../../../core/observer/ObserverRegistry.js';
 import { loadKillSwitchFromEnv } from '../../../core/futures/kill_switch.js';
 import { getCostWriter } from '../../../core/vast/CostWriter.js';
 import { createVastClient } from '../../../core/vast/VastClient.js';
+import { SLOCalculator } from '../../../core/slo/index.js';
 
 /**
  * Read SYSTEM_STATE.json
@@ -492,6 +493,226 @@ export default async function monitorRoutes(fastify, options) {
         budgetUsedPct: Math.round((summary.totalCost / budgetLimit) * 100),
         budgetStatus
       }
+    };
+  });
+
+  /**
+   * GET /v1/monitor/summary - Unified observability dashboard
+   * Single endpoint that aggregates all system status for dashboards
+   */
+  fastify.get('/v1/monitor/summary', async (request, reply) => {
+    const timestamp = new Date().toISOString();
+    const { bridge, healthMonitor, slippageAnalyzer, lifecycleManager } = getBridgeSingletons();
+
+    // === 1. System State ===
+    const systemState = readSystemState();
+    const killSwitch = loadKillSwitchFromEnv();
+    const bridgeConfig = bridge?.getConfig();
+    const bridgeStats = bridge?.getStats();
+
+    // === 2. Services Health ===
+    const services = [];
+
+    // Strategyd (self)
+    services.push({
+      name: 'strategyd',
+      status: 'healthy',
+      url: `http://localhost:${process.env.STRATEGYD_PORT || 3031}`,
+      lastCheck: timestamp
+    });
+
+    // Check replayd
+    try {
+      const replaydUrl = process.env.REPLAYD_URL || 'http://localhost:3030';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      const resp = await fetch(`${replaydUrl}/health`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      services.push({
+        name: 'replayd',
+        status: resp.ok ? 'healthy' : 'degraded',
+        url: replaydUrl,
+        lastCheck: timestamp
+      });
+    } catch {
+      services.push({
+        name: 'replayd',
+        status: 'unreachable',
+        url: process.env.REPLAYD_URL || 'http://localhost:3030',
+        lastCheck: timestamp
+      });
+    }
+
+    // Check observer-api
+    try {
+      const observerUrl = process.env.OBSERVER_API_URL || 'http://localhost:3000';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      const resp = await fetch(`${observerUrl}/ping`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      services.push({
+        name: 'observer-api',
+        status: resp.ok ? 'healthy' : 'degraded',
+        url: observerUrl,
+        lastCheck: timestamp
+      });
+    } catch {
+      services.push({
+        name: 'observer-api',
+        status: 'unreachable',
+        url: process.env.OBSERVER_API_URL || 'http://localhost:3000',
+        lastCheck: timestamp
+      });
+    }
+
+    // === 3. Exchange Health ===
+    const exchangeHealth = healthMonitor?.getLastStatus();
+    const exchange = {
+      name: bridgeConfig?.exchange ?? 'unknown',
+      testnet: bridgeConfig?.testnet ?? true,
+      healthy: exchangeHealth?.healthy ?? false,
+      pingMs: exchangeHealth?.pingMs ?? null,
+      driftMs: exchangeHealth?.serverTimeDriftMs ?? null,
+      consecutiveFailures: exchangeHealth?.consecutiveFailures ?? 0
+    };
+
+    // === 4. SLO Status ===
+    let sloSummary = { healthy: true, ok: 0, warning: 0, breached: 0, critical: [] };
+    try {
+      const sloCalc = new SLOCalculator({
+        getBridgeMetrics: () => {
+          if (!bridge) return { active: false, killSwitchActive: killSwitch.global_kill };
+          const stats = bridge.getStats();
+          const slippage = slippageAnalyzer?.getAggregateStats() ?? {};
+          return {
+            active: true,
+            killSwitchActive: killSwitch.global_kill,
+            ordersToday: stats.ordersToday || 0,
+            maxOrdersPerDay: stats.maxOrdersPerDay || 100,
+            slippageAvgBps: slippage.avgSlippageBps || 0
+          };
+        },
+        getExchangeMetrics: () => ({
+          healthy: exchangeHealth?.healthy ?? false,
+          pingMs: exchangeHealth?.pingMs ?? 0,
+          driftMs: exchangeHealth?.serverTimeDriftMs ?? 0
+        }),
+        getObserverMetrics: () => {
+          const health = observerRegistry.getHealth();
+          return {
+            activeRuns: health.active_runs || 0,
+            lastEventAgeMs: health.last_event_age_ms || 0
+          };
+        },
+        getAlertMetrics: () => {
+          const summary = readAlertSummary(24 * 60 * 60 * 1000);
+          return { criticalCount: summary.criticalCount || 0 };
+        }
+      });
+      const health = sloCalc.getOverallHealth();
+      sloSummary.healthy = health.healthy;
+      sloSummary.ok = health.ok;
+      sloSummary.warning = health.warning;
+      sloSummary.breached = health.breached;
+      sloSummary.critical = health.criticalSLOs?.map(s => s.slo_id) || [];
+    } catch {
+      // SLO calculation failed
+    }
+
+    // === 5. GPU Costs (24h + 7d) ===
+    let gpuCosts = { cost24h: 0, cost7d: 0, jobs24h: 0, jobs7d: 0, budgetStatus: 'ok' };
+    try {
+      const costWriter = getCostWriter();
+      const summary24h = await costWriter.getLocalSummary('24h');
+      const summary7d = await costWriter.getLocalSummary('7d');
+      const budgetLimit = parseFloat(process.env.GPU_BUDGET_MONTHLY) || 100;
+
+      gpuCosts = {
+        cost24h: summary24h.totalCost,
+        cost7d: summary7d.totalCost,
+        jobs24h: summary24h.totalJobs,
+        jobs7d: summary7d.totalJobs,
+        budgetUsedPct: Math.round((summary7d.totalCost / budgetLimit) * 100),
+        budgetStatus: summary7d.totalCost >= budgetLimit ? 'exceeded'
+          : summary7d.totalCost >= budgetLimit * 0.9 ? 'critical'
+          : summary7d.totalCost >= budgetLimit * 0.75 ? 'warning'
+          : 'ok'
+      };
+    } catch {
+      // GPU cost tracking not available
+    }
+
+    // === 6. Alerts (24h) ===
+    const alertSummary = readAlertSummary(24 * 60 * 60 * 1000);
+
+    // === 7. Execution Stats ===
+    const execution = {
+      bridgeActive: !!bridge,
+      mode: bridgeConfig?.mode ?? 'SHADOW',
+      killSwitchActive: killSwitch.global_kill,
+      ordersToday: bridgeStats?.ordersToday ?? 0,
+      maxOrdersPerDay: bridgeStats?.maxOrdersPerDay ?? 100,
+      utilizationPct: bridgeStats
+        ? Math.round((bridgeStats.ordersToday / bridgeStats.maxOrdersPerDay) * 100)
+        : 0
+    };
+
+    // === 8. Slippage ===
+    const slippage = slippageAnalyzer?.getAggregateStats() ?? {
+      avgSlippageBps: 0,
+      weightedSlippageBps: 0,
+      totalRecords: 0
+    };
+
+    // === 9. Live Runs ===
+    const observerHealth = observerRegistry.getHealth();
+    const liveRuns = {
+      activeCount: observerHealth.active_runs,
+      lastEventAgeMs: observerHealth.last_event_age_ms,
+      budgetPressure: observerHealth.budget_pressure
+    };
+
+    // === 10. Order States ===
+    const orderStates = lifecycleManager?.getStateCounts() ?? {};
+
+    // === Overall Status ===
+    const healthyServices = services.filter(s => s.status === 'healthy').length;
+    const overallHealthy =
+      healthyServices === services.length &&
+      !killSwitch.global_kill &&
+      sloSummary.healthy &&
+      alertSummary.criticalCount === 0 &&
+      exchange.healthy;
+
+    return {
+      timestamp,
+      overall: {
+        healthy: overallHealthy,
+        status: overallHealthy ? 'OK' : killSwitch.global_kill ? 'KILLED' : 'DEGRADED',
+        phase: systemState.current_phase,
+        bridgeMode: execution.mode
+      },
+      services: {
+        total: services.length,
+        healthy: healthyServices,
+        list: services
+      },
+      exchange,
+      slo: sloSummary,
+      execution,
+      slippage: {
+        avgBps: slippage.avgSlippageBps,
+        weightedBps: slippage.weightedSlippageBps,
+        fillCount: slippage.totalRecords
+      },
+      gpuCosts,
+      alerts: {
+        total24h: alertSummary.recentCount,
+        critical24h: alertSummary.criticalCount,
+        lastAlertAt: alertSummary.lastAlertAt
+      },
+      liveRuns,
+      orderStates
     };
   });
 

@@ -230,7 +230,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 
 ### Outstanding
 
-- [ ] Unified observability dashboard
+- [x] Unified observability dashboard — ✅ DONE (2026-02-04)
 - [x] Alerting integration (Slack) — ✅ DONE (2026-02-04)
 - [x] Metrics aggregation (Prometheus/Grafana) — ✅ DONE (2026-02-04)
 - [x] SLO/SLA monitoring — ✅ DONE (2026-02-04)
@@ -313,7 +313,7 @@ Phase 4 Activation (BLOCKED until safety verified):
 └── Live monitoring
 
 Phase 5 Completion:
-├── Observability dashboard
+├── ✅ Observability dashboard (DONE)
 ├── ✅ Alerting integration (DONE)
 ├── ✅ GPU cost tracking (DONE)
 └── Incident response

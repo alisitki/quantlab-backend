@@ -10,7 +10,7 @@ import { createHash } from 'node:crypto';
 import { writeFile, mkdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import duckdb from 'duckdb';
-import { ReplayEngine } from './index.js';
+import { ReplayEngine } from '../index.js';
 
 const TEST_DIR = '/tmp/replay-multi-test';
 const SINGLE_PARQUET = join(TEST_DIR, 'single.parquet');

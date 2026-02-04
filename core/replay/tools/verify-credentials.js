@@ -5,8 +5,8 @@
  * when required S3_COMPACT_* environment variables are missing.
  */
 
-import { loadMeta } from './MetaLoader.js';
-import { ParquetReader } from './ParquetReader.js';
+import { loadMeta } from '../MetaLoader.js';
+import { ParquetReader } from '../ParquetReader.js';
 
 async function testMetaLoader() {
   console.log('Testing MetaLoader credential guardrail...');

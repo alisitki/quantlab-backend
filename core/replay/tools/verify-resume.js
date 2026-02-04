@@ -9,7 +9,7 @@
  */
 
 import { createHash } from 'node:crypto';
-import { ReplayEngine, encodeCursor } from './index.js';
+import { ReplayEngine, encodeCursor } from '../index.js';
 
 const BATCH_SIZE = 5000;
 const CHUNK_COUNT = 5; // 20% each

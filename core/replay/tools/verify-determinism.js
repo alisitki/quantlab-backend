@@ -5,7 +5,7 @@
  */
 
 import { createHash } from 'node:crypto';
-import { ReplayEngine } from './index.js';
+import { ReplayEngine } from '../index.js';
 
 const PARQUET_PATH = '/tmp/replay-test/data.parquet';
 const META_PATH = '/tmp/replay-test/meta.json';

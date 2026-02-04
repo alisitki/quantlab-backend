@@ -64,6 +64,7 @@ import { ErrorPolicy, OrderingMode } from '../interface/types.js';
 import { ReplayEngine } from '../../replay/ReplayEngine.js';
 import { ExecutionEngine } from '../../execution/engine.js';
 import { encodeCursor, decodeCursor } from '../../replay/CursorCodec.js';
+import { RiskManager } from '../../risk/RiskManager.js';
 
 // Default output directory for run manifests
 const DEFAULT_OUTPUT_DIR = join(__dirname, '_runs');
@@ -88,6 +89,12 @@ function parseCliArgs() {
       'ordering-mode': { type: 'string', default: 'STRICT' },
       'no-execution': { type: 'boolean', default: false },
       'output-dir': { type: 'string', default: DEFAULT_OUTPUT_DIR },
+      'risk-enabled': { type: 'boolean', default: true },
+      'risk-max-positions': { type: 'string', default: '1' },
+      'risk-cooldown': { type: 'string', default: '50' },
+      'risk-max-daily-loss': { type: 'string', default: '0.02' },
+      'risk-stop-loss': { type: 'string', default: '0.005' },
+      'risk-take-profit': { type: 'string', default: '0.01' },
       help: { type: 'boolean', default: false }
     },
     allowPositionals: false
@@ -120,6 +127,12 @@ Optional:
   --ordering-mode <mode>    STRICT | WARN
   --no-execution            Run without ExecutionEngine (dry run)
   --output-dir <path>       Dir for manifest output (default: _runs/)
+  --risk-enabled            Enable risk management (default: true)
+  --risk-max-positions <n>  Max concurrent positions (default: 1)
+  --risk-cooldown <n>       Events to wait after fill (default: 50)
+  --risk-max-daily-loss <f> Max daily loss pct (default: 0.02)
+  --risk-stop-loss <f>      Stop loss pct (default: 0.005)
+  --risk-take-profit <f>    Take profit pct (default: 0.01)
   --help                    Show this help
 `);
 }
@@ -248,7 +261,26 @@ async function main() {
       runtime.attachCheckpointManager(checkpointManager);
       console.log(`  checkpoints: ${args['checkpoint-dir']}`);
     }
-    
+
+    // RiskManager (if enabled)
+    let riskManager = null;
+    if (args['risk-enabled'] !== false) {
+      const riskConfig = {
+        enabled: true,
+        maxPositions: parseInt(args['risk-max-positions'], 10),
+        cooldownEvents: parseInt(args['risk-cooldown'], 10),
+        maxDailyLossPct: parseFloat(args['risk-max-daily-loss']),
+        stopLossPct: parseFloat(args['risk-stop-loss']),
+        takeProfitPct: parseFloat(args['risk-take-profit'])
+      };
+      const initialCapital = 10000;
+      riskManager = new RiskManager(riskConfig, initialCapital);
+      runtime.attachRiskManager(riskManager);
+      console.log(`  risk: enabled (maxPos=${riskConfig.maxPositions}, SL=${(riskConfig.stopLossPct*100).toFixed(2)}%, TP=${(riskConfig.takeProfitPct*100).toFixed(2)}%)`);
+    } else {
+      console.log(`  risk: disabled`);
+    }
+
     // ExecutionEngine (if enabled)
     if (executionEngine) {
       runtime.attachExecutionEngine(executionEngine);
@@ -332,6 +364,11 @@ async function main() {
     console.log(`  fills:        ${manifest.output.fills_count}`);
     console.log(`  state_hash:   ${manifest.output.state_hash.substring(0, 16)}...`);
     console.log(`  fills_hash:   ${manifest.output.fills_hash.substring(0, 16)}...`);
+    if (riskManager) {
+      const riskStats = riskManager.getStats();
+      console.log(`  risk_rejects: ${riskStats.rejectCount}`);
+      console.log(`  force_exits:  ${riskStats.forceExitCount}`);
+    }
     console.log(`  elapsed:      ${elapsedMs}ms`);
     console.log(`  events/sec:   ${(manifest.output.event_count / (elapsedMs / 1000)).toFixed(0)}`);
     console.log(`  manifest:     ${manifestPath}`);

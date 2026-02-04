@@ -60,7 +60,9 @@ export class MetricsRegistry {
     this.#counters.set('errors_total', 0);
     this.#counters.set('skipped_events_total', 0);
     this.#counters.set('checkpoints_total', 0);
-    
+    this.#counters.set('risk_rejections_total', 0);
+    this.#counters.set('risk_forced_exits_total', 0);
+
     // Initialize gauges
     this.#gauges.set('equity', 0);
     this.#gauges.set('position_value', 0);

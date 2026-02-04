@@ -185,7 +185,7 @@ export class RuntimeContext {
   
   /**
    * Get current execution state snapshot.
-   * 
+   *
    * @returns {Object|null} Execution state or null if not available
    */
   getExecutionState() {
@@ -194,7 +194,23 @@ export class RuntimeContext {
     }
     return this.#getExecutionState();
   }
-  
+
+  /**
+   * Execution engine compatibility interface for RiskManager.
+   * Provides snapshot() method expected by risk rules.
+   *
+   * @returns {Object|null} Execution interface with snapshot() or null
+   */
+  get execution() {
+    if (!this.#getExecutionState) {
+      return null;
+    }
+    const getState = this.#getExecutionState;
+    return {
+      snapshot: () => getState()
+    };
+  }
+
   // ============================================================================
   // CURSOR MANAGEMENT
   // ============================================================================

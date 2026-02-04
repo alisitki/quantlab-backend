@@ -22,8 +22,12 @@ import { RuntimeConfig } from './RuntimeConfig.js';
 import { RuntimeContext, createRuntimeContext } from './RuntimeContext.js';
 import { RuntimeLifecycle } from './RuntimeLifecycle.js';
 import { RuntimeState, createRuntimeState } from './RuntimeState.js';
-import { computeRunId } from '../safety/DeterminismValidator.js';
+import { computeRunId, computeHash } from '../safety/DeterminismValidator.js';
 import { RunLifecycleStatus } from '../interface/types.js';
+import { emitAudit } from '../../audit/AuditWriter.js';
+import { canonicalStringify } from '../state/StateSerializer.js';
+import crypto from 'node:crypto';
+import { RunArchiveWriter } from '../../run-archive/RunArchiveWriter.js';
 
 /**
  * @typedef {import('../interface/types.js').StrategyV2} StrategyV2
@@ -71,12 +75,45 @@ export class StrategyRuntime extends EventEmitter {
   
   /** @type {Object|null} */
   #checkpointManager;
-  
+
+  /** @type {Object|null} */
+  #riskManager;
+
   /** @type {Object|null} */
   #lastEvent;
   
   /** @type {string} */
   #endedReason;
+  
+  /** @type {string|null} */
+  #replayRunId;
+
+  /** @type {function|null} */
+  #eventObserver;
+  
+  /** @type {number|null} */
+  #replayStartedAt;
+  
+  /** @type {number|null} */
+  #replayFinishedAt;
+  
+  /** @type {bigint|null} */
+  #replayFirstEventTs;
+  
+  /** @type {bigint|null} */
+  #replayLastEventTs;
+  
+  /** @type {string|null} */
+  #replayManifestId;
+  
+  /** @type {string|null} */
+  #replayStopReason;
+  
+  /** @type {number|null} */
+  #replayEmittedEventCount;
+  
+  /** @type {Array<Object>} */
+  #decisions;
   
   /**
    * Create a new StrategyRuntime.
@@ -117,8 +154,19 @@ export class StrategyRuntime extends EventEmitter {
     this.#orderingGuard = null;
     this.#errorContainment = null;
     this.#checkpointManager = null;
+    this.#riskManager = null;
     this.#lastEvent = null;
     this.#endedReason = 'finished';
+    this.#replayRunId = null;
+    this.#replayStartedAt = null;
+    this.#replayFinishedAt = null;
+    this.#replayStopReason = null;
+    this.#replayEmittedEventCount = null;
+    this.#decisions = [];
+    this.#replayFirstEventTs = null;
+    this.#replayLastEventTs = null;
+    this.#replayManifestId = null;
+    this.#eventObserver = null;
     
     // Create context (will be updated with placeOrder after execution engine attachment)
     this.#context = null;
@@ -145,6 +193,36 @@ export class StrategyRuntime extends EventEmitter {
   
   /** @returns {RuntimeContext} */
   get context() { return this.#context; }
+
+  /** @returns {string|null} */
+  get replayRunId() { return this.#replayRunId; }
+
+  /** @returns {Array<Object>} */
+  get decisions() { return this.#decisions.map(d => ({ ...d })); }
+
+  /** @returns {string} */
+  get decisionHash() {
+    return computeHash(this.#decisions);
+  }
+
+  /**
+   * Attach an observer called after each event is processed.
+   * @param {function} fn
+   */
+  setEventObserver(fn) {
+    this.#lifecycle.assertStatus(RunLifecycleStatus.READY);
+    this.#eventObserver = fn;
+  }
+
+  /**
+   * Set replay_run_id for external (live) runs.
+   * Must be called before start/processStream.
+   * @param {string} replayRunId
+   */
+  setReplayRunId(replayRunId) {
+    this.#lifecycle.assertStatus(RunLifecycleStatus.READY);
+    this.#replayRunId = replayRunId;
+  }
   
   // ============================================================================
   // COMPONENT ATTACHMENT
@@ -221,7 +299,28 @@ export class StrategyRuntime extends EventEmitter {
     this.#checkpointManager = checkpointManager;
     return this;
   }
-  
+
+  /**
+   * Attach a RiskManager for risk control.
+   *
+   * Risk checks are applied:
+   * - onEvent: Updates risk state, checks for forced exits (SL/TP)
+   * - placeOrder: Validates orders against risk rules
+   *
+   * @param {Object} riskManager - RiskManager instance
+   * @returns {this} For chaining
+   */
+  attachRiskManager(riskManager) {
+    this.#lifecycle.assertStatus(RunLifecycleStatus.CREATED);
+
+    if (!riskManager || typeof riskManager.onEvent !== 'function') {
+      throw new Error('RUNTIME_ERROR: Invalid RiskManager - must implement onEvent()');
+    }
+
+    this.#riskManager = riskManager;
+    return this;
+  }
+
   // ============================================================================
   // LIFECYCLE METHODS
   // ============================================================================
@@ -281,59 +380,11 @@ export class StrategyRuntime extends EventEmitter {
     if (!this.#replayEngine) {
       throw new Error('RUNTIME_ERROR: ReplayEngine not attached');
     }
-    
-    this.#lifecycle.start();
-    this.emit('start', { runId: this.#runId });
-    
-    try {
-      // Start replay
-      const replayOpts = {
-        batchSize: this.#config.batchSize,
-        clock: this.#config.clock,
-        startCursor: options.startCursor
-      };
-      
-      const replayGenerator = this.#replayEngine.replay(replayOpts);
-      
-      // Process events
-      let eventIndex = 0;
-      for await (const event of replayGenerator) {
-        // Check lifecycle status (for pause/cancel)
-        if (this.#lifecycle.isPaused) {
-          await this.#waitForResume();
-        }
-        
-        if (this.#lifecycle.isTerminal) {
-          break;
-        }
-        
-        // Process event
-        await this.#processEvent(event, eventIndex);
-        eventIndex++;
-        
-        // Checkpoint if enabled
-        if (this.#config.enableCheckpoints && 
-            eventIndex % this.#config.checkpointInterval === 0) {
-          await this.#saveCheckpoint(eventIndex);
-        }
-      }
-      
-      // Finalize
-      this.#lifecycle.finalize();
-      await this.#finalize();
-      this.#lifecycle.complete();
-      
-      const manifest = this.getManifest();
-      this.emit('complete', manifest);
-      
-      return manifest;
-      
-    } catch (error) {
-      this.#endedReason = 'error';
-      this.#lifecycle.fail(error);
-      this.emit('error', error);
-      throw error;
-    }
+
+    return this.processReplay(this.#replayEngine, {
+      clock: this.#config.clock,
+      cursor: options.startCursor
+    });
   }
   
   /**
@@ -383,6 +434,90 @@ export class StrategyRuntime extends EventEmitter {
       this.#lifecycle.fail(error);
       this.emit('error', error);
       throw error;
+    }
+  }
+
+  /**
+   * Process events directly from ReplayEngine with deterministic replay lifecycle.
+   * 
+   * @param {Object} replayEngine - ReplayEngine instance
+   * @param {Object} [replayOptions] - Replay options
+   * @returns {Promise<RunManifest>} Run manifest
+   */
+  async processReplay(replayEngine, replayOptions = {}) {
+    this.#lifecycle.assertStatus(RunLifecycleStatus.READY);
+    this.#lifecycle.start();
+    this.emit('start', { runId: this.#runId });
+
+    this.#replayStartedAt = Date.now();
+    this.#replayStopReason = null;
+    this.#replayEmittedEventCount = 0;
+    this.#replayFirstEventTs = null;
+    this.#replayLastEventTs = null;
+
+    let stats = null;
+    try {
+      const meta = await replayEngine.getMeta();
+      this.#replayManifestId = meta.manifest_id;
+      const seed = this.#config.seed ?? '';
+      const replayHash = computeHash({ seed, manifest_id: meta.manifest_id });
+      this.#replayRunId = `replay_${replayHash.substring(0, 16)}`;
+
+      const iterator = replayEngine.replay({
+        batchSize: this.#config.batchSize,
+        ...replayOptions
+      });
+
+      let eventIndex = 0;
+      while (true) {
+        const { value, done } = await iterator.next();
+        if (done) {
+          stats = value;
+          break;
+        }
+
+        if (this.#lifecycle.isPaused) {
+          await this.#waitForResume();
+        }
+
+        if (this.#lifecycle.isTerminal) {
+          break;
+        }
+
+        if (this.#executionEngine) {
+          this.#executionEngine.onEvent(value);
+        }
+
+        await this.#processEvent(value, eventIndex);
+        eventIndex++;
+
+        if (this.#config.enableCheckpoints && 
+            eventIndex % this.#config.checkpointInterval === 0) {
+          await this.#saveCheckpoint(eventIndex);
+        }
+      }
+
+      this.#replayEmittedEventCount = stats ? stats.rowsEmitted : eventIndex;
+      this.#replayStopReason = stats ? stats.stop_reason : 'ERROR';
+
+      this.#lifecycle.finalize();
+      await this.#finalize();
+      const manifest = this.getManifest();
+      await this.#archiveReplayRun(manifest, stats);
+      this.#lifecycle.complete();
+
+      this.emit('complete', manifest);
+      return manifest;
+    } catch (error) {
+      this.#endedReason = 'error';
+      if (error && error.replay_stats && !this.#replayStopReason) {
+        this.#replayStopReason = error.replay_stats.stop_reason;
+      }
+      this.#lifecycle.fail(error);
+      this.emit('error', error);
+      throw error;
+    } finally {
+      this.#replayFinishedAt = Date.now();
     }
   }
   
@@ -450,7 +585,38 @@ export class StrategyRuntime extends EventEmitter {
     };
     this.#context.updateCursor(cursor);
     this.#state.updateCursor(cursor);
-    
+
+    // Risk state update & forced exits (before strategy processing)
+    if (this.#riskManager) {
+      this.#riskManager.onEvent(event, this.#context);
+
+      const forceExit = this.#riskManager.checkForExit(event, this.#context);
+      if (forceExit) {
+        this.#context.logger.info(
+          `[RISK] Forced exit: ${forceExit.symbol} ${forceExit.side} qty=${forceExit.qty} reason=${forceExit.reason}`
+        );
+        try {
+          this.#placeOrder({
+            symbol: forceExit.symbol,
+            side: forceExit.side,
+            qty: forceExit.qty,
+            _riskForced: true,
+            _riskReason: forceExit.reason
+          });
+          this.emit('riskExit', {
+            eventIndex,
+            order: forceExit,
+            cursor: cursor.encoded
+          });
+          if (this.#metrics) {
+            this.#metrics.increment('risk_forced_exits_total');
+          }
+        } catch (err) {
+          this.#context.logger.error(`[RISK] Force exit failed: ${err.message}`);
+        }
+      }
+    }
+
     // Process event through strategy with error containment
     if (this.#errorContainment) {
       const result = await this.#errorContainment.wrap(async () => {
@@ -468,6 +634,10 @@ export class StrategyRuntime extends EventEmitter {
     // Update state
     this.#state.incrementEventCount();
     this.#context.incrementProcessed();
+    if (this.#replayRunId) {
+      if (this.#replayFirstEventTs === null) this.#replayFirstEventTs = BigInt(event.ts_event);
+      this.#replayLastEventTs = BigInt(event.ts_event);
+    }
     
     if (this.#executionEngine) {
       this.#state.updateExecutionState(this.#executionEngine.snapshot());
@@ -493,6 +663,19 @@ export class StrategyRuntime extends EventEmitter {
         stateHash: this.#state.computeStateHash().substring(0, 8)
       });
     }
+
+    if (this.#eventObserver) {
+      try {
+        this.#eventObserver({
+          event,
+          eventIndex,
+          decisionCount: this.#decisions.length,
+          stateSnapshot: this.#state.snapshot()
+        });
+      } catch (err) {
+        console.warn('[StrategyRuntime] eventObserver error:', err.message || String(err));
+      }
+    }
   }
   
   /**
@@ -505,6 +688,55 @@ export class StrategyRuntime extends EventEmitter {
     if (!this.#executionEngine) {
       throw new Error('RUNTIME_ERROR: No execution engine attached');
     }
+
+    // Risk validation (skip for forced exits marked with _riskForced)
+    if (this.#riskManager && !intent._riskForced) {
+      const { allowed, reason } = this.#riskManager.allow(intent, this.#context);
+      if (!allowed) {
+        this.#context.logger.warn(
+          `[RISK] Order rejected: ${intent.symbol} ${intent.side} qty=${intent.qty} reason=${reason}`
+        );
+        this.emit('riskReject', {
+          order: intent,
+          reason,
+          cursor: this.#context.cursor.encoded
+        });
+        if (this.#metrics) {
+          this.#metrics.increment('risk_rejections_total');
+        }
+        return {
+          fill_id: null,
+          status: 'REJECTED',
+          reason: reason,
+          symbol: intent.symbol,
+          side: intent.side,
+          qty: intent.qty
+        };
+      }
+    }
+
+    const decisionPayload = {
+      replay_run_id: this.#replayRunId,
+      cursor: this.#context.cursor.encoded,
+      ts_event: this.#context.cursor.ts_event,
+      decision: { ...intent }
+    };
+    this.#decisions.push(decisionPayload);
+
+    const decisionHash = crypto.createHash('sha256').update(canonicalStringify(decisionPayload)).digest('hex');
+    emitAudit({
+      actor: 'system',
+      action: 'DECISION',
+      target_type: 'decision',
+      target_id: decisionHash,
+      reason: null,
+      metadata: {
+        live_run_id: this.#replayRunId,
+        strategy_id: this.#config.strategy?.id || null,
+        decision_id: decisionHash,
+        decision_hash: decisionHash
+      }
+    });
     
     const fill = this.#executionEngine.onOrder({
       ...intent,
@@ -617,11 +849,64 @@ export class StrategyRuntime extends EventEmitter {
       output: {
         event_count: snapshot.eventCount,
         fills_count: snapshot.fillsCount,
+        decision_count: this.#decisions.length,
+        decision_hash: this.decisionHash,
         state_hash: snapshot.stateHash,
         fills_hash: snapshot.fillsHash,
         last_cursor: snapshot.cursor
+      },
+      replay: {
+        replay_run_id: this.#replayRunId,
+        started_at: this.#replayFirstEventTs !== null
+          ? new Date(Number(this.#replayFirstEventTs / 1_000_000n)).toISOString()
+          : null,
+        finished_at: this.#replayLastEventTs !== null
+          ? new Date(Number(this.#replayLastEventTs / 1_000_000n)).toISOString()
+          : null,
+        stop_reason: this.#replayStopReason,
+        emitted_event_count: this.#replayEmittedEventCount,
+        decision_count: this.#decisions.length
+      },
+      risk: this.#riskManager ? {
+        enabled: true,
+        ...this.#riskManager.getStats()
+      } : { enabled: false }
+    };
+  }
+
+  async #archiveReplayRun(manifest, stats) {
+    if (!this.#replayRunId) return;
+
+    const writer = RunArchiveWriter.fromEnv();
+    const run = {
+      replay_run_id: this.#replayRunId,
+      seed: this.#config.seed ?? '',
+      manifest_id: this.#replayManifestId,
+      parquet_path: this.#config.dataset.parquet,
+      first_ts_event: this.#replayFirstEventTs,
+      last_ts_event: this.#replayLastEventTs,
+      stop_reason: this.#replayStopReason,
+      decisions: this.#decisions,
+      stats: {
+        emitted_event_count: stats ? stats.rowsEmitted : this.#replayEmittedEventCount,
+        decision_count: this.#decisions.length,
+        duration_ms: (this.#replayFirstEventTs !== null && this.#replayLastEventTs !== null)
+          ? Number((this.#replayLastEventTs - this.#replayFirstEventTs) / 1_000_000n)
+          : 0
       }
     };
+
+    try {
+      await writer.write(run);
+    } catch (err) {
+      this.#replayStopReason = 'ERROR';
+      console.error(JSON.stringify({
+        event: 'run_archive_error',
+        replay_run_id: this.#replayRunId,
+        error: err.message
+      }));
+      throw err;
+    }
   }
   
   /**

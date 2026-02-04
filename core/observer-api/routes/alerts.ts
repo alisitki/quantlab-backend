@@ -1,8 +1,9 @@
 import fs from 'fs';
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { readJSONL } from '../readers/JSONLReader.js';
 import { DATA_PATHS } from '../config.js';
 import path from 'path';
+import { alertManager, sendAlert, AlertSeverity, AlertType } from '../../alerts/index.js';
 
 const router = Router();
 
@@ -64,6 +65,52 @@ router.get('/', async (req, res) => {
     });
 
     res.json(results);
+});
+
+// GET /alerts/status - Get alert system configuration status
+router.get('/status', (req: Request, res: Response) => {
+    const status = alertManager.getStatus();
+    res.json({
+        ...status,
+        alert_types: Object.keys(AlertType),
+        severity_levels: Object.keys(AlertSeverity)
+    });
+});
+
+// POST /alerts/test - Send a test alert (useful for verifying Slack webhook)
+router.post('/test', async (req: Request, res: Response) => {
+    const { severity = 'info', message } = req.body || {};
+
+    const validSeverities = ['info', 'warning', 'error', 'critical'];
+    if (!validSeverities.includes(severity)) {
+        return res.status(400).json({
+            error: 'INVALID_SEVERITY',
+            valid: validSeverities
+        });
+    }
+
+    try {
+        const result = await sendAlert({
+            type: 'TEST_ALERT' as any,
+            severity: severity as any,
+            message: message || `Test alert at ${new Date().toISOString()}`,
+            source: 'observer-api',
+            metadata: {
+                test: true,
+                triggered_by: req.ip
+            }
+        });
+
+        res.json({
+            status: 'sent',
+            ...result
+        });
+    } catch (err: any) {
+        res.status(500).json({
+            error: 'ALERT_SEND_FAILED',
+            message: err.message
+        });
+    }
 });
 
 export default router;

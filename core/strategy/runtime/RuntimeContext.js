@@ -71,7 +71,10 @@ export class RuntimeContext {
   
   /** @type {number} */
   #processedCount;
-  
+
+  /** @type {Object|null} */
+  #mlAdapter;
+
   /**
    * Create a runtime context.
    * 
@@ -89,7 +92,8 @@ export class RuntimeContext {
     config,
     metrics = null,
     placeOrder = null,
-    getExecutionState = null
+    getExecutionState = null,
+    mlAdapter = null
   }) {
     this.#runId = runId;
     this.#dataset = Object.freeze({ ...dataset });
@@ -108,8 +112,9 @@ export class RuntimeContext {
     };
     
     this.#processedCount = 0;
+    this.#mlAdapter = mlAdapter;
   }
-  
+
   // ============================================================================
   // GETTERS
   // ============================================================================
@@ -212,6 +217,52 @@ export class RuntimeContext {
   }
 
   // ============================================================================
+  // ML ADVISORY
+  // ============================================================================
+
+  /**
+   * Get ML advisory advice (read-only, deterministic).
+   * Returns the latest ML inference result if an MLAdapter is attached.
+   *
+   * @returns {Object|null} ML advice or null if not available
+   * @example
+   * const advice = ctx.getMlAdvice();
+   * if (advice && advice.confidence > 0.7) {
+   *   // Use ML signal
+   * }
+   */
+  getMlAdvice() {
+    if (!this.#mlAdapter) {
+      return null;
+    }
+
+    const result = this.#mlAdapter.getLastResult();
+    if (!result) {
+      return null;
+    }
+
+    return {
+      model_type: result.model_type,
+      model_version: result.model_version,
+      proba: result.proba,           // 0.0-1.0 signal probability
+      confidence: result.confidence, // 0.0-1.0 model confidence
+      regime: result.regime,
+      computedWeight: this.#mlAdapter.computeWeight
+        ? this.#mlAdapter.computeWeight(result.confidence)
+        : 1.0
+    };
+  }
+
+  /**
+   * Check if ML advisory is available.
+   *
+   * @returns {boolean} True if ML adapter is attached
+   */
+  hasMlAdvisor() {
+    return this.#mlAdapter !== null;
+  }
+
+  // ============================================================================
   // CURSOR MANAGEMENT
   // ============================================================================
   
@@ -285,7 +336,8 @@ export class RuntimeContext {
       cursor: { ...this.#cursor },
       status: this.#status,
       hasExecution: this.#placeOrder !== null,
-      hasMetrics: this.#metrics !== null
+      hasMetrics: this.#metrics !== null,
+      hasMlAdvisor: this.#mlAdapter !== null
     };
   }
 }

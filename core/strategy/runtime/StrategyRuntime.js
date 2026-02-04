@@ -80,6 +80,9 @@ export class StrategyRuntime extends EventEmitter {
   #riskManager;
 
   /** @type {Object|null} */
+  #mlAdapter;
+
+  /** @type {Object|null} */
   #lastEvent;
   
   /** @type {string} */
@@ -155,6 +158,7 @@ export class StrategyRuntime extends EventEmitter {
     this.#errorContainment = null;
     this.#checkpointManager = null;
     this.#riskManager = null;
+    this.#mlAdapter = null;
     this.#lastEvent = null;
     this.#endedReason = 'finished';
     this.#replayRunId = null;
@@ -321,6 +325,29 @@ export class StrategyRuntime extends EventEmitter {
     return this;
   }
 
+  /**
+   * Attach an MLDecisionAdapter for ML advisory signals.
+   *
+   * ML adapter is called during event processing:
+   * - observeEvent(): Updates feature state
+   * - computeShadow(): Triggers async ML inference
+   *
+   * Strategy can access results via context.getMlAdvice().
+   *
+   * @param {Object} mlAdapter - MLDecisionAdapter instance
+   * @returns {this} For chaining
+   */
+  attachMlAdapter(mlAdapter) {
+    this.#lifecycle.assertStatus(RunLifecycleStatus.CREATED);
+
+    if (mlAdapter && typeof mlAdapter.getLastResult !== 'function') {
+      throw new Error('RUNTIME_ERROR: Invalid MLAdapter - must implement getLastResult()');
+    }
+
+    this.#mlAdapter = mlAdapter;
+    return this;
+  }
+
   // ============================================================================
   // LIFECYCLE METHODS
   // ============================================================================
@@ -341,12 +368,13 @@ export class StrategyRuntime extends EventEmitter {
         dataset: this.#config.dataset,
         config: this.#config,
         metrics: this.#metrics,
-        placeOrder: this.#executionEngine 
-          ? (intent) => this.#placeOrder(intent) 
+        placeOrder: this.#executionEngine
+          ? (intent) => this.#placeOrder(intent)
           : null,
         getExecutionState: this.#executionEngine
           ? () => this.#executionEngine.snapshot()
-          : null
+          : null,
+        mlAdapter: this.#mlAdapter
       });
       
       // Call strategy.onInit if available (v2 interface)
@@ -617,6 +645,12 @@ export class StrategyRuntime extends EventEmitter {
       }
     }
 
+    // ML advisory update (before strategy processing)
+    if (this.#mlAdapter) {
+      this.#mlAdapter.observeEvent(event);
+      this.#mlAdapter.computeShadow(event);
+    }
+
     // Process event through strategy with error containment
     if (this.#errorContainment) {
       const result = await this.#errorContainment.wrap(async () => {
@@ -870,6 +904,10 @@ export class StrategyRuntime extends EventEmitter {
       risk: this.#riskManager ? {
         enabled: true,
         ...this.#riskManager.getStats()
+      } : { enabled: false },
+      ml: this.#mlAdapter ? {
+        enabled: true,
+        lastResult: this.#mlAdapter.getLastResult()
       } : { enabled: false }
     };
   }

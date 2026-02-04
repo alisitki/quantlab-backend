@@ -8,6 +8,7 @@ import path from 'node:path';
 import parquet from 'parquetjs-lite';
 import { ReplayEngine } from '../../core/replay/ReplayEngine.js';
 import { buildDatasetPaths } from '../replayd/config.js';
+import { canonicalStringify } from '../../core/strategy/state/StateSerializer.js';
 import {
   FEATURE_MANIFEST_SCHEMA_VERSION
 } from './constants.js';
@@ -46,7 +47,7 @@ export class FeatureOrchestrator {
   }
 
   computeJobId(normalizedJob) {
-    const payload = this.#canonicalStringify(normalizedJob);
+    const payload = canonicalStringify(normalizedJob);
     return createHash('sha256').update(payload).digest('hex');
   }
 
@@ -242,14 +243,6 @@ export class FeatureOrchestrator {
       parts.push(value === null || value === undefined ? 'null' : String(value));
     }
     hash.update(parts.join('|'));
-  }
-
-  #canonicalStringify(obj) {
-    if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
-    if (Array.isArray(obj)) return '[' + obj.map((item) => this.#canonicalStringify(item)).join(',') + ']';
-
-    const keys = Object.keys(obj).sort();
-    return '{' + keys.map((k) => `"${k}":${this.#canonicalStringify(obj[k])}`).join(',') + '}';
   }
 
   #dateRange(start, end) {

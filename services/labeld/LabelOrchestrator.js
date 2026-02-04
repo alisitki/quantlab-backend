@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import parquet from 'parquetjs-lite';
+import { canonicalStringify } from '../../core/strategy/state/StateSerializer.js';
 import { LABEL_MANIFEST_SCHEMA_VERSION } from './constants.js';
 import { LABEL_SET_ID, LABEL_SET_VERSION, buildReturnsLabels } from './labelsets/ReturnsV1.js';
 
@@ -27,7 +28,7 @@ export class LabelOrchestrator {
   }
 
   computeJobId(normalizedJob) {
-    const payload = this.#canonicalStringify(normalizedJob);
+    const payload = canonicalStringify(normalizedJob);
     return createHash('sha256').update(payload).digest('hex');
   }
 
@@ -212,14 +213,6 @@ export class LabelOrchestrator {
       lastTs = ts;
       lastSeq = seq;
     }
-  }
-
-  #canonicalStringify(obj) {
-    if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
-    if (Array.isArray(obj)) return '[' + obj.map((item) => this.#canonicalStringify(item)).join(',') + ']';
-
-    const keys = Object.keys(obj).sort();
-    return '{' + keys.map((k) => `"${k}":${this.#canonicalStringify(obj[k])}`).join(',') + '}';
   }
 
   #toBigInt(value) {

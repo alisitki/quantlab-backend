@@ -8,16 +8,56 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ActiveHealth } from '../runtime/ActiveHealth.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const RUNS_DIR = path.resolve(__dirname, '../runs');
 const INDEX_PATH = path.join(RUNS_DIR, 'index.json');
 const HEALTH_DIR = path.join(RUNS_DIR, 'health');
 const SUMMARY_DIR = path.join(RUNS_DIR, 'summary');
+const REPORT_DIR = path.join(RUNS_DIR, 'report');
+const ARCHIVE_DIR = path.join(RUNS_DIR, 'archive');
 
 async function readJson(filePath) {
   const raw = await fs.readFile(filePath, 'utf8');
   return JSON.parse(raw);
+}
+
+function parseArtifactId(filename, prefix) {
+  if (!filename.startsWith(prefix) || !filename.endsWith('.json')) return null;
+  const base = filename.slice(0, -5);
+  const suffix = base.slice(prefix.length);
+  const lastUnderscore = suffix.lastIndexOf('_');
+  if (lastUnderscore === -1) return { id: base, strategy_id: null, seed: null };
+  return {
+    id: base,
+    strategy_id: suffix.slice(0, lastUnderscore) || null,
+    seed: suffix.slice(lastUnderscore + 1) || null
+  };
+}
+
+async function listArtifacts(prefix, { seed, strategyId }) {
+  try {
+    const files = await fs.readdir(REPORT_DIR);
+    const entries = [];
+    for (const file of files) {
+      const parsed = parseArtifactId(file, prefix);
+      if (!parsed) continue;
+      if (seed && parsed.seed !== seed) continue;
+      if (strategyId && parsed.strategy_id !== strategyId) continue;
+      const stat = await fs.stat(path.join(REPORT_DIR, file));
+      entries.push({
+        id: parsed.id,
+        strategy_id: parsed.strategy_id,
+        seed: parsed.seed,
+        created_at: stat.mtime.toISOString()
+      });
+    }
+    entries.sort((a, b) => a.id.localeCompare(b.id));
+    return entries;
+  } catch {
+    return [];
+  }
 }
 
 export default async function runsRoutes(fastify, options) {
@@ -90,6 +130,78 @@ export default async function runsRoutes(fastify, options) {
       return summary;
     } catch {
       return reply.code(404).send({ error: 'RUN_NOT_FOUND', id: runId });
+    }
+  });
+
+  // GET /runs/health/active - ACTIVE health snapshot
+  fastify.get('/runs/health/active', async (_request, reply) => {
+    try {
+      const strategyId = runner?.getStrategyId ? runner.getStrategyId() : null;
+      const seed = runner?.getStrategySeed ? runner.getStrategySeed() : null;
+      const health = new ActiveHealth({ strategyId, seed });
+      return reply.code(200).send(health.getSnapshot());
+    } catch {
+      return reply.code(200).send({
+        active_enabled: false,
+        strategy_id: null,
+        seed: null,
+        active_config_present: false,
+        limits: { max_weight: null, daily_cap: null },
+        guards: { kill_switch_required: true, safety_audit_required: true },
+        provenance: {
+          active_config_hash: null,
+          decision_hash: null,
+          triad_report_hash: null
+        }
+      });
+    }
+  });
+
+  // GET /runs/report - list triad reports
+  fastify.get('/runs/report', async (request) => {
+    const { seed, strategy_id } = request.query || {};
+    return listArtifacts('triad_', { seed, strategyId: strategy_id });
+  });
+
+  // GET /runs/report/:id - fetch report
+  fastify.get('/runs/report/:id', async (request, reply) => {
+    const id = request.params.id;
+    const filePath = path.join(REPORT_DIR, `${id}.json`);
+    try {
+      const doc = await readJson(filePath);
+      return doc;
+    } catch {
+      return reply.code(404).send({ error: 'REPORT_NOT_FOUND', id });
+    }
+  });
+
+  // GET /runs/decision - list decisions
+  fastify.get('/runs/decision', async (request) => {
+    const { seed, strategy_id } = request.query || {};
+    return listArtifacts('decision_', { seed, strategyId: strategy_id });
+  });
+
+  // GET /runs/decision/:id - fetch decision
+  fastify.get('/runs/decision/:id', async (request, reply) => {
+    const id = request.params.id;
+    const filePath = path.join(REPORT_DIR, `${id}.json`);
+    try {
+      const doc = await readJson(filePath);
+      return doc;
+    } catch {
+      return reply.code(404).send({ error: 'DECISION_NOT_FOUND', id });
+    }
+  });
+
+  // GET /runs/archive - list archive directories
+  fastify.get('/runs/archive', async () => {
+    try {
+      const entries = await fs.readdir(ARCHIVE_DIR, { withFileTypes: true });
+      const dirs = entries.filter((e) => e.isDirectory()).map((e) => e.name);
+      dirs.sort();
+      return dirs;
+    } catch {
+      return [];
     }
   });
 

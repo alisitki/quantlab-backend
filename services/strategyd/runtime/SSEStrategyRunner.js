@@ -99,6 +99,10 @@ export class SSEStrategyRunner {
   #queueOverflowDisconnectsTotal = 0;
   /** @type {number} */
   #lastEventTs = Date.now();
+  /** @type {number} */
+  #legacyYieldEvery = Number(process.env.STRATEGYD_LEGACY_YIELD_EVERY || 1000);
+  /** @type {number} */
+  #eventsSinceYield = 0;
   /** @type {string|null} */
   #startedAt = null;
   /** @type {boolean} */
@@ -226,7 +230,7 @@ export class SSEStrategyRunner {
     this.#processQueue();
   }
 
-  #processQueue() {
+  async #processQueue() {
     if (this.#isProcessing || this.#eventQueue.length === 0) return;
     this.#isProcessing = true;
 
@@ -258,6 +262,11 @@ export class SSEStrategyRunner {
 
       this.#localEventIdx++;
       this.#handleEvent(event);
+      this.#eventsSinceYield++;
+      if (this.#legacyYieldEvery > 0 && this.#eventsSinceYield >= this.#legacyYieldEvery) {
+        this.#eventsSinceYield = 0;
+        await new Promise((resolve) => setImmediate(resolve));
+      }
       this.#lastProcessedCursor = currentCursor;
       this.#lastTs = currentTs;
       this.#lastSeq = currentSeq;

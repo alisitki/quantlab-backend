@@ -7,6 +7,7 @@ import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
+import { canonicalStringify } from '../../core/strategy/state/StateSerializer.js';
 
 export class BacktestOrchestrator {
   constructor({ jobStore, config }) {
@@ -36,7 +37,7 @@ export class BacktestOrchestrator {
   }
 
   computeJobId(normalizedJob) {
-    const payload = this.#canonicalStringify(normalizedJob);
+    const payload = canonicalStringify(normalizedJob);
     return createHash('sha256').update(payload).digest('hex');
   }
 
@@ -321,14 +322,6 @@ export class BacktestOrchestrator {
     }
 
     job.aggregate = aggregate;
-  }
-
-  #canonicalStringify(obj) {
-    if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
-    if (Array.isArray(obj)) return '[' + obj.map((item) => this.#canonicalStringify(item)).join(',') + ']';
-
-    const keys = Object.keys(obj).sort();
-    return '{' + keys.map((k) => `"${k}":${this.#canonicalStringify(obj[k])}`).join(',') + '}';
   }
 
   #buildRunId(jobId, stream, symbol, date) {

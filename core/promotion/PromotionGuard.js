@@ -132,26 +132,3 @@ export function evaluate(backtestSummary, dummyBaseline) {
   };
 }
 
-/**
- * Log promotion decision to console.
- * @param {PromotionDecision} decision 
- * @param {string} [jobId] 
- */
-export function logDecision(decision, jobId = '') {
-  const prefix = jobId ? `[PromotionGuard][${jobId}]` : '[PromotionGuard]';
-  
-  if (decision.safety_pass) {
-    console.log(`${prefix} PASS - Model approved for promotion`);
-  } else {
-    console.log(`${prefix} REJECT - ${decision.reasons.length} rule(s) failed:`);
-    decision.reasons.forEach(r => console.log(`  - ${r}`));
-  }
-  
-  if (decision.metrics_snapshot) {
-    const m = decision.metrics_snapshot;
-    console.log(`${prefix} Metrics: return=${m.return_pct?.toFixed(2)}%, dd=${m.max_drawdown_pct?.toFixed(2)}%, baseline=${m.baseline_return_pct?.toFixed(2)}%, trades=${m.trades}`);
-  }
-}
-
-// Export rules for testing
-export const PROMOTION_RULES = RULES;

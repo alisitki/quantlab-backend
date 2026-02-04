@@ -16,6 +16,7 @@ import jobsRoutes from './routes/jobs.js';
 import experimentsRoutes from './routes/experiments.js';
 import candidatesRoutes from './routes/candidates.js';
 import apiRoutes from './routes/api.js';
+import runsRoutes from './routes/runs.js';
 
 // ENV GUARD
 if (process.env.OBSERVER_MODE !== '1') {
@@ -42,6 +43,7 @@ app.use('/gates', gateRoutes);
 app.use('/decisions', decisionRoutes);
 app.use('/alerts', alertRoutes);
 app.use('/debug', healthRoutes); // debug endpoint is in health.ts
+app.use('/', runsRoutes); // run monitoring (migrated from core/observer)
 
 // v1 API (secured)
 app.use('/v1', authGuard);

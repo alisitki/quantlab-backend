@@ -4,6 +4,7 @@ import { StrategyRuntime } from '../../../core/strategy/runtime/StrategyRuntime.
 import { OrderingGuard } from '../../../core/strategy/safety/OrderingGuard.js';
 import { ErrorContainment } from '../../../core/strategy/safety/ErrorContainment.js';
 import { MetricsRegistry } from '../../../core/strategy/metrics/MetricsRegistry.js';
+import { RiskManager } from '../../../core/risk/RiskManager.js';
 import { ErrorPolicy, OrderingMode } from '../../../core/strategy/interface/types.js';
 import { SignalEngine } from './SignalEngine.js';
 import { ManifestManager } from './ManifestManager.js';
@@ -144,6 +145,13 @@ export class RuntimeAdapterV2 {
       .attachMetrics(this.#metrics)
       .attachOrderingGuard(this.#runtimeOrderingGuard)
       .attachErrorContainment(this.#errorContainment);
+
+    // Risk management (Phase 2 Safety Guards)
+    if (config.riskConfig?.enabled !== false) {
+      const initialCapital = config.executionConfig?.initialCapital || 10000;
+      const riskManager = new RiskManager(config.riskConfig || {}, initialCapital);
+      this.#runtime.attachRiskManager(riskManager);
+    }
   }
 
   setStreamClient(client) {
@@ -751,6 +759,7 @@ export class RuntimeAdapterV2 {
   }
 
   #canonicalStringify(obj) {
+    if (typeof obj === 'bigint') return JSON.stringify(obj.toString());
     if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
     if (Array.isArray(obj)) return '[' + obj.map(item => this.#canonicalStringify(item)).join(',') + ']';
 

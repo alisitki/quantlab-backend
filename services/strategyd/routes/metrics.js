@@ -18,6 +18,8 @@ import { readAlertSummary } from './monitor.routes.js';
 import { observerRegistry } from '../../../core/observer/ObserverRegistry.js';
 import { loadKillSwitchFromEnv } from '../../../core/futures/kill_switch.js';
 import { SLOCalculator, SLO_DEFINITIONS } from '../../../core/slo/index.js';
+import { getCostWriter } from '../../../core/vast/CostWriter.js';
+import { createVastClient } from '../../../core/vast/VastClient.js';
 
 /**
  * Render bridge and system metrics in Prometheus format
@@ -183,6 +185,97 @@ function renderBridgeMetrics() {
 }
 
 /**
+ * Render GPU cost metrics in Prometheus format (cached, async)
+ */
+let gpuCostCache = { data: null, timestamp: 0 };
+const GPU_COST_CACHE_MS = 60000; // Cache for 1 minute
+
+async function renderGPUCostMetrics() {
+  const now = Date.now();
+  const lines = [];
+
+  // Use cached data if fresh
+  if (gpuCostCache.data && (now - gpuCostCache.timestamp) < GPU_COST_CACHE_MS) {
+    return gpuCostCache.data;
+  }
+
+  try {
+    const costWriter = getCostWriter();
+
+    // Get 24h and 7d summaries
+    const summary24h = await costWriter.getLocalSummary('24h');
+    const summary7d = await costWriter.getLocalSummary('7d');
+
+    // GPU Cost - 24h
+    lines.push('# HELP strategyd_gpu_cost_24h GPU cost in USD for the last 24 hours');
+    lines.push('# TYPE strategyd_gpu_cost_24h gauge');
+    lines.push(`strategyd_gpu_cost_24h ${summary24h.totalCost || 0}`);
+    lines.push('');
+
+    // GPU Cost - 7d
+    lines.push('# HELP strategyd_gpu_cost_7d GPU cost in USD for the last 7 days');
+    lines.push('# TYPE strategyd_gpu_cost_7d gauge');
+    lines.push(`strategyd_gpu_cost_7d ${summary7d.totalCost || 0}`);
+    lines.push('');
+
+    // GPU Jobs - 24h
+    lines.push('# HELP strategyd_gpu_jobs_24h Number of GPU jobs in the last 24 hours');
+    lines.push('# TYPE strategyd_gpu_jobs_24h gauge');
+    lines.push(`strategyd_gpu_jobs_24h ${summary24h.totalJobs || 0}`);
+    lines.push('');
+
+    // GPU Jobs - 7d
+    lines.push('# HELP strategyd_gpu_jobs_7d Number of GPU jobs in the last 7 days');
+    lines.push('# TYPE strategyd_gpu_jobs_7d gauge');
+    lines.push(`strategyd_gpu_jobs_7d ${summary7d.totalJobs || 0}`);
+    lines.push('');
+
+    // Avg cost per job
+    lines.push('# HELP strategyd_gpu_avg_cost_per_job Average cost per GPU job (7d)');
+    lines.push('# TYPE strategyd_gpu_avg_cost_per_job gauge');
+    lines.push(`strategyd_gpu_avg_cost_per_job ${summary7d.avgCostPerJob || 0}`);
+    lines.push('');
+
+    // Account balance (try to fetch, use -1 if unavailable)
+    let accountBalance = -1;
+    try {
+      const vast = createVastClient();
+      const account = await vast.getAccountInfo();
+      accountBalance = account.balance ?? account.credit ?? -1;
+    } catch {
+      // API key not set or error
+    }
+
+    lines.push('# HELP strategyd_gpu_account_balance Vast.ai account balance in USD');
+    lines.push('# TYPE strategyd_gpu_account_balance gauge');
+    lines.push(`strategyd_gpu_account_balance ${accountBalance}`);
+    lines.push('');
+
+    // Budget metrics
+    const budgetLimit = parseFloat(process.env.GPU_BUDGET_MONTHLY) || 100;
+    const budgetUsedPct = budgetLimit > 0 ? (summary7d.totalCost / budgetLimit) * 100 : 0;
+
+    lines.push('# HELP strategyd_gpu_budget_limit Monthly GPU budget limit in USD');
+    lines.push('# TYPE strategyd_gpu_budget_limit gauge');
+    lines.push(`strategyd_gpu_budget_limit ${budgetLimit}`);
+    lines.push('');
+
+    lines.push('# HELP strategyd_gpu_budget_used_pct Budget used percentage (7d)');
+    lines.push('# TYPE strategyd_gpu_budget_used_pct gauge');
+    lines.push(`strategyd_gpu_budget_used_pct ${budgetUsedPct.toFixed(2)}`);
+
+    // Cache the result
+    const result = lines.join('\n');
+    gpuCostCache = { data: result, timestamp: now };
+    return result;
+
+  } catch (err) {
+    // Return empty if cost tracking fails
+    return '# GPU cost metrics unavailable: ' + err.message;
+  }
+}
+
+/**
  * Create metrics provider for SLO calculator
  */
 function createSLOMetricsProvider() {
@@ -328,6 +421,9 @@ export default async function metricsRoutes(fastify, options) {
     // SLO metrics
     const sloMetrics = renderSLOMetrics();
 
-    return runnerMetrics + '\n\n' + bridgeMetrics + '\n\n' + sloMetrics;
+    // GPU cost metrics (async)
+    const gpuCostMetrics = await renderGPUCostMetrics();
+
+    return runnerMetrics + '\n\n' + bridgeMetrics + '\n\n' + sloMetrics + '\n\n' + gpuCostMetrics;
   });
 }

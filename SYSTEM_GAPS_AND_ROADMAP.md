@@ -236,7 +236,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 - [x] SLO/SLA monitoring — ✅ DONE (2026-02-04)
 - [x] Runbook automation — ✅ DONE (2026-02-04)
 - [ ] Incident response tooling
-- [ ] Cost tracking for GPU usage
+- [x] Cost tracking for GPU usage — ✅ DONE (2026-02-04)
 
 ### Available Tooling
 
@@ -248,6 +248,7 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 | `core/alerts/AlertManager.js` | Slack/file alerting | Available |
 | `tools/verify-audit-trail.js` | Audit verification | Available |
 | `tools/run-archive-retention.js` | Archive cleanup | Available |
+| `core/scheduler/report_ml_costs.js` | GPU cost reporting | Available |
 
 ---
 
@@ -314,6 +315,7 @@ Phase 4 Activation (BLOCKED until safety verified):
 Phase 5 Completion:
 ├── Observability dashboard
 ├── ✅ Alerting integration (DONE)
+├── ✅ GPU cost tracking (DONE)
 └── Incident response
 ```
 

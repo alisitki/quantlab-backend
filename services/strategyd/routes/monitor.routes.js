@@ -15,6 +15,8 @@ import path from 'path';
 import { getBridgeSingletons } from './bridge.routes.js';
 import { observerRegistry } from '../../../core/observer/ObserverRegistry.js';
 import { loadKillSwitchFromEnv } from '../../../core/futures/kill_switch.js';
+import { getCostWriter } from '../../../core/vast/CostWriter.js';
+import { createVastClient } from '../../../core/vast/VastClient.js';
 
 /**
  * Read SYSTEM_STATE.json
@@ -443,6 +445,53 @@ export default async function monitorRoutes(fastify, options) {
       lookbackHours,
       summary,
       alerts
+    };
+  });
+
+  /**
+   * GET /v1/monitor/costs - GPU cost summary
+   */
+  fastify.get('/v1/monitor/costs', async (request, reply) => {
+    const { period = '7d' } = request.query;
+
+    const costWriter = getCostWriter();
+    let accountBalance = null;
+
+    // Get local summary (fast)
+    const summary = await costWriter.getLocalSummary(period);
+
+    // Try to get account balance
+    try {
+      const vast = createVastClient();
+      const account = await vast.getAccountInfo();
+      accountBalance = account.balance ?? account.credit ?? null;
+    } catch {
+      // VAST_API_KEY may not be set or API error
+    }
+
+    // Budget check (from env)
+    const budgetLimit = parseFloat(process.env.GPU_BUDGET_MONTHLY) || 100;
+    const budgetStatus = summary.totalCost >= budgetLimit ? 'exceeded'
+      : summary.totalCost >= budgetLimit * 0.9 ? 'critical'
+      : summary.totalCost >= budgetLimit * 0.75 ? 'warning'
+      : 'ok';
+
+    return {
+      period,
+      generatedAt: new Date().toISOString(),
+      summary: {
+        totalJobs: summary.totalJobs,
+        totalCost: summary.totalCost,
+        avgCostPerJob: summary.avgCostPerJob,
+        totalRuntimeMs: summary.totalRuntimeMs
+      },
+      bySymbol: summary.bySymbol,
+      account: {
+        balance: accountBalance,
+        budgetLimit,
+        budgetUsedPct: Math.round((summary.totalCost / budgetLimit) * 100),
+        budgetStatus
+      }
     };
   });
 

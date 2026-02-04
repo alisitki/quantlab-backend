@@ -33,17 +33,6 @@ export function canonicalStringify(value) {
 }
 
 /**
- * Pretty-print canonical JSON (for debugging)
- * 
- * @param {any} value - Value to stringify
- * @param {number} [indent=2] - Indentation spaces
- * @returns {string} Formatted canonical JSON string
- */
-export function canonicalStringifyPretty(value, indent = 2) {
-  return JSON.stringify(value, replacer, indent);
-}
-
-/**
  * Parse JSON with BigInt restoration.
  * 
  * Converts strings ending with 'n' back to BigInt.
@@ -163,7 +152,6 @@ function deepFreeze(obj) {
 // Default export for convenience
 export default {
   stringify: canonicalStringify,
-  stringifyPretty: canonicalStringifyPretty,
   parse: canonicalParse,
   equals: canonicalEquals,
   clone: canonicalClone,

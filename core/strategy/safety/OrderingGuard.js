@@ -77,8 +77,7 @@ export class OrderingGuard {
       if (this.#mode === OrderingMode.STRICT) {
         throw new Error(result.error);
       } else {
-        // WARN mode - log but continue
-        console.warn(`[OrderingGuard] ${result.error}`);
+        // WARN mode - continue silently
       }
     }
     

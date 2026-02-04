@@ -17,7 +17,6 @@
 
 import { promises as fs } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { spawn } from 'node:child_process';
 import { canonicalStringify, canonicalParse } from './StateSerializer.js';
 import { computeHash, verifyHash } from '../safety/DeterminismValidator.js';
 
@@ -258,90 +257,6 @@ export class CheckpointManager {
     
     return deleted;
   }
-}
-
-/**
- * Save checkpoint to S3.
- * Uses aws-cli for simplicity.
- * 
- * @param {Object} state - State to save
- * @param {string} s3Uri - S3 URI (s3://bucket/key)
- * @returns {Promise<{uri: string, hash: string}>} Save result
- */
-export async function saveToS3(state, s3Uri) {
-  const stateHash = computeHash(state);
-  
-  const checkpoint = {
-    state,
-    stateHash,
-    createdAt: new Date().toISOString(),
-    version: '1.0.0'
-  };
-  
-  const content = canonicalStringify(checkpoint);
-  
-  return new Promise((resolve, reject) => {
-    const proc = spawn('aws', ['s3', 'cp', '-', s3Uri], {
-      stdio: ['pipe', 'pipe', 'pipe']
-    });
-    
-    let stderr = '';
-    proc.stderr.on('data', (data) => { stderr += data; });
-    
-    proc.on('close', (code) => {
-      if (code === 0) {
-        resolve({ uri: s3Uri, hash: stateHash });
-      } else {
-        reject(new Error(`S3_UPLOAD_FAILED: ${stderr}`));
-      }
-    });
-    
-    proc.stdin.write(content);
-    proc.stdin.end();
-  });
-}
-
-/**
- * Load checkpoint from S3.
- * 
- * @param {string} s3Uri - S3 URI
- * @returns {Promise<CheckpointData>} Loaded checkpoint
- */
-export async function loadFromS3(s3Uri) {
-  return new Promise((resolve, reject) => {
-    const proc = spawn('aws', ['s3', 'cp', s3Uri, '-'], {
-      stdio: ['pipe', 'pipe', 'pipe']
-    });
-    
-    let stdout = '';
-    let stderr = '';
-    proc.stdout.on('data', (data) => { stdout += data; });
-    proc.stderr.on('data', (data) => { stderr += data; });
-    
-    proc.on('close', (code) => {
-      if (code !== 0) {
-        reject(new Error(`S3_DOWNLOAD_FAILED: ${stderr}`));
-        return;
-      }
-      
-      try {
-        const checkpoint = canonicalParse(stdout);
-        
-        // Verify hash
-        if (checkpoint.stateHash) {
-          const actualHash = computeHash(checkpoint.state);
-          if (actualHash !== checkpoint.stateHash) {
-            reject(new Error(`CHECKPOINT_CORRUPT: S3 checkpoint hash mismatch`));
-            return;
-          }
-        }
-        
-        resolve(checkpoint);
-      } catch (err) {
-        reject(new Error(`S3_PARSE_FAILED: ${err.message}`));
-      }
-    });
-  });
 }
 
 export default CheckpointManager;

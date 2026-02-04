@@ -207,15 +207,4 @@ export class StrategyStateContainer {
   }
 }
 
-/**
- * Create a typed state container factory.
- * 
- * @template T
- * @param {T} defaultState - Default state values
- * @returns {function(): StrategyStateContainer<T>} Factory function
- */
-export function createStateContainerFactory(defaultState) {
-  return () => new StrategyStateContainer(canonicalClone(defaultState));
-}
-
 export default StrategyStateContainer;

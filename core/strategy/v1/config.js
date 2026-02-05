@@ -63,7 +63,7 @@ export const DEFAULT_CONFIG = {
     regimeTrendMin: -0.5,         // Allow trend >= -0.5
     regimeVolMin: 0,              // Allow all volatility regimes
     regimeSpreadMax: 2,           // Block only VERY_WIDE spread
-    minSignalScore: 0.6,          // Minimum confidence (stricter than execution.minConfidence)
+    minSignalScore: 0.5,          // Minimum confidence (aligned with execution.minConfidence)
     cooldownMs: 5000,             // 5 seconds cooldown between trades
     maxSpreadNormalized: 0.001,   // Max spread/mid ratio (0.1%)
     logBlockedTrades: true
@@ -116,7 +116,7 @@ export const HIGH_FREQUENCY_CONFIG = {
     regimeTrendMin: -0.7,         // More permissive
     regimeVolMin: 0,
     regimeSpreadMax: 2,
-    minSignalScore: 0.5,          // Lower threshold for HF
+    minSignalScore: 0.4,          // Lower threshold for HF
     cooldownMs: 3000,             // Shorter cooldown (3s)
     maxSpreadNormalized: 0.0005,  // Tighter spread requirement
     logBlockedTrades: true
@@ -196,7 +196,7 @@ export const AGGRESSIVE_CONFIG = {
     regimeTrendMin: -1.0,         // Allow all trends
     regimeVolMin: 0,
     regimeSpreadMax: 2,
-    minSignalScore: 0.4,          // Lower threshold
+    minSignalScore: 0.35,         // Lower threshold (more aggressive)
     cooldownMs: 2000,             // Very short cooldown (2s)
     maxSpreadNormalized: 0.002,   // More permissive spread
     logBlockedTrades: true

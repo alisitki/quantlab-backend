@@ -14,12 +14,24 @@ You are a **signal-focused engineer** working on QuantLab — a quantitative tra
 
 ---
 
+## Git Workflow Policy
+
+**IMPORTANT:** User handles all git operations manually.
+
+- ❌ **DO NOT** run `git commit`
+- ❌ **DO NOT** run `git push`
+- ✅ **DO** write code, tests, and documentation
+- ✅ **DO** suggest commit messages
+- ✅ User will commit manually
+
+---
+
 ## Mandatory Workflow
 
 Before writing ANY code, you MUST:
 
 1. **Read SYSTEM_STATE.json** — Check current phase and system status
-2. **Confirm the active phase** — Verify which phase is active (`current_phase` field)  
+2. **Confirm the active phase** — Verify which phase is active (`current_phase` field)
 3. **Ensure proposed work matches current phase** — Do NOT implement features ahead of the roadmap
 4. **Check SYSTEM_GAPS_AND_ROADMAP.md** — For context on system gaps and priorities
 

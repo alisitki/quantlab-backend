@@ -433,12 +433,13 @@ Phase 5 Completion:
 
 ### Strategy Development (ACTIVE) - 2026-02-05
 
-**Status:** ✅ StrategyV1 implemented, tests passing
+**Status:** ✅ StrategyV1 implemented, SignalGate validated, baseline comparison pending
 
 | Component | Location | Status |
 |-----------|----------|--------|
 | BaselineStrategy | core/strategy/baseline/ | PRODUCTION |
-| StrategyV1 | core/strategy/v1/StrategyV1.js | READY |
+| StrategyV1 | core/strategy/v1/StrategyV1.js | ACTIVE |
+| SignalGate | core/decision/SignalGate.js | VALIDATED |
 | RegimeModeSelector | core/strategy/v1/decision/RegimeModeSelector.js | READY |
 | SignalGenerator | core/strategy/v1/decision/SignalGenerator.js | READY |
 | Combiner | core/strategy/v1/decision/Combiner.js | READY |
@@ -448,11 +449,40 @@ Phase 5 Completion:
 - ✅ Regime mode switching (HIGH vol → mean reversion, LOW vol → momentum)
 - ✅ Alpha-weighted signal combination
 - ✅ 5 config presets (default, high_frequency, quality, aggressive, conservative)
+- ✅ SignalGate decision gating (4 gates: regime, signal, cooldown, spread)
 
-**Next Steps:**
-- [ ] Backtest StrategyV1 vs BaselineStrategy
-- [ ] Compare performance metrics
-- [ ] Feature report generation on historical data
+**Backtest Results Summary:**
+
+| Variant | Trades | Return | Win Rate | Status |
+|---------|--------|--------|----------|--------|
+| Initial (no gate) | 1.9M | -0.25% | 34% | EXCESSIVE_TRADING |
+| With gate (broken) | 0 | N/A | N/A | THRESHOLD_MISCONFIGURATION |
+| With gate (fixed) | 12,927 | 0.00% | 35% | VALIDATED |
+
+**SignalGate Fix (2026-02-05):**
+- **Issue:** gate.minSignalScore (0.6) > confidence_range (0.50-0.56) → Zero trades
+- **Root cause:** Combiner weighted mode produces confidence [0, 1], but realistic range is [0.5, 0.6] for 5 features
+- **Fix:** Lowered minSignalScore from 0.6 to 0.5 (aligned with execution.minConfidence)
+- **Result:**
+  - Gate pass rate: 0% → 0.7% ✅
+  - Trades: 0 → 12,927 ✅
+  - Dominant block: signal_strength (92%) → **cooldown (99.99%)** ✅
+  - Noise reduction: **99.3%** (from 1.9M to 13K trades)
+- **Config changes:**
+  - DEFAULT: 0.6 → 0.5
+  - HIGH_FREQUENCY: 0.5 → 0.4
+  - AGGRESSIVE: 0.4 → 0.35
+
+**Performance Notes:**
+- Return: 0.00% (break-even)
+- Win rate: 35% (low)
+- BaselineStrategy comparison needed to validate alpha generation
+
+**Next Steps (Priority Order):**
+- [x] **Backtest with SignalGate** — ✅ DONE (99.3% noise reduction)
+- [ ] **Backtest StrategyV1 vs BaselineStrategy comparison** — PRIORITY #1
+- [ ] Confidence rescaling (Combiner: [0, 1] → [0.5, 1.0])
+- [ ] Feature selection optimization (top-N tuning)
 
 ### ML Integration (ADVISORY_ACTIVE)
 

@@ -14,7 +14,7 @@
 
   "alpha_layer": {
     "status": "ACTIVE",
-    "current_focus": "strategy_development",
+    "current_focus": "strategy_validation",
     "feature_analysis": {
       "status": "ACTIVE",
       "modules": [
@@ -46,11 +46,12 @@
       "target_strategy": "StrategyV1",
       "regime_awareness": true,
       "decision_gating": {
-        "status": "INTEGRATED",
+        "status": "VALIDATED",
         "module": "SignalGate",
         "gate_count": 4,
         "gates": ["regime", "signal_strength", "cooldown", "spread_penalty"],
-        "expected_trade_reduction": "40-80%",
+        "actual_trade_reduction": "99.3%",
+        "dominant_filter": "cooldown",
         "config_presets": ["default", "high_frequency", "quality", "aggressive", "conservative"]
       },
       "modules": [
@@ -72,6 +73,33 @@
           "win_rate": 0.34,
           "status": "EXCESSIVE_TRADING",
           "issues": ["aşırı_trading", "düşük_win_rate", "cooldown_eksik"]
+        },
+        "strategyv1_with_gate_broken": {
+          "date": "2026-02-05",
+          "dataset": "adausdt_20260203",
+          "events": 3745659,
+          "trades": 0,
+          "gate_pass_rate": 0.0,
+          "status": "THRESHOLD_MISCONFIGURATION",
+          "issue": "gate.minSignalScore (0.6) > confidence_range (0.50-0.56)",
+          "block_reason": "signal_strength (92.6%)"
+        },
+        "strategyv1_with_gate_fixed": {
+          "date": "2026-02-05",
+          "dataset": "adausdt_20260203",
+          "events": 3745659,
+          "trades": 12927,
+          "return_pct": 0.0,
+          "max_drawdown_pct": 0.0,
+          "win_rate": 0.35,
+          "gate_pass_rate": 0.007,
+          "gate_evaluations": 1900683,
+          "gate_passed": 12927,
+          "gate_blocked": 1887756,
+          "dominant_block_reason": "cooldown (99.99%)",
+          "status": "VALIDATED",
+          "noise_reduction": "99.3%",
+          "config": "default (gate.minSignalScore=0.5)"
         }
       }
     },

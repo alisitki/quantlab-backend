@@ -57,6 +57,18 @@ export const DEFAULT_CONFIG = {
     spreadThreshold: 0.0005      // Wide spread delay threshold
   },
 
+  // Decision Gating Layer (noise reduction)
+  gate: {
+    enabled: true,
+    regimeTrendMin: -0.5,         // Allow trend >= -0.5
+    regimeVolMin: 0,              // Allow all volatility regimes
+    regimeSpreadMax: 2,           // Block only VERY_WIDE spread
+    minSignalScore: 0.6,          // Minimum confidence (stricter than execution.minConfidence)
+    cooldownMs: 5000,             // 5 seconds cooldown between trades
+    maxSpreadNormalized: 0.001,   // Max spread/mid ratio (0.1%)
+    logBlockedTrades: true
+  },
+
   // Feature builder parameters
   featureParams: {
     ema: { period: 20 },
@@ -97,6 +109,17 @@ export const HIGH_FREQUENCY_CONFIG = {
     baseQuantity: 0.005,        // Yarı pozisyon
     maxQuantity: 0.05,
     spreadThreshold: 0.0003
+  },
+
+  gate: {
+    enabled: true,
+    regimeTrendMin: -0.7,         // More permissive
+    regimeVolMin: 0,
+    regimeSpreadMax: 2,
+    minSignalScore: 0.5,          // Lower threshold for HF
+    cooldownMs: 3000,             // Shorter cooldown (3s)
+    maxSpreadNormalized: 0.0005,  // Tighter spread requirement
+    logBlockedTrades: true
   }
 };
 
@@ -122,6 +145,17 @@ export const QUALITY_CONFIG = {
     baseQuantity: 0.02,         // Daha büyük pozisyon
     maxQuantity: 0.2,
     spreadThreshold: 0.0005
+  },
+
+  gate: {
+    enabled: true,
+    regimeTrendMin: -0.3,         // Stricter trend requirement
+    regimeVolMin: 0,
+    regimeSpreadMax: 1,           // Block WIDE spread
+    minSignalScore: 0.75,         // Very high threshold
+    cooldownMs: 10000,            // Longer cooldown (10s)
+    maxSpreadNormalized: 0.0005,  // Tight spread only
+    logBlockedTrades: true
   }
 };
 
@@ -155,6 +189,17 @@ export const AGGRESSIVE_CONFIG = {
     baseQuantity: 0.02,
     maxQuantity: 0.15,
     spreadThreshold: 0.001
+  },
+
+  gate: {
+    enabled: true,
+    regimeTrendMin: -1.0,         // Allow all trends
+    regimeVolMin: 0,
+    regimeSpreadMax: 2,
+    minSignalScore: 0.4,          // Lower threshold
+    cooldownMs: 2000,             // Very short cooldown (2s)
+    maxSpreadNormalized: 0.002,   // More permissive spread
+    logBlockedTrades: true
   }
 };
 
@@ -188,6 +233,17 @@ export const CONSERVATIVE_CONFIG = {
     baseQuantity: 0.005,
     maxQuantity: 0.05,
     spreadThreshold: 0.0003     // Sadece tight spread
+  },
+
+  gate: {
+    enabled: true,
+    regimeTrendMin: 0.0,          // Neutral or positive trend only
+    regimeVolMin: 0,
+    regimeSpreadMax: 1,           // Only NORMAL or TIGHT spread
+    minSignalScore: 0.85,         // Extremely high threshold
+    cooldownMs: 15000,            // Very long cooldown (15s)
+    maxSpreadNormalized: 0.0003,  // Very tight spread requirement
+    logBlockedTrades: true
   }
 };
 
@@ -233,6 +289,10 @@ export function mergeConfig(base, overrides) {
     execution: {
       ...base.execution,
       ...overrides?.execution
+    },
+    gate: {
+      ...base.gate,
+      ...overrides?.gate
     },
     featureParams: {
       ...base.featureParams,

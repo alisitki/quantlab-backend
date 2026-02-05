@@ -17,6 +17,7 @@ import { Combiner, ACTION } from './decision/Combiner.js';
 import { DEFAULT_CONFIG, mergeConfig } from './config.js';
 import { DecisionLogger } from '../../ml/logging/DecisionLogger.js';
 import { RegimeLogger } from '../../ml/logging/RegimeLogger.js';
+import { SignalGate } from '../../decision/SignalGate.js';
 
 /**
  * Position sizing modes
@@ -33,12 +34,14 @@ export class StrategyV1 {
   #regimeModeSelector;
   #signalGenerator;
   #combiner;
+  #signalGate = null;
   #decisionLogger = null;
   #regimeLogger = null;
 
   // State
   #position = 'FLAT';
   #lastMode = null;
+  #lastTradeTime = null;
   #tradeCount = 0;
   #signalCount = 0;
   #warmupComplete = false;
@@ -53,6 +56,11 @@ export class StrategyV1 {
     this.#regimeModeSelector = new RegimeModeSelector(this.#config.regime);
     this.#signalGenerator = new SignalGenerator(this.#config.signals);
     this.#combiner = new Combiner(this.#config.combiner);
+
+    // Initialize decision gating layer
+    if (this.#config.gate?.enabled) {
+      this.#signalGate = new SignalGate(this.#config.gate);
+    }
   }
 
   /**
@@ -104,6 +112,19 @@ export class StrategyV1 {
     ctx.logger.info(`Combiner mode: ${this.#config.combiner.mode}`);
     ctx.logger.info(`Min confidence: ${this.#config.execution.minConfidence}`);
 
+    // Log gate configuration
+    if (this.#signalGate) {
+      const gateConfig = this.#signalGate.getConfig();
+      ctx.logger.info('Decision Gate: ENABLED', {
+        minSignalScore: gateConfig.minSignalScore,
+        cooldownMs: gateConfig.cooldownMs,
+        regimeTrendMin: gateConfig.regimeTrendMin,
+        maxSpreadNormalized: gateConfig.maxSpreadNormalized
+      });
+    } else {
+      ctx.logger.warn('Decision Gate: DISABLED (expect high trade frequency!)');
+    }
+
     // 4. Initialize loggers if enabled
     if (this.#config.logging?.decisionLogging) {
       this.#decisionLogger = DecisionLogger;
@@ -124,9 +145,15 @@ export class StrategyV1 {
     // 5. Reset state
     this.#position = 'FLAT';
     this.#lastMode = null;
+    this.#lastTradeTime = null;
     this.#tradeCount = 0;
     this.#signalCount = 0;
     this.#warmupComplete = false;
+
+    // Reset gate stats if enabled
+    if (this.#signalGate) {
+      this.#signalGate.resetStats();
+    }
   }
 
   /**
@@ -226,6 +253,26 @@ export class StrategyV1 {
     if (decision.action !== ACTION.HOLD &&
         decision.confidence >= this.#config.execution.minConfidence) {
 
+      // Apply decision gate (if enabled)
+      if (this.#signalGate) {
+        const gateResult = this.#signalGate.evaluate({
+          signalScore: decision.confidence,
+          features,
+          regime: regimes,
+          mode,
+          lastTradeTime: this.#lastTradeTime,
+          now: event.ts_event
+        });
+
+        if (!gateResult.allow) {
+          // Trade blocked by gate
+          if (ctx.logger?.debug) {
+            ctx.logger.debug(`Gate blocked: ${gateResult.reason}`);
+          }
+          return;
+        }
+      }
+
       const quantity = this.#calculateQuantity(decision, mode, ctx);
 
       if (ctx.placeOrder) {
@@ -239,6 +286,7 @@ export class StrategyV1 {
         });
 
         this.#tradeCount++;
+        this.#lastTradeTime = event.ts_event;  // Track last trade time
         ctx.logger.info(`Trade #${this.#tradeCount}: ${decision.action}`, {
           confidence: decision.confidence.toFixed(3),
           quantity,
@@ -321,6 +369,19 @@ export class StrategyV1 {
     ctx.logger.info(`Total signals: ${this.#signalCount}`);
     ctx.logger.info(`Active features: ${this.#signalGenerator.getTopFeatures().map(f => f.name).join(', ')}`);
 
+    // Log gate statistics
+    if (this.#signalGate) {
+      const gateStats = this.#signalGate.getStats();
+      ctx.logger.info('=== Decision Gate Statistics ===');
+      ctx.logger.info(`Total evaluations: ${gateStats.total}`);
+      ctx.logger.info(`Passed: ${gateStats.passed} (${(gateStats.passRate * 100).toFixed(1)}%)`);
+      ctx.logger.info(`Blocked: ${gateStats.blocked}`);
+
+      if (Object.keys(gateStats.blockReasons).length > 0) {
+        ctx.logger.info('Block reasons:', gateStats.blockReasons);
+      }
+    }
+
     // Reset
     this.#featureBuilder?.reset();
     this.#regimeModeSelector.reset();
@@ -335,10 +396,12 @@ export class StrategyV1 {
     return {
       position: this.#position,
       mode: this.#lastMode,
+      lastTradeTime: this.#lastTradeTime,
       tradeCount: this.#tradeCount,
       signalCount: this.#signalCount,
       warmupComplete: this.#warmupComplete,
-      topFeatures: this.#signalGenerator.getTopFeatures()
+      topFeatures: this.#signalGenerator.getTopFeatures(),
+      gateStats: this.#signalGate ? this.#signalGate.getStats() : null
     };
   }
 

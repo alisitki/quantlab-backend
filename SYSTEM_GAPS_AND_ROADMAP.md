@@ -331,7 +331,7 @@ Phase 5 Completion:
 >
 > Infrastructure is COMPLETE. Development focus is now on SIGNAL/ALPHA layer.
 
-### Feature Development (IN_PROGRESS)
+### Feature Development (COMPLETE) - 2026-02-05
 
 | Feature | Location | Status |
 |---------|----------|--------|
@@ -339,32 +339,75 @@ Phase 5 Completion:
 | spread | core/features/builders/SpreadFeature.js | LIVE |
 | return_1 | core/features/builders/ReturnFeature.js | LIVE |
 | volatility | core/features/builders/VolatilityFeature.js | LIVE |
-| RSI | pending | PLANNED |
-| EMA | pending | PLANNED |
-| ATR | pending | PLANNED |
-| Regime detection | pending | PLANNED |
+| ema | core/features/builders/EMAFeature.js | LIVE |
+| rsi | core/features/builders/RSIFeature.js | LIVE |
+| atr | core/features/builders/ATRFeature.js | LIVE |
+| roc | core/features/builders/ROCFeature.js | LIVE |
+| regime_volatility | core/features/builders/VolatilityRegimeFeature.js | LIVE |
+| regime_trend | core/features/builders/TrendRegimeFeature.js | LIVE |
+| regime_spread | core/features/builders/SpreadRegimeFeature.js | LIVE |
+| microprice | core/features/builders/MicropriceFeature.js | LIVE |
+| imbalance_ema | core/features/builders/ImbalanceEMAFeature.js | LIVE |
+| ema_slope | core/features/builders/EMASlopeFeature.js | LIVE |
+| bollinger_pos | core/features/builders/BollingerPositionFeature.js | LIVE |
 
-**Target:** 15+ live features (currently 4)
+**Target:** 15 live features - **ACHIEVED**
 
-### Strategy Development (PENDING)
+### Feature Analysis & Intelligence (COMPLETE) - 2026-02-05
 
-- Current: `BaselineStrategy` (primitive, noise-trading)
-- Target: `StrategyV1` (regime-aware, adaptive sizing)
-- Awaiting feature layer completion
+| Module | Location | Status |
+|--------|----------|--------|
+| FeatureCorrelation | core/ml/analysis/FeatureCorrelation.js | LIVE |
+| FeatureLabelCorrelation | core/ml/analysis/FeatureLabelCorrelation.js | LIVE |
+| LabelDistribution | core/ml/analysis/LabelDistribution.js | LIVE |
+| PermutationImportance | core/ml/analysis/PermutationImportance.js | LIVE |
+| FeatureDistribution | core/ml/analysis/FeatureDistribution.js | LIVE |
+| FeatureStability | core/ml/analysis/FeatureStability.js | LIVE |
+| FeatureReportGenerator | core/ml/analysis/FeatureReportGenerator.js | LIVE |
+| DecisionLogger | core/ml/logging/DecisionLogger.js | LIVE |
+| RegimeLogger | core/ml/logging/RegimeLogger.js | LIVE |
+
+**CLI Tool:** `tools/ml-feature-analysis.js`
+**Alpha Score:** `0.4 * importance + 0.3 * labelCorr + 0.3 * stability`
+
+### Strategy Development (ACTIVE) - 2026-02-05
+
+**Status:** ✅ StrategyV1 implemented, tests passing
+
+| Component | Location | Status |
+|-----------|----------|--------|
+| BaselineStrategy | core/strategy/baseline/ | PRODUCTION |
+| StrategyV1 | core/strategy/v1/StrategyV1.js | READY |
+| RegimeModeSelector | core/strategy/v1/decision/RegimeModeSelector.js | READY |
+| SignalGenerator | core/strategy/v1/decision/SignalGenerator.js | READY |
+| Combiner | core/strategy/v1/decision/Combiner.js | READY |
+
+**Key Features:**
+- ✅ Dynamic feature selection (from analysis report, NOT hardcoded)
+- ✅ Regime mode switching (HIGH vol → mean reversion, LOW vol → momentum)
+- ✅ Alpha-weighted signal combination
+- ✅ 5 config presets (default, high_frequency, quality, aggressive, conservative)
+
+**Next Steps:**
+- [ ] Backtest StrategyV1 vs BaselineStrategy
+- [ ] Compare performance metrics
+- [ ] Feature report generation on historical data
 
 ### ML Integration (ADVISORY_ACTIVE)
 
 ML operates in advisory mode. Next steps:
-- [ ] Expose confidence to strategy
+- [x] Expose confidence to strategy — ✅ DONE (context.getMlAdvice())
 - [ ] Enable position scaling based on confidence
+- [ ] Integrate ML signals with StrategyV1
 
-### Validation (NOT_STARTED)
+### Validation (READY) - 2026-02-05
 
-Decision logging not yet implemented:
-- [ ] Feature values at decision time
-- [ ] Regime state logging
-- [ ] Decision reasoning traces
+Decision and regime logging implemented:
+- [x] Feature values at decision time — ✅ DecisionLogger.logDecision()
+- [x] Regime state logging — ✅ RegimeLogger.logRegimeState()
+- [x] Transition detection — ✅ RegimeLogger detects regime changes
+- [ ] Decision reasoning traces (future: explain StrategyV1 decisions)
 
 ---
 
-*This document reflects gaps identified through codebase analysis. Last updated: 2026-02-04.*
+*This document reflects gaps identified through codebase analysis. Last updated: 2026-02-05.*

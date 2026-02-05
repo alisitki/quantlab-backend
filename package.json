@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@fastify/rate-limit": "^10.3.0",
+    "dotenv": "^17.2.3",
+    "fastify": "^5.7.4",
+    "pino": "^10.3.0",
+    "pino-pretty": "^13.1.3"
+  }
+}

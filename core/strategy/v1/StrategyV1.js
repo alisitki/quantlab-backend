@@ -159,7 +159,9 @@ export class StrategyV1 {
 
     if (!this.#warmupComplete) {
       this.#warmupComplete = true;
-      ctx.logger.debug('Warmup complete, starting signal generation');
+      if (ctx.logger?.info) {
+        ctx.logger.info('Warmup complete, starting signal generation');
+      }
     }
 
     // 2. Get regime values
@@ -210,10 +212,12 @@ export class StrategyV1 {
     if (mode.combined.executionDelay) {
       const currentSpread = features.spread;
       if (currentSpread > this.#config.execution.spreadThreshold) {
-        ctx.logger.debug('Spread delay active', {
-          spread: currentSpread,
-          threshold: this.#config.execution.spreadThreshold
-        });
+        if (ctx.logger?.info) {
+          ctx.logger.info('Spread delay active', {
+            spread: currentSpread,
+            threshold: this.#config.execution.spreadThreshold
+          });
+        }
         return; // Wait for better spread
       }
     }
@@ -225,10 +229,13 @@ export class StrategyV1 {
       const quantity = this.#calculateQuantity(decision, mode, ctx);
 
       if (ctx.placeOrder) {
+        const symbol = event.symbol || this.#config.symbol.toUpperCase();
         ctx.placeOrder({
+          symbol,
           side: decision.action === ACTION.LONG ? 'BUY' : 'SELL',
           type: 'MARKET',
-          quantity
+          qty: quantity,
+          ts_event: event.ts_event
         });
 
         this.#tradeCount++;

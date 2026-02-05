@@ -51,7 +51,20 @@
         "Combiner",
         "StrategyV1"
       ],
-      "config_presets": ["default", "high_frequency", "quality", "aggressive", "conservative"]
+      "config_presets": ["default", "high_frequency", "quality", "aggressive", "conservative"],
+      "backtest_results": {
+        "strategyv1_initial": {
+          "date": "2026-02-05",
+          "dataset": "adausdt_20260203",
+          "events": 3745659,
+          "trades": 1900683,
+          "return_pct": -0.25,
+          "max_drawdown_pct": -0.74,
+          "win_rate": 0.34,
+          "status": "EXCESSIVE_TRADING",
+          "issues": ["aşırı_trading", "düşük_win_rate", "cooldown_eksik"]
+        }
+      }
     },
     "ml_integration": {
       "status": "ADVISORY_ACTIVE",
@@ -71,7 +84,14 @@
     "replay_engine": "STABLE",
     "exchange_bridges": "STABLE",
     "safety_guards": "STABLE",
-    "monitoring": "STABLE"
+    "monitoring": "STABLE",
+    "compact_pipeline": {
+      "status": "FIXED",
+      "fix_date": "2026-02-05",
+      "issue": "Missing ordering_columns in meta.json",
+      "resolution": "Added ordering_columns and stream_type to compact.py",
+      "backfill_status": "IN_PROGRESS"
+    }
   },
 
   "risk_layer": "INTEGRATED",

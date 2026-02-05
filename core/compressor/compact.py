@@ -433,6 +433,8 @@ class CompactionJob:
                     "sha256": metadata.get('sha256', 'N/A'),
                     "source_files": len(raw_files),
                     "schema_version": 1,
+                    "stream_type": stream,
+                    "ordering_columns": ["ts_event", "seq"],
                     "day_quality": result['day_quality'],
                     "post_filter_version": POST_FILTER_VERSION
                 }

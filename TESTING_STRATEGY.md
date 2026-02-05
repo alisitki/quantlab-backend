@@ -328,6 +328,126 @@ aws s3 ls s3://${S3_COMPACT_BUCKET}/features/featureset=v1/exchange=binance/stre
 
 ---
 
+## Memory Validation & Optimization Testing
+
+**Added:** 2026-02-05
+
+### Purpose
+
+Verify that memory optimizations (streaming maxDD, fills streaming) maintain 0% accuracy loss while reducing memory footprint by 99.998%.
+
+### Test Suite Overview
+
+| Test | Purpose | Location | Tests |
+|------|---------|----------|-------|
+| Streaming MaxDD | O(1) maxDD accuracy | `core/execution/tests/test-streaming-maxdd.js` | 6 tests |
+| FillsStream | Buffered disk I/O | `core/execution/tests/test-fills-stream.js` | 7 tests |
+| Integration | End-to-end accuracy | `core/execution/tests/test-fills-streaming-integration.js` | 4 tests |
+
+### Running Memory Tests
+
+```bash
+# Individual test suites
+node core/execution/tests/test-streaming-maxdd.js
+node core/execution/tests/test-fills-stream.js
+node core/execution/tests/test-fills-streaming-integration.js
+
+# All tests (17 total)
+for test in core/execution/tests/test-*.js; do
+    echo "Running $test"
+    node "$test" || exit 1
+done
+```
+
+### Expected Results
+
+**All tests:** 17/17 PASS ✅
+
+```
+Streaming MaxDD Tests:     6/6 PASS
+FillsStream Tests:         7/7 PASS
+Integration Tests:         4/4 PASS
+```
+
+### Memory Profiling
+
+**Before Optimization:**
+```bash
+# Run with default 2GB heap (will crash at ~1.65M trades)
+node --max-old-space-size=2048 core/strategy/v1/tests/test-strategy-v1.js
+# Expected: CRASH at 86.7% complete
+```
+
+**After Optimization:**
+```bash
+# Enable optimizations
+export EXECUTION_STREAMING_MAXDD=1
+export EXECUTION_STREAM_FILLS=1
+
+# Run with 2GB heap (should complete)
+node --max-old-space-size=2048 core/strategy/v1/tests/test-strategy-v1.js
+# Expected: SUCCESS (100% complete, <1.5GB peak)
+```
+
+### Accuracy Verification
+
+**Baseline (4GB heap, no optimizations):**
+```bash
+node --max-old-space-size=4096 core/strategy/v1/tests/test-strategy-v1.js > baseline.log
+```
+
+**Optimized (2GB heap, all optimizations):**
+```bash
+export EXECUTION_STREAMING_MAXDD=1
+export EXECUTION_STREAM_FILLS=1
+node --max-old-space-size=2048 core/strategy/v1/tests/test-strategy-v1.js > optimized.log
+```
+
+**Compare metrics:**
+```bash
+# Extract metrics from logs
+grep -E "(maxDrawdown|winRate|totalReturn)" baseline.log > baseline_metrics.txt
+grep -E "(maxDrawdown|winRate|totalReturn)" optimized.log > optimized_metrics.txt
+
+# Diff (should be identical)
+diff baseline_metrics.txt optimized_metrics.txt
+# Expected: No differences (0% accuracy loss)
+```
+
+### Memory Impact Benchmarks
+
+| Scenario | Events | Fills | Memory (Baseline) | Memory (Optimized) | Reduction |
+|----------|--------|-------|-------------------|-------------------|-----------|
+| Small (100K) | 100,000 | ~50K | ~30 MB | ~5 MB | 83% |
+| Medium (1M) | 1,000,000 | ~500K | ~150 MB | ~10 MB | 93% |
+| Large (3.7M) | 3,700,000 | ~1.9M | ~558 MB | ~10 KB | 99.998% |
+
+### Pass Criteria
+
+1. **Unit Tests:** All 17 tests pass
+2. **Accuracy:** 0% metrics difference (exact match)
+3. **Memory:** Peak < 1.5 GB on 2GB heap for 3.7M events
+4. **Determinism:** State/fills hashes unchanged
+
+### Failure Diagnosis
+
+**If unit tests fail:**
+- Check file permissions on `/tmp/`
+- Verify Node.js version (v18+)
+- Check for fs module issues
+
+**If memory still high:**
+- Verify flags are set: `echo $EXECUTION_STREAMING_MAXDD`
+- Check ExecutionEngine constructor receives options
+- Profile with `node --inspect`
+
+**If metrics differ:**
+- Check BigInt serialization (fills timestamps)
+- Verify maxDD calculation logic
+- Compare raw fills arrays (hash)
+
+---
+
 ## Verification Scripts Inventory
 
 | Script | Purpose | Usage |

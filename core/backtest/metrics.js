@@ -1,16 +1,18 @@
 /**
  * QuantLab Backtest Result — Metrics
  * Pure functions for computing backtest performance metrics.
- * 
+ *
  * BACKTEST v1 — REQUIRED METRICS:
  * - totalReturn
  * - maxDrawdown
  * - winRate
  * - avgTradePnl
  * - tradesCount
- * 
+ *
  * NO Sharpe ratio in v1 (avoids risk-free rate debates)
  */
+
+import { FillsStream } from '../execution/FillsStream.js';
 
 /**
  * Calculate total return percentage
@@ -25,14 +27,48 @@ export function totalReturn(result) {
 }
 
 /**
- * Calculate maximum drawdown from equity curve
+ * Calculate maximum drawdown from equity curve OR snapshot
  * Drawdown = (peak - trough) / peak
- * 
- * @param {Array<{ts_event: bigint, equity: number}>} equityCurve - Equity curve
+ *
+ * Supports three calling patterns:
+ * 1. Streaming mode: Pre-computed maxDD from snapshot (snapshot.maxDrawdown)
+ * 2. Legacy snapshot: Extract equity curve from snapshot (snapshot.equityCurve)
+ * 3. Direct array: Compute from equity curve array
+ *
+ * @param {Array<{ts_event: bigint, equity: number}>|Object} equityCurveOrSnapshot - Equity curve or snapshot
  * @returns {number} - Max drawdown as negative decimal (-0.10 = -10%)
  */
-export function maxDrawdown(equityCurve) {
-  if (!equityCurve || equityCurve.length === 0) {
+export function maxDrawdown(equityCurveOrSnapshot) {
+  // Handle null/undefined
+  if (!equityCurveOrSnapshot) {
+    return 0;
+  }
+
+  // Streaming mode: Use pre-computed maxDrawdown from snapshot
+  if (
+    typeof equityCurveOrSnapshot === 'object' &&
+    !Array.isArray(equityCurveOrSnapshot) &&
+    'maxDrawdown' in equityCurveOrSnapshot &&
+    typeof equityCurveOrSnapshot.maxDrawdown === 'number'
+  ) {
+    // Return as negative value (consistent with legacy calculation)
+    return -equityCurveOrSnapshot.maxDrawdown;
+  }
+
+  // Legacy snapshot mode: Extract equityCurve from snapshot
+  if (
+    typeof equityCurveOrSnapshot === 'object' &&
+    !Array.isArray(equityCurveOrSnapshot) &&
+    'equityCurve' in equityCurveOrSnapshot &&
+    Array.isArray(equityCurveOrSnapshot.equityCurve)
+  ) {
+    return maxDrawdown(equityCurveOrSnapshot.equityCurve);  // Recursive call with array
+  }
+
+  // Direct array mode: Compute from full equity curve
+  const equityCurve = equityCurveOrSnapshot;
+
+  if (!Array.isArray(equityCurve) || equityCurve.length === 0) {
     return 0;
   }
 
@@ -186,17 +222,35 @@ export function tradesCount(fills) {
 }
 
 /**
+ * Load fills from snapshot (streaming or in-memory)
+ * @param {import('../execution/state.js').ExecutionStateSnapshot} snapshot - Execution state snapshot
+ * @returns {import('../execution/fill.js').FillResult[]} - Array of fills
+ */
+function loadFills(snapshot) {
+  // Streaming mode: load from disk
+  if (snapshot.fillsStreamPath && (!snapshot.fills || snapshot.fills.length === 0)) {
+    return FillsStream.readFills(snapshot.fillsStreamPath);
+  }
+
+  // In-memory mode: use fills array
+  return snapshot.fills || [];
+}
+
+/**
  * Get all metrics as an object
- * @param {import('./result.js').BacktestResult} result - Backtest result
- * @param {import('../execution/fill.js').FillResult[]} fills - Array of fills
+ * @param {import('./result.js').BacktestResult|import('../execution/state.js').ExecutionStateSnapshot} result - Backtest result or snapshot
+ * @param {import('../execution/fill.js').FillResult[]} [fills] - Array of fills (optional, will load from snapshot if not provided)
  * @returns {Object} - All metrics
  */
 export function computeAllMetrics(result, fills) {
+  // Load fills if not provided
+  const fillsArray = fills || loadFills(result);
+
   return {
     totalReturn: totalReturn(result),
-    maxDrawdown: maxDrawdown(result.equityCurve),
-    winRate: winRate(fills),
-    avgTradePnl: avgTradePnl(fills),
-    tradesCount: tradesCount(fills)
+    maxDrawdown: maxDrawdown(result.equityCurve || result),  // Pass snapshot if no equityCurve
+    winRate: winRate(fillsArray),
+    avgTradePnl: avgTradePnl(fillsArray),
+    tradesCount: tradesCount(fillsArray)
   };
 }

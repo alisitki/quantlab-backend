@@ -26,6 +26,9 @@ import { ExecutionState } from './state.js';
  * @property {number} [feeRate=0.0004] - Fee rate per trade
  * @property {boolean} [recordEquityCurve=true] - Whether to record equity on each event
  * @property {boolean} [requiresBbo=true] - If true, only BBO events are accepted (throws on other streams)
+ * @property {boolean} [streamingMaxDD=false] - Enable streaming maxDD calculation (O(1) memory)
+ * @property {boolean} [streamFills=false] - Enable fills streaming to disk
+ * @property {string} [fillsStreamPath] - Custom path for fills stream
  */
 
 /**
@@ -72,7 +75,23 @@ export class ExecutionEngine {
       requiresBbo = true  // v1 default: strict BBO only
     } = options;
 
-    this.#state = new ExecutionState(initialCapital);
+    // Feature flags (from options or environment variables)
+    const enableStreamingMaxDD = options.streamingMaxDD ??
+      (process.env.EXECUTION_STREAMING_MAXDD === '1');
+
+    const enableStreamFills = options.streamFills ??
+      (process.env.EXECUTION_STREAM_FILLS === '1');
+
+    const fillsStreamPath = options.fillsStreamPath ??
+      process.env.EXECUTION_FILLS_STREAM_PATH;
+
+    // Initialize state with optimizations
+    this.#state = new ExecutionState(initialCapital, {
+      streamingMaxDD: enableStreamingMaxDD,
+      streamFills: enableStreamFills,
+      fillsStreamPath
+    });
+
     this.#feeRate = feeRate;
     this.#recordEquityCurve = recordEquityCurve;
     this.#requiresBbo = requiresBbo;

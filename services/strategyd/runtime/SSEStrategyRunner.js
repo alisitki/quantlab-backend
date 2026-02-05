@@ -322,7 +322,7 @@ export class SSEStrategyRunner {
     }
 
     if (this.#eventCount % 50000 === 0) {
-      const snapshot = this.#executionEngine.snapshot();
+      const snapshot = this.#executionEngine.snapshot({ deepCopy: false });
       console.log(`[SSERunner] Progress: events=${this.#eventCount} signals=${this.#signalCount} equity=${snapshot.equity.toFixed(2)}`);
     }
   }
@@ -336,7 +336,7 @@ export class SSEStrategyRunner {
   }
 
   #computeStateHash() {
-    const execSnapshot = this.#executionEngine.snapshot();
+    const execSnapshot = this.#executionEngine.snapshot({ deepCopy: false });
     const signalState = this.#signalEngine.snapshot();
     const combined = { exec: execSnapshot, signal: signalState };
     return createHash('sha256').update(this.#canonicalStringify(combined)).digest('hex');

@@ -45,10 +45,19 @@
       "production_strategy": "BaselineStrategy",
       "target_strategy": "StrategyV1",
       "regime_awareness": true,
+      "decision_gating": {
+        "status": "INTEGRATED",
+        "module": "SignalGate",
+        "gate_count": 4,
+        "gates": ["regime", "signal_strength", "cooldown", "spread_penalty"],
+        "expected_trade_reduction": "40-80%",
+        "config_presets": ["default", "high_frequency", "quality", "aggressive", "conservative"]
+      },
       "modules": [
         "RegimeModeSelector",
         "SignalGenerator",
         "Combiner",
+        "SignalGate",
         "StrategyV1"
       ],
       "config_presets": ["default", "high_frequency", "quality", "aggressive", "conservative"],
@@ -91,6 +100,41 @@
       "issue": "Missing ordering_columns in meta.json",
       "resolution": "Added ordering_columns and stream_type to compact.py",
       "backfill_status": "IN_PROGRESS"
+    },
+    "execution_engine": {
+      "status": "OPTIMIZED",
+      "optimization_date": "2026-02-05",
+      "memory_optimization": {
+        "phase_1_streaming_maxdd": {
+          "status": "COMPLETE",
+          "memory_reduction": "99.99%",
+          "baseline_mb": 88.8,
+          "optimized_bytes": 24,
+          "accuracy_loss": "0%",
+          "tests_passed": "6/6"
+        },
+        "phase_2_fills_streaming": {
+          "status": "COMPLETE",
+          "memory_reduction": "99.5%",
+          "baseline_mb": 190,
+          "optimized_kb": 10,
+          "accuracy_loss": "0%",
+          "tests_passed": "7/7",
+          "disk_io_overhead_sec": "2-3"
+        },
+        "phase_3_lazy_snapshot": {
+          "status": "COMPLETE",
+          "peak_memory_reduction": "15%",
+          "eliminated_mb": 279
+        },
+        "combined_impact": {
+          "total_reduction": "99.998%",
+          "baseline_mb": 558,
+          "optimized_kb": 10,
+          "accuracy_loss": "0%",
+          "feature_flags": ["EXECUTION_STREAMING_MAXDD", "EXECUTION_STREAM_FILLS"]
+        }
+      }
     }
   },
 

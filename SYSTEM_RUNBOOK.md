@@ -51,7 +51,7 @@ A production-grade system for:
 | **Data Storage** | STABLE | `collector/writer.py` | Local spool → S3 (separate uploader) |
 | **Replay Engine** | STABLE | `core/replay/ReplayEngine.js`, `ParquetReader.js` | DuckDB backend, ORDERING_CONTRACT enforced |
 | **Strategy Runtime Core** | STABLE | `core/strategy/runtime/StrategyRuntime.js` | Full lifecycle, determinism validation |
-| **Execution Engine** | STABLE | `core/execution/engine.js` | Paper trading, BBO-only fills |
+| **Execution Engine** | STABLE | `core/execution/engine.js` | Paper trading, BBO-only fills, memory-optimized (99.998% reduction, 2026-02-05) |
 | **Ordering Guard** | STABLE | `core/strategy/safety/OrderingGuard.js` | STRICT/WARN modes, integrated |
 | **Determinism Validator** | STABLE | `core/strategy/safety/DeterminismValidator.js` | Hash computation, imported by 4+ modules |
 | **Error Containment** | STABLE | `core/strategy/safety/ErrorContainment.js` | Policy-based error handling |

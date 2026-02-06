@@ -1,6 +1,6 @@
 {
-  "system_state_version": "v2.0",
-  "last_updated": "2026-02-05",
+  "system_state_version": "v2.1",
+  "last_updated": "2026-02-06",
 
   "current_phase": 4,
   "phase_status": {
@@ -30,15 +30,65 @@
       "logging": ["DecisionLogger", "RegimeLogger"]
     },
     "feature_development": {
-      "status": "COMPLETE",
+      "status": "EXTENDED",
       "live_features": [
         "mid_price", "spread", "return_1", "volatility",
         "ema", "rsi", "atr", "roc",
         "regime_volatility", "regime_trend", "regime_spread",
-        "microprice", "imbalance_ema", "ema_slope", "bollinger_pos"
+        "microprice", "imbalance_ema", "ema_slope", "bollinger_pos",
+        "volatility_ratio", "trend_strength", "spread_ratio"
       ],
+      "behavior_features": [
+        "liquidity_pressure",
+        "return_momentum",
+        "regime_stability",
+        "spread_compression",
+        "imbalance_acceleration",
+        "micro_reversion",
+        "quote_intensity",
+        "behavior_divergence",
+        "volatility_compression_score"
+      ],
+      "behavior_features_status": "EXPANDED",
       "pending_features": [],
-      "target_count": 15
+      "target_count": 24
+    },
+    "behavior_modeling_layer": {
+      "status": "PHASE_2_EXPANDED",
+      "date_started": "2026-02-05",
+      "date_expanded": "2026-02-06",
+      "approach": "behavior_feature_stack",
+      "features_implemented": 9,
+      "bbo_features": 7,
+      "derived_features": 2,
+      "milestone_1_completed": "2026-02-06",
+      "milestone_1_desc": "FeatureBuilder derived feature fix (static isDerived)",
+      "milestone_2_completed": "2026-02-06",
+      "milestone_2_desc": "6 new behavior features (4 BBO + 2 derived)",
+      "milestone_3a_completed": "2026-02-06",
+      "milestone_3a_desc": "3 continuous regime features (volatility_ratio, trend_strength, spread_ratio)",
+      "milestone_4_completed": "2026-02-06",
+      "milestone_4_desc": "Edge abstraction (Edge class, EdgeRegistry, 3 manual test edges)",
+      "milestone_3b_completed": "2026-02-06",
+      "milestone_3b_desc": "Regime clustering (RegimeCluster K-means, ClusterRegimeFeature)",
+      "validation": {
+        "status": "READY_FOR_DATA",
+        "script": "tools/validate-behavior-features.js",
+        "unit_tests": "PASSED (102/102)",
+        "structural_validation": "NOT_YET_RUN",
+        "data_validation": "BLOCKED_BY_DATA_AVAILABILITY",
+        "criteria": [
+          "feature_outcome_correlation (|r| > 0.05, p < 0.05)",
+          "regime_stratification (stable > unstable)",
+          "incremental_value (features add signal, not noise)"
+        ]
+      },
+      "next_steps": [
+        "Milestone 3b: Regime clustering engine (K-means)",
+        "Milestone 5 Tier 3: Download sample data and run correlation analysis",
+        "Backtest manual edges to validate behavior features",
+        "Edge discovery automation (Phase 5)"
+      ]
     },
     "strategy_development": {
       "status": "ACTIVE",

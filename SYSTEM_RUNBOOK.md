@@ -1,19 +1,56 @@
 # QUANTLAB SYSTEM RUNBOOK
 ## Frozen System State — 2026-02-03
+## Identity Update — 2026-02-05
+
+---
+
+# SECTION 0 — SYSTEM IDENTITY (CRITICAL)
+
+> **QuantLab is NOT a strategy runner. QuantLab is an edge discovery & strategy factory system.**
+
+## Architecture Mental Model
+
+```
+OLD (Deprecated):
+Data → Features → Strategy → ML → Execution
+
+NEW (Active):
+Data → Behavior → Regime → EDGE → Strategy → Risk → Execution
+```
+
+**Core Principle:** Strategy is the OUTPUT layer, not the CENTER. Edge discovery is the engine.
+
+## What QuantLab Does
+
+1. Collects multi-exchange market data
+2. Extracts market behavior patterns
+3. Discovers exploitable edges from behaviors
+4. Generates strategies from validated edges
+5. Manages strategy lifecycle (promote/demote/retire)
+6. Executes with risk controls
+
+## What QuantLab Does NOT Do
+
+- Run fixed, manually-written strategies as the primary function
+- Use ML for blind signal prediction
+- Treat backtest PnL as proof of edge
 
 ---
 
 # SECTION 1 — PROJECT IDENTITY
 
 ## System Type
-**Deterministic Market Data Replay & Algorithmic Trading Infrastructure**
+**Edge Discovery & Strategy Factory System**
+(Infrastructure: Deterministic Market Data Replay & Algorithmic Trading)
 
 ## Primary Purpose
 A production-grade system for:
 1. Collecting real-time market data from cryptocurrency exchanges (Binance, Bybit, OKX)
-2. Replaying historical market data deterministically for backtesting
-3. Executing trading strategies with paper/live execution capabilities
-4. ML-assisted trading signal generation and position sizing
+2. Extracting market behavior and detecting regime changes
+3. Discovering and validating statistical edges
+4. Generating and managing strategy lifecycle from edges
+5. Replaying historical market data deterministically for edge validation
+6. Executing strategies with paper/live execution capabilities
 
 ## Core Subsystems
 

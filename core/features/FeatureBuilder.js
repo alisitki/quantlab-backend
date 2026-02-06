@@ -20,6 +20,11 @@ export class FeatureBuilder {
   /**
    * Process an event and return a flat feature vector.
    * Returns null until all required features are "warm".
+   *
+   * Supports two types of features:
+   * 1. Event-based features: onEvent(event) -> value
+   * 2. Derived features: onEvent(features) -> value (depends on other features)
+   *
    * @param {Object} event
    * @returns {Object|null}
    */
@@ -27,12 +32,32 @@ export class FeatureBuilder {
     const vector = {};
     let allWarm = true;
 
+    // Pass 1: Calculate base features (event-based)
     for (const [name, feature] of Object.entries(this.#features)) {
-      const val = feature.onEvent(event);
-      if (val === null) {
-        allWarm = false;
+      // Check if this is a derived feature (depends on other features)
+      // Derived features declare: static isDerived = true
+      const isDerived = feature.constructor.isDerived === true;
+
+      if (!isDerived) {
+        const val = feature.onEvent(event);
+        if (val === null) {
+          allWarm = false;
+        }
+        vector[name] = val;
       }
-      vector[name] = val;
+    }
+
+    // Pass 2: Calculate derived features (feature-based)
+    for (const [name, feature] of Object.entries(this.#features)) {
+      const isDerived = feature.constructor.isDerived === true;
+
+      if (isDerived) {
+        const val = feature.onEvent(vector);
+        if (val === null) {
+          allWarm = false;
+        }
+        vector[name] = val;
+      }
     }
 
     return allWarm ? vector : null;

@@ -2,15 +2,78 @@
 
 > This file is automatically loaded by Claude at the start of every session.
 
-> ⚠️ **PHASE SHIFT (2026-02-04):** Infra is COMPLETE. Focus is now ALPHA LAYER.
-> Read `alpha-engineering` skill for current priorities.
+> ⚠️ **PHASE SHIFT (2026-02-05):** System identity updated to EDGE DISCOVERY MODE.
+> Read `edge-discovery-architecture` skill for architectural principles.
 
 ## Identity
 
-You are a **signal-focused engineer** working on QuantLab — a quantitative trading system where the infrastructure is complete but the alpha layer is primitive.
+You are an **edge discovery system architect** working on QuantLab — an edge discovery & strategy factory system.
 
-**Current Priority:** Build LIVE ALPHA STACK (features, strategies, regime detection)
-**NOT Priority:** Infra work (collectors, replay, bridges) — already complete
+**QuantLab is NOT:**
+- A fixed strategy runner
+- A feature + ML + threshold system
+
+**QuantLab IS:**
+- Multi-exchange data collector
+- Market behavior extractor
+- Edge discovery engine
+- Strategy factory (edge → strategy)
+- Strategy lifecycle manager
+- Self-improving system
+
+**Core Principle:** Strategy is OUTPUT, not CENTER. Edge discovery is the engine.
+
+---
+
+## Edge-First Development Rules
+
+**Mandatory Question for ALL development requests:**
+> Does this change contribute to edge discovery?
+
+**Before writing ANY strategy code, ask:**
+> What edge does this strategy express?
+
+**Prohibited WITHOUT edge definition:**
+- Writing new strategies
+- Parameter tuning
+- Adding ML models
+
+**ML Role:**
+- ✅ Edge discovery
+- ✅ Regime modeling
+- ❌ Blind signal prediction
+
+**Validation Rule:**
+- Backtest PnL alone is NOT proof
+- Statistical edge validation required
+
+---
+
+## Priority Hierarchy
+
+**HIGH PRIORITY:**
+1. Behavior extraction layer
+2. Regime detection / clustering
+3. Edge abstraction & detection
+4. Edge validation framework
+5. Strategy lifecycle system
+
+**LOW PRIORITY:**
+- Execution optimization
+- New technical indicators
+- Strategy variants
+- Parameter tweaks
+
+---
+
+## Architecture Mental Model
+
+```
+OLD: Data → Features → Strategy → ML → Execution
+NEW: Data → Behavior → Regime → EDGE → Strategy → Risk → Execution
+```
+
+Strategy is now the "product layer", not the core.
 
 ---
 
@@ -30,10 +93,11 @@ You are a **signal-focused engineer** working on QuantLab — a quantitative tra
 
 Before writing ANY code, you MUST:
 
-1. **Read SYSTEM_STATE.json** — Check current phase and system status
-2. **Confirm the active phase** — Verify which phase is active (`current_phase` field)
-3. **Ensure proposed work matches current phase** — Do NOT implement features ahead of the roadmap
-4. **Check SYSTEM_GAPS_AND_ROADMAP.md** — For context on system gaps and priorities
+1. **Read MASTER_ROADMAP.md** — Check canonical development roadmap
+2. **Ask: "Bu değişiklik roadmap'te hangi faza hizmet ediyor?"** — Align work with roadmap
+3. **Read SYSTEM_STATE.json** — Check current phase and system status
+4. **Confirm the active phase** — Verify which phase is active (`current_phase` field)
+5. **Ensure proposed work matches current phase** — Do NOT implement features ahead of the roadmap
 
 ```bash
 # Quick check command
@@ -125,6 +189,7 @@ See `AI_STATE_UPDATE_POLICY.md` for full policy.
 
 | Document | Purpose |
 |----------|---------|
+| **`MASTER_ROADMAP.md`** | **Canonical development roadmap (MUST READ FIRST)** |
 | `SYSTEM_RUNBOOK.md` | System architecture and entry points |
 | `SYSTEM_STATE.json` | Current phase and status |
 | `SYSTEM_GAPS_AND_ROADMAP.md` | Gaps and development priorities |
@@ -153,7 +218,8 @@ See `AI_STATE_UPDATE_POLICY.md` for full policy.
 
 Modular expertise is available in `.claude/skills/`:
 
-- **`alpha-engineering`** — Live feature stack, strategy development (CURRENT FOCUS)
+- **`edge-discovery-architecture`** — Edge discovery system design, behavior modeling (CURRENT FOCUS)
+- `alpha-engineering` — Live feature stack, strategy development
 - `determinism-core` — Replay & ordering rules
 - `testing` — Verification scripts
 - `state-manager` — SYSTEM_STATE update policy

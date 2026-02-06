@@ -355,42 +355,55 @@ export { StopLossTakeProfitRule } from './rules/StopLossTakeProfitRule.js';
 
 ---
 
-## Recommended Development Order
+## Recommended Development Order (EDGE-FIRST)
+
+> **PARADIGM SHIFT (2026-02-05):** Development priority changed from Strategy → ML → Live
+> to Edge Discovery → Strategy Factory → Controlled Live.
 
 ```
-Phase 3 Completion:
-├── ✅ RiskManager integration (DONE)
-├── ✅ ML confidence API (DONE)
-├── ✅ ML backtest tooling (DONE)
-├── ✅ Model version tracking (DONE)
-└── ✅ ML metrics dashboard API (DONE)
+Phase 6: EDGE DISCOVERY (NEW - HIGH PRIORITY)
+├── [ ] Behavior Modeling Layer
+│   ├── Order flow analysis features
+│   ├── Liquidity absorption detection
+│   └── Cross-timeframe behavior extraction
+├── [ ] Edge Discovery Engine
+│   ├── Edge abstraction (entry/exit/magnitude/decay)
+│   ├── Regime clustering (unsupervised)
+│   └── Pattern mining in favorable regimes
+├── [ ] Edge Validation Framework
+│   ├── Statistical significance tests
+│   ├── Out-of-sample validation
+│   └── Walk-forward analysis
+├── [ ] Strategy Factory
+│   ├── Edge → Strategy template mapping
+│   └── Automatic parameter optimization
+└── [ ] Strategy Lifecycle System
+    ├── CANDIDATE → PAPER → CANARY → SHADOW → LIVE → RETIRED
+    └── Performance-based promotion/demotion
 
-Phase 4 Preparation:
-├── ✅ HTTP API for live runs (DONE)
-├── ✅ Pre-flight checks service (DONE)
-└── ✅ Kill switch endpoint (DONE)
+Legacy Phases (COMPLETE - LOW PRIORITY):
+├── ✅ Phase 0-3: Infrastructure (STABLE)
+├── ✅ Phase 4: Exchange bridge ready (WAITING for edge layer)
+└── ✅ Phase 5: Ops & monitoring (STABLE)
 
-Phase 4 Activation (BLOCKED until safety verified):
-├── Exchange bridge
-├── Position reconciliation
-└── Live monitoring
-
-Phase 5 Completion:
-├── ✅ Observability dashboard (DONE)
-├── ✅ Alerting integration (DONE)
-├── ✅ GPU cost tracking (DONE)
-└── ✅ Incident response (DONE)
+DEPRIORITIZED:
+├── Execution optimization (already 99.998% memory reduction)
+├── New technical indicators (without edge purpose)
+├── Strategy variants (without edge definition)
+└── Parameter tweaks (without edge validation)
 ```
 
 ---
 
 ---
 
-## Alpha Layer Development
+## Alpha Layer Development (LEGACY - EDGE DISCOVERY SUPERSEDES)
 
-> **Current Focus:** Signal Layer Construction (`alpha_layer.status: ACTIVE`)
+> **NOTICE:** Alpha layer work completed but does NOT produce alpha without edge discovery.
+> StrategyV1 achieves 0% return (break-even) because it lacks edge definition.
+> SignalGate reduces noise 99.3% but noise reduction ≠ edge.
 >
-> Infrastructure is COMPLETE. Development focus is now on SIGNAL/ALPHA layer.
+> **NEW FOCUS:** Edge Discovery Layer (Phase 6)
 
 ### Feature Development (COMPLETE) - 2026-02-05
 

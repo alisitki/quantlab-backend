@@ -8,6 +8,7 @@ import os
 import tempfile
 import json
 import socket
+import uuid
 from pathlib import Path
 from typing import List, Dict, Optional, Set, Tuple, Any, Callable
 from datetime import datetime, timedelta
@@ -62,6 +63,96 @@ class StateManager:
         self.s3_client = s3_client
         self.bucket = bucket
         self.state_key = state_key
+        # Serialize updates to the shared state document across multiple workers/processes.
+        # Without this, parallel workers can clobber each other's writes (last-write-wins).
+        self.state_lock_key = f"{state_key}.lock"
+
+    def _acquire_state_lock(self, wait_seconds: float = 30.0, ttl_seconds: float = 120.0) -> Optional[str]:
+        """
+        Acquire a best-effort distributed lock for state updates using S3 conditional put.
+        Returns a lock token if acquired, or None if lock couldn't be acquired (caller may fallback).
+        """
+        token = str(uuid.uuid4())
+        body = {
+            "token": token,
+            "hostname": socket.gethostname(),
+            "pid": os.getpid(),
+            "started_at": datetime.utcnow().isoformat() + "Z",
+        }
+
+        deadline = time.time() + wait_seconds
+        while time.time() < deadline:
+            try:
+                self.s3_client.put_object(
+                    Bucket=self.bucket,
+                    Key=self.state_lock_key,
+                    Body=json.dumps(body).encode("utf-8"),
+                    IfNoneMatch="*",
+                    ContentType="application/json",
+                )
+                return token
+            except ClientError as e:
+                if e.response["Error"]["Code"] not in ["PreconditionFailed", "412"]:
+                    raise
+
+                # Lock exists; if it's stale, break it.
+                try:
+                    resp = self.s3_client.get_object(Bucket=self.bucket, Key=self.state_lock_key)
+                    data = json.loads(resp["Body"].read().decode("utf-8") or "{}")
+                    started_at_str = (data.get("started_at") or "").replace("Z", "+00:00")
+                    if started_at_str:
+                        started_at = datetime.fromisoformat(started_at_str).replace(tzinfo=None)
+                        if started_at < (datetime.utcnow() - timedelta(seconds=ttl_seconds)):
+                            logger.warning(
+                                f"State lock stale (> {ttl_seconds}s). Forcing unlock: {self.state_lock_key}"
+                            )
+                            self.s3_client.delete_object(Bucket=self.bucket, Key=self.state_lock_key)
+                            continue
+                except Exception:
+                    pass
+
+                time.sleep(0.2)
+
+        logger.warning(f"State lock acquisition timed out: {self.state_lock_key}")
+        return None
+
+    def _release_state_lock(self, token: str):
+        """Release state lock if we still own it."""
+        try:
+            resp = self.s3_client.get_object(Bucket=self.bucket, Key=self.state_lock_key)
+            data = json.loads(resp["Body"].read().decode("utf-8") or "{}")
+            if data.get("token") != token:
+                return
+        except ClientError as e:
+            if e.response["Error"]["Code"] in ["NoSuchKey", "404"]:
+                return
+        except Exception:
+            # If we can't verify ownership, avoid deleting someone else's lock.
+            return
+
+        try:
+            self.s3_client.delete_object(Bucket=self.bucket, Key=self.state_lock_key)
+        except Exception:
+            pass
+
+    def _update_state(self, mutate_fn):
+        """
+        Read-modify-write state with a best-effort distributed lock.
+        Falls back to an unlocked update if the lock can't be acquired, to avoid blocking compaction.
+        """
+        token = self._acquire_state_lock()
+        try:
+            state = self._read_state()
+            mutate_fn(state)
+            self.s3_client.put_object(
+                Bucket=self.bucket,
+                Key=self.state_key,
+                Body=json.dumps(state, indent=2).encode("utf-8"),
+                ContentType="application/json",
+            )
+        finally:
+            if token:
+                self._release_state_lock(token)
         
     def get_last_compacted_date(self) -> Optional[str]:
         """Read last_compacted_date from S3"""
@@ -79,61 +170,55 @@ class StateManager:
             
     def update_last_compacted_date(self, date_str: str):
         """Update last_compacted_date and current timestamp in S3 for audit"""
-        state = self._read_state()
-        state["last_compacted_date"] = date_str
-        state["updated_at"] = datetime.utcnow().isoformat() + "Z"
-        
-        self.s3_client.put_object(
-            Bucket=self.bucket,
-            Key=self.state_key,
-            Body=json.dumps(state, indent=2).encode('utf-8'),
-            ContentType='application/json'
-        )
+        def mutate(state: Dict):
+            state["last_compacted_date"] = date_str
+            state["updated_at"] = datetime.utcnow().isoformat() + "Z"
+
+        self._update_state(mutate)
         logger.info(f"Updated state: last_compacted_date={date_str}")
         
     def log_partition_status(self, result: Dict, status: Optional[str] = None):
         """Log individual partition results into state history"""
-        state = self._read_state()
-        if "partitions" not in state:
-            state["partitions"] = {}
-            
-        key = f"{result['exchange']}/{result['stream']}/{result['symbol']}/{result['date']}"
-        
-        final_status = status or result.get("status", "unknown")
-        
-        state["partitions"][key] = {
-            "status": final_status,
-            "day_quality_post": result.get("day_quality"),
-            "post_filter_version": result.get("post_filter_version", "1.0.0"),
-            "rows": result.get("rows", 0),
-            "total_size_bytes": result.get("total_size_bytes", 0),
-            "updated_at": datetime.utcnow().isoformat() + "Z"
-        }
-        
-        self.s3_client.put_object(
-            Bucket=self.bucket,
-            Key=self.state_key,
-            Body=json.dumps(state, indent=2).encode('utf-8'),
-            ContentType='application/json'
-        )
+        def mutate(state: Dict):
+            if "partitions" not in state:
+                state["partitions"] = {}
+
+            key = f"{result['exchange']}/{result['stream']}/{result['symbol']}/{result['date']}"
+            final_status = status or result.get("status", "unknown")
+
+            entry = {
+                "status": final_status,
+                "day_quality_post": result.get("day_quality"),
+                "post_filter_version": result.get("post_filter_version", "1.0.0"),
+                "rows": result.get("rows", 0),
+                "total_size_bytes": result.get("total_size_bytes", 0),
+                "updated_at": datetime.utcnow().isoformat() + "Z",
+            }
+
+            # Persist minimal diagnostics to prevent re-work and aid triage.
+            if result.get("error_type"):
+                entry["error_type"] = result.get("error_type")
+            if result.get("failing_key"):
+                entry["failing_key"] = result.get("failing_key")
+            if result.get("error"):
+                entry["error"] = str(result.get("error"))[:2000]
+
+            state["partitions"][key] = entry
+
+        self._update_state(mutate)
 
     def log_day_status(self, date: str, status: str):
         """Log day-level status (useful for skipping BAD days entirely)"""
-        state = self._read_state()
-        if "days" not in state:
-            state["days"] = {}
-            
-        state["days"][date] = {
-            "status": status,
-            "updated_at": datetime.utcnow().isoformat() + "Z"
-        }
-        
-        self.s3_client.put_object(
-            Bucket=self.bucket,
-            Key=self.state_key,
-            Body=json.dumps(state, indent=2).encode('utf-8'),
-            ContentType='application/json'
-        )
+        def mutate(state: Dict):
+            if "days" not in state:
+                state["days"] = {}
+
+            state["days"][date] = {
+                "status": status,
+                "updated_at": datetime.utcnow().isoformat() + "Z",
+            }
+
+        self._update_state(mutate)
 
     def acquire_lock(self, result: Dict) -> bool:
         """
@@ -183,38 +268,41 @@ class StateManager:
         3. If state in_progress but updated_at > 2h -> set aborted/stalled + remove lock.
         """
         prefix = "compacted/locks/"
-        state = self._read_state()
-        partitions = state.get("partitions", {})
-        
+        token = self._acquire_state_lock()
         try:
+            state = self._read_state()
+            partitions = state.get("partitions", {})
+
             resp = self.s3_client.list_objects_v2(Bucket=self.bucket, Prefix=prefix)
-            locks = resp.get('Contents', [])
-            
+            locks = resp.get("Contents", [])
+
             now = datetime.utcnow()
             ttl_limit = now - timedelta(hours=2)
             changed = False
-            
+
             for l in locks:
-                lock_key = l['Key']
+                lock_key = l["Key"]
                 # compacted/locks/exchange/stream/symbol/date.lock
-                rel_path = lock_key.replace(prefix, '').replace('.lock', '')
-                parts = rel_path.split('/')
-                if len(parts) != 4: continue
-                
+                rel_path = lock_key.replace(prefix, "").replace(".lock", "")
+                parts = rel_path.split("/")
+                if len(parts) != 4:
+                    continue
+
                 p_date = parts[3]
-                if target_date and p_date != target_date: continue
-                
+                if target_date and p_date != target_date:
+                    continue
+
                 p_key = rel_path
                 entry = partitions.get(p_key)
-                
+
                 lock_stale = False
                 trigger_reason = ""
-                
+
                 if not entry or entry.get("status") != "in_progress":
                     lock_stale = True
                     trigger_reason = f"Status is {entry.get('status') if entry else 'missing'}"
                 else:
-                    updated_at_str = entry.get("updated_at", "").replace('Z', '+00:00')
+                    updated_at_str = entry.get("updated_at", "").replace("Z", "+00:00")
                     try:
                         updated_at = datetime.fromisoformat(updated_at_str).replace(tzinfo=None)
                         if updated_at < ttl_limit:
@@ -223,22 +311,25 @@ class StateManager:
                             entry["status"] = "stalled"
                             entry["updated_at"] = now.isoformat() + "Z"
                             changed = True
-                    except:
+                    except Exception:
                         pass
-                
+
                 if lock_stale:
                     logger.warning(f"Cleanup: Removing stale lock {lock_key} | {trigger_reason}")
                     self.s3_client.delete_object(Bucket=self.bucket, Key=lock_key)
-            
+
             if changed:
                 self.s3_client.put_object(
                     Bucket=self.bucket,
                     Key=self.state_key,
-                    Body=json.dumps(state, indent=2).encode('utf-8'),
-                    ContentType='application/json'
+                    Body=json.dumps(state, indent=2).encode("utf-8"),
+                    ContentType="application/json",
                 )
         except Exception as e:
             logger.error(f"Error during stale lock cleanup: {e}")
+        finally:
+            if token:
+                self._release_state_lock(token)
 
     def get_partition_status(self, result: Dict) -> Tuple[Optional[str], Optional[datetime]]:
         """Get current status and timestamp for a partition"""
@@ -321,7 +412,8 @@ class CompactionJob:
         stream: str,
         symbol: str,
         date: str,
-        overwrite: bool = False
+        overwrite: bool = False,
+        retry_quarantine: bool = False,
     ) -> Dict:
         """Compact a single partition for a specific date"""
         result = {
@@ -331,12 +423,75 @@ class CompactionJob:
             'day_quality': 'UNKNOWN', 'post_filter_version': POST_FILTER_VERSION,
             'merge_time': 0, 'upload_time': 0
         }
+
+        # Derive keys early so we can reconcile state vs. artifacts before doing any work.
+        raw_prefix = f"exchange={exchange}/stream={stream}/symbol={symbol}/date={date}/"
+        compact_key = f"exchange={exchange}/stream={stream}/symbol={symbol}/date={date}/data.parquet"
+        meta_key = f"exchange={exchange}/stream={stream}/symbol={symbol}/date={date}/meta.json"
+        quality_key = f"exchange={exchange}/stream={stream}/symbol={symbol}/date={date}/quality_day.json"
+        lock_key = f"compacted/locks/{exchange}/{stream}/{symbol}/{date}.lock"
         
         # 1. State Check
         current_status, _ = self.state_manager.get_partition_status(result)
         if current_status == 'success' and not overwrite:
             result['status'] = 'skipped'
             return result
+
+        if current_status == 'quarantine' and not overwrite and not retry_quarantine:
+            # Fast skip: known-bad partition (prevents re-downloading + re-failing on every backfill run).
+            result['status'] = 'quarantine'
+            result['skip_reason'] = 'already_quarantined'
+            logger.info(Colors.colorate(f"SKIP {symbol} {date} | Previously quarantined", Colors.BLUE))
+            return result
+
+        # Heal corrupted state from older parallel runs: if artifacts already exist but state is missing/stuck,
+        # treat as done and update state so the planner won't keep re-scheduling the same partition/day.
+        if not overwrite and current_status in [None, 'in_progress', 'stalled']:
+            try:
+                lock_exists = self._compact_exists(lock_key)
+            except Exception:
+                lock_exists = True  # Conservative: assume active lock on errors
+
+            if not lock_exists:
+                try:
+                    artifacts_exist = (
+                        self._compact_exists(compact_key)
+                        and self._compact_exists(meta_key)
+                        and self._compact_exists(quality_key)
+                    )
+                except Exception:
+                    artifacts_exist = False
+
+                if artifacts_exist:
+                    meta = {}
+                    try:
+                        resp = self.s3_client_compact.get_object(Bucket=self.compact_bucket, Key=meta_key)
+                        meta = json.loads(resp['Body'].read().decode('utf-8') or '{}')
+                    except Exception:
+                        pass
+
+                    healed = {
+                        'exchange': exchange,
+                        'stream': stream,
+                        'symbol': symbol,
+                        'date': date,
+                        'status': 'success',
+                        'day_quality': meta.get('day_quality', 'UNKNOWN'),
+                        'post_filter_version': meta.get('post_filter_version', POST_FILTER_VERSION),
+                        'rows': meta.get('rows', 0) or 0,
+                        'total_size_bytes': 0,
+                        'error': None,
+                    }
+                    try:
+                        self.state_manager.log_partition_status(healed, status='success')
+                    except Exception:
+                        pass
+
+                    result['status'] = 'skipped'
+                    result['skip_reason'] = 'artifact_exists'
+                    result['rows'] = healed['rows']
+                    logger.info(Colors.colorate(f"SKIP {symbol} {stream} {date} | Artifacts already exist (state healed)", Colors.BLUE))
+                    return result
             
         # 2. Atomic S3 LOCK acquisition
         if not self.state_manager.acquire_lock(result):
@@ -373,11 +528,6 @@ class CompactionJob:
                 return result
             
             # 3. Compaction
-            raw_prefix = f"exchange={exchange}/stream={stream}/symbol={symbol}/date={date}/"
-            compact_key = f"exchange={exchange}/stream={stream}/symbol={symbol}/date={date}/data.parquet"
-            meta_key = f"exchange={exchange}/stream={stream}/symbol={symbol}/date={date}/meta.json"
-            quality_key = f"exchange={exchange}/stream={stream}/symbol={symbol}/date={date}/quality_day.json"
-            
             t0 = time.perf_counter()
             raw_files = self._list_raw_files(raw_prefix)
             result['t_list'] = time.perf_counter() - t0

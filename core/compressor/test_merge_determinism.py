@@ -201,17 +201,73 @@ def run_synthetic_test():
         print("\n✅ SYNTHETIC TEST PASSED\n")
 
 
+def run_dictionary_hierarchical_test():
+    """
+    Repro for: 'Column cannot have more than one dictionary.'
+    This typically happens when merging dictionary-encoded columns that were encoded with
+    different dictionaries across input files.
+    """
+    print("\n" + "="*60)
+    print("DICTIONARY + HIERARCHICAL MERGE TEST")
+    print("="*60)
+
+    import pyarrow as pa
+
+    def create_dict_parquet(path: Path, ts_events: list, symbols: list):
+        # Explicit dictionary type to force per-file dictionaries.
+        dict_ty = pa.dictionary(pa.int32(), pa.string())
+        table = pa.table({
+            'ts_event': pa.array(ts_events, type=pa.int64()),
+            'symbol': pa.array(symbols, type=dict_ty),
+            'value': pa.array([1.0] * len(ts_events), type=pa.float64()),
+        })
+        pq.write_table(table, path)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmpdir = Path(tmpdir)
+
+        # Different per-file symbol dictionaries (A/B/C) to trigger dictionary conflicts.
+        create_dict_parquet(tmpdir / "d1.parquet", [100, 200], ["A", "A"])
+        create_dict_parquet(tmpdir / "d2.parquet", [150, 250], ["B", "B"])
+        create_dict_parquet(tmpdir / "d3.parquet", [50, 300], ["C", "C"])
+
+        input_files = [tmpdir / "d1.parquet", tmpdir / "d2.parquet", tmpdir / "d3.parquet"]
+        out = tmpdir / "out.parquet"
+
+        # Force hierarchical merge by setting a very low max_open_files.
+        merger = StreamingMergeWriter(
+            input_files,
+            out,
+            max_open_files=2,          # Force hierarchical merge
+            output_buffer_size=2,      # Force multiple flushes (repro dictionary conflicts)
+            batch_size=2,
+        )
+        meta = merger.merge()
+        print(f"      Rows: {meta['rows']}")
+
+        assert verify_sorted_order(out), "Output not sorted!"
+        pf = pq.ParquetFile(out)
+        schema = pf.schema_arrow
+        assert "symbol" in schema.names, "symbol column missing!"
+
+        print("\n✅ DICTIONARY + HIERARCHICAL TEST PASSED\n")
+
+
 if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description="Verify merge determinism")
     parser.add_argument("--files", nargs="*", help="Input parquet files to test")
     parser.add_argument("--synthetic", action="store_true", help="Run synthetic data test")
+    parser.add_argument("--dict-hier", action="store_true", help="Run dictionary + hierarchical merge test")
     
     args = parser.parse_args()
     
     if args.synthetic or not args.files:
         run_synthetic_test()
+
+    if args.dict_hier:
+        run_dictionary_hierarchical_test()
     
     if args.files:
         input_files = [Path(f) for f in args.files]

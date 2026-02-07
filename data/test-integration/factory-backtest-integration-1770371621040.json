@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-02-06T09:53:41.040Z",
+  "testData": {
+    "parquet": "/home/deploy/quantlab-backend/data/test/adausdt_20260203.parquet",
+    "meta": "/home/deploy/quantlab-backend/data/test/adausdt_20260203_meta.json",
+    "symbol": "ADA/USDT"
+  },
+  "edgesCount": 3,
+  "factoryResults": [
+    {
+      "strategyId": "strat_test_mean_reversion_001_mean_reversion_v1",
+      "edgeId": "test_mean_reversion_001",
+      "templateType": "mean_reversion",
+      "backtestResult": {
+        "strategyId": "strat_test_mean_reversion_001_mean_reversion_v1",
+        "trades": 0,
+        "returnPct": null,
+        "sharpe": 0,
+        "maxDrawdownPct": null,
+        "winRate": 0,
+        "passed": false,
+        "executionSnapshot": {
+          "fills": 0
+        },
+        "metadata": {
+          "events": 234292,
+          "duration": 22298
+        }
+      },
+      "deployResult": null,
+      "status": "BACKTEST_FAILED"
+    },
+    {
+      "strategyId": "strat_test_momentum_001_momentum_v1",
+      "edgeId": "test_momentum_001",
+      "templateType": "momentum",
+      "backtestResult": {
+        "strategyId": "strat_test_momentum_001_momentum_v1",
+        "trades": 0,
+        "returnPct": null,
+        "sharpe": 0,
+        "maxDrawdownPct": null,
+        "winRate": 0,
+        "passed": false,
+        "executionSnapshot": {
+          "fills": 0
+        },
+        "metadata": {
+          "events": 234292,
+          "duration": 22598
+        }
+      },
+      "deployResult": null,
+      "status": "BACKTEST_FAILED"
+    },
+    {
+      "strategyId": "strat_test_breakout_001_breakout_v1",
+      "edgeId": "test_breakout_001",
+      "templateType": "breakout",
+      "backtestResult": {
+        "strategyId": "strat_test_breakout_001_breakout_v1",
+        "trades": 0,
+        "returnPct": null,
+        "sharpe": 0,
+        "maxDrawdownPct": null,
+        "winRate": 0,
+        "passed": false,
+        "executionSnapshot": {
+          "fills": 0
+        },
+        "metadata": {
+          "events": 234292,
+          "duration": 21030
+        }
+      },
+      "deployResult": null,
+      "status": "BACKTEST_FAILED"
+    }
+  ],
+  "totalDurationMs": 65966
+}

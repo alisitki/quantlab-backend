@@ -1,0 +1,20 @@
+{
+  "step": "multi_day_discovery",
+  "timestamp": "2026-02-06T19:18:12.201Z",
+  "symbol": "ADA/USDT",
+  "days": 1,
+  "files": [
+    "data/sprint2/adausdt_20260108.parquet"
+  ],
+  "patternsScanned": 0,
+  "patternsTestedSignificant": 0,
+  "edgeCandidatesGenerated": 0,
+  "edgeCandidatesRegistered": 0,
+  "metadata": {
+    "duration": 739952,
+    "dataRowCount": 3261104,
+    "regimesUsed": 4,
+    "filesLoaded": 1
+  },
+  "duration": "740.0"
+}

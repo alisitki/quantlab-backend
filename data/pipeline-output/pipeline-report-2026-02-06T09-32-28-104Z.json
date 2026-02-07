@@ -1,0 +1,19 @@
+{
+  "pipeline": "full",
+  "timestamp": "2026-02-06T09:32:28.105Z",
+  "symbol": "ADA/USDT",
+  "durationMs": 75365,
+  "discovery": {
+    "patternsScanned": 0,
+    "patternsTestedSignificant": 0,
+    "edgeCandidatesGenerated": 0,
+    "edgeCandidatesRegistered": 0,
+    "edges": [],
+    "rejectedPatterns": [],
+    "metadata": {
+      "duration": 75359,
+      "dataRowCount": 234075,
+      "regimesUsed": 4
+    }
+  }
+}

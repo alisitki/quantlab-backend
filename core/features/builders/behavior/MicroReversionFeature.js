@@ -48,15 +48,19 @@ export class MicroReversionFeature {
     }
 
     // Detect reversion (sign flip) or continuation (same sign)
-    // Skip if either return is zero (no movement)
-    if (ret !== 0 && this.#prevReturn !== 0) {
-      const isReversion = (ret * this.#prevReturn) < 0 ? 1 : 0;
-      this.#reversions.push(isReversion);
+    // Also count zero returns as neutral (0.5 reversion score)
+    let reversionValue;
+    if (ret === 0 || this.#prevReturn === 0) {
+      reversionValue = 0.5; // Neutral - no clear direction
+    } else {
+      reversionValue = (ret * this.#prevReturn) < 0 ? 1 : 0; // 1=reversion, 0=continuation
+    }
 
-      // Trim to window
-      if (this.#reversions.length > this.#window) {
-        this.#reversions.shift();
-      }
+    this.#reversions.push(reversionValue);
+
+    // Trim to window
+    if (this.#reversions.length > this.#window) {
+      this.#reversions.shift();
     }
 
     this.#prevReturn = ret;

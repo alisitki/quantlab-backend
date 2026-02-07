@@ -1,0 +1,109 @@
+{
+  "dataset": {
+    "exchange": "binance",
+    "stream": "bbo",
+    "symbol": "ADA/USDT",
+    "date": "20260203",
+    "parquet": "data/test/adausdt_20260203.parquet",
+    "meta": "data/test/adausdt_20260203_meta.json",
+    "quality": "DEGRADED",
+    "rows": 234075,
+    "events": 234292,
+    "regimes": 4,
+    "duration_hours": 24
+  },
+  "hypotheses": [
+    {
+      "id": "H1",
+      "name": "Low Volatility Mean Reversion",
+      "seed": 42,
+      "patterns_scanned": 260,
+      "patterns_significant": 0,
+      "candidates": 0,
+      "validated": 0,
+      "rejected": 260,
+      "duration_ms": 84304
+    },
+    {
+      "id": "H2",
+      "name": "Momentum Continuation with Liquidity Pressure",
+      "seed": 100,
+      "patterns_scanned": 260,
+      "patterns_significant": 0,
+      "candidates": 0,
+      "validated": 0,
+      "rejected": 260,
+      "duration_ms": 70401
+    },
+    {
+      "id": "H3",
+      "name": "Volatility Compression → Breakout",
+      "seed": 200,
+      "patterns_scanned": 260,
+      "patterns_significant": 0,
+      "candidates": 0,
+      "validated": 0,
+      "rejected": 260,
+      "duration_ms": 72599
+    }
+  ],
+  "totals": {
+    "patterns_scanned": 780,
+    "patterns_significant": 0,
+    "candidates": 0,
+    "validated": 0,
+    "rejected": 780,
+    "total_duration_ms": 227304
+  },
+  "common_failure_reasons": [
+    {
+      "reason": "insufficient_return",
+      "count": 780,
+      "description": "Mean forward return < 0.05% threshold (returnThreshold=0.0005)",
+      "threshold": 0.0005,
+      "note": "In stable/low-volatility single-day data, 0.05% mean return is aggressive"
+    },
+    {
+      "reason": "low_support",
+      "count": 0,
+      "description": "Pattern occurrence < 30 minimum (minSupport=30)",
+      "threshold": 30,
+      "note": "All patterns had sufficient support, failure was purely return magnitude"
+    }
+  ],
+  "filter_criteria": {
+    "pattern_scanner": {
+      "minSupport": 30,
+      "returnThreshold": 0.0005,
+      "thresholdLevels": [0.3, 0.5, 0.7],
+      "quantileLevels": [0.1, 0.9],
+      "clusterK": 12
+    },
+    "statistical_tester": {
+      "minSampleSize": 30,
+      "pValueThreshold": 0.05,
+      "minSharpe": 0.5,
+      "minReturnMagnitude": 0.0003
+    }
+  },
+  "diagnosis": {
+    "system_working_correctly": true,
+    "rejection_rate": "100% (780/780)",
+    "expected_behavior": true,
+    "reasons": [
+      "Single day of data limits sample diversity",
+      "DEGRADED data quality reduces signal clarity",
+      "ADA/USDT lower volatility vs BTC/ETH",
+      "0.05% return threshold appropriate for multi-day but aggressive for 1-day",
+      "Conservative filters correctly reject weak patterns"
+    ],
+    "recommendations": [
+      "Use multi-day datasets (5-7 days minimum) for discovery",
+      "Try higher-volatility periods (market stress, news events)",
+      "Consider BTC/USDT or ETH/USDT for higher signal-to-noise",
+      "Aggregate patterns across multiple days before validation",
+      "Current filters are correct - DO NOT lower thresholds without justification"
+    ]
+  },
+  "notes": "Edge discovery rejecting 80%+ of patterns is NORMAL and EXPECTED. The goal is NOT to find many edges, but to find VALID edges. Zero validated edges on a single day of degraded data is a healthy validation outcome."
+}

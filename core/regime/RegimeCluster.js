@@ -121,8 +121,15 @@ export class RegimeCluster {
       throw new Error('Model not trained. Call train() first.');
     }
 
-    // Extract feature values
-    const x = this.#featureNames.map(name => features[name]);
+    // Extract feature values (support both array and object formats)
+    let x;
+    if (Array.isArray(features)) {
+      // Array format: use directly (memory optimization)
+      x = features;
+    } else {
+      // Object format: extract by feature names (legacy)
+      x = this.#featureNames.map(name => features[name]);
+    }
 
     // Check for missing features
     if (x.some(v => v === null || v === undefined || isNaN(v))) {
@@ -157,11 +164,28 @@ export class RegimeCluster {
    * Extract feature matrix from data
    */
   #extractFeatures(data, featureNames) {
-    return data.map(row => {
+    return data.map((row, rowIdx) => {
+      // If row is already an array, use it directly (memory optimization)
+      if (Array.isArray(row)) {
+        if (row.length !== featureNames.length) {
+          throw new Error(`Array length mismatch at row ${rowIdx}: expected ${featureNames.length}, got ${row.length}`);
+        }
+        // Validate values
+        for (let i = 0; i < row.length; i++) {
+          if (row[i] === null || row[i] === undefined || isNaN(row[i])) {
+            throw new Error(`Invalid feature value at row ${rowIdx}, index ${i}: ${row[i]}`);
+          }
+        }
+        return row;
+      }
+
+      // Otherwise extract from object (legacy path)
       return featureNames.map(name => {
         const val = row[name];
         if (val === null || val === undefined || isNaN(val)) {
-          throw new Error(`Invalid feature value for ${name}`);
+          console.error(`[RegimeCluster] Invalid value at row ${rowIdx}, feature ${name}: ${val}`);
+          console.error(`[RegimeCluster] Row data: ${JSON.stringify(Object.keys(row))}`);
+          throw new Error(`Invalid feature value for ${name} at row ${rowIdx}: ${val}`);
         }
         return val;
       });

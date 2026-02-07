@@ -105,6 +105,7 @@ def main():
     parser.add_argument('--date-from', help='Target start date (YYYYMMDD)')
     parser.add_argument('--date-to', help='Target end date (YYYYMMDD)')
     parser.add_argument('--overwrite', action='store_true', help='Overwrite existing compacted files')
+    parser.add_argument('--retry-quarantine', action='store_true', help='Retry partitions previously marked quarantined in state')
     parser.add_argument('--quality-report', action='store_true', help='Only print quality report for last 14 days')
     parser.add_argument('--apply', action='store_true', help='Apply changes (required for cleanup and wipe modes)')
     parser.add_argument('--wipe-after', action='store_true', help='Clear bucket/state after successful run (requires --apply)')
@@ -429,7 +430,8 @@ def main():
                     'stream': p['stream'],
                     'symbol': p['symbol'],
                     'date': target_date,
-                    'overwrite': args.overwrite
+                    'overwrite': args.overwrite,
+                    'retry_quarantine': args.retry_quarantine,
                 }
                 future = executor.submit(process_partition_wrapper, (job_cfg, p_kwargs, shutdown_event))
                 futures[future] = p

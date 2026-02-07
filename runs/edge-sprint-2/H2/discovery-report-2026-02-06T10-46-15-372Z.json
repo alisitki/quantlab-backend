@@ -1,0 +1,17 @@
+{
+  "step": "discovery",
+  "timestamp": "2026-02-06T10:46:15.383Z",
+  "symbol": "ADA/USDT",
+  "parquetPath": "data/sprint2/adausdt_20260110.parquet",
+  "patternsScanned": 0,
+  "patternsTestedSignificant": 0,
+  "edgeCandidatesGenerated": 0,
+  "edgeCandidatesRegistered": 0,
+  "duration": 416724,
+  "metadata": {
+    "duration": 416723,
+    "dataRowCount": 1716886,
+    "regimesUsed": 4
+  },
+  "edges": []
+}

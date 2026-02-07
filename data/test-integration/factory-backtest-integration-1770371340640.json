@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-02-06T09:49:00.640Z",
+  "testData": {
+    "parquet": "/home/deploy/quantlab-backend/data/bybit_bbo_adausdt_20260203.parquet",
+    "symbol": "ADA/USDT"
+  },
+  "edgesCount": 3,
+  "factoryResults": [
+    {
+      "strategyId": "error_test_mean_reversion_001",
+      "edgeId": "test_mean_reversion_001",
+      "templateType": "unknown",
+      "backtestResult": null,
+      "deployResult": null,
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'toLowerCase')"
+    },
+    {
+      "strategyId": "error_test_momentum_001",
+      "edgeId": "test_momentum_001",
+      "templateType": "unknown",
+      "backtestResult": null,
+      "deployResult": null,
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'toLowerCase')"
+    },
+    {
+      "strategyId": "error_test_breakout_001",
+      "edgeId": "test_breakout_001",
+      "templateType": "unknown",
+      "backtestResult": null,
+      "deployResult": null,
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'toLowerCase')"
+    }
+  ],
+  "totalDurationMs": 20
+}

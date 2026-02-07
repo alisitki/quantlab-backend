@@ -1,0 +1,22 @@
+{
+  "test": "2-day-smoke",
+  "files": [
+    "data/sprint2/adausdt_20260108.parquet",
+    "data/sprint2/adausdt_20260109.parquet"
+  ],
+  "summary": {
+    "patternsScanned": 0,
+    "patternsTestedSignificant": 0,
+    "edgeCandidatesGenerated": 0,
+    "edgeCandidatesRegistered": 0,
+    "edges": [],
+    "rejectedPatterns": [],
+    "metadata": {
+      "duration": 8973779,
+      "dataRowCount": 0,
+      "regimesUsed": 4,
+      "filesLoaded": 2
+    }
+  },
+  "durationSec": 8973.8
+}

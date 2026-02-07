@@ -151,10 +151,17 @@ export class Edge {
   updateStats(trade) {
     this.stats.trades++;
 
-    if (trade.return > 0) {
+    const win = trade.return > 0 || (trade.returnPct && trade.returnPct > 0);
+
+    if (win) {
       this.stats.wins++;
-    } else if (trade.return < 0) {
+      this.stats.consecutiveLosses = 0;
+    } else if (trade.return < 0 || (trade.returnPct && trade.returnPct < 0)) {
       this.stats.losses++;
+      this.stats.consecutiveLosses = (this.stats.consecutiveLosses || 0) + 1;
+    } else {
+      // Neutral trade (return = 0)
+      this.stats.consecutiveLosses = 0;
     }
 
     this.stats.totalReturn += trade.return;

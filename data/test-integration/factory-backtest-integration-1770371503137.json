@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-02-06T09:51:43.137Z",
+  "testData": {
+    "parquet": "/home/deploy/quantlab-backend/data/test/adausdt_20260203.parquet",
+    "meta": "/home/deploy/quantlab-backend/data/test/adausdt_20260203_meta.json",
+    "symbol": "ADA/USDT"
+  },
+  "edgesCount": 3,
+  "factoryResults": [
+    {
+      "strategyId": "error_test_mean_reversion_001",
+      "edgeId": "test_mean_reversion_001",
+      "templateType": "unknown",
+      "backtestResult": null,
+      "deployResult": null,
+      "status": "ERROR",
+      "error": "executionEngine.getSnapshot is not a function"
+    },
+    {
+      "strategyId": "error_test_momentum_001",
+      "edgeId": "test_momentum_001",
+      "templateType": "unknown",
+      "backtestResult": null,
+      "deployResult": null,
+      "status": "ERROR",
+      "error": "executionEngine.getSnapshot is not a function"
+    },
+    {
+      "strategyId": "error_test_breakout_001",
+      "edgeId": "test_breakout_001",
+      "templateType": "unknown",
+      "backtestResult": null,
+      "deployResult": null,
+      "status": "ERROR",
+      "error": "executionEngine.getSnapshot is not a function"
+    }
+  ],
+  "totalDurationMs": 69536
+}

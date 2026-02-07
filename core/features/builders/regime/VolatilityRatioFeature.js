@@ -58,13 +58,14 @@ export class VolatilityRatioFeature {
     const longVol = this.#calculateStdDev(this.#returns);
 
     // Avoid division by zero
-    if (longVol === 0) return 1.0;
+    if (longVol === 0 || shortVol === 0) return 1.0; // Both zero or denominator zero = neutral (1.0)
 
     // Volatility ratio
     const ratio = shortVol / longVol;
 
-    // Cap to [0, 5] to prevent extreme outliers
-    return Math.min(5, Math.max(0, ratio));
+    // Cap to [0, 5] to prevent extreme outliers and check for NaN
+    const clamped = Math.min(5, Math.max(0, ratio));
+    return isNaN(clamped) ? 1.0 : clamped;
   }
 
   #calculateStdDev(values) {

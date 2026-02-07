@@ -23,7 +23,7 @@
  */
 export class RegimeStabilityFeature {
   static isDerived = true;
-  static dependencies = ['regime_volatility', 'regime_trend', 'regime_spread'];
+  static dependencies = ['volatility_ratio', 'trend_strength', 'spread_ratio'];
 
   #window;
   #volHistory = [];
@@ -45,10 +45,10 @@ export class RegimeStabilityFeature {
    * We extract regime features and track their stability
    */
   onEvent(features) {
-    // Extract regime features
-    const regimeVol = features.regime_volatility;
-    const regimeTrend = features.regime_trend;
-    const regimeSpread = features.regime_spread;
+    // Extract regime features (using correct feature names)
+    const regimeVol = features.volatility_ratio;
+    const regimeTrend = features.trend_strength;
+    const regimeSpread = features.spread_ratio;
 
     // If any regime feature is missing, we can't calculate stability
     if (regimeVol === null || regimeVol === undefined ||

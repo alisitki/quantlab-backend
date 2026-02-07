@@ -44,13 +44,14 @@ export class SpreadRatioFeature {
     const avgSpread = this.#spreadHistory.reduce((sum, s) => sum + s, 0) / this.#window;
 
     // Avoid division by zero
-    if (avgSpread === 0) return 1.0;
+    if (avgSpread === 0 || spread === 0) return 1.0;
 
     // Spread ratio
     const ratio = spread / avgSpread;
 
-    // Cap to [0, 5] to prevent extreme outliers
-    return Math.min(5, Math.max(0, ratio));
+    // Cap to [0, 5] to prevent extreme outliers and check for NaN
+    const clamped = Math.min(5, Math.max(0, ratio));
+    return isNaN(clamped) ? 1.0 : clamped;
   }
 
   reset() {

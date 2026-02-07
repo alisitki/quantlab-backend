@@ -73,7 +73,8 @@ export class TrendStrengthFeature {
 
     // Normalize to [-1, +1] via tanh
     // Scale factor: typical values are small, multiply for sensitivity
-    return Math.tanh(trendStrength * 100);
+    const normalized = Math.tanh(trendStrength * 100);
+    return isNaN(normalized) ? 0 : normalized; // 0 = no trend
   }
 
   reset() {

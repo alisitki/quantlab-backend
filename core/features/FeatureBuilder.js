@@ -31,6 +31,7 @@ export class FeatureBuilder {
   onEvent(event) {
     const vector = {};
     let allWarm = true;
+    const nullFeatures = []; // Track which features are null
 
     // Pass 1: Calculate base features (event-based)
     for (const [name, feature] of Object.entries(this.#features)) {
@@ -42,6 +43,7 @@ export class FeatureBuilder {
         const val = feature.onEvent(event);
         if (val === null) {
           allWarm = false;
+          nullFeatures.push(name);
         }
         vector[name] = val;
       }
@@ -55,8 +57,20 @@ export class FeatureBuilder {
         const val = feature.onEvent(vector);
         if (val === null) {
           allWarm = false;
+          nullFeatures.push(name);
         }
         vector[name] = val;
+      }
+    }
+
+    // Debug logging (only log first few times) - controlled by env
+    if (!allWarm && !this._debugLogged && process.env.FEATURE_BUILDER_DEBUG === 'true') {
+      this._debugLogCount = (this._debugLogCount || 0) + 1;
+      if (this._debugLogCount <= 5 || this._debugLogCount === 100 || this._debugLogCount === 1000) {
+        console.log(`[FeatureBuilder DEBUG ${this._debugLogCount}] Null features: ${nullFeatures.join(', ')}`);
+      }
+      if (this._debugLogCount >= 1000) {
+        this._debugLogged = true;
       }
     }
 

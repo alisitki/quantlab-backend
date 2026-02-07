@@ -1,0 +1,15 @@
+{
+  "rows": 2195115,
+  "ts_event_min": 1768089585188,
+  "ts_event_max": 1768145185976,
+  "sha256": "1f29d6cda536be29b0a55dedb641aef23d8719372f92c58b1e290a799237d23d",
+  "source_files": 2172,
+  "schema_version": 1,
+  "stream_type": "bbo",
+  "ordering_columns": [
+    "ts_event",
+    "seq"
+  ],
+  "day_quality": "GOOD",
+  "post_filter_version": "1.0.0"
+}

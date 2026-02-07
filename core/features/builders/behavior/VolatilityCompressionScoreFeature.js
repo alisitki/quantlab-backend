@@ -20,7 +20,7 @@
  */
 export class VolatilityCompressionScoreFeature {
   static isDerived = true;
-  static dependencies = ['regime_volatility', 'spread_compression', 'volatility'];
+  static dependencies = ['volatility_ratio', 'spread_compression', 'volatility'];
 
   #window;
   #volHistory = [];
@@ -39,7 +39,7 @@ export class VolatilityCompressionScoreFeature {
    * onEvent receives the full feature vector
    */
   onEvent(features) {
-    const regimeVol = features.regime_volatility;
+    const regimeVol = features.volatility_ratio; // Fixed: use correct feature name
     const spreadComp = features.spread_compression;
     const volatility = features.volatility;
 
@@ -60,8 +60,9 @@ export class VolatilityCompressionScoreFeature {
     if (this.#volHistory.length < this.#window) return null;
 
     // Component 1: Regime score (LOW vol = 1, HIGH vol = 0)
-    // regime_volatility: 0=LOW, 1=NORMAL, 2=HIGH
-    const regimeScore = regimeVol === 0 ? 1.0 : (regimeVol === 1 ? 0.5 : 0.0);
+    // volatility_ratio: <1 = LOW, ~1 = NORMAL, >1 = HIGH
+    // Invert and clamp: low ratio = high score
+    const regimeScore = Math.max(0, Math.min(1, 2 - regimeVol)); // 0.5→1.5, 1.0→1.0, 1.5→0.5, clamped to [0,1]
 
     // Component 2: Spread compression score
     // spread_compression: [-1, +1] where +1 = compressing

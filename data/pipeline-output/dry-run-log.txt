@@ -1,0 +1,34 @@
+(node:2496821) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/deploy/quantlab-backend/tools/run-full-pipeline.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/deploy/quantlab-backend/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[dotenv@17.2.3] injecting env (53) from .env -- tip: ⚙️  override existing env vars with { override: true }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+================================================================================
+FULL EDGE DISCOVERY PIPELINE
+================================================================================
+Parquet:        data/test/adausdt_20260203.parquet
+Meta:           data/test/adausdt_20260203_meta.json
+Symbol:         ADAUSDT
+Max Edges:      20
+Seed:           42
+Output Dir:     data/pipeline-output
+Lifecycle Dir:  data/lifecycle
+Dry Run:        YES
+================================================================================
+
+[1/4] EDGE DISCOVERY
+--------------------------------------------------------------------------------
+[EdgeDiscoveryPipeline] ========================================
+[EdgeDiscoveryPipeline] Starting Edge Discovery Pipeline
+[EdgeDiscoveryPipeline] ========================================
+[EdgeDiscoveryPipeline] Step 1: Loading data...
+[DiscoveryDataLoader] Loading data from data/test/adausdt_20260203.parquet
+
+================================================================================
+{
+  "event": "pipeline_error",
+  "error": "The \"data\" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined",
+  "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"data\" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined\n    at Hash.update (node:internal/crypto/hash:140:11)\n    at getPathHash (file:///home/deploy/quantlab-backend/core/replay/MetaLoader.js:17:35)\n    at loadMeta (file:///home/deploy/quantlab-backend/core/replay/MetaLoader.js:30:20)\n    at ReplayEngine.getMeta (file:///home/deploy/quantlab-backend/core/replay/ReplayEngine.js:98:26)\n    at DiscoveryDataLoader.load (file:///home/deploy/quantlab-backend/core/edge/discovery/DiscoveryDataLoader.js:50:37)\n    at EdgeDiscoveryPipeline.run (file:///home/deploy/quantlab-backend/core/edge/discovery/EdgeDiscoveryPipeline.js:62:39)\n    at main (file:///home/deploy/quantlab-backend/tools/run-full-pipeline.js:125:47)\n    at file:///home/deploy/quantlab-backend/tools/run-full-pipeline.js:308:1\n    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)\n    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)"
+}
+================================================================================

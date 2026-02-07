@@ -235,9 +235,17 @@ class StreamingMergeWriter:
                     output_buffer_size=self.output_buffer_size,
                     max_open_files=self.max_open_files,
                     add_seq_column=False,
-                    check_shutdown=self.check_shutdown
+                    check_shutdown=self.check_shutdown,
+                    decode_dictionaries=self.decode_dictionaries,
                 )
-                chunk_merger.merge()
+                try:
+                    chunk_merger.merge()
+                except Exception as e:
+                    if "more than one dictionary" in str(e).lower() and not self.decode_dictionaries:
+                        logger.warning("HIERARCHICAL=FALLBACK: dictionary_conflict in chunk merge. Retrying with decoding.")
+                        self.decode_dictionaries = True
+                        return self._hierarchical_merge()
+                    raise
                 intermediate_files.append(chunk_output)
                 chunk_idx += 1
             
@@ -249,9 +257,17 @@ class StreamingMergeWriter:
                 output_buffer_size=self.output_buffer_size,
                 max_open_files=self.max_open_files,
                 add_seq_column=self.add_seq_column,
-                check_shutdown=self.check_shutdown
+                check_shutdown=self.check_shutdown,
+                decode_dictionaries=self.decode_dictionaries,
             )
-            return final_merger.merge()
+            try:
+                return final_merger.merge()
+            except Exception as e:
+                if "more than one dictionary" in str(e).lower() and not self.decode_dictionaries:
+                    logger.warning("HIERARCHICAL=FALLBACK: dictionary_conflict in final merge. Retrying with decoding.")
+                    self.decode_dictionaries = True
+                    return self._hierarchical_merge()
+                raise
         finally:
             shutil.rmtree(temp_dir, ignore_errors=True)
 

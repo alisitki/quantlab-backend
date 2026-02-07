@@ -2,7 +2,7 @@
 ## Edge Discovery & Strategy Factory System
 
 > **CANONICAL REFERENCE DOCUMENT**
-> Last Updated: 2026-02-06
+> Last Updated: 2026-02-07
 
 ---
 
@@ -536,6 +536,42 @@ CANDIDATE → PAPER → CANARY → SHADOW → LIVE → RETIRED
 - `tools/run-strategy-factory.js`
 - `tools/run-full-pipeline.js`
 
+### Sprint-4: Multi-Day Streaming Validation
+
+**Status:** ✅ VALIDATED (completed on 2026-02-07)
+
+**Amaç:** Production-readiness validation for multi-day edge discovery
+
+**Bugs Fixed:**
+1. **ReferenceError in EdgeDiscoveryPipeline** (line 238)
+   - Issue: `rows.length` referenced non-existent variable in streaming mode
+   - Fix: `dataset.metadata.rowCount || 0`
+
+2. **Iterator Exhaustion in PatternScanner** (lines 472, 641, 822)
+   - Issue: Multi-scan iterator reuse causing "No data rows found"
+   - Fix: `dataset.rows` → `dataset.rowsFactory()` (fresh iterator per scan)
+
+3. **Streaming Detection** (line 58)
+   - Issue: Unreliable iterator state check
+   - Fix: `typeof dataset.rowsFactory === 'function'`
+
+**Validation Tests:**
+
+| Test | Scale | Exit | Memory | Duration | Status |
+|------|-------|------|--------|----------|--------|
+| Test 1 (PERM ON) | 3.2M rows | 0 | 5.9 GB | 68m | ✅ PASS |
+| Test 2 (PERM OFF) | 3.2M rows | 0 | 6.0 GB | 68m | ✅ PASS |
+| Test 3 (2-DAY SMOKE) | 6.4M rows | 0 | 5.9 GB | 2h 29m | ✅ PASS |
+
+**Error Elimination:**
+- "rows is not defined": 0 occurrences ✅
+- "No data rows found": 0 occurrences ✅
+- "heap out of memory": 0 occurrences ✅
+
+**Evidence:** `.evidence_s4/` (3 clean PASS logs)
+
+**Verdict:** PRODUCTION READY for multi-day edge discovery at scale
+
 ---
 
 ## Phase 9B — Closed-Loop Learning
@@ -791,13 +827,15 @@ For ANY development request:
 | Phase 6 — Edge Validation | ✅ COMPLETE (6 validators, 19/19 tests) |
 | Phase 7 — Strategy Factory | ✅ COMPLETE (4 templates, 8/8 unit + 1 integration) |
 | Phase 8 — Strategy Lifecycle | ✅ COMPLETE (7 modules, 45/45 tests) |
-| Phase 9A — Pipeline Orchestration | ✅ COMPLETE (22/22 tests) |
+| Phase 9A — Pipeline Orchestration | ✅ COMPLETE (22/22 tests + Sprint-4 validated) |
 | Phase 9B — Closed-Loop Learning | ✅ COMPLETE (55/55 tests) |
 | Phase 9C — Behavior Refinement | ✅ COMPLETE (12/12 tests) |
 | Phase 10 — Controlled Live | ✅ READY (infrastructure complete, waiting for live edges) |
 | Phase 11 — Capital Scaling | ❌ NOT STARTED |
 
-**Next Focus:** Multi-day/Volatile Data Edge Discovery + Template Validation with Real Edges + Phase 10 (Live Trading)
+**Sprint-4 Status:** ✅ Multi-day streaming validated (3 tests, 13M rows, exit 0)
+
+**Next Focus:** Multi-day/Volatile Data Edge Discovery (production-ready) + Template Validation with Real Edges + Phase 10 (Live Trading)
 
 ---
 

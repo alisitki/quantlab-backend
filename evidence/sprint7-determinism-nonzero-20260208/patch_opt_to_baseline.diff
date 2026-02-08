@@ -1,0 +1,198 @@
+diff --git a/core/edge/discovery/PatternScanner.js b/core/edge/discovery/PatternScanner.js
+index a4d1a9d..d3fbf62 100644
+--- a/core/edge/discovery/PatternScanner.js
++++ b/core/edge/discovery/PatternScanner.js
+@@ -52,6 +52,10 @@ export class PatternScanner {
+    * Exact semantics guaranteed: same input → same output.
+    */
+   scan(dataset) {
++    const diagTiming = process.env.QUANTLAB_DIAG_TIMING === 'true';
++    this._diagTimingEnabled = diagTiming;
++    this._diagScanStart = diagTiming ? Date.now() : 0;
++
+     console.log(`[PatternScanner] Scanning with methods: ${this.scanMethods.join(', ')}`);
+ 
+     // Detect streaming vs array mode
+@@ -60,11 +64,45 @@ export class PatternScanner {
+ 
+     if (isStreaming) {
+       console.log('[PatternScanner] Mode: STREAMING (async iterator detected)');
+-      return this.#scanStreaming(dataset);
++      const p = this.#scanStreaming(dataset);
++      if (!diagTiming) return p;
++      return Promise.resolve(p).finally(() => {
++        this._diagTimingEnabled = false;
++        this._diagScanStart = 0;
++      });
+     } else {
+       console.log('[PatternScanner] Mode: ARRAY (backward compatible)');
+-      return this.#scanArray(dataset);
++      try {
++        return this.#scanArray(dataset);
++      } finally {
++        this._diagTimingEnabled = false;
++        this._diagScanStart = 0;
++      }
++    }
++  }
++
++  #logMethodTiming(method, checkpoint, patterns, dataset) {
++    if (!this._diagTimingEnabled) return;
++
++    const scanStart = this._diagScanStart || 0;
++    let processedEvents = 'N/A';
++
++    if (dataset && dataset.rows && typeof dataset.rows.length === 'number') {
++      processedEvents = dataset.rows.length;
++    } else if (dataset && dataset.metadata && Number.isFinite(dataset.metadata.rowCount)) {
++      processedEvents = dataset.metadata.rowCount;
++    }
++
++    let line =
++      `[Timing][PatternScanner] method=${method} checkpoint=${checkpoint} ` +
++      `elapsed_ms_since_scan_start=${Date.now() - scanStart}`;
++
++    if (checkpoint === 'end') {
++      const candidatesSoFar = Array.isArray(patterns) ? patterns.length : 'N/A';
++      line += ` candidates_so_far=${candidatesSoFar} processed_events=${processedEvents}`;
+     }
++
++    console.log(line);
+   }
+ 
+   /**
+@@ -81,15 +119,21 @@ export class PatternScanner {
+     const patterns = [];
+ 
+     if (this.scanMethods.includes('threshold')) {
++      this.#logMethodTiming('threshold', 'begin', patterns, dataset);
+       patterns.push(...this.#scanThresholdPatterns(dataset));
++      this.#logMethodTiming('threshold', 'end', patterns, dataset);
+     }
+ 
+     if (this.scanMethods.includes('quantile')) {
++      this.#logMethodTiming('quantile', 'begin', patterns, dataset);
+       patterns.push(...this.#scanQuantilePatterns(dataset));
++      this.#logMethodTiming('quantile', 'end', patterns, dataset);
+     }
+ 
+     if (this.scanMethods.includes('cluster')) {
++      this.#logMethodTiming('cluster', 'begin', patterns, dataset);
+       patterns.push(...this.#scanClusterPatterns(dataset));
++      this.#logMethodTiming('cluster', 'end', patterns, dataset);
+     }
+ 
+     console.log(`[PatternScanner] Found ${patterns.length} total patterns`);
+@@ -112,15 +156,21 @@ export class PatternScanner {
+     const patterns = [];
+ 
+     if (this.scanMethods.includes('threshold')) {
++      this.#logMethodTiming('threshold', 'begin', patterns, dataset);
+       patterns.push(...await this.#scanThresholdPatternsStreaming(dataset));
++      this.#logMethodTiming('threshold', 'end', patterns, dataset);
+     }
+ 
+     if (this.scanMethods.includes('quantile')) {
++      this.#logMethodTiming('quantile', 'begin', patterns, dataset);
+       patterns.push(...await this.#scanQuantilePatternsStreaming(dataset));
++      this.#logMethodTiming('quantile', 'end', patterns, dataset);
+     }
+ 
+     if (this.scanMethods.includes('cluster')) {
++      this.#logMethodTiming('cluster', 'begin', patterns, dataset);
+       patterns.push(...await this.#scanClusterPatternsStreaming(dataset));
++      this.#logMethodTiming('cluster', 'end', patterns, dataset);
+     }
+ 
+     console.log(`[PatternScanner] Found ${patterns.length} total patterns (streaming)`);
+@@ -145,8 +195,29 @@ export class PatternScanner {
+     console.log('[PatternScanner] Running threshold scan...');
+     const patterns = [];
+ 
++    const diagTiming = this._diagTimingEnabled === true;
++    const thStart = diagTiming ? Date.now() : 0;
++    const processedEvents = (dataset && dataset.rows && typeof dataset.rows.length === 'number')
++      ? dataset.rows.length
++      : (dataset && dataset.metadata && Number.isFinite(dataset.metadata.rowCount))
++        ? dataset.metadata.rowCount
++        : 'N/A';
++    const log = diagTiming
++      ? (checkpoint) => {
++        console.log(
++          `[Timing][Threshold] checkpoint=${checkpoint} ` +
++          `elapsed_ms_since_threshold_start=${Date.now() - thStart} ` +
++          `processed_events=${processedEvents} ` +
++          `candidates_so_far=${patterns.length}`
++        );
++      }
++      : () => {};
++
++    log('begin');
++
+     // Early exit if no data
+     if (dataset.rows.length === 0) {
++      log('end');
+       return patterns;
+     }
+ 
+@@ -209,10 +280,15 @@ export class PatternScanner {
+       }
+     }
+ 
++    log('after_iterate');
++
+     // Limit patterns
+     const limited = patterns.slice(0, this.maxPatternsPerMethod);
+     console.log(`[PatternScanner] Threshold scan found ${patterns.length} patterns (kept ${limited.length})`);
+ 
++    log('after_build');
++    log('end');
++
+     return limited;
+   }
+ 
+@@ -452,6 +528,21 @@ export class PatternScanner {
+   async #scanThresholdPatternsStreaming(dataset) {
+     console.log('[PatternScanner] Running threshold scan (streaming)...');
+ 
++    const diagTiming = this._diagTimingEnabled === true;
++    const thStart = diagTiming ? Date.now() : 0;
++    const log = diagTiming
++      ? (checkpoint, processedEvents = 'N/A', candidatesSoFar = 'N/A') => {
++        console.log(
++          `[Timing][Threshold] checkpoint=${checkpoint} ` +
++          `elapsed_ms_since_threshold_start=${Date.now() - thStart} ` +
++          `processed_events=${processedEvents} ` +
++          `candidates_so_far=${candidatesSoFar}`
++        );
++      }
++      : () => {};
++
++    log('begin', 'N/A', 'N/A');
++
+     // Prepare all threshold conditions upfront
+     const conditions = [];
+ 
+@@ -569,6 +660,8 @@ export class PatternScanner {
+       }
+     }
+ 
++    log('after_iterate', rowIndex, 'N/A');
++
+     // Count how many configs hit the limit
+     for (const [key, stats] of configStats) {
+       if (stats.indices.length >= MAX_INDICES_PER_CONFIG) {
+@@ -621,9 +714,13 @@ export class PatternScanner {
+       });
+     }
+ 
++    log('after_build', rowIndex, patterns.length);
++
+     const limited = patterns.slice(0, this.maxPatternsPerMethod);
+     console.log(`[PatternScanner] Threshold scan found ${patterns.length} patterns (kept ${limited.length})`);
+ 
++    log('end', rowIndex, patterns.length);
++
+     return limited;
+   }
+ 

@@ -1,0 +1,96 @@
+================================================================================
+MULTI-DAY DISCOVERY RUNNER
+================================================================================
+mode:             smoke
+exchange:          binance
+stream:            bbo
+symbol:            ADA/USDT
+date_range:        20260111..20260111 (1 day(s))
+permutation_test:  OFF (CLI)
+heapMB:            6144
+heap_limit_mb:     6192
+progressEvery:     1
+================================================================================
+
+[Dataset] Resolving day files...
+[Dataset] progress 1/1: date=20260111 parquet=adausdt_20260111.parquet meta=adausdt_20260111_meta.json
+[Dataset] resolved 1 day(s); meta.rows_total=2195115
+[dotenv@17.2.3] injecting env (53) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+
+[Run] output_dir=runs/multi-day-discovery/2026-02-08T08-03-46-373Z_binance_bbo_adausdt_20260111_20260111_smoke_perm-off
+[Run] starting EdgeDiscoveryPipeline.runMultiDayStreaming(files=1)...
+
+[StatisticalEdgeTester] Permutation test: DISABLED (DISCOVERY_PERMUTATION_TEST=false)
+[StatisticalEdgeTester] ⚠️  Statistical validation will rely on t-test + Sharpe only
+[EdgeDiscoveryPipeline] ========================================
+[EdgeDiscoveryPipeline] Running multi-day discovery (STREAMING) with 1 files
+[EdgeDiscoveryPipeline] ========================================
+[EdgeDiscoveryPipeline] Step 1: Creating iterator factory...
+[DiscoveryDataLoader] Loading multi-day data (streaming): 1 files
+[DiscoveryDataLoader] Training regime model on first file (streaming)...
+[DiscoveryDataLoader] Collecting regime vectors (streaming)...
+{"event":"replay_stats","run_id":"bc61f214-6ca1-4e4d-b926-64248fb9f751","manifest_id":"244d80bb55a3","parquet_path":"data/sprint2/adausdt_20260111.parquet","batch_size":10000,"emitted_rows":2195115,"duration_ms":140806,"stop_reason":"EOF"}
+[DiscoveryDataLoader] Collected 2175199 regime vectors from 2195115 events (19916 warmup)
+[DiscoveryDataLoader] Regime model trained: 4 clusters
+[DiscoveryDataLoader] Memory: regime vectors GC-able now (2175199 vectors)
+[DiscoveryDataLoader] Metadata prepared (totalRowCount: TBD via iterator)
+[DiscoveryDataLoader] Iterator factory ready for streaming
+[EdgeDiscoveryPipeline] Iterator factory ready. Estimated rows: null
+[EdgeDiscoveryPipeline] Step 2: Preparing streaming dataset...
+[EdgeDiscoveryPipeline] Dataset ready (streaming mode)
+[EdgeDiscoveryPipeline] Step 3: Scanning for patterns...
+[PatternScanner] Scanning with methods: threshold, quantile, cluster
+[PatternScanner] Mode: STREAMING (async iterator detected)
+[PatternScanner] Running threshold scan (streaming)...
+[DiscoveryDataLoader] Streaming file: data/sprint2/adausdt_20260111.parquet
+{"event":"replay_stats","run_id":"7d2e2708-2908-49f6-842b-9992d38da219","manifest_id":"244d80bb55a3","parquet_path":"data/sprint2/adausdt_20260111.parquet","batch_size":10000,"emitted_rows":2195115,"duration_ms":156454,"stop_reason":"EOF"}
+[DiscoveryDataLoader] Day collected: 2175199 rows from 2195115 events (19916 warmup)
+[DiscoveryDataLoader] Day streamed: 2175199 rows yielded
+[PatternScanner] Testing 810 threshold configurations...
+[DiscoveryDataLoader] Streaming file: data/sprint2/adausdt_20260111.parquet
+{"event":"replay_stats","run_id":"dd98e2a6-8cf7-4834-956a-407139c2c326","manifest_id":"244d80bb55a3","parquet_path":"data/sprint2/adausdt_20260111.parquet","batch_size":10000,"emitted_rows":2195115,"duration_ms":154254,"stop_reason":"EOF"}
+[DiscoveryDataLoader] Day collected: 2175199 rows from 2195115 events (19916 warmup)
+[PatternScanner] Threshold scan processed 500000 rows...
+[PatternScanner] Threshold scan processed 1000000 rows...
+[PatternScanner] Threshold scan processed 1500000 rows...
+[PatternScanner] Threshold scan processed 2000000 rows...
+[DiscoveryDataLoader] Day streamed: 2175199 rows yielded
+[PatternScanner] Warning: 231 configs exceeded 50000 matches (capped)
+[PatternScanner] Threshold scan completed 2175199 rows
+[PatternScanner] Threshold scan found 570 patterns (kept 200)
+[PatternScanner] Running quantile scan (streaming)...
+[PatternScanner] Quantile scan pass 1: collecting feature values...
+[DiscoveryDataLoader] Streaming file: data/sprint2/adausdt_20260111.parquet
+{"event":"replay_stats","run_id":"eb615927-8d25-4daf-bb6a-66634f990c81","manifest_id":"244d80bb55a3","parquet_path":"data/sprint2/adausdt_20260111.parquet","batch_size":10000,"emitted_rows":2195115,"duration_ms":161267,"stop_reason":"EOF"}
+[DiscoveryDataLoader] Day collected: 2175199 rows from 2195115 events (19916 warmup)
+[DiscoveryDataLoader] Day streamed: 2175199 rows yielded
+[PatternScanner] Computed quantiles for 9 features
+[PatternScanner] Quantile scan pass 2: matching patterns...
+[DiscoveryDataLoader] Streaming file: data/sprint2/adausdt_20260111.parquet
+{"event":"replay_stats","run_id":"740f41a0-6e40-4f9d-9695-cb566448be0b","manifest_id":"244d80bb55a3","parquet_path":"data/sprint2/adausdt_20260111.parquet","batch_size":10000,"emitted_rows":2195115,"duration_ms":166178,"stop_reason":"EOF"}
+[DiscoveryDataLoader] Day collected: 2175199 rows from 2195115 events (19916 warmup)
+[PatternScanner] Quantile scan processed 500000 rows...
+[PatternScanner] Quantile scan processed 1000000 rows...
+[PatternScanner] Quantile scan processed 1500000 rows...
+[PatternScanner] Quantile scan processed 2000000 rows...
+[DiscoveryDataLoader] Day streamed: 2175199 rows yielded
+[PatternScanner] Warning: 48 configs exceeded 50000 matches (capped)
+[PatternScanner] Quantile scan completed 2175199 rows
+[PatternScanner] Quantile scan found 51 patterns (kept 51)
+[PatternScanner] Running cluster scan (streaming)...
+[PatternScanner] Cluster scan pass 1: building feature matrix...
+[DiscoveryDataLoader] Streaming file: data/sprint2/adausdt_20260111.parquet
+{"event":"replay_stats","run_id":"76533a0c-6d89-4534-8e45-e477e2bd7658","manifest_id":"244d80bb55a3","parquet_path":"data/sprint2/adausdt_20260111.parquet","batch_size":10000,"emitted_rows":2195115,"duration_ms":157390,"stop_reason":"EOF"}
+[DiscoveryDataLoader] Day collected: 2175199 rows from 2195115 events (19916 warmup)
+[PatternScanner] Feature matrix: 500000 rows...
+[PatternScanner] Feature matrix: 1000000 rows...
+[PatternScanner] Feature matrix: 1500000 rows...
+[PatternScanner] Feature matrix: 2000000 rows...
+[DiscoveryDataLoader] Day streamed: 2175199 rows yielded
+[PatternScanner] Feature matrix built: 2175199 rows
+[PatternScanner] Cluster model trained (k=12)
+[PatternScanner] Cluster scan pass 2: assigning cluster labels...
+[DiscoveryDataLoader] Streaming file: data/sprint2/adausdt_20260111.parquet
+{"event":"replay_stats","run_id":"050e6950-42b1-438f-b2c7-efd7d5f22caa","manifest_id":"244d80bb55a3","parquet_path":"data/sprint2/adausdt_20260111.parquet","batch_size":10000,"emitted_rows":2195115,"duration_ms":145043,"stop_reason":"EOF"}
+[DiscoveryDataLoader] Day collected: 2175199 rows from 2195115 events (19916 warmup)

@@ -1,0 +1,106 @@
+--- evidence/sprint7-determinism-nonzero-20260208/PatternScanner.baseline.js	2026-02-08 07:13:25.795419570 +0000
++++ evidence/sprint7-determinism-nonzero-20260208/PatternScanner.optimized.js	2026-02-08 07:12:49.427527597 +0000
+@@ -581,10 +581,18 @@
+     for (const condition of conditions) {
+       for (const horizon of horizonKeys) {
+         for (const regime of regimesList) {
++          const horizonNum = parseInt(horizon.slice(1));
+           testConfigs.push({
+-            ...condition,
+-            horizon: parseInt(horizon.slice(1)),
+-            regime
++            featureName: condition.featureName,
++            operator: condition.operator,
++            value: condition.value,
++            horizon: horizonNum,
++            horizonKey: horizon,
++            regime,
++            // Precompute key strings to avoid per-row string interpolation.
++            configKey:
++              `${condition.featureName}_${condition.operator}_${condition.value}` +
++              `_r${regime}_h${horizonNum}`
+           });
+         }
+       }
+@@ -600,56 +608,47 @@
+     let droppedConfigs = 0;
+ 
+     for await (const row of dataset.rowsFactory()) {
+-      for (const config of testConfigs) {
+-        const configKey = `${config.featureName}_${config.operator}_${config.value}_r${config.regime}_h${config.horizon}`;
++      const rowRegime = row.regime;
++      const rowFeatures = row.features;
++      const rowForwardReturns = row.forwardReturns;
++
++      for (let i = 0; i < testConfigs.length; i++) {
++        const config = testConfigs[i];
++        const configKey = config.configKey;
+ 
+         // Skip if config already exceeded max indices
+-        const stats = configStats.get(configKey);
+-        if (stats && stats.indices.length >= MAX_INDICES_PER_CONFIG) {
+-          continue;
+-        }
++        let stats = configStats.get(configKey);
++        if (stats && stats.indices.length >= MAX_INDICES_PER_CONFIG) continue;
+ 
+         // Check regime constraint
+-        if (config.regime !== null && row.regime !== config.regime) {
+-          continue;
+-        }
++        if (config.regime !== null && rowRegime !== config.regime) continue;
+ 
+         // Check feature condition
+-        const featureValue = row.features[config.featureName];
+-        if (featureValue === null || featureValue === undefined) {
+-          continue;
+-        }
++        const featureValue = rowFeatures[config.featureName];
++        if (featureValue === null || featureValue === undefined) continue;
+ 
+-        let conditionMet = false;
+         if (config.operator === '>') {
+-          conditionMet = featureValue > config.value;
++          if (featureValue <= config.value) continue;
+         } else if (config.operator === '<') {
+-          conditionMet = featureValue < config.value;
+-        }
+-
+-        if (!conditionMet) continue;
+-
+-        // Get forward return
+-        const forwardReturn = row.forwardReturns[`h${config.horizon}`];
+-        if (forwardReturn === null) {
++          if (featureValue >= config.value) continue;
++        } else {
+           continue;
+         }
+ 
++        // Get forward return (precomputed horizon key)
++        const forwardReturn = rowForwardReturns[config.horizonKey];
++        if (forwardReturn === null) continue;
++
+         // Accumulate stats
+-        if (!configStats.has(configKey)) {
+-          configStats.set(configKey, {
+-            config,
+-            indices: [],
+-            returns: []
+-          });
++        if (!stats) {
++          stats = { config, indices: [], returns: [] };
++          configStats.set(configKey, stats);
+         }
+ 
+-        const currentStats = configStats.get(configKey);
+-
+         // Only store if under limit
+-        if (currentStats.indices.length < MAX_INDICES_PER_CONFIG) {
+-          currentStats.indices.push(rowIndex);
+-          currentStats.returns.push(forwardReturn);
++        if (stats.indices.length < MAX_INDICES_PER_CONFIG) {
++          stats.indices.push(rowIndex);
++          stats.returns.push(forwardReturn);
+         }
+       }
+ 

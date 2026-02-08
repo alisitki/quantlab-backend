@@ -1,0 +1,18 @@
+tools/run-multi-day-discovery.js
+
+Args:
+  --exchange <binance|bybit|okx>       (default: binance)
+  --symbol <ADA/USDT>                  (required)
+  --stream <stream>                    (required)
+  --start <YYYYMMDD>                   (required)
+  --end <YYYYMMDD>                     (required)
+  --heapMB <int>                       (default: 6144)
+  --permutationTest <on|off>           (default: on)
+  --mode <smoke|acceptance>            (default: smoke)
+  --progressEvery <N>                  (default: 1)
+  --help
+
+Examples:
+  NODE_OPTIONS="--max-old-space-size=6144" node tools/run-multi-day-discovery.js \
+    --exchange binance --stream bbo --symbol ADA/USDT \
+    --start 20260110 --end 20260111 --mode acceptance

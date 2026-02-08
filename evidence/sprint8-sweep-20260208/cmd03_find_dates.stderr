@@ -1,0 +1,2 @@
+awk: cmd. line:1: >=20260108 && <=20260208
+awk: cmd. line:1: ^ syntax error

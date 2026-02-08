@@ -1,0 +1,58 @@
+{
+  "step": "multi_day_discovery",
+  "timestamp": "2026-02-08T08:03:21.330Z",
+  "mode": "smoke",
+  "exchange": "binance",
+  "stream": "bbo",
+  "symbol": "ADA/USDT",
+  "symbolSlug": "adausdt",
+  "dateRange": {
+    "start": "20260110",
+    "end": "20260110",
+    "days": 1
+  },
+  "permutationTest": {
+    "enabled": false,
+    "source": "CLI"
+  },
+  "heap": {
+    "requestedMB": 6144,
+    "heapLimitMB": 6192
+  },
+  "progressEvery": 1,
+  "diagnosticNotes": [
+    "artifact_created_for_diag: data/test/adausdt_20260204.parquet + data/test/adausdt_20260204_meta.json (pre-existing)",
+    "no_patterns: patterns_scanned=0 (scanner.minSupport=30 scanner.returnThreshold=0.0005)",
+    "note: threshold/config may be restrictive"
+  ],
+  "files": [
+    {
+      "date": "20260110",
+      "parquetPath": "data/sprint2/adausdt_20260110.parquet",
+      "metaPath": "data/sprint2/adausdt_20260110_meta.json",
+      "meta": {
+        "rows": 1728582,
+        "schema_version": 1,
+        "stream_type": "bbo",
+        "day_quality": "GOOD",
+        "sha256": "c7df4cdcd681369b7225c627be41497b2a996c4945a7442eee558077c35e6685"
+      }
+    }
+  ],
+  "metaRowsTotal": 1728582,
+  "result": {
+    "patternsScanned": 0,
+    "patternsTestedSignificant": 0,
+    "edgeCandidatesGenerated": 0,
+    "edgeCandidatesRegistered": 0,
+    "edges": [],
+    "rejectedPatterns": [],
+    "metadata": {
+      "duration": 872865,
+      "dataRowCount": 0,
+      "regimesUsed": 4,
+      "filesLoaded": 1
+    }
+  },
+  "durationMs": 872865
+}

@@ -1,0 +1,140 @@
+     1	/**
+     2	 * StatisticalEdgeTester - Apply rigorous statistical tests to pattern candidates
+     3	 *
+     4	 * Tests applied:
+     5	 * 1. Welch's t-test: Compare mean return when pattern active vs inactive
+     6	 * 2. Permutation test: Non-parametric p-value via shuffling
+     7	 * 3. Sharpe ratio test: Minimum Sharpe threshold
+     8	 * 4. Regime robustness: Pattern works in claimed regimes
+     9	 * 5. Sample size: Minimum occurrence count
+    10	 * 6. Bonferroni correction: Multiple comparison adjustment
+    11	 */
+    12	
+    13	import v8 from 'node:v8';
+    14	import { DISCOVERY_CONFIG } from './config.js';
+    15	
+    16	export class StatisticalEdgeTester {
+    17	  /**
+    18	   * @param {Object} config
+    19	   * @param {number} config.minSampleSize - Minimum samples per pattern (default: 30)
+    20	   * @param {number} config.pValueThreshold - Maximum p-value (default: 0.05)
+    21	   * @param {number} config.minSharpe - Minimum Sharpe ratio (default: 0.5)
+    22	   * @param {boolean} config.multipleComparisonCorrection - Apply Bonferroni (default: true)
+    23	   * @param {number} config.seed - Random seed for permutation tests
+    24	   */
+    25	  constructor(config = {}) {
+    26	    this.minSampleSize = config.minSampleSize || DISCOVERY_CONFIG.tester.minSampleSize;
+    27	    this.pValueThreshold = config.pValueThreshold || DISCOVERY_CONFIG.tester.pValueThreshold;
+    28	    this.minSharpe = config.minSharpe || DISCOVERY_CONFIG.tester.minSharpe;
+    29	    this.multipleComparisonCorrection = config.multipleComparisonCorrection !== undefined
+    30	      ? config.multipleComparisonCorrection
+    31	      : DISCOVERY_CONFIG.tester.multipleComparisonCorrection;
+    32	    this.seed = config.seed || DISCOVERY_CONFIG.seed;
+    33	    this.permutationTestEnabled = config.permutationTestEnabled !== undefined
+    34	      ? config.permutationTestEnabled
+    35	      : DISCOVERY_CONFIG.tester.permutationTestEnabled;
+    36	    this.permutationN = config.permutationN || DISCOVERY_CONFIG.tester.permutationN;
+    37	    this.permutationMinHeapMB = config.permutationMinHeapMB || DISCOVERY_CONFIG.tester.permutationMinHeapMB;
+    38	
+    39	    // Heap check for permutation test
+    40	    if (this.permutationTestEnabled) {
+    41	      const heapStats = v8.getHeapStatistics();
+    42	      const currentHeapLimitMB = Math.floor(heapStats.heap_size_limit / 1024 / 1024);
+    43	
+    44	      console.log(`[StatisticalEdgeTester] Permutation test: ENABLED (DEFAULT)`);
+    45	      console.log(`[StatisticalEdgeTester] Current heap limit: ${currentHeapLimitMB} MB`);
+    46	      console.log(`[StatisticalEdgeTester] Permutation test requires: ${this.permutationMinHeapMB} MB`);
+    47	
+    48	      if (currentHeapLimitMB < this.permutationMinHeapMB) {
+    49	        console.error('');
+    50	        console.error('❌ FATAL ERROR: Heap limit too low for permutation test');
+    51	        console.error('');
+    52	        console.error(`Current heap: ${currentHeapLimitMB} MB`);
+    53	        console.error(`Required heap: ${this.permutationMinHeapMB} MB`);
+    54	        console.error('');
+    55	        console.error('Permutation test provides exact statistical validation but requires high memory.');
+    56	        console.error('');
+    57	        console.error('SOLUTIONS:');
+    58	        console.error('  1. Increase heap limit (RECOMMENDED for exact semantics):');
+    59	        console.error(`     NODE_OPTIONS="--max-old-space-size=${this.permutationMinHeapMB}" node --expose-gc <script>`);
+    60	        console.error('');
+    61	        console.error('  2. Disable permutation test (NOT RECOMMENDED - loses statistical rigor):');
+    62	        console.error('     DISCOVERY_PERMUTATION_TEST=false node <script>');
+    63	        console.error('');
+    64	        throw new Error(`Heap limit too low: ${currentHeapLimitMB} MB < ${this.permutationMinHeapMB} MB required for permutation test`);
+    65	      }
+    66	
+    67	      console.log(`[StatisticalEdgeTester] ✅ Heap adequate for permutation test`);
+    68	    } else {
+    69	      console.log(`[StatisticalEdgeTester] Permutation test: DISABLED (DISCOVERY_PERMUTATION_TEST=false)`);
+    70	      console.log(`[StatisticalEdgeTester] ⚠️  Statistical validation will rely on t-test + Sharpe only`);
+    71	    }
+    72	  }
+    73	
+    74	  /**
+    75	   * Test a pattern candidate for statistical significance
+    76	   * @param {PatternCandidate} pattern
+    77	   * @param {DiscoveryDataset} dataset
+    78	   * @returns {EdgeTestResult}
+    79	   *
+    80	   * EdgeTestResult = {
+    81	   *   patternId: string,
+    82	   *   isSignificant: boolean,
+    83	   *   tests: {
+    84	   *     tTest: { statistic, pValue, passed },
+    85	   *     permutationTest: { pValue, nPermutations, passed },
+    86	   *     sharpeTest: { sharpe, passed },
+    87	   *     regimeRobustness: { perRegimeSharpe: Object, passed },
+    88	   *     sampleSizeTest: { count, minRequired, passed }
+    89	   *   },
+    90	   *   overallScore: number,  // 0-1 combined score
+    91	   *   recommendation: 'ACCEPT'|'REJECT'|'WEAK'
+    92	   * }
+    93	   */
+    94	  test(pattern, dataset) {
+    95	    const tests = {};
+    96	
+    97	    // 1. Sample size test
+    98	    tests.sampleSizeTest = {
+    99	      count: pattern.support,
+   100	      minRequired: this.minSampleSize,
+   101	      passed: pattern.support >= this.minSampleSize
+   102	    };
+   103	
+   104	    if (!tests.sampleSizeTest.passed) {
+   105	      return {
+   106	        patternId: pattern.id,
+   107	        isSignificant: false,
+   108	        tests,
+   109	        overallScore: 0,
+   110	        recommendation: 'REJECT'
+   111	      };
+   112	    }
+   113	
+   114	    // Get pattern returns and compute non-pattern statistics (streaming)
+   115	    const patternReturns = [];
+   116	    let nonPatternCount = 0;
+   117	    let nonPatternSum = 0;
+   118	    let nonPatternSumSq = 0;
+   119	
+   120	    for (let i = 0; i < dataset.rows.length; i++) {
+   121	      const row = dataset.rows[i];
+   122	      const forwardReturn = row.forwardReturns[`h${pattern.horizon}`];
+   123	
+   124	      if (forwardReturn === null) continue;
+   125	
+   126	      if (pattern.matchingIndices.includes(i)) {
+   127	        patternReturns.push(forwardReturn);
+   128	      } else {
+   129	        // Streaming statistics for non-pattern returns (avoid storing 3.2M array)
+   130	        nonPatternCount++;
+   131	        nonPatternSum += forwardReturn;
+   132	        nonPatternSumSq += forwardReturn * forwardReturn;
+   133	      }
+   134	    }
+   135	
+   136	    // Calculate non-pattern statistics (online variance algorithm)
+   137	    const nonPatternMean = nonPatternCount > 0 ? nonPatternSum / nonPatternCount : 0;
+   138	    const nonPatternVariance = nonPatternCount > 0
+   139	      ? (nonPatternSumSq / nonPatternCount) - (nonPatternMean * nonPatternMean)
+   140	      : 0;

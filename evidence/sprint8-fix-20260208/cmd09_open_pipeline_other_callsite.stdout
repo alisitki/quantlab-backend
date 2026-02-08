@@ -1,0 +1,71 @@
+   350	      patternsTestedSignificant: acceptedPatterns.length,
+   351	      edgeCandidatesGenerated: edges.length,
+   352	      edgeCandidatesRegistered: registeredCount,
+   353	      edges,
+   354	      rejectedPatterns,
+   355	      metadata: {
+   356	        duration,
+   357	        dataRowCount: dataset.metadata.rowCount || 0,
+   358	        regimesUsed: dataset.metadata.regimeK,
+   359	        filesLoaded: files.length
+   360	      }
+   361	    };
+   362	  }
+   363	
+   364	  /**
+   365	   * Run on multiple days for more robust discovery (LEGACY - uses allRows concat)
+   366	   * @param {Array<{parquetPath, metaPath}>} files
+   367	   * @param {string} symbol
+   368	   * @returns {Promise<DiscoveryResult>}
+   369	   */
+   370	  async runMultiDay(files, symbol) {
+   371	    const startTime = Date.now();
+   372	
+   373	    console.log(`[EdgeDiscoveryPipeline] Running multi-day discovery with ${files.length} files`);
+   374	
+   375	    // Load multi-day data
+   376	    const dataset = await this.loader.loadMultiDay(files, symbol);
+   377	
+   378	    // Continue with standard pipeline
+   379	    const patterns = this.scanner.scan(dataset);
+   380	    const testResults = this.tester.testBatch(patterns, dataset);
+   381	
+   382	    const pairedResults = patterns.map((pattern, i) => ({
+   383	      pattern,
+   384	      testResult: testResults[i]
+   385	    }));
+   386	
+   387	    const acceptedPatterns = pairedResults.filter(({ testResult }) =>
+   388	      testResult.recommendation === 'ACCEPT'
+   389	    );
+   390	
+   391	    const rejectedPatterns = pairedResults
+   392	      .filter(({ testResult }) => testResult.recommendation === 'REJECT')
+   393	      .map(({ pattern, testResult }) => ({
+   394	        pattern,
+   395	        reason: `overallScore=${testResult.overallScore.toFixed(2)}`
+   396	      }));
+   397	
+   398	    const limitedAccepted = acceptedPatterns.slice(0, this.maxEdgesPerRun);
+   399	    const edges = this.generator.generateBatch(limitedAccepted);
+   400	
+   401	    let registeredCount = 0;
+   402	
+   403	    if (this.registry) {
+   404	      for (const edge of edges) {
+   405	        const paired = limitedAccepted.find(p =>
+   406	          edge.id.includes(p.pattern.id)
+   407	        );
+   408	
+   409	        if (paired) {
+   410	          this.registry.register(edge, {
+   411	            pattern: paired.pattern,
+   412	            testResult: paired.testResult,
+   413	            discoveredAt: Date.now()
+   414	          });
+   415	          registeredCount++;
+   416	        }
+   417	      }
+   418	    }
+   419	
+   420	    const duration = Date.now() - startTime;

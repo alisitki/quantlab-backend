@@ -91,7 +91,7 @@ export class StatisticalEdgeTester {
    *   recommendation: 'ACCEPT'|'REJECT'|'WEAK'
    * }
    */
-  test(pattern, dataset) {
+  async test(pattern, dataset) {
     const tests = {};
 
     // 1. Sample size test
@@ -117,19 +117,42 @@ export class StatisticalEdgeTester {
     let nonPatternSum = 0;
     let nonPatternSumSq = 0;
 
-    for (let i = 0; i < dataset.rows.length; i++) {
-      const row = dataset.rows[i];
-      const forwardReturn = row.forwardReturns[`h${pattern.horizon}`];
+    if (Array.isArray(dataset.rows)) {
+      for (let i = 0; i < dataset.rows.length; i++) {
+        const row = dataset.rows[i];
+        const forwardReturn = row.forwardReturns[`h${pattern.horizon}`];
 
-      if (forwardReturn === null) continue;
+        if (forwardReturn === null) continue;
 
-      if (pattern.matchingIndices.includes(i)) {
-        patternReturns.push(forwardReturn);
-      } else {
-        // Streaming statistics for non-pattern returns (avoid storing 3.2M array)
-        nonPatternCount++;
-        nonPatternSum += forwardReturn;
-        nonPatternSumSq += forwardReturn * forwardReturn;
+        if (pattern.matchingIndices.includes(i)) {
+          patternReturns.push(forwardReturn);
+        } else {
+          // Streaming statistics for non-pattern returns (avoid storing 3.2M array)
+          nonPatternCount++;
+          nonPatternSum += forwardReturn;
+          nonPatternSumSq += forwardReturn * forwardReturn;
+        }
+      }
+    } else if (typeof dataset.rowsFactory === 'function') {
+      const matchingIndexSet = new Set(pattern.matchingIndices);
+      let i = 0;
+
+      for await (const row of dataset.rowsFactory()) {
+        const forwardReturn = row.forwardReturns[`h${pattern.horizon}`];
+        if (forwardReturn === null) {
+          i++;
+          continue;
+        }
+
+        if (matchingIndexSet.has(i)) {
+          patternReturns.push(forwardReturn);
+        } else {
+          nonPatternCount++;
+          nonPatternSum += forwardReturn;
+          nonPatternSumSq += forwardReturn * forwardReturn;
+        }
+
+        i++;
       }
     }
 
@@ -152,12 +175,28 @@ export class StatisticalEdgeTester {
       // Permutation test requires full non-pattern returns array
       // Re-collect non-pattern returns (memory intensive, but exact)
       const nonPatternReturns = [];
-      for (let i = 0; i < dataset.rows.length; i++) {
-        const row = dataset.rows[i];
-        const forwardReturn = row.forwardReturns[`h${pattern.horizon}`];
-        if (forwardReturn === null) continue;
-        if (!pattern.matchingIndices.includes(i)) {
-          nonPatternReturns.push(forwardReturn);
+      if (Array.isArray(dataset.rows)) {
+        for (let i = 0; i < dataset.rows.length; i++) {
+          const row = dataset.rows[i];
+          const forwardReturn = row.forwardReturns[`h${pattern.horizon}`];
+          if (forwardReturn === null) continue;
+          if (!pattern.matchingIndices.includes(i)) {
+            nonPatternReturns.push(forwardReturn);
+          }
+        }
+      } else if (typeof dataset.rowsFactory === 'function') {
+        const matchingIndexSet = new Set(pattern.matchingIndices);
+        let i = 0;
+        for await (const row of dataset.rowsFactory()) {
+          const forwardReturn = row.forwardReturns[`h${pattern.horizon}`];
+          if (forwardReturn === null) {
+            i++;
+            continue;
+          }
+          if (!matchingIndexSet.has(i)) {
+            nonPatternReturns.push(forwardReturn);
+          }
+          i++;
         }
       }
 
@@ -189,7 +228,7 @@ export class StatisticalEdgeTester {
 
     // 5. Regime robustness (if pattern has regime constraints)
     if (pattern.regimes && pattern.regimes.length > 0) {
-      tests.regimeRobustness = this.#testRegimeRobustness(pattern, dataset);
+      tests.regimeRobustness = await this.#testRegimeRobustness(pattern, dataset);
     } else {
       tests.regimeRobustness = {
         perRegimeSharpe: {},
@@ -228,10 +267,10 @@ export class StatisticalEdgeTester {
    * @param {DiscoveryDataset} dataset
    * @returns {Array<EdgeTestResult>}
    */
-  testBatch(patterns, dataset) {
+  async testBatch(patterns, dataset) {
     console.log(`[StatisticalEdgeTester] Testing ${patterns.length} patterns...`);
 
-    const results = patterns.map(pattern => this.test(pattern, dataset));
+    const results = await Promise.all(patterns.map(pattern => this.test(pattern, dataset)));
 
     // Apply Bonferroni correction if enabled
     if (this.multipleComparisonCorrection && patterns.length > 1) {
@@ -437,33 +476,80 @@ export class StatisticalEdgeTester {
    * @param {DiscoveryDataset} dataset
    * @returns {Object}
    */
-  #testRegimeRobustness(pattern, dataset) {
-    const perRegimeSharpe = {};
+  async #testRegimeRobustness(pattern, dataset) {
+    if (Array.isArray(dataset.rows)) {
+      const perRegimeSharpe = {};
 
-    // Calculate Sharpe per regime
-    const uniqueRegimes = [...new Set(dataset.rows.map(r => r.regime))];
+      // Calculate Sharpe per regime
+      const uniqueRegimes = [...new Set(dataset.rows.map(r => r.regime))];
 
-    for (const regime of uniqueRegimes) {
-      const regimeReturns = [];
+      for (const regime of uniqueRegimes) {
+        const regimeReturns = [];
 
-      for (const idx of pattern.matchingIndices) {
-        const row = dataset.rows[idx];
-        if (row.regime === regime) {
-          const ret = row.forwardReturns[`h${pattern.horizon}`];
-          if (ret !== null) {
-            regimeReturns.push(ret);
+        for (const idx of pattern.matchingIndices) {
+          const row = dataset.rows[idx];
+          if (row.regime === regime) {
+            const ret = row.forwardReturns[`h${pattern.horizon}`];
+            if (ret !== null) {
+              regimeReturns.push(ret);
+            }
           }
+        }
+
+        if (regimeReturns.length > 0) {
+          perRegimeSharpe[regime] = this.#calculateSharpe(regimeReturns);
         }
       }
 
+      // Check if target regimes have good Sharpe
+      let passed = true;
+
+      for (const targetRegime of pattern.regimes) {
+        if (perRegimeSharpe[targetRegime] !== undefined && perRegimeSharpe[targetRegime] < this.minSharpe) {
+          passed = false;
+          break;
+        }
+      }
+
+      return {
+        perRegimeSharpe,
+        passed
+      };
+    }
+
+    if (typeof dataset.rowsFactory !== 'function') {
+      console.warn('[StatisticalEdgeTester] Regime robustness skipped: dataset has no rows array or rowsFactory');
+      return { perRegimeSharpe: {}, passed: true };
+    }
+
+    const perRegimeSharpe = {};
+    const matchingIndexSet = new Set(pattern.matchingIndices);
+    const regimeReturnsByRegime = new Map();
+
+    let i = 0;
+    for await (const row of dataset.rowsFactory()) {
+      if (matchingIndexSet.has(i)) {
+        const ret = row.forwardReturns[`h${pattern.horizon}`];
+        if (ret !== null) {
+          const regime = row.regime;
+          const arr = regimeReturnsByRegime.get(regime);
+          if (arr) {
+            arr.push(ret);
+          } else {
+            regimeReturnsByRegime.set(regime, [ret]);
+          }
+        }
+      }
+      i++;
+    }
+
+    for (const [regime, regimeReturns] of regimeReturnsByRegime.entries()) {
       if (regimeReturns.length > 0) {
         perRegimeSharpe[regime] = this.#calculateSharpe(regimeReturns);
       }
     }
 
-    // Check if target regimes have good Sharpe
     let passed = true;
-
     for (const targetRegime of pattern.regimes) {
       if (perRegimeSharpe[targetRegime] !== undefined && perRegimeSharpe[targetRegime] < this.minSharpe) {
         passed = false;
@@ -471,10 +557,7 @@ export class StatisticalEdgeTester {
       }
     }
 
-    return {
-      perRegimeSharpe,
-      passed
-    };
+    return { perRegimeSharpe, passed };
   }
 
   // --- Helper functions ---

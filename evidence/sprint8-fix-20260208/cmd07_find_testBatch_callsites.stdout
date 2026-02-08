@@ -1,0 +1,3 @@
+89:    const testResults = this.tester.testBatch(patterns, dataset);
+263:    const testResults = this.tester.testBatch(patterns, dataset);
+380:    const testResults = this.tester.testBatch(patterns, dataset);

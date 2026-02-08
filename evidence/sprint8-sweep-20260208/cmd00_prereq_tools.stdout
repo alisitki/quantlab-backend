@@ -1,0 +1,11 @@
+/usr/bin/bash
+/usr/bin/ls
+/usr/bin/find
+/usr/bin/sed
+/usr/bin/awk
+/usr/bin/sort
+/usr/bin/tail
+/usr/bin/head
+/usr/bin/timeout
+/usr/bin/node
+/usr/bin/time

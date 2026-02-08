@@ -1,0 +1,71 @@
+    50	   *   metadata: { duration, dataRowCount, regimesUsed }
+    51	   * }
+    52	   */
+    53	  async run({ parquetPath, metaPath, symbol }) {
+    54	    const startTime = Date.now();
+    55	
+    56	    console.log('[EdgeDiscoveryPipeline] ========================================');
+    57	    console.log('[EdgeDiscoveryPipeline] Starting Edge Discovery Pipeline');
+    58	    console.log('[EdgeDiscoveryPipeline] ========================================');
+    59	
+    60	    // Step 1: Load data
+    61	    console.log('[EdgeDiscoveryPipeline] Step 1: Loading data...');
+    62	    const dataset = await this.loader.load({ parquetPath, metaPath, symbol });
+    63	    console.log(`[EdgeDiscoveryPipeline] Loaded ${dataset.rows.length} rows with ${dataset.metadata.regimeK} regimes`);
+    64	
+    65	    // Step 2: Scan for patterns
+    66	    console.log('[EdgeDiscoveryPipeline] Step 2: Scanning for patterns...');
+    67	    const patterns = this.scanner.scan(dataset);
+    68	    console.log(`[EdgeDiscoveryPipeline] Found ${patterns.length} patterns`);
+    69	
+    70	    if (patterns.length === 0) {
+    71	      console.log('[EdgeDiscoveryPipeline] No patterns found. Exiting.');
+    72	      return {
+    73	        patternsScanned: 0,
+    74	        patternsTestedSignificant: 0,
+    75	        edgeCandidatesGenerated: 0,
+    76	        edgeCandidatesRegistered: 0,
+    77	        edges: [],
+    78	        rejectedPatterns: [],
+    79	        metadata: {
+    80	          duration: Date.now() - startTime,
+    81	          dataRowCount: dataset.rows.length,
+    82	          regimesUsed: dataset.metadata.regimeK
+    83	        }
+    84	      };
+    85	    }
+    86	
+    87	    // Step 3: Test patterns statistically
+    88	    console.log('[EdgeDiscoveryPipeline] Step 3: Testing patterns for statistical significance...');
+    89	    const testResults = this.tester.testBatch(patterns, dataset);
+    90	
+    91	    // Pair patterns with test results
+    92	    const pairedResults = patterns.map((pattern, i) => ({
+    93	      pattern,
+    94	      testResult: testResults[i]
+    95	    }));
+    96	
+    97	    // Filter accepted patterns
+    98	    const acceptedPatterns = pairedResults.filter(({ testResult }) =>
+    99	      testResult.recommendation === 'ACCEPT'
+   100	    );
+   101	
+   102	    const rejectedPatterns = pairedResults
+   103	      .filter(({ testResult }) => testResult.recommendation === 'REJECT')
+   104	      .map(({ pattern, testResult }) => ({
+   105	        pattern,
+   106	        reason: `overallScore=${testResult.overallScore.toFixed(2)}`
+   107	      }));
+   108	
+   109	    console.log(`[EdgeDiscoveryPipeline] ${acceptedPatterns.length} patterns passed statistical tests`);
+   110	
+   111	    if (acceptedPatterns.length === 0) {
+   112	      console.log('[EdgeDiscoveryPipeline] No patterns passed tests. Exiting.');
+   113	      return {
+   114	        patternsScanned: patterns.length,
+   115	        patternsTestedSignificant: 0,
+   116	        edgeCandidatesGenerated: 0,
+   117	        edgeCandidatesRegistered: 0,
+   118	        edges: [],
+   119	        rejectedPatterns,
+   120	        metadata: {

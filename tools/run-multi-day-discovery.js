@@ -1,203 +1,508 @@
 #!/usr/bin/env node
 /**
- * Sprint-2 Multi-Day Discovery Runner
- * Tests discovery pipeline on 6 consecutive days of ADA/USDT
+ * Sprint-4 Multi-Day Discovery Runner (Official)
+ *
+ * Scope: CLI/runner only (no core refactors).
+ *
+ * Notes:
+ * - Permutation test toggle is read at module-load time via DISCOVERY_CONFIG,
+ *   so we set process.env.DISCOVERY_PERMUTATION_TEST BEFORE importing pipeline modules.
+ * - Heap size cannot be changed for the current process; if heap is too low, we re-exec node
+ *   with NODE_OPTIONS and --max-old-space-size to match --heapMB.
  */
 
 import { spawn } from 'node:child_process';
 import v8 from 'node:v8';
-import { EdgeDiscoveryPipeline } from '../core/edge/discovery/EdgeDiscoveryPipeline.js';
-import { EdgeRegistry } from '../core/edge/EdgeRegistry.js';
-import { writeFile, mkdir } from 'node:fs/promises';
+import path from 'node:path';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 
-// ========================================
-// HEAP LIMIT CHECK & AUTO RE-EXEC
-// ========================================
-const REQUIRED_HEAP_MB = 6144; // 6 GB required for multi-day discovery
-const heapStats = v8.getHeapStatistics();
-const currentHeapLimitMB = Math.floor(heapStats.heap_size_limit / 1024 / 1024);
+const SCRIPT_NAME = 'tools/run-multi-day-discovery.js';
+const VALID_EXCHANGES = new Set(['binance', 'bybit', 'okx']);
+const VALID_MODES = new Set(['smoke', 'acceptance']);
+const VALID_PERMUTATION = new Set(['on', 'off']);
 
-console.log(`[Heap Check] Current heap limit: ${currentHeapLimitMB} MB`);
+function printHelp(exitCode = 0) {
+  const msg = `
+${SCRIPT_NAME}
 
-if (currentHeapLimitMB < REQUIRED_HEAP_MB) {
-  console.log(`[Heap Check] ⚠️  Heap limit too low (${currentHeapLimitMB} MB < ${REQUIRED_HEAP_MB} MB required)`);
-  console.log(`[Heap Check] 🔄 Auto re-exec with --max-old-space-size=${REQUIRED_HEAP_MB}...`);
-  console.log('');
+Args:
+  --exchange <binance|bybit|okx>       (default: binance)
+  --symbol <ADA/USDT>                  (required)
+  --stream <stream>                    (required)
+  --start <YYYYMMDD>                   (required)
+  --end <YYYYMMDD>                     (required)
+  --heapMB <int>                       (default: 6144)
+  --permutationTest <on|off>           (default: on)
+  --mode <smoke|acceptance>            (default: smoke)
+  --progressEvery <N>                  (default: 1)
+  --help
 
-  // Re-exec self with correct NODE_OPTIONS
-  const child = spawn(
-    process.execPath,
-    ['--expose-gc', `--max-old-space-size=${REQUIRED_HEAP_MB}`, ...process.argv.slice(1)],
-    {
-      stdio: 'inherit',
-      env: { ...process.env, NODE_OPTIONS: `--max-old-space-size=${REQUIRED_HEAP_MB}` }
-    }
-  );
-
-  child.on('exit', (code) => {
-    process.exit(code || 0);
-  });
-
-  // Exit parent process
-  // Child will continue execution
-} else {
-  console.log(`[Heap Check] ✅ Heap limit adequate (${currentHeapLimitMB} MB >= ${REQUIRED_HEAP_MB} MB)`);
-  console.log('');
+Examples:
+  NODE_OPTIONS="--max-old-space-size=6144" node ${SCRIPT_NAME} \\
+    --exchange binance --stream bbo --symbol ADA/USDT \\
+    --start 20260110 --end 20260111 --mode acceptance
+`.trim();
+  console.log(msg);
+  process.exit(exitCode);
 }
 
-// Single-day capacity test (Sprint-2)
-// Goal: Validate discovery engine works at scale (3.2M rows)
-// Multi-day loading already validated (successfully loaded 2 days before OOM)
-const FILES = [
-  '20260108'   // Day 1: 3.2M rows (GOOD quality, largest day)
-].map(date => ({
-  parquetPath: `data/sprint2/adausdt_${date}.parquet`,
-  metaPath: `data/sprint2/adausdt_${date}_meta.json`
-}));
+function fatal(msg, exitCode = 1) {
+  console.error(`[FATAL] ${msg}`);
+  process.exit(exitCode);
+}
 
-const SYMBOL = 'ADA/USDT';
-const OUTPUT_DIR = 'runs/sprint2-multiday-20260206';
+function parseArgs(argv) {
+  const out = {};
+  const tokens = argv.slice(2);
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    if (t === '--help' || t === '-h') {
+      out.help = true;
+      continue;
+    }
+    if (!t.startsWith('--')) {
+      fatal(`Unexpected arg: ${t}`);
+    }
+
+    const eq = t.indexOf('=');
+    if (eq !== -1) {
+      const key = t.slice(2, eq);
+      const value = t.slice(eq + 1);
+      out[key] = value;
+      continue;
+    }
+
+    const key = t.slice(2);
+    const next = tokens[i + 1];
+    if (!next || next.startsWith('--')) {
+      out[key] = true;
+      continue;
+    }
+    out[key] = next;
+    i++;
+  }
+
+  const allowed = new Set([
+    'help',
+    'exchange',
+    'symbol',
+    'stream',
+    'start',
+    'end',
+    'heapMB',
+    'permutationTest',
+    'mode',
+    'progressEvery'
+  ]);
+
+  for (const k of Object.keys(out)) {
+    if (!allowed.has(k)) fatal(`Unknown flag: --${k}`);
+  }
+
+  return out;
+}
+
+function toInt(name, value, { min = 1 } = {}) {
+  const n = Number.parseInt(String(value), 10);
+  if (!Number.isFinite(n) || String(n) !== String(value).trim()) {
+    fatal(`Invalid --${name}: ${value} (expected integer)`);
+  }
+  if (n < min) fatal(`Invalid --${name}: ${value} (min ${min})`);
+  return n;
+}
+
+function parseYYYYMMDD(s) {
+  if (typeof s !== 'string' || !/^\d{8}$/.test(s)) return null;
+  const year = Number.parseInt(s.slice(0, 4), 10);
+  const month = Number.parseInt(s.slice(4, 6), 10);
+  const day = Number.parseInt(s.slice(6, 8), 10);
+  const d = new Date(Date.UTC(year, month - 1, day));
+  if (
+    d.getUTCFullYear() !== year ||
+    d.getUTCMonth() !== month - 1 ||
+    d.getUTCDate() !== day
+  ) {
+    return null;
+  }
+  return d;
+}
+
+function fmtYYYYMMDD(d) {
+  const y = String(d.getUTCFullYear()).padStart(4, '0');
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  return `${y}${m}${dd}`;
+}
+
+function listDates(startYYYYMMDD, endYYYYMMDD) {
+  const startD = parseYYYYMMDD(startYYYYMMDD);
+  const endD = parseYYYYMMDD(endYYYYMMDD);
+  if (!startD) fatal(`Invalid --start: ${startYYYYMMDD} (expected YYYYMMDD)`);
+  if (!endD) fatal(`Invalid --end: ${endYYYYMMDD} (expected YYYYMMDD)`);
+  if (startD.getTime() > endD.getTime()) fatal(`Invalid date range: start > end (${startYYYYMMDD} > ${endYYYYMMDD})`);
+
+  const out = [];
+  for (let d = startD; d.getTime() <= endD.getTime(); d = new Date(d.getTime() + 86_400_000)) {
+    out.push(fmtYYYYMMDD(d));
+  }
+  return out;
+}
+
+function normalizeSymbolForPath(symbol) {
+  return String(symbol || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
+
+function currentHeapLimitMB() {
+  const heapStats = v8.getHeapStatistics();
+  return Math.floor(heapStats.heap_size_limit / 1024 / 1024);
+}
+
+function buildNodeOptions(existing, heapMB) {
+  const parts = String(existing || '')
+    .split(/\s+/)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .filter(s => !s.startsWith('--max-old-space-size='));
+  parts.push(`--max-old-space-size=${heapMB}`);
+  return parts.join(' ');
+}
+
+function resolveDayFiles({ exchange, stream, symbolSlug, date }) {
+  const curatedDir = `data/curated/exchange=${exchange}/stream=${stream}/symbol=${symbolSlug}/date=${date}`;
+  const legacyDir = `data/exchange=${exchange}/stream=${stream}/symbol=${symbolSlug}/date=${date}`;
+
+  /** @type {Array<{parquetPath: string, metaCandidates: string[]}>} */
+  const candidates = [
+    {
+      parquetPath: `${curatedDir}/data.parquet`,
+      metaCandidates: [`${curatedDir}/meta.json`, `${curatedDir}/data.parquet.meta.json`]
+    },
+    {
+      parquetPath: `${legacyDir}/data.parquet`,
+      metaCandidates: [`${legacyDir}/meta.json`, `${legacyDir}/data.parquet.meta.json`]
+    },
+    {
+      parquetPath: `data/test/${symbolSlug}_${date}.parquet`,
+      metaCandidates: [
+        `data/test/${symbolSlug}_${date}_meta.json`,
+        `data/test/${symbolSlug}_${date}.parquet.meta.json`
+      ]
+    },
+    {
+      parquetPath: `data/sprint2/${symbolSlug}_${date}.parquet`,
+      metaCandidates: [
+        `data/sprint2/${symbolSlug}_${date}_meta.json`,
+        `data/sprint2/${symbolSlug}_${date}.parquet.meta.json`
+      ]
+    },
+    {
+      parquetPath: `data/${symbolSlug}_${date}.parquet`,
+      metaCandidates: [`data/${symbolSlug}_${date}_meta.json`, `data/${symbolSlug}_${date}.parquet.meta.json`]
+    }
+  ];
+
+  for (const c of candidates) {
+    if (!existsSync(c.parquetPath)) continue;
+    for (const metaPath of c.metaCandidates) {
+      if (existsSync(metaPath)) {
+        return { parquetPath: c.parquetPath, metaPath };
+      }
+    }
+  }
+
+  return null;
+}
+
+async function readJSON(filePath) {
+  const txt = await readFile(filePath, 'utf8');
+  return JSON.parse(txt);
+}
+
+function safeTimestamp() {
+  return new Date().toISOString().replace(/[:.]/g, '-');
+}
 
 async function main() {
-  console.log('=== Sprint-2 Discovery Capacity Test ===\n');
-  console.log(`Goal: Validate discovery engine at scale`);
-  console.log(`Symbol: ${SYMBOL}`);
-  console.log(`Days: ${FILES.length} (largest day)`);
-  console.log(`Expected Rows: ~3.2M rows`);
-  console.log(`Output: ${OUTPUT_DIR}\n`);
+  const diagTiming = process.env.QUANTLAB_DIAG_TIMING === 'true';
+  const t0 = diagTiming ? Date.now() : 0;
+  const checkpoint = diagTiming
+    ? (name) => {
+      const elapsed = Date.now() - t0;
+      console.log(`[Timing] ${name} elapsed_ms_since_start=${elapsed}`);
+    }
+    : () => {};
+  checkpoint('t0');
 
-  // Verify files exist
-  console.log('Verifying files...');
-  for (const file of FILES) {
-    if (!existsSync(file.parquetPath)) {
-      console.error(`✗ Missing: ${file.parquetPath}`);
-      process.exit(1);
-    }
-    if (!existsSync(file.metaPath)) {
-      console.error(`✗ Missing: ${file.metaPath}`);
-      process.exit(1);
-    }
-    console.log(`  ✓ ${file.parquetPath.split('/').pop()}`);
+  const args = parseArgs(process.argv);
+  if (args.help) printHelp(0);
+
+  const exchange = String(args.exchange || 'binance').trim();
+  const symbol = String(args.symbol || '').trim();
+  const stream = String(args.stream || '').trim();
+  const start = String(args.start || '').trim();
+  const end = String(args.end || '').trim();
+  const heapMB = args.heapMB === undefined ? 6144 : toInt('heapMB', args.heapMB, { min: 256 });
+  const mode = String(args.mode || 'smoke').trim();
+  const progressEvery = args.progressEvery === undefined ? 1 : toInt('progressEvery', args.progressEvery, { min: 1 });
+
+  if (!VALID_EXCHANGES.has(exchange)) fatal(`Invalid --exchange: ${exchange} (expected: binance|bybit|okx)`);
+  if (!symbol) fatal('Missing required --symbol');
+  if (!stream) fatal('Missing required --stream');
+  if (!start) fatal('Missing required --start');
+  if (!end) fatal('Missing required --end');
+  if (!VALID_MODES.has(mode)) fatal(`Invalid --mode: ${mode} (expected: smoke|acceptance)`);
+
+  // Date list + acceptance guardrail
+  const dates = listDates(start, end);
+  if (mode === 'acceptance' && dates.length < 2) {
+    fatal(`--mode acceptance requires at least 2 days (got ${dates.length}: ${start}-${end})`);
   }
+
+  // Permutation test: explicit flag overrides env; otherwise env can disable.
+  let permutationEnabled = true;
+  let permutationSource = 'DEFAULT';
+
+  if (args.permutationTest !== undefined) {
+    const v = String(args.permutationTest).trim().toLowerCase();
+    if (!VALID_PERMUTATION.has(v)) fatal(`Invalid --permutationTest: ${args.permutationTest} (expected: on|off)`);
+    permutationEnabled = v === 'on';
+    permutationSource = 'CLI';
+  } else if (process.env.DISCOVERY_PERMUTATION_TEST === 'false') {
+    permutationEnabled = false;
+    permutationSource = 'ENV';
+  } else if (process.env.DISCOVERY_PERMUTATION_TEST === 'true') {
+    permutationEnabled = true;
+    permutationSource = 'ENV';
+  }
+
+  // Heap check and optional re-exec (only if current heap limit is below requested).
+  const heapLimitMB = currentHeapLimitMB();
+  if (heapLimitMB < heapMB && process.env.QUANTLAB_HEAP_REEXEC !== '1') {
+    const nextNodeOptions = buildNodeOptions(process.env.NODE_OPTIONS, heapMB);
+
+    // Preserve user execArgv but ensure heap is set. (time -v may not account child RSS;
+    // recommended invocation is to set NODE_OPTIONS externally so this path is not used.)
+    const execArgv = process.execArgv
+      .filter(a => !a.startsWith('--max-old-space-size='))
+      .concat([`--max-old-space-size=${heapMB}`]);
+
+    const childEnv = {
+      ...process.env,
+      QUANTLAB_HEAP_REEXEC: '1',
+      NODE_OPTIONS: nextNodeOptions
+    };
+
+    if (permutationSource === 'CLI') {
+      childEnv.DISCOVERY_PERMUTATION_TEST = permutationEnabled ? 'true' : 'false';
+    }
+
+    console.log(`[Heap] current=${heapLimitMB}MB requested=${heapMB}MB -> re-exec with NODE_OPTIONS="${nextNodeOptions}"`);
+    const child = spawn(process.execPath, [...execArgv, ...process.argv.slice(1)], {
+      stdio: 'inherit',
+      env: childEnv
+    });
+    child.on('exit', (code) => process.exit(code ?? 0));
+    return;
+  }
+
+  // Ensure DISCOVERY_PERMUTATION_TEST is set BEFORE importing pipeline modules.
+  // (DISCOVERY_CONFIG reads it at module-load time.)
+  if (permutationSource === 'CLI') {
+    process.env.DISCOVERY_PERMUTATION_TEST = permutationEnabled ? 'true' : 'false';
+  }
+
+  const symbolSlug = normalizeSymbolForPath(symbol);
+  if (!symbolSlug) fatal(`Invalid --symbol: ${symbol} (cannot derive path slug)`);
+
+  // Header log (required)
+  console.log('='.repeat(80));
+  console.log('MULTI-DAY DISCOVERY RUNNER');
+  console.log('='.repeat(80));
+  console.log(`mode:             ${mode}`);
+  console.log(`exchange:          ${exchange}`);
+  console.log(`stream:            ${stream}`);
+  console.log(`symbol:            ${symbol}`);
+  console.log(`date_range:        ${start}..${end} (${dates.length} day(s))`);
+  console.log(`permutation_test:  ${permutationEnabled ? 'ON' : 'OFF'} (${permutationSource})`);
+  if (process.env.DISCOVERY_PERMUTATION_TEST === 'false' && permutationSource !== 'CLI') {
+    console.log(`permutation_note:  DISABLED via env DISCOVERY_PERMUTATION_TEST=false`);
+  }
+  console.log(`heapMB:            ${heapMB}`);
+  console.log(`heap_limit_mb:     ${heapLimitMB}`);
+  console.log(`progressEvery:     ${progressEvery}`);
+  console.log('='.repeat(80));
+
+  // Resolve parquet/meta paths for each day
+  console.log('');
+  console.log('[Dataset] Resolving day files...');
+  /** @type {Array<{date: string, parquetPath: string, metaPath: string, meta: any}>} */
+  const resolved = [];
+  for (let i = 0; i < dates.length; i++) {
+    const date = dates[i];
+    const found = resolveDayFiles({ exchange, stream, symbolSlug, date });
+    if (!found) {
+      console.error('');
+      console.error(`[Dataset] Missing files for date=${date}`);
+      console.error(`[Dataset] Tried patterns (first existing parquet wins, requires meta):`);
+      console.error(`  data/curated/exchange=${exchange}/stream=${stream}/symbol=${symbolSlug}/date=${date}/data.parquet + meta.json`);
+      console.error(`  data/exchange=${exchange}/stream=${stream}/symbol=${symbolSlug}/date=${date}/data.parquet + meta.json`);
+      console.error(`  data/test/${symbolSlug}_${date}.parquet + ${symbolSlug}_${date}_meta.json`);
+      console.error(`  data/sprint2/${symbolSlug}_${date}.parquet + ${symbolSlug}_${date}_meta.json`);
+      console.error(`  data/${symbolSlug}_${date}.parquet + ${symbolSlug}_${date}_meta.json`);
+      process.exit(2);
+    }
+
+    const meta = await readJSON(found.metaPath);
+    if (meta && typeof meta.stream_type === 'string' && meta.stream_type !== stream) {
+      fatal(`Meta stream_type mismatch for date=${date}: meta.stream_type=${meta.stream_type} != --stream=${stream}`, 2);
+    }
+
+    resolved.push({ date, parquetPath: found.parquetPath, metaPath: found.metaPath, meta });
+
+    const n = i + 1;
+    if (n === 1 || n === dates.length || (n % progressEvery) === 0) {
+      console.log(`[Dataset] progress ${n}/${dates.length}: date=${date} parquet=${path.basename(found.parquetPath)} meta=${path.basename(found.metaPath)}`);
+    }
+  }
+
+  // Total rows from meta (best-effort; does not affect pipeline).
+  const totalRows = resolved.reduce((acc, r) => acc + (Number.isFinite(r.meta?.rows) ? r.meta.rows : 0), 0);
+  console.log(`[Dataset] resolved ${resolved.length} day(s); meta.rows_total=${totalRows || 'N/A'}`);
+  checkpoint('t_resolve_files_done');
+
+  const outputRoot = 'runs/multi-day-discovery';
+  const runTs = safeTimestamp();
+  const permTag = permutationEnabled ? 'perm-on' : 'perm-off';
+  const runDirName = `${runTs}_${exchange}_${stream}_${symbolSlug}_${start}_${end}_${mode}_${permTag}`;
+  const outputDir = path.join(outputRoot, runDirName);
+  await mkdir(outputDir, { recursive: true });
+
+  const files = resolved.map(r => ({ parquetPath: r.parquetPath, metaPath: r.metaPath }));
+
+  // Import pipeline modules AFTER env is ready
+  const [{ EdgeDiscoveryPipeline }, { EdgeRegistry }] = await Promise.all([
+    import('../core/edge/discovery/EdgeDiscoveryPipeline.js'),
+    import('../core/edge/EdgeRegistry.js')
+  ]);
+  checkpoint('t_import_modules_done');
+
+  console.log('');
+  console.log(`[Run] output_dir=${outputDir}`);
+  console.log(`[Run] starting EdgeDiscoveryPipeline.runMultiDayStreaming(files=${files.length})...`);
   console.log('');
 
-  // Create output directory
-  await mkdir(OUTPUT_DIR, { recursive: true });
-
-  // Initialize registry
   const registry = new EdgeRegistry();
-
-  // Create pipeline
   const pipeline = new EdgeDiscoveryPipeline({ registry });
 
-  // Run multi-day discovery (STREAMING mode for memory efficiency)
-  console.log('Running multi-day discovery (STREAMING)...');
-  console.log('');
-  const startTime = Date.now();
-
+  const startedAt = Date.now();
   let result;
   try {
-    result = await pipeline.runMultiDayStreaming(FILES, SYMBOL);
+    checkpoint('t_pipeline_start');
+    result = await pipeline.runMultiDayStreaming(files, symbol);
   } catch (err) {
-    console.error('\n✗ Discovery failed:', err.message);
-    console.error(err.stack);
+    console.error('');
+    console.error('[Run] discovery_error');
+    console.error(err && err.stack ? err.stack : String(err));
     process.exit(1);
   }
+  checkpoint('t_pipeline_done');
+  const durationMs = Date.now() - startedAt;
 
-  const durationSec = ((Date.now() - startTime) / 1000).toFixed(1);
-  console.log(`\n✓ Discovery complete (${durationSec}s)\n`);
-
-  // Print summary
-  console.log('=== CANDIDATE DISCOVERY SUMMARY ===\n');
-  console.log(`Patterns Scanned:          ${result.patternsScanned}`);
-  console.log(`Patterns Tested:           ${result.patternsTestedSignificant}`);
-  console.log(`Edge Candidates Generated: ${result.edgeCandidatesGenerated}`);
-  console.log(`Edge Candidates Registered: ${result.edgeCandidatesRegistered}`);
   console.log('');
-  console.log(`Data Rows Processed:       ${result.metadata.dataRowCount?.toLocaleString() || 'N/A'}`);
-  console.log(`Regimes Detected:          ${result.metadata.regimesUsed || 'N/A'}`);
-  console.log(`Files Loaded:              ${result.metadata.filesLoaded || FILES.length}`);
-  console.log(`Duration:                  ${durationSec}s`);
-  console.log('');
+  console.log('='.repeat(80));
+  console.log('DISCOVERY SUMMARY');
+  console.log('='.repeat(80));
+  console.log(`patterns_scanned:          ${result.patternsScanned}`);
+  console.log(`patterns_tested_significant:${result.patternsTestedSignificant}`);
+  console.log(`edge_candidates_generated: ${result.edgeCandidatesGenerated}`);
+  console.log(`edge_candidates_registered:${result.edgeCandidatesRegistered}`);
+  console.log(`metadata.dataRowCount:     ${result.metadata?.dataRowCount ?? 'N/A'}`);
+  console.log(`metadata.regimesUsed:      ${result.metadata?.regimesUsed ?? 'N/A'}`);
+  console.log(`metadata.filesLoaded:      ${result.metadata?.filesLoaded ?? files.length}`);
+  console.log(`duration_ms:              ${durationMs}`);
+  console.log('='.repeat(80));
 
-  if (result.edgeCandidatesGenerated > 0) {
-    console.log('=== EDGE CANDIDATES ===\n');
-    result.edges.forEach((edge, i) => {
-      console.log(`${i + 1}. ${edge.name} (${edge.id})`);
-      console.log(`   Expected Return: ${(edge.expectedAdvantage.mean * 100).toFixed(4)}%`);
-      console.log(`   Sharpe Ratio:    ${edge.expectedAdvantage.sharpe?.toFixed(2) || 'N/A'}`);
-      console.log(`   Win Rate:        ${(edge.expectedAdvantage.winRate * 100).toFixed(1)}%`);
-      console.log(`   Sample Size:     ${edge.confidence.sampleSize}`);
-      console.log(`   Confidence:      ${(edge.confidence.score * 100).toFixed(1)}%`);
-      console.log(`   Status:          ${edge.status}`);
-      console.log('');
-    });
-  } else {
-    console.log('⚠️  No edge candidates generated');
-    console.log('');
-    console.log('Possible reasons:');
-    console.log('  - Patterns did not meet returnThreshold (0.05%)');
-    console.log('  - Statistical tests failed (p-value, Sharpe, etc.)');
-    console.log('  - Insufficient sample sizes (<30 occurrences)');
-    console.log('');
+  // Persist minimal run report for evidence/repro.
+  const reportPath = path.join(outputDir, `discovery-report-${runTs}.json`);
+  const edgesPath = path.join(outputDir, `edges-discovered-${runTs}.json`);
+
+  const diagnosticNotes = [];
+  // NOTE: Artifact was created previously for diagnosis (not created by this runner).
+  if (
+    existsSync('data/test/adausdt_20260204.parquet') &&
+    existsSync('data/test/adausdt_20260204_meta.json')
+  ) {
+    diagnosticNotes.push(
+      'artifact_created_for_diag: data/test/adausdt_20260204.parquet + data/test/adausdt_20260204_meta.json (pre-existing)'
+    );
   }
 
-  // Save detailed report
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-  const reportPath = `${OUTPUT_DIR}/discovery-report-${timestamp}.json`;
-  const edgesPath = `${OUTPUT_DIR}/edges-discovered-${timestamp}.json`;
+  if (result.patternsScanned === 0) {
+    const minSupport = pipeline.scanner?.minSupport;
+    const returnThreshold = pipeline.scanner?.returnThreshold;
+    console.log(
+      `[Runner] no_patterns: patterns_scanned=0 (scanner.minSupport=${minSupport} scanner.returnThreshold=${returnThreshold})`
+    );
+    console.log('[Runner] note: threshold/config may be restrictive');
+    diagnosticNotes.push(
+      `no_patterns: patterns_scanned=0 (scanner.minSupport=${minSupport} scanner.returnThreshold=${returnThreshold})`
+    );
+    diagnosticNotes.push('note: threshold/config may be restrictive');
+  }
 
   const report = {
     step: 'multi_day_discovery',
     timestamp: new Date().toISOString(),
-    symbol: SYMBOL,
-    days: FILES.length,
-    files: FILES.map(f => f.parquetPath),
-    patternsScanned: result.patternsScanned,
-    patternsTestedSignificant: result.patternsTestedSignificant,
-    edgeCandidatesGenerated: result.edgeCandidatesGenerated,
-    edgeCandidatesRegistered: result.edgeCandidatesRegistered,
-    metadata: result.metadata,
-    duration: durationSec
+    mode,
+    exchange,
+    stream,
+    symbol,
+    symbolSlug,
+    dateRange: { start, end, days: dates.length },
+    permutationTest: { enabled: permutationEnabled, source: permutationSource },
+    heap: { requestedMB: heapMB, heapLimitMB },
+    progressEvery,
+    diagnosticNotes,
+    files: resolved.map(r => ({
+      date: r.date,
+      parquetPath: r.parquetPath,
+      metaPath: r.metaPath,
+      meta: {
+        rows: r.meta?.rows,
+        schema_version: r.meta?.schema_version,
+        stream_type: r.meta?.stream_type,
+        day_quality: r.meta?.day_quality,
+        sha256: r.meta?.sha256
+      }
+    })),
+    metaRowsTotal: totalRows || null,
+    result,
+    durationMs
   };
 
   await writeFile(reportPath, JSON.stringify(report, null, 2));
-  console.log(`Report saved: ${reportPath}`);
+  console.log(`[Run] report_saved=${reportPath}`);
 
-  if (result.edges.length > 0) {
+  if (Array.isArray(result.edges) && result.edges.length > 0) {
     const edgesData = {
-      edges: result.edges.map(e => e.toJSON()),
+      edges: result.edges.map(e => (typeof e.toJSON === 'function' ? e.toJSON() : e)),
       metadata: {
         discoveryTimestamp: new Date().toISOString(),
-        symbol: SYMBOL,
-        daysProcessed: FILES.length,
+        symbol,
+        daysProcessed: dates.length,
         totalCandidates: result.edges.length
       }
     };
     await writeFile(edgesPath, JSON.stringify(edgesData, null, 2));
-    console.log(`Edges saved:  ${edgesPath}`);
-  }
-
-  console.log('');
-  console.log('=== Sprint-2 Multi-Day Discovery Complete ===');
-  console.log('');
-  console.log('Next steps:');
-  if (result.edgeCandidatesGenerated > 0) {
-    console.log('  1. Review edge candidates in discovery report');
-    console.log('  2. Run edge validation:');
-    console.log(`     node tools/run-edge-validation.js --edges-file=${edgesPath}`);
-    console.log('  3. Generate strategies from validated edges');
-  } else {
-    console.log('  1. Review rejection reasons in discovery logs');
-    console.log('  2. Consider:');
-    console.log('     - Extending to more days (7-14 days)');
-    console.log('     - Using higher volatility period');
-    console.log('     - Trying different symbol (BTC/USDT)');
+    console.log(`[Run] edges_saved=${edgesPath}`);
   }
 }
 
 main().catch(err => {
-  console.error('Fatal error:', err);
+  console.error('Fatal error:', err && err.stack ? err.stack : String(err));
   process.exit(1);
 });

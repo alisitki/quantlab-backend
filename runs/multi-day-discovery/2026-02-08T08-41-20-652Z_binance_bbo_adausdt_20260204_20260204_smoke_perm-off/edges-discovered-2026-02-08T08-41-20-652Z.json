@@ -1,0 +1,798 @@
+{
+  "edges": [
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_>_0.30_regimeall_h100",
+      "name": "High imbalance acceleration (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.000564413117524922,
+        "std": 0.0015851694457488224,
+        "sharpe": 955.4053176305925,
+        "winRate": 0.6708687879521905
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0031703388914976448,
+        "maxLoss": 0.0037347520090225666,
+        "tailRisk": 0.004755508337246467
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 1804,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_>_0.30_regime1_h100",
+      "name": "High imbalance acceleration (LONG)",
+      "regimes": [
+        1
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.000527073066401666,
+        "std": 0.0014773356875325766,
+        "sharpe": 957.3216558940511,
+        "winRate": 0.6711840970626723
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0029546713750651533,
+        "maxLoss": 0.0034817444414668194,
+        "tailRisk": 0.00443200706259773
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 769,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_>_0.50_regimeall_h100",
+      "name": "High imbalance acceleration (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005658307959157634,
+        "std": 0.001587325968722499,
+        "sharpe": 956.5038171324591,
+        "winRate": 0.6710495509306789
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.003174651937444998,
+        "maxLoss": 0.0037404827333607617,
+        "tailRisk": 0.0047619779061674975
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 1706,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_>_0.50_regime1_h100",
+      "name": "High imbalance acceleration (LONG)",
+      "regimes": [
+        1
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005468184055543237,
+        "std": 0.0014804937766280102,
+        "sharpe": 991.0664769850539,
+        "winRate": 0.6767109341820763
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0029609875532560204,
+        "maxLoss": 0.003507805958810344,
+        "tailRisk": 0.00444148132988403
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 733,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_>_0.70_regimeall_h100",
+      "name": "High imbalance acceleration (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005730848112202861,
+        "std": 0.0015943608737792646,
+        "sharpe": 964.491752778882,
+        "winRate": 0.6723624762830921
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0031887217475585292,
+        "maxLoss": 0.0037618065587788152,
+        "tailRisk": 0.004783082621337794
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 1591,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_>_0.70_regime1_h100",
+      "name": "High imbalance acceleration (LONG)",
+      "regimes": [
+        1
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005679632908934273,
+        "std": 0.001484788470318375,
+        "sharpe": 1026.4124911125182,
+        "winRate": 0.6824475561282013
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.00296957694063675,
+        "maxLoss": 0.0035375402315301775,
+        "tailRisk": 0.004454365410955125
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 681,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_quote_intensity_>_0.30_regimeall_h100",
+      "name": "High quote intensity (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005508310591972815,
+        "std": 0.0015229724005015011,
+        "sharpe": 970.4935102522506,
+        "winRate": 0.6733471760452181
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0030459448010030023,
+        "maxLoss": 0.003596775860200284,
+        "tailRisk": 0.004568917201504504
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 2588,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_quote_intensity_>_0.30_regime1_h100",
+      "name": "High quote intensity (LONG)",
+      "regimes": [
+        1
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005004538247869472,
+        "std": 0.0014948440020042086,
+        "sharpe": 898.3268651361782,
+        "winRate": 0.6614076100727115
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.002989688004008417,
+        "maxLoss": 0.0034901418287953644,
+        "tailRisk": 0.004484532006012626
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 1025,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_quote_intensity_>_0.50_regimeall_h100",
+      "name": "High quote intensity (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005411657643724924,
+        "std": 0.001539940051702708,
+        "sharpe": 942.9588651022152,
+        "winRate": 0.6688171447216374
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.003079880103405416,
+        "maxLoss": 0.0036210458677779084,
+        "tailRisk": 0.004619820155108124
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 1909,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_quote_intensity_>_0.70_regimeall_h100",
+      "name": "High quote intensity (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0006134883747806046,
+        "std": 0.0015341708790807974,
+        "sharpe": 1072.9978477264942,
+        "winRate": 0.6899242904869897
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0030683417581615947,
+        "maxLoss": 0.0036818301329421994,
+        "tailRisk": 0.004602512637242392
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 1170,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_>_0.30_regime0_h100",
+      "name": "High imbalance acceleration (LONG)",
+      "regimes": [
+        0
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005575124096566463,
+        "std": 0.0015894647496730485,
+        "sharpe": 941.1739240257349,
+        "winRate": 0.6685223902766348
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.003178929499346097,
+        "maxLoss": 0.0037364419090027434,
+        "tailRisk": 0.004768394249019146
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 580,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_>_0.50_regime0_h100",
+      "name": "High imbalance acceleration (LONG)",
+      "regimes": [
+        0
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005333840135053204,
+        "std": 0.0015991821325504786,
+        "sharpe": 894.9696633296381,
+        "winRate": 0.6608469975523954
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0031983642651009572,
+        "maxLoss": 0.003731748278606278,
+        "tailRisk": 0.004797546397651436
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 546,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_>_0.70_regime0_h100",
+      "name": "High imbalance acceleration (LONG)",
+      "regimes": [
+        0
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005356704304036199,
+        "std": 0.0016059264163037679,
+        "sharpe": 895.0314164525178,
+        "winRate": 0.6608573136642959
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0032118528326075357,
+        "maxLoss": 0.0037475232630111554,
+        "tailRisk": 0.004817779248911303
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 510,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_micro_reversion_>_0.50_regime0_h100",
+      "name": "High micro reversion (LONG)",
+      "regimes": [
+        0
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005119866529007266,
+        "std": 0.0013275859098388044,
+        "sharpe": 1034.813898798568,
+        "winRate": 0.6838030677217468
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0026551718196776088,
+        "maxLoss": 0.0031671584725783356,
+        "tailRisk": 0.003982757729516413
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 570,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_volatility_compression_score_>_0.70_regime0_h100",
+      "name": "High volatility compression score (LONG)",
+      "regimes": [
+        0
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0006082861637599086,
+        "std": 0.0015713620994853902,
+        "sharpe": 1038.718609073112,
+        "winRate": 0.6844320069648869
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0031427241989707803,
+        "maxLoss": 0.003751010362730689,
+        "tailRisk": 0.0047140862984561705
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 397,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_regime_stability_>_0.30_regime3_h100",
+      "name": "High regime stability (LONG)",
+      "regimes": [
+        3
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005649684589370268,
+        "std": 0.0017157715983858641,
+        "sharpe": 883.549684945221,
+        "winRate": 0.6589366253055757
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0034315431967717283,
+        "maxLoss": 0.003996511655708755,
+        "tailRisk": 0.005147314795157593
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 943,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_regime_stability_>_0.50_regime3_h100",
+      "name": "High regime stability (LONG)",
+      "regimes": [
+        3
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005649684589370268,
+        "std": 0.0017157715983858641,
+        "sharpe": 883.549684945221,
+        "winRate": 0.6589366253055757
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0034315431967717283,
+        "maxLoss": 0.003996511655708755,
+        "tailRisk": 0.005147314795157593
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092450,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 943,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_regime_stability_>_0.70_regime3_h100",
+      "name": "High regime stability (LONG)",
+      "regimes": [
+        3
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005649684589370268,
+        "std": 0.0017157715983858641,
+        "sharpe": 883.549684945221,
+        "winRate": 0.6589366253055757
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0034315431967717283,
+        "maxLoss": 0.003996511655708755,
+        "tailRisk": 0.005147314795157593
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092451,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 943,
+        "lastValidated": 1770540092450
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_<_-0.70_regime3_h100",
+      "name": "Low imbalance acceleration (LONG)",
+      "regimes": [
+        3
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005275577438970238,
+        "std": 0.0017037691490848757,
+        "sharpe": 830.855502726141,
+        "winRate": 0.6500554896448607
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0034075382981697514,
+        "maxLoss": 0.003935096042066775,
+        "tailRisk": 0.005111307447254627
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092451,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 391,
+        "lastValidated": 1770540092451
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_micro_reversion_>_0.30_regime3_h100",
+      "name": "High micro reversion (LONG)",
+      "regimes": [
+        3
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005649684589370268,
+        "std": 0.0017157715983858641,
+        "sharpe": 883.549684945221,
+        "winRate": 0.6589366253055757
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0034315431967717283,
+        "maxLoss": 0.003996511655708755,
+        "tailRisk": 0.005147314795157593
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770540092451,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 943,
+        "lastValidated": 1770540092451
+      }
+    }
+  ],
+  "metadata": {
+    "discoveryTimestamp": "2026-02-08T08:41:32.452Z",
+    "symbol": "ADA/USDT",
+    "daysProcessed": 1,
+    "totalCandidates": 20
+  }
+}

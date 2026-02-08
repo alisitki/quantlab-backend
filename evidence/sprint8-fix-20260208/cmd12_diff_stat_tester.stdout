@@ -1,0 +1,61 @@
+231 evidence/sprint8-fix-20260208/StatisticalEdgeTester.patch
+--- evidence/sprint8-fix-20260208/StatisticalEdgeTester.before.js	2026-02-08 08:39:43.204899382 +0000
++++ core/edge/discovery/StatisticalEdgeTester.js	2026-02-08 08:40:29.048764848 +0000
+@@ -91,7 +91,7 @@
+    *   recommendation: 'ACCEPT'|'REJECT'|'WEAK'
+    * }
+    */
+-  test(pattern, dataset) {
++  async test(pattern, dataset) {
+     const tests = {};
+ 
+     // 1. Sample size test
+@@ -117,19 +117,42 @@
+     let nonPatternSum = 0;
+     let nonPatternSumSq = 0;
+ 
+-    for (let i = 0; i < dataset.rows.length; i++) {
+-      const row = dataset.rows[i];
+-      const forwardReturn = row.forwardReturns[`h${pattern.horizon}`];
+-
+-      if (forwardReturn === null) continue;
+-
+-      if (pattern.matchingIndices.includes(i)) {
+-        patternReturns.push(forwardReturn);
+-      } else {
+-        // Streaming statistics for non-pattern returns (avoid storing 3.2M array)
+-        nonPatternCount++;
+-        nonPatternSum += forwardReturn;
+-        nonPatternSumSq += forwardReturn * forwardReturn;
++    if (Array.isArray(dataset.rows)) {
++      for (let i = 0; i < dataset.rows.length; i++) {
++        const row = dataset.rows[i];
++        const forwardReturn = row.forwardReturns[`h${pattern.horizon}`];
++
++        if (forwardReturn === null) continue;
++
++        if (pattern.matchingIndices.includes(i)) {
++          patternReturns.push(forwardReturn);
++        } else {
++          // Streaming statistics for non-pattern returns (avoid storing 3.2M array)
++          nonPatternCount++;
++          nonPatternSum += forwardReturn;
++          nonPatternSumSq += forwardReturn * forwardReturn;
++        }
++      }
++    } else if (typeof dataset.rowsFactory === 'function') {
++      const matchingIndexSet = new Set(pattern.matchingIndices);
++      let i = 0;
++
++      for await (const row of dataset.rowsFactory()) {
++        const forwardReturn = row.forwardReturns[`h${pattern.horizon}`];
++        if (forwardReturn === null) {
++          i++;
++          continue;
++        }
++
++        if (matchingIndexSet.has(i)) {
++          patternReturns.push(forwardReturn);
++        } else {
++          nonPatternCount++;
++          nonPatternSum += forwardReturn;

@@ -1,0 +1,65 @@
+{
+  "step": "multi_day_discovery",
+  "timestamp": "2026-02-07T17:32:00.782Z",
+  "mode": "acceptance",
+  "exchange": "binance",
+  "stream": "bbo",
+  "symbol": "ADA/USDT",
+  "symbolSlug": "adausdt",
+  "dateRange": {
+    "start": "20260110",
+    "end": "20260111",
+    "days": 2
+  },
+  "permutationTest": {
+    "enabled": false,
+    "source": "CLI"
+  },
+  "heap": {
+    "requestedMB": 6144,
+    "heapLimitMB": 6192
+  },
+  "progressEvery": 1,
+  "files": [
+    {
+      "date": "20260110",
+      "parquetPath": "data/sprint2/adausdt_20260110.parquet",
+      "metaPath": "data/sprint2/adausdt_20260110_meta.json",
+      "meta": {
+        "rows": 1728582,
+        "schema_version": 1,
+        "stream_type": "bbo",
+        "day_quality": "GOOD",
+        "sha256": "c7df4cdcd681369b7225c627be41497b2a996c4945a7442eee558077c35e6685"
+      }
+    },
+    {
+      "date": "20260111",
+      "parquetPath": "data/sprint2/adausdt_20260111.parquet",
+      "metaPath": "data/sprint2/adausdt_20260111_meta.json",
+      "meta": {
+        "rows": 2195115,
+        "schema_version": 1,
+        "stream_type": "bbo",
+        "day_quality": "GOOD",
+        "sha256": "1f29d6cda536be29b0a55dedb641aef23d8719372f92c58b1e290a799237d23d"
+      }
+    }
+  ],
+  "metaRowsTotal": 3923697,
+  "result": {
+    "patternsScanned": 0,
+    "patternsTestedSignificant": 0,
+    "edgeCandidatesGenerated": 0,
+    "edgeCandidatesRegistered": 0,
+    "edges": [],
+    "rejectedPatterns": [],
+    "metadata": {
+      "duration": 4408402,
+      "dataRowCount": 0,
+      "regimesUsed": 4,
+      "filesLoaded": 2
+    }
+  },
+  "durationMs": 4408402
+}

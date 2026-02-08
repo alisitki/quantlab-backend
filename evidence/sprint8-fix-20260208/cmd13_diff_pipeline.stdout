@@ -1,0 +1,30 @@
+29 evidence/sprint8-fix-20260208/EdgeDiscoveryPipeline.patch
+--- evidence/sprint8-fix-20260208/EdgeDiscoveryPipeline.before.js	2026-02-08 08:39:43.204899382 +0000
++++ core/edge/discovery/EdgeDiscoveryPipeline.js	2026-02-08 08:40:36.636742585 +0000
+@@ -86,7 +86,7 @@
+ 
+     // Step 3: Test patterns statistically
+     console.log('[EdgeDiscoveryPipeline] Step 3: Testing patterns for statistical significance...');
+-    const testResults = this.tester.testBatch(patterns, dataset);
++    const testResults = await this.tester.testBatch(patterns, dataset);
+ 
+     // Pair patterns with test results
+     const pairedResults = patterns.map((pattern, i) => ({
+@@ -260,7 +260,7 @@
+     }
+ 
+     console.log('[EdgeDiscoveryPipeline] Step 4: Testing patterns for statistical significance...');
+-    const testResults = this.tester.testBatch(patterns, dataset);
++    const testResults = await this.tester.testBatch(patterns, dataset);
+     timing('after_stat_tests');
+ 
+     const pairedResults = patterns.map((pattern, i) => ({
+@@ -377,7 +377,7 @@
+ 
+     // Continue with standard pipeline
+     const patterns = this.scanner.scan(dataset);
+-    const testResults = this.tester.testBatch(patterns, dataset);
++    const testResults = await this.tester.testBatch(patterns, dataset);
+ 
+     const pairedResults = patterns.map((pattern, i) => ({
+       pattern,

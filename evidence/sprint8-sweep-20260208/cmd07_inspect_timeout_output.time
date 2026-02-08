@@ -1,0 +1,23 @@
+	Command being timed: "bash -lc echo 'STDOUT_TAIL'; tail -n 120 'evidence/sprint8-sweep-20260208/cmd07_smoke_ADA_20260112.stdout'; echo 'STDERR_TAIL'; tail -n 200 'evidence/sprint8-sweep-20260208/cmd07_smoke_ADA_20260112.stderr'; echo 'TIME_V'; cat 'evidence/sprint8-sweep-20260208/cmd07_smoke_ADA_20260112.time'"
+	User time (seconds): 0.00
+	System time (seconds): 0.00
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.01
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3656
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 663
+	Voluntary context switches: 7
+	Involuntary context switches: 0
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

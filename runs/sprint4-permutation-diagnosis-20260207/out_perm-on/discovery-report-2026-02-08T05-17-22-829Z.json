@@ -1,0 +1,632 @@
+{
+  "step": "discovery",
+  "timestamp": "2026-02-08T05:17:22.833Z",
+  "symbol": "ADA/USDT",
+  "parquetPath": "data/test/adausdt_20260204.parquet",
+  "patternsScanned": 39,
+  "patternsTestedSignificant": 16,
+  "edgeCandidatesGenerated": 16,
+  "edgeCandidatesRegistered": 16,
+  "duration": 6825,
+  "metadata": {
+    "duration": 6825,
+    "dataRowCount": 3822,
+    "regimesUsed": 4
+  },
+  "edges": [
+    {
+      "id": "discovered_threshold_threshold_liquidity_pressure_>_0.30_regimeall_h50",
+      "name": "High liquidity pressure (LONG)",
+      "regimes": null,
+      "timeHorizon": 50000,
+      "expectedAdvantage": {
+        "mean": 0.0005444817239821005,
+        "std": 0.0012635965181901723,
+        "sharpe": 1156.221749398983,
+        "winRate": 0.7030359226075547
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0025271930363803445,
+        "maxLoss": 0.003071674760362445,
+        "tailRisk": 0.003790789554570517
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 421,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_liquidity_pressure_>_0.30_regime0_h50",
+      "name": "High liquidity pressure (LONG)",
+      "regimes": [
+        0
+      ],
+      "timeHorizon": 50000,
+      "expectedAdvantage": {
+        "mean": 0.0007435115046446811,
+        "std": 0.0012923582162358428,
+        "sharpe": 1543.728893941826,
+        "winRate": 0.7596255286753097
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0025847164324716856,
+        "maxLoss": 0.0033282279371163667,
+        "tailRisk": 0.003877074648707528
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 113,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_liquidity_pressure_>_0.30_regimeall_h100",
+      "name": "High liquidity pressure (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0008281519902374194,
+        "std": 0.0016948779171023667,
+        "sharpe": 1311.1062175181557,
+        "winRate": 0.7265604029134015
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0033897558342047334,
+        "maxLoss": 0.0042179078244421525,
+        "tailRisk": 0.0050846337513071
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 409,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_liquidity_pressure_>_0.30_regime0_h100",
+      "name": "High liquidity pressure (LONG)",
+      "regimes": [
+        0
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0011181540454745348,
+        "std": 0.0016164454396169002,
+        "sharpe": 1856.1233633150164,
+        "winRate": 0.7995481474909367
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0032328908792338003,
+        "maxLoss": 0.004351044924708335,
+        "tailRisk": 0.0048493363188507
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 104,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_liquidity_pressure_>_0.50_regimeall_h50",
+      "name": "High liquidity pressure (LONG)",
+      "regimes": null,
+      "timeHorizon": 50000,
+      "expectedAdvantage": {
+        "mean": 0.0009007589319764096,
+        "std": 0.0012598328253525066,
+        "sharpe": 1918.5004512094283,
+        "winRate": 0.80689598818922
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0025196656507050132,
+        "maxLoss": 0.0034204245826814227,
+        "tailRisk": 0.00377949847605752
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 37,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_liquidity_pressure_>_0.50_regimeall_h100",
+      "name": "High liquidity pressure (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0015973704208523288,
+        "std": 0.002112087358500956,
+        "sharpe": 2029.364267664578,
+        "winRate": 0.8194460322096138
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.004224174717001912,
+        "maxLoss": 0.00582154513785424,
+        "tailRisk": 0.0063362620755028675
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 34,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_liquidity_pressure_<_-0.50_regimeall_h100",
+      "name": "Low liquidity pressure (SHORT)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": -0.0005371611241751098,
+        "std": 0.0015653237261351463,
+        "sharpe": -920.8028487434161,
+        "winRate": 0.33485088812999564
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0031306474522702927,
+        "maxLoss": 0.0036678085764454025,
+        "tailRisk": 0.004695971178405439
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 0.75,
+        "sampleSize": 47,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_return_momentum_<_-0.30_regime3_h100",
+      "name": "Low return momentum (LONG)",
+      "regimes": [
+        3
+      ],
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0014221672002841864,
+        "std": 0.0014227206055843142,
+        "sharpe": 2682.237838735687,
+        "winRate": 0.8807153736411973
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0028454412111686284,
+        "maxLoss": 0.0042676084114528145,
+        "tailRisk": 0.0042681618167529425
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 89,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_imbalance_acceleration_>_0.30_regimeall_h100",
+      "name": "High imbalance acceleration (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0005642934268026777,
+        "std": 0.0015847384338106964,
+        "sharpe": 955.4625051047253,
+        "winRate": 0.6708781996539188
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0031694768676213928,
+        "maxLoss": 0.0037337702944240706,
+        "tailRisk": 0.004754215301432089
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 1805,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_liquidity_pressure_>_0.31_regimeall_h50",
+      "name": "High liquidity pressure (LONG)",
+      "regimes": null,
+      "timeHorizon": 50000,
+      "expectedAdvantage": {
+        "mean": 0.0005813349409205136,
+        "std": 0.001267044890298154,
+        "sharpe": 1231.1208124171885,
+        "winRate": 0.7145575841965199
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.002534089780596308,
+        "maxLoss": 0.0031154247215168214,
+        "tailRisk": 0.003801134670894462
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 380,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_liquidity_pressure_>_0.31_regimeall_h100",
+      "name": "High liquidity pressure (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0008732999268635243,
+        "std": 0.0017004640314547744,
+        "sharpe": 1378.0412629193827,
+        "winRate": 0.7363593632081733
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0034009280629095488,
+        "maxLoss": 0.004274227989773073,
+        "tailRisk": 0.005101392094364323
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 368,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_spread_compression_<_0.00_regimeall_h50",
+      "name": "Low spread compression (LONG)",
+      "regimes": null,
+      "timeHorizon": 50000,
+      "expectedAdvantage": {
+        "mean": 0.0006196779585836902,
+        "std": 0.0011928947170508329,
+        "sharpe": 1393.895390510696,
+        "winRate": 0.7386470254614547
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.0023857894341016658,
+        "maxLoss": 0.003005467392685356,
+        "tailRisk": 0.003578684151152499
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 377,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_spread_compression_<_0.00_regimeall_h100",
+      "name": "Low spread compression (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0008331138401628746,
+        "std": 0.00164504414098417,
+        "sharpe": 1358.9173444201274,
+        "winRate": 0.7335828415258112
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.00329008828196834,
+        "maxLoss": 0.004123202122131215,
+        "tailRisk": 0.00493513242295251
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 373,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_quote_intensity_>_0.94_regimeall_h50",
+      "name": "High quote intensity (LONG)",
+      "regimes": null,
+      "timeHorizon": 50000,
+      "expectedAdvantage": {
+        "mean": 0.0006559618583917843,
+        "std": 0.0011955254588285164,
+        "sharpe": 1472.2650648845897,
+        "winRate": 0.749765420431896
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.002391050917657033,
+        "maxLoss": 0.003047012776048817,
+        "tailRisk": 0.0035865763764855495
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 372,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_threshold_threshold_quote_intensity_>_0.94_regimeall_h100",
+      "name": "High quote intensity (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0008039866489565039,
+        "std": 0.00148359630494561,
+        "sharpe": 1454.1169675950987,
+        "winRate": 0.7472189965918563
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.00296719260989122,
+        "maxLoss": 0.003771179258847724,
+        "tailRisk": 0.00445078891483683
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_threshold",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 372,
+        "lastValidated": 1770527842827
+      }
+    },
+    {
+      "id": "discovered_cluster_cluster_0_h100",
+      "name": "Cluster 0 (LONG)",
+      "regimes": null,
+      "timeHorizon": 100000,
+      "expectedAdvantage": {
+        "mean": 0.0006846712184897961,
+        "std": 0.001607401546192766,
+        "sharpe": 1142.9413319207008,
+        "winRate": 0.7009651754679951
+      },
+      "riskProfile": {
+        "maxDrawdown": 0.003214803092385532,
+        "maxLoss": 0.003899474310875328,
+        "tailRisk": 0.004822204638578298
+      },
+      "decayFunction": {
+        "halfLife": null,
+        "mechanism": "unknown"
+      },
+      "discovered": 1770527842827,
+      "discoveryMethod": "auto_cluster",
+      "status": "CANDIDATE",
+      "stats": {
+        "trades": 0,
+        "wins": 0,
+        "losses": 0,
+        "totalReturn": 0,
+        "totalReturnPct": 0,
+        "avgReturn": 0,
+        "lastUpdated": null
+      },
+      "confidence": {
+        "score": 1,
+        "sampleSize": 1097,
+        "lastValidated": 1770527842827
+      }
+    }
+  ]
+}

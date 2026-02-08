@@ -1,0 +1,71 @@
+--- evidence/sprint8-fix-20260208/test-statistical-edge-tester.before.js	2026-02-08 08:44:08.020123528 +0000
++++ core/edge/discovery/tests/test-statistical-edge-tester.js	2026-02-08 08:44:28.484063683 +0000
+@@ -14,7 +14,7 @@
+   assert.ok(tester.minSharpe >= 0);
+ });
+ 
+-test('StatisticalEdgeTester - test with good edge (synthetic)', () => {
++test('StatisticalEdgeTester - test with good edge (synthetic)', async () => {
+   const tester = new StatisticalEdgeTester({
+     minSampleSize: 10,
+     pValueThreshold: 0.1, // Relaxed for synthetic test
+@@ -63,7 +63,7 @@
+     matchingIndices
+   };
+ 
+-  const result = tester.test(pattern, dataset);
++  const result = await tester.test(pattern, dataset);
+ 
+   assert.ok(result, 'Should return result');
+   assert.equal(result.patternId, 'test_pattern');
+@@ -78,7 +78,7 @@
+   console.log(`  Result: ${result.recommendation}, score: ${result.overallScore.toFixed(2)}`);
+ });
+ 
+-test('StatisticalEdgeTester - test with random noise (should reject)', () => {
++test('StatisticalEdgeTester - test with random noise (should reject)', async () => {
+   const tester = new StatisticalEdgeTester({
+     minSampleSize: 10,
+     pValueThreshold: 0.05,
+@@ -126,14 +126,14 @@
+     matchingIndices
+   };
+ 
+-  const result = tester.test(pattern, dataset);
++  const result = await tester.test(pattern, dataset);
+ 
+   // Random noise should fail Sharpe test
+   assert.ok(!result.tests.sharpeTest.passed || result.overallScore < 0.75, 'Random noise should not pass all tests');
+   console.log(`  Noise pattern result: ${result.recommendation}, score: ${result.overallScore.toFixed(2)}`);
+ });
+ 
+-test('StatisticalEdgeTester - insufficient sample size', () => {
++test('StatisticalEdgeTester - insufficient sample size', async () => {
+   const tester = new StatisticalEdgeTester({
+     minSampleSize: 30
+   });
+@@ -161,13 +161,13 @@
+     matchingIndices: Array(20).fill(null).map((_, i) => i)
+   };
+ 
+-  const result = tester.test(pattern, dataset);
++  const result = await tester.test(pattern, dataset);
+ 
+   assert.ok(!result.tests.sampleSizeTest.passed, 'Sample size test should fail');
+   assert.equal(result.recommendation, 'REJECT', 'Should reject due to insufficient sample');
+ });
+ 
+-test('StatisticalEdgeTester - testBatch with Bonferroni correction', () => {
++test('StatisticalEdgeTester - testBatch with Bonferroni correction', async () => {
+   const tester = new StatisticalEdgeTester({
+     minSampleSize: 10,
+     pValueThreshold: 0.05,
+@@ -210,7 +210,7 @@
+     }
+   ];
+ 
+-  const results = tester.testBatch(patterns, dataset);
++  const results = await tester.testBatch(patterns, dataset);
+ 
+   assert.equal(results.length, 2, 'Should return 2 results');
+   assert.ok(results.every(r => r.recommendation), 'All results should have recommendations');

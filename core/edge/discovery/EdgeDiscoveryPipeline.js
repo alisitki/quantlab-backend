@@ -86,7 +86,7 @@ export class EdgeDiscoveryPipeline {
 
     // Step 3: Test patterns statistically
     console.log('[EdgeDiscoveryPipeline] Step 3: Testing patterns for statistical significance...');
-    const testResults = this.tester.testBatch(patterns, dataset);
+    const testResults = await this.tester.testBatch(patterns, dataset);
 
     // Pair patterns with test results
     const pairedResults = patterns.map((pattern, i) => ({
@@ -196,6 +196,18 @@ export class EdgeDiscoveryPipeline {
    */
   async runMultiDayStreaming(files, symbol) {
     const startTime = Date.now();
+    const diagTiming = process.env.QUANTLAB_DIAG_TIMING === 'true';
+    const pipelineStart = diagTiming ? Date.now() : 0;
+    const timing = diagTiming
+      ? (checkpointName) => {
+        console.log(
+          `[Timing][Pipeline] ${checkpointName} ` +
+          `elapsed_ms_since_pipeline_start=${Date.now() - pipelineStart}`
+        );
+      }
+      : () => {};
+
+    timing('start');
 
     console.log('[EdgeDiscoveryPipeline] ========================================');
     console.log(`[EdgeDiscoveryPipeline] Running multi-day discovery (STREAMING) with ${files.length} files`);
@@ -218,14 +230,19 @@ export class EdgeDiscoveryPipeline {
     };
 
     console.log('[EdgeDiscoveryPipeline] Dataset ready (streaming mode)');
+    timing('after_load_or_open');
 
     // Step 3: Scan for patterns (streaming-compatible)
     console.log('[EdgeDiscoveryPipeline] Step 3: Scanning for patterns...');
     const patterns = await this.scanner.scan(dataset);
     console.log(`[EdgeDiscoveryPipeline] Found ${patterns.length} patterns`);
+    timing('after_pattern_scan');
 
     if (patterns.length === 0) {
       console.log('[EdgeDiscoveryPipeline] No patterns found. Exiting.');
+      timing('early_exit_no_patterns');
+      timing('after_stat_tests');
+      timing('end');
       return {
         patternsScanned: 0,
         patternsTestedSignificant: 0,
@@ -243,7 +260,8 @@ export class EdgeDiscoveryPipeline {
     }
 
     console.log('[EdgeDiscoveryPipeline] Step 4: Testing patterns for statistical significance...');
-    const testResults = this.tester.testBatch(patterns, dataset);
+    const testResults = await this.tester.testBatch(patterns, dataset);
+    timing('after_stat_tests');
 
     const pairedResults = patterns.map((pattern, i) => ({
       pattern,
@@ -265,6 +283,7 @@ export class EdgeDiscoveryPipeline {
 
     if (acceptedPatterns.length === 0) {
       console.log('[EdgeDiscoveryPipeline] No patterns passed tests. Exiting.');
+      timing('end');
       return {
         patternsScanned: patterns.length,
         patternsTestedSignificant: 0,
@@ -312,6 +331,7 @@ export class EdgeDiscoveryPipeline {
       }
 
       console.log(`[EdgeDiscoveryPipeline] Registered ${registeredCount} edges in registry`);
+      timing('after_registry_register');
     }
 
     const duration = Date.now() - startTime;
@@ -324,6 +344,7 @@ export class EdgeDiscoveryPipeline {
     console.log(`[EdgeDiscoveryPipeline] Edges registered: ${registeredCount}`);
     console.log('[EdgeDiscoveryPipeline] ========================================');
 
+    timing('end');
     return {
       patternsScanned: patterns.length,
       patternsTestedSignificant: acceptedPatterns.length,
@@ -356,7 +377,7 @@ export class EdgeDiscoveryPipeline {
 
     // Continue with standard pipeline
     const patterns = this.scanner.scan(dataset);
-    const testResults = this.tester.testBatch(patterns, dataset);
+    const testResults = await this.tester.testBatch(patterns, dataset);
 
     const pairedResults = patterns.map((pattern, i) => ({
       pattern,

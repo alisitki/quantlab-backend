@@ -1,0 +1,94 @@
+#!/usr/bin/env node
+/**
+ * Compare two discovery-report*.json files for semantic equivalence (stable fields).
+ *
+ * Usage:
+ *   node tools/tmp-compare-discovery-reports.js <before_report.json> <after_report.json>
+ */
+
+import { readFileSync } from 'node:fs';
+import crypto from 'node:crypto';
+
+function stableStringify(value) {
+  if (value === null || value === undefined) return JSON.stringify(value);
+  if (typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`;
+  const keys = Object.keys(value).sort();
+  return `{${keys.map(k => JSON.stringify(k) + ':' + stableStringify(value[k])).join(',')}}`;
+}
+
+function sha256Hex(s) {
+  return crypto.createHash('sha256').update(s).digest('hex');
+}
+
+function pickStable(report) {
+  // Supports both shapes:
+  // 1) multi-day runner report: { result: { ... , edges: [...] } }
+  // 2) run-edge-discovery report: { patternsScanned, ..., edges: [...] }
+  const r = report?.result ?? report ?? {};
+  const edges = Array.isArray(r.edges) ? r.edges : [];
+  const edgeSummary = edges.map(e => {
+    if (!e || typeof e !== 'object') return null;
+    const id = e.id ?? e.edgeId ?? null;
+    const name = e.name ?? null;
+    const mean = e.expectedAdvantage?.mean ?? null;
+    const support = e.confidence?.sampleSize ?? e.confidence?.n ?? null;
+    return { id, name, mean, support };
+  }).filter(v => v !== null);
+
+  return {
+    patternsScanned: r.patternsScanned ?? null,
+    patternsTestedSignificant: r.patternsTestedSignificant ?? null,
+    edgeCandidatesGenerated: r.edgeCandidatesGenerated ?? null,
+    edgeCandidatesRegistered: r.edgeCandidatesRegistered ?? null,
+    edgeIds: edgeSummary.map(e => e.id),
+    edgeSummary
+  };
+}
+
+function assertEqual(a, b, label) {
+  if (a !== b) {
+    throw new Error(`Mismatch: ${label}: before=${JSON.stringify(a)} after=${JSON.stringify(b)}`);
+  }
+}
+
+function main() {
+  const [beforePath, afterPath] = process.argv.slice(2);
+  if (!beforePath || !afterPath) {
+    console.error('Usage: node tools/tmp-compare-discovery-reports.js <before_report.json> <after_report.json>');
+    process.exit(2);
+  }
+
+  const before = JSON.parse(readFileSync(beforePath, 'utf8'));
+  const after = JSON.parse(readFileSync(afterPath, 'utf8'));
+
+  const beforeStable = pickStable(before);
+  const afterStable = pickStable(after);
+
+  // Required stable fields
+  assertEqual(beforeStable.patternsScanned, afterStable.patternsScanned, 'result.patternsScanned');
+  assertEqual(beforeStable.edgeCandidatesGenerated, afterStable.edgeCandidatesGenerated, 'result.edgeCandidatesGenerated');
+  assertEqual(beforeStable.edgeCandidatesRegistered, afterStable.edgeCandidatesRegistered, 'result.edgeCandidatesRegistered');
+
+  // Extra confidence checks
+  assertEqual(beforeStable.patternsTestedSignificant, afterStable.patternsTestedSignificant, 'result.patternsTestedSignificant');
+  assertEqual(stableStringify(beforeStable.edgeIds), stableStringify(afterStable.edgeIds), 'result.edgeIds');
+
+  const beforeFp = sha256Hex(stableStringify(beforeStable));
+  const afterFp = sha256Hex(stableStringify(afterStable));
+  assertEqual(beforeFp, afterFp, 'stable_fingerprint_sha256');
+
+  console.log('COMPARE_RESULT: PASS');
+  console.log(`before_report: ${beforePath}`);
+  console.log(`after_report:  ${afterPath}`);
+  console.log(`stable_fingerprint_sha256: ${beforeFp}`);
+  console.log(`stable_payload: ${stableStringify(beforeStable)}`);
+}
+
+try {
+  main();
+} catch (err) {
+  console.log('COMPARE_RESULT: FAIL');
+  console.error(err && err.stack ? err.stack : String(err));
+  process.exit(1);
+}

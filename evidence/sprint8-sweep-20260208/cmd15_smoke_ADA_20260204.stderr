@@ -1,0 +1,14 @@
+(node:2867789) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/deploy/quantlab-backend/tools/run-multi-day-discovery.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/deploy/quantlab-backend/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[Run] discovery_error
+TypeError: dataset.rows.map is not a function
+    at #testRegimeRobustness (file:///home/deploy/quantlab-backend/core/edge/discovery/StatisticalEdgeTester.js:444:52)
+    at StatisticalEdgeTester.test (file:///home/deploy/quantlab-backend/core/edge/discovery/StatisticalEdgeTester.js:192:58)
+    at file:///home/deploy/quantlab-backend/core/edge/discovery/StatisticalEdgeTester.js:234:50
+    at Array.map (<anonymous>)
+    at StatisticalEdgeTester.testBatch (file:///home/deploy/quantlab-backend/core/edge/discovery/StatisticalEdgeTester.js:234:30)
+    at EdgeDiscoveryPipeline.runMultiDayStreaming (file:///home/deploy/quantlab-backend/core/edge/discovery/EdgeDiscoveryPipeline.js:263:37)
+    at async main (file:///home/deploy/quantlab-backend/tools/run-multi-day-discovery.js:405:14)

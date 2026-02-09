@@ -1,0 +1,23 @@
+{
+  "rows": 2830,
+  "ts_event_min": 1770146400090,
+  "ts_event_max": 1770146999296,
+  "sha256": "3a08afc6cecdf3f5690c66f89059c5df987f9324ba6c47889476b26035037c28",
+  "source_files": null,
+  "schema_version": 1,
+  "stream_type": "bbo",
+  "ordering_columns": [
+    "ts_event",
+    "seq"
+  ],
+  "day_quality": "DIAGNOSTIC_SLICE",
+  "post_filter_version": "1.0.0",
+  "diagnostic": {
+    "source_parquet": "data/test/adausdt_20260203.parquet",
+    "window_ts_event": {
+      "startTs": 1770146399489,
+      "endTs": 1770146999488
+    },
+    "note": "10-minute slice created for Sprint-5 acceptance evidence; file date label does not imply timestamp day"
+  }
+}

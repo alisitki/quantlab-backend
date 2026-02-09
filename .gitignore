@@ -24,6 +24,16 @@ health/
 daily_runs/
 reports/
 
+# Runtime outputs
+# Keep evidence bundles committable; do not ignore evidence/*.tar.gz or *.sha256.
+runs/
+runs/**
+runs/_archive/
+runs/_archive/**
+
+# Temp files
+**/*.tmp
+
 # IDE
 .vscode/
 
@@ -43,4 +53,3 @@ services/strategyd/runs/
 services/strategyd/validation_reports/
 **/reports/
 **/*.generated.json
-

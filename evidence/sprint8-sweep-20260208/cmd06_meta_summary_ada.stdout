@@ -1,8 +1,0 @@
-20260112 rows=3889966 stream_type=bbo schema_version=1 meta=data/sprint2/adausdt_20260112_meta.json
-20260114 rows=3561603 stream_type=bbo schema_version=1 meta=data/sprint2/adausdt_20260114_meta.json
-20260108 rows=3272498 stream_type=bbo schema_version=1 meta=data/sprint2/adausdt_20260108_meta.json
-20260109 rows=3150390 stream_type=bbo schema_version=1 meta=data/sprint2/adausdt_20260109_meta.json
-20260111 rows=2195115 stream_type=bbo schema_version=1 meta=data/sprint2/adausdt_20260111_meta.json
-20260110 rows=1728582 stream_type=bbo schema_version=1 meta=data/sprint2/adausdt_20260110_meta.json
-20260203 rows=234292 stream_type=bbo schema_version=1 meta=data/test/adausdt_20260203_meta.json
-20260204 rows=4039 stream_type=bbo schema_version=1 meta=data/test/adausdt_20260204_meta.json

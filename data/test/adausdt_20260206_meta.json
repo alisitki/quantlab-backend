@@ -1,0 +1,23 @@
+{
+  "rows": 4039,
+  "ts_event_min": 1770145800090,
+  "ts_event_max": 1770146399488,
+  "sha256": "925a40e0c3fed79af5d1989282a1b42331d739265bd750fe81244f2425f8d5be",
+  "source_files": null,
+  "schema_version": 1,
+  "stream_type": "bbo",
+  "ordering_columns": [
+    "ts_event",
+    "seq"
+  ],
+  "day_quality": "DIAGNOSTIC_SLICE",
+  "post_filter_version": "1.0.0",
+  "diagnostic": {
+    "source_parquet": "data/test/adausdt_20260203.parquet",
+    "window_ts_event": {
+      "startTs": 1770145800090,
+      "endTs": 1770146399488
+    },
+    "note": "10-minute slice created for permutation-test diagnosis; file date label does not imply timestamp day"
+  }
+}

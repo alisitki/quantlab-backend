@@ -1,0 +1,131 @@
+evidence/sprint6-acceptance-full2day-20260117-20260118-20260209
+├── determinism
+├── finalize
+│   ├── cmd06b_rename_fix_exit_code
+│   │   └── cmd.sh
+│   ├── cmd06c_rename_fix_exit_code
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd06_rename_root_to_window
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd07_copy_inputs_20260117_20260118
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd08_sha256_inputs
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd09_write_summary_json
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd10_write_readme
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd11_integrity_check
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   └── cmd12_tree
+│       ├── cmd.sh
+│       ├── stderr.log
+│       ├── stdout.log
+│       └── time-v.log
+├── inputs
+│   ├── adausdt_20260117_meta.json
+│   ├── adausdt_20260117.parquet
+│   ├── adausdt_20260118_meta.json
+│   └── adausdt_20260118.parquet
+├── inventory
+│   ├── adausdt_bbo_daily_inventory_missing_day_quality.tsv
+│   ├── adausdt_bbo_daily_inventory.tsv
+│   ├── _candidate_parquets.list
+│   ├── candidate_sha256_proof.txt
+│   ├── cmd00_pack_init_dirs
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd01_download_compact_days_20260116_20260118
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd02_build_local_inventory
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd03_fail_gate_check_day_quality_missing
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd04_build_candidates_top3
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── cmd05_sha256_candidates
+│   │   ├── cmd.sh
+│   │   ├── exit_code.txt
+│   │   ├── stderr.log
+│   │   ├── stdout.log
+│   │   └── time-v.log
+│   ├── sha256sum_candidate_parquets.txt
+│   ├── smoke
+│   │   ├── try1_20260117_20260118
+│   │   │   ├── cmd.sh
+│   │   │   ├── exit_code.txt
+│   │   │   ├── patterns_scanned.txt
+│   │   │   ├── stderr.log
+│   │   │   ├── stdout.log
+│   │   │   └── time-v.log
+│   │   ├── try2_20260116_20260117
+│   │   │   ├── cmd.sh
+│   │   │   ├── exit_code.txt
+│   │   │   ├── patterns_scanned.txt
+│   │   │   ├── stderr.log
+│   │   │   ├── stdout.log
+│   │   │   └── time-v.log
+│   │   └── try3_20260110_20260111
+│   │       ├── cmd.sh
+│   │       ├── exit_code.txt
+│   │       ├── patterns_scanned.txt
+│   │       ├── stderr.log
+│   │       ├── stdout.log
+│   │       └── time-v.log
+│   ├── smoke_aday_listesi.txt
+│   └── tree.txt
+├── README.md
+├── runs
+├── sha256
+│   ├── meta_sha256_proof.txt
+│   └── sha256sum_inputs_parquet.txt
+└── summary.json
+
+25 directories, 103 files

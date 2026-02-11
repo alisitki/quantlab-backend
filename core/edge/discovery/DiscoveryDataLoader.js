@@ -18,6 +18,8 @@ export class DiscoveryDataLoader {
    * @param {number} config.regimeK - Number of regime clusters (default: 4)
    * @param {number[]} config.forwardHorizons - Forward return horizons in events [10, 50, 100]
    * @param {number} config.seed - Random seed
+   * @param {number|null} config.maxRowsPerDay - Optional cap on feature rows per day (streaming only)
+   * @param {string|null} config.smokeSlice - Optional slice selection for smoke (head|tail|head_tail)
    */
   constructor(config = {}) {
     this.featureNames = config.featureNames || DISCOVERY_CONFIG.behaviorFeatures;
@@ -25,6 +27,8 @@ export class DiscoveryDataLoader {
     this.regimeK = config.regimeK || DISCOVERY_CONFIG.regimeK;
     this.forwardHorizons = config.forwardHorizons || DISCOVERY_CONFIG.forwardHorizons;
     this.seed = config.seed || DISCOVERY_CONFIG.seed;
+    this.maxRowsPerDay = config.maxRowsPerDay ?? null;
+    this.smokeSlice = config.smokeSlice ?? 'head';
   }
 
   /**
@@ -259,6 +263,15 @@ export class DiscoveryDataLoader {
    */
   async loadMultiDayStreaming(files, symbol) {
     console.log(`[DiscoveryDataLoader] Loading multi-day data (streaming): ${files.length} files`);
+    const maxRowsPerDay = Number.isFinite(this.maxRowsPerDay) ? this.maxRowsPerDay : null;
+    const smokeSlice = typeof this.smokeSlice === 'string' ? this.smokeSlice : 'head';
+    const replayOpts =
+      maxRowsPerDay !== null && smokeSlice !== 'head'
+        ? { slice: smokeSlice, rowLimit: maxRowsPerDay }
+        : undefined;
+    const smokeCapEnabled = maxRowsPerDay !== null;
+    let smokeSelectedMax = 0;
+    let smokeEmittedMax = 0;
 
     // Step 1: Train regime model on first file (STREAMING - no full load)
     console.log('[DiscoveryDataLoader] Training regime model on first file (streaming)...');
@@ -287,7 +300,7 @@ export class DiscoveryDataLoader {
 
     console.log('[DiscoveryDataLoader] Collecting regime vectors (streaming)...');
 
-    for await (const event of replayEngine.replay()) {
+    for await (const event of replayEngine.replay(replayOpts)) {
       eventCount++;
       const features = featureBuilder.onEvent(event);
 
@@ -307,6 +320,10 @@ export class DiscoveryDataLoader {
         regimeVector[fname] = features[fname] || 0;
       }
       regimeVectors.push(regimeVector);
+
+      if (maxRowsPerDay !== null && regimeVectors.length >= maxRowsPerDay) {
+        break;
+      }
     }
 
     console.log(`[DiscoveryDataLoader] Collected ${regimeVectors.length} regime vectors from ${eventCount} events (${warmupCount} warmup)`);
@@ -330,6 +347,9 @@ export class DiscoveryDataLoader {
     // Step 3: Create iterator factory
     const self = this;
     const iteratorFactory = async function*() {
+      let passSelectedTotal = 0;
+      let passEmittedTotal = 0;
+      try {
       for (const file of files) {
         console.log(`[DiscoveryDataLoader] Streaming file: ${file.parquetPath}`);
 
@@ -353,7 +373,7 @@ export class DiscoveryDataLoader {
         let warmupCount = 0;
 
         // Collect day data
-        for await (const event of replayEngine.replay()) {
+        for await (const event of replayEngine.replay(replayOpts)) {
           eventCount++;
           const features = featureBuilder.onEvent(event);
 
@@ -368,8 +388,13 @@ export class DiscoveryDataLoader {
           });
 
           dayMidPrices.push(features.mid_price);
+
+          if (maxRowsPerDay !== null && dayRows.length >= maxRowsPerDay) {
+            break;
+          }
         }
 
+        passSelectedTotal += eventCount;
         console.log(`[DiscoveryDataLoader] Day collected: ${dayRows.length} rows from ${eventCount} events (${warmupCount} warmup)`);
 
         // Calculate forward returns for this day
@@ -399,9 +424,25 @@ export class DiscoveryDataLoader {
           row.regimeConfidence = prediction.confidence;
 
           yield row;  // ← Stream row
+          passEmittedTotal++;
         }
 
         console.log(`[DiscoveryDataLoader] Day streamed: ${dayRows.length} rows yielded`);
+      }
+      } finally {
+        if (smokeCapEnabled) {
+          if (passSelectedTotal > smokeSelectedMax) smokeSelectedMax = passSelectedTotal;
+          if (passEmittedTotal > smokeEmittedMax) smokeEmittedMax = passEmittedTotal;
+
+          iteratorFactory.metadata.rowCount = smokeEmittedMax;
+          iteratorFactory.metadata.smokeCap = {
+            enabled: true,
+            maxRowsPerDay,
+            slice: smokeSlice,
+            rows_selected_total: smokeSelectedMax,
+            rows_emitted_total: smokeEmittedMax
+          };
+        }
       }
     };
 
@@ -418,7 +459,18 @@ export class DiscoveryDataLoader {
       horizonsUsed: this.forwardHorizons,
       regimeK: this.regimeK,
       regimeModel,
-      featureNames: this.featureNames
+      featureNames: this.featureNames,
+      ...(smokeCapEnabled
+        ? {
+          smokeCap: {
+            enabled: true,
+            maxRowsPerDay,
+            slice: smokeSlice,
+            rows_selected_total: 0,
+            rows_emitted_total: 0
+          }
+        }
+        : {})
     };
 
     console.log(`[DiscoveryDataLoader] Iterator factory ready for streaming`);

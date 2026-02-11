@@ -1,0 +1,1 @@
+EVD_ROOT="evidence/sprint6-acceptance-full2day-__PENDING__-__PENDING__-20260209"; mkdir -p "evidence/sprint6-acceptance-full2day-__PENDING__-__PENDING__-20260209"/{inputs,sha256,inventory,runs,determinism}

@@ -767,141 +767,244 @@ export class PatternScanner {
 
     // Pass 2: Match patterns using computed quantiles
     console.log('[PatternScanner] Quantile scan pass 2: matching patterns...');
+    const pass2StartedAt = Date.now();
 
-    const horizonKeys = Object.keys(firstRow.forwardReturns);
-    const testConfigs = [];
+    const horizonKeysRaw = Object.keys(firstRow.forwardReturns);
+    const horizonNums = new Array(horizonKeysRaw.length);
+    const forwardKeys = new Array(horizonKeysRaw.length);
+
+    for (let h = 0; h < horizonKeysRaw.length; h++) {
+      const horizonKey = horizonKeysRaw[h];
+      const horizonNum = parseInt(horizonKey.slice(1));
+      horizonNums[h] = horizonNum;
+      forwardKeys[h] = `h${horizonNum}`;
+    }
+
+    const featureNames = [];
+    const q10ByFeature = [];
+    const q90ByFeature = [];
 
     for (const [fname, q] of quantiles) {
-      for (const horizon of horizonKeys) {
-        // Low quantile (< q10)
-        testConfigs.push({
-          featureName: fname,
-          operator: '<',
-          value: q.q10,
-          horizon: parseInt(horizon.slice(1))
-        });
-
-        // High quantile (> q90)
-        testConfigs.push({
-          featureName: fname,
-          operator: '>',
-          value: q.q90,
-          horizon: parseInt(horizon.slice(1))
-        });
-      }
+      featureNames.push(fname);
+      q10ByFeature.push(q.q10);
+      q90ByFeature.push(q.q90);
     }
 
-    const configStats = new Map();
+    const featureCount = featureNames.length;
+    const horizonCount = forwardKeys.length;
+    const configCount = featureCount * horizonCount * 2;
     const MAX_INDICES_PER_CONFIG = 50000; // Memory guard
-    let rowIndex = 0;
-    let droppedConfigs = 0;
+
+    // Pass 2A: Counting (clamped). No allocation for indices/returns.
+    const matchCounts = new Uint32Array(configCount);
+    const insertionOrder = [];
+    let rowIndexA = 0;
+    let cappedConfigs = 0;
+    const pass2AStartedAt = Date.now();
 
     for await (const row of dataset.rowsFactory()) {
-      for (const config of testConfigs) {
-        const configKey = `${config.featureName}_${config.operator}_${config.value}_h${config.horizon}`;
+      const features = row.features;
+      const forwardReturns = row.forwardReturns;
 
-        // Skip if config already exceeded max indices
-        const stats = configStats.get(configKey);
-        if (stats && stats.indices.length >= MAX_INDICES_PER_CONFIG) {
-          continue;
-        }
+      for (let f = 0; f < featureCount; f++) {
+        const featureValue = features[featureNames[f]];
+        if (featureValue === null || featureValue === undefined) continue;
 
-        const featureValue = row.features[config.featureName];
-        if (featureValue === null || featureValue === undefined) {
-          continue;
-        }
+        const q10 = q10ByFeature[f];
+        const q90 = q90ByFeature[f];
+        const isLow = featureValue < q10;
+        const isHigh = featureValue > q90;
+        if (!isLow && !isHigh) continue;
 
-        let conditionMet = false;
-        if (config.operator === '<') {
-          conditionMet = featureValue < config.value;
-        } else if (config.operator === '>') {
-          conditionMet = featureValue > config.value;
-        }
+        const base = f * horizonCount * 2;
 
-        if (!conditionMet) continue;
+        for (let h = 0; h < horizonCount; h++) {
+          const forwardReturn = forwardReturns[forwardKeys[h]];
+          if (forwardReturn === null) continue;
 
-        const forwardReturn = row.forwardReturns[`h${config.horizon}`];
-        if (forwardReturn === null) {
-          continue;
-        }
+          const lowIdx = base + h * 2;
+          if (isLow) {
+            const cur = matchCounts[lowIdx];
+            if (cur < MAX_INDICES_PER_CONFIG) {
+              if (cur === 0) insertionOrder.push(lowIdx);
+              const next = cur + 1;
+              matchCounts[lowIdx] = next;
+              if (next === MAX_INDICES_PER_CONFIG) cappedConfigs++;
+            }
+          }
 
-        if (!configStats.has(configKey)) {
-          configStats.set(configKey, {
-            config,
-            indices: [],
-            returns: []
-          });
-        }
-
-        const currentStats = configStats.get(configKey);
-
-        if (currentStats.indices.length < MAX_INDICES_PER_CONFIG) {
-          currentStats.indices.push(rowIndex);
-          currentStats.returns.push(forwardReturn);
+          const highIdx = lowIdx + 1;
+          if (isHigh) {
+            const cur = matchCounts[highIdx];
+            if (cur < MAX_INDICES_PER_CONFIG) {
+              if (cur === 0) insertionOrder.push(highIdx);
+              const next = cur + 1;
+              matchCounts[highIdx] = next;
+              if (next === MAX_INDICES_PER_CONFIG) cappedConfigs++;
+            }
+          }
         }
       }
 
-      rowIndex++;
+      rowIndexA++;
 
-      if (rowIndex % 500000 === 0) {
-        console.log(`[PatternScanner] Quantile scan processed ${rowIndex} rows...`);
+      if (rowIndexA % 500000 === 0) {
+        console.log(`[PatternScanner] Quantile scan processed ${rowIndexA} rows...`);
       }
+
+      // If every config is capped, remaining rows can't affect results.
+      if (cappedConfigs === configCount) break;
     }
 
-    // Count capped configs
-    for (const [key, stats] of configStats) {
-      if (stats.indices.length >= MAX_INDICES_PER_CONFIG) {
-        droppedConfigs++;
+    console.log(`[PatternScanner] Quantile pass2A done: elapsed_ms=${Date.now() - pass2AStartedAt}`);
+
+    // Pass 2B: Fill typed arrays deterministically (row order).
+    const indicesByConfig = new Array(configCount);
+    const returnsByConfig = new Array(configCount);
+
+    for (const cfgIdx of insertionOrder) {
+      const n = matchCounts[cfgIdx];
+      if (n === 0) continue;
+      indicesByConfig[cfgIdx] = new Uint32Array(n);
+      returnsByConfig[cfgIdx] = new Float64Array(n);
+    }
+
+    const fillPos = new Uint32Array(configCount);
+    let remainingConfigs = insertionOrder.length;
+    let rowIndexB = 0;
+    const pass2BStartedAt = Date.now();
+
+    for await (const row of dataset.rowsFactory()) {
+      const features = row.features;
+      const forwardReturns = row.forwardReturns;
+
+      for (let f = 0; f < featureCount; f++) {
+        const featureValue = features[featureNames[f]];
+        if (featureValue === null || featureValue === undefined) continue;
+
+        const q10 = q10ByFeature[f];
+        const q90 = q90ByFeature[f];
+        const isLow = featureValue < q10;
+        const isHigh = featureValue > q90;
+        if (!isLow && !isHigh) continue;
+
+        const base = f * horizonCount * 2;
+
+        for (let h = 0; h < horizonCount; h++) {
+          const forwardReturn = forwardReturns[forwardKeys[h]];
+          if (forwardReturn === null) continue;
+
+          const lowIdx = base + h * 2;
+          if (isLow) {
+            const cap = matchCounts[lowIdx];
+            const pos = fillPos[lowIdx];
+            if (pos < cap) {
+              indicesByConfig[lowIdx][pos] = rowIndexB;
+              returnsByConfig[lowIdx][pos] = forwardReturn;
+              const nextPos = pos + 1;
+              fillPos[lowIdx] = nextPos;
+              if (nextPos === cap) remainingConfigs--;
+            }
+          }
+
+          const highIdx = lowIdx + 1;
+          if (isHigh) {
+            const cap = matchCounts[highIdx];
+            const pos = fillPos[highIdx];
+            if (pos < cap) {
+              indicesByConfig[highIdx][pos] = rowIndexB;
+              returnsByConfig[highIdx][pos] = forwardReturn;
+              const nextPos = pos + 1;
+              fillPos[highIdx] = nextPos;
+              if (nextPos === cap) remainingConfigs--;
+            }
+          }
+        }
       }
+
+      rowIndexB++;
+
+      if (rowIndexB % 500000 === 0) {
+        console.log(`[PatternScanner] Quantile scan processed ${rowIndexB} rows...`);
+      }
+
+      // All configs have fully-filled arrays; remaining rows can't affect results.
+      if (remainingConfigs === 0) break;
+    }
+
+    console.log(`[PatternScanner] Quantile pass2B done: elapsed_ms=${Date.now() - pass2BStartedAt}`);
+
+    let droppedConfigs = 0;
+    for (let i = 0; i < matchCounts.length; i++) {
+      if (matchCounts[i] >= MAX_INDICES_PER_CONFIG) droppedConfigs++;
     }
 
     if (droppedConfigs > 0) {
       console.log(`[PatternScanner] Warning: ${droppedConfigs} configs exceeded ${MAX_INDICES_PER_CONFIG} matches (capped)`);
     }
 
-    console.log(`[PatternScanner] Quantile scan completed ${rowIndex} rows`);
+    console.log(`[PatternScanner] Quantile scan completed ${rowIndexB} rows`);
+    console.log(`[PatternScanner] Quantile scan pass 2 done: elapsed_ms=${Date.now() - pass2StartedAt}`);
 
-    // Convert to patterns
+    // Convert to patterns (matchingIndices must remain a plain Array for downstream callers).
     const patterns = [];
+    const totalPatternsFound = insertionOrder.length;
 
-    for (const [configKey, stats] of configStats) {
-      if (stats.indices.length === 0) continue;
+    for (const cfgIdx of insertionOrder) {
+      const indices = indicesByConfig[cfgIdx];
+      if (!indices || indices.length === 0) continue;
 
-      const { config } = stats;
-      const returns = stats.returns;
+      const withinFeature = cfgIdx % (horizonCount * 2);
+      const featureIndex = (cfgIdx - withinFeature) / (horizonCount * 2);
+      const horizonIndex = (withinFeature - (withinFeature % 2)) / 2;
+      const isHigh = (withinFeature % 2) === 1;
 
-      const mean = returns.reduce((a, b) => a + b, 0) / returns.length;
-      const sortedReturns = [...returns].sort((a, b) => a - b);
+      const featureName = featureNames[featureIndex];
+      const operator = isHigh ? '>' : '<';
+      const value = isHigh ? q90ByFeature[featureIndex] : q10ByFeature[featureIndex];
+      const horizon = horizonNums[horizonIndex];
+
+      const returns = returnsByConfig[cfgIdx];
+      let sum = 0;
+      for (let i = 0; i < returns.length; i++) sum += returns[i];
+      const mean = sum / returns.length;
+
+      const sortedReturns = Array.from(returns).sort((a, b) => a - b);
       const median = sortedReturns[Math.floor(sortedReturns.length / 2)];
-      const variance = returns.reduce((sum, r) => sum + Math.pow(r - mean, 2), 0) / returns.length;
-      const std = Math.sqrt(variance);
+
+      let varianceSum = 0;
+      for (let i = 0; i < returns.length; i++) {
+        const d = returns[i] - mean;
+        varianceSum += d * d;
+      }
+      const std = Math.sqrt(varianceSum / returns.length);
 
       const direction = mean > 0 ? 'LONG' : 'SHORT';
-
-      const id = `quantile_${config.featureName}_${config.operator}_${config.value.toFixed(4)}_h${config.horizon}`;
+      const id = `quantile_${featureName}_${operator}_${value.toFixed(4)}_h${horizon}`;
 
       patterns.push({
         id,
         type: 'quantile',
-        conditions: [{ feature: config.featureName, operator: config.operator, value: config.value }],
+        conditions: [{ feature: featureName, operator, value }],
         regimes: null,
         direction,
-        support: stats.indices.length,
+        support: indices.length,
         forwardReturns: {
           mean,
           median,
           std,
           count: returns.length
         },
-        horizon: config.horizon,
-        matchingIndices: stats.indices
+        horizon,
+        matchingIndices: Array.from(indices)
       });
+
+      if (patterns.length >= this.maxPatternsPerMethod) break;
     }
 
-    const limited = patterns.slice(0, this.maxPatternsPerMethod);
-    console.log(`[PatternScanner] Quantile scan found ${patterns.length} patterns (kept ${limited.length})`);
+    console.log(`[PatternScanner] Quantile scan found ${totalPatternsFound} patterns (kept ${patterns.length})`);
 
-    return limited;
+    return patterns;
   }
 
   /**

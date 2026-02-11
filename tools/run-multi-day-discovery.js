@@ -21,6 +21,7 @@ const SCRIPT_NAME = 'tools/run-multi-day-discovery.js';
 const VALID_EXCHANGES = new Set(['binance', 'bybit', 'okx']);
 const VALID_MODES = new Set(['smoke', 'acceptance']);
 const VALID_PERMUTATION = new Set(['on', 'off']);
+const VALID_SMOKE_SLICES = new Set(['head', 'tail', 'head_tail']);
 
 function printHelp(exitCode = 0) {
   const msg = `
@@ -35,6 +36,8 @@ Args:
   --heapMB <int>                       (default: 6144)
   --permutationTest <on|off>           (default: on)
   --mode <smoke|acceptance>            (default: smoke)
+  --smokeMaxRowsPerDay <int>           (default: 200000; smoke only)
+  --smokeSlice <head|tail|head_tail>   (default: head; smoke only)
   --progressEvery <N>                  (default: 1)
   --help
 
@@ -93,6 +96,8 @@ function parseArgs(argv) {
     'heapMB',
     'permutationTest',
     'mode',
+    'smokeMaxRowsPerDay',
+    'smokeSlice',
     'progressEvery'
   ]);
 
@@ -247,6 +252,11 @@ async function main() {
   const end = String(args.end || '').trim();
   const heapMB = args.heapMB === undefined ? 6144 : toInt('heapMB', args.heapMB, { min: 256 });
   const mode = String(args.mode || 'smoke').trim();
+  const smokeMaxRowsPerDay =
+    args.smokeMaxRowsPerDay === undefined
+      ? 200000
+      : toInt('smokeMaxRowsPerDay', args.smokeMaxRowsPerDay, { min: 1 });
+  const smokeSlice = String(args.smokeSlice || 'head').trim();
   const progressEvery = args.progressEvery === undefined ? 1 : toInt('progressEvery', args.progressEvery, { min: 1 });
 
   if (!VALID_EXCHANGES.has(exchange)) fatal(`Invalid --exchange: ${exchange} (expected: binance|bybit|okx)`);
@@ -255,6 +265,7 @@ async function main() {
   if (!start) fatal('Missing required --start');
   if (!end) fatal('Missing required --end');
   if (!VALID_MODES.has(mode)) fatal(`Invalid --mode: ${mode} (expected: smoke|acceptance)`);
+  if (!VALID_SMOKE_SLICES.has(smokeSlice)) fatal(`Invalid --smokeSlice: ${smokeSlice} (expected: head|tail|head_tail)`);
 
   // Date list + acceptance guardrail
   const dates = listDates(start, end);
@@ -374,6 +385,40 @@ async function main() {
   console.log(`[Dataset] resolved ${resolved.length} day(s); meta.rows_total=${totalRows || 'N/A'}`);
   checkpoint('t_resolve_files_done');
 
+  if (mode === 'smoke') {
+    console.log(`[SmokeCap] enabled=true maxRowsPerDay=${smokeMaxRowsPerDay} slice=${smokeSlice}`);
+    for (const r of resolved) {
+      const total = Number.isFinite(r.meta?.rows) ? r.meta.rows : null;
+      const used = total === null ? smokeMaxRowsPerDay : Math.min(total, smokeMaxRowsPerDay);
+
+      let usedHead = 0;
+      let usedTail = 0;
+      if (smokeSlice === 'head') {
+        usedHead = used;
+      } else if (smokeSlice === 'tail') {
+        usedTail = used;
+      } else {
+        const headTarget = Math.floor(smokeMaxRowsPerDay / 2);
+        const tailTarget = smokeMaxRowsPerDay - headTarget;
+        if (total === null) {
+          usedHead = headTarget;
+          usedTail = tailTarget;
+        } else if (total <= headTarget) {
+          usedHead = total;
+          usedTail = 0;
+        } else if (total <= smokeMaxRowsPerDay) {
+          usedHead = headTarget;
+          usedTail = total - headTarget;
+        } else {
+          usedHead = headTarget;
+          usedTail = tailTarget;
+        }
+      }
+
+      console.log(`[SmokeCap] date=${r.date} rows_used_head=${usedHead} rows_used_tail=${usedTail} rows_total=${total === null ? 'UNKNOWN' : total}`);
+    }
+  }
+
   const outputRoot = 'runs/multi-day-discovery';
   const runTs = safeTimestamp();
   const permTag = permutationEnabled ? 'perm-on' : 'perm-off';
@@ -396,7 +441,10 @@ async function main() {
   console.log('');
 
   const registry = new EdgeRegistry();
-  const pipeline = new EdgeDiscoveryPipeline({ registry });
+  const pipeline = new EdgeDiscoveryPipeline({
+    registry,
+    loader: mode === 'smoke' ? { maxRowsPerDay: smokeMaxRowsPerDay, smokeSlice } : undefined
+  });
 
   const startedAt = Date.now();
   let result;
@@ -407,6 +455,7 @@ async function main() {
     console.error('');
     console.error('[Run] discovery_error');
     console.error(err && err.stack ? err.stack : String(err));
+    if (err && (err.code === 'SMOKE_CAP_GUARD_FAIL' || err.exit_code === 2)) process.exit(2);
     process.exit(1);
   }
   checkpoint('t_pipeline_done');

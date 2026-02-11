@@ -1,0 +1,5 @@
+data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260116/data.parquet
+data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260117/data.parquet
+data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260118/data.parquet
+data/sprint2/adausdt_20260110.parquet
+data/sprint2/adausdt_20260111.parquet

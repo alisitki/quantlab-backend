@@ -238,6 +238,25 @@ export class EdgeDiscoveryPipeline {
     console.log(`[EdgeDiscoveryPipeline] Found ${patterns.length} patterns`);
     timing('after_pattern_scan');
 
+    // Smoke-only guard/metrics: ensure selected rows actually emit into pipeline.
+    const smokeCap = dataset && dataset.metadata && dataset.metadata.smokeCap && dataset.metadata.smokeCap.enabled
+      ? dataset.metadata.smokeCap
+      : null;
+    if (smokeCap) {
+      const rowsSelectedTotal = Number.isFinite(smokeCap.rows_selected_total) ? smokeCap.rows_selected_total : 0;
+      const rowsEmittedTotal = Number.isFinite(smokeCap.rows_emitted_total) ? smokeCap.rows_emitted_total : 0;
+
+      if (rowsEmittedTotal > 0) {
+        console.log(`[SmokeCapGuard] PASS rows_selected_total=${rowsSelectedTotal} rows_emitted_total=${rowsEmittedTotal}`);
+      } else if (rowsSelectedTotal > 0) {
+        console.error('[SmokeCapGuard] FAIL rows_selected_total>0 but rows_emitted_total==0');
+        const err = new Error('SMOKE_CAP_GUARD_FAIL');
+        err.code = 'SMOKE_CAP_GUARD_FAIL';
+        err.exit_code = 2;
+        throw err;
+      }
+    }
+
     if (patterns.length === 0) {
       console.log('[EdgeDiscoveryPipeline] No patterns found. Exiting.');
       timing('early_exit_no_patterns');
@@ -252,7 +271,7 @@ export class EdgeDiscoveryPipeline {
         rejectedPatterns: [],
         metadata: {
           duration: Date.now() - startTime,
-          dataRowCount: dataset.metadata.rowCount || 0,
+          dataRowCount: dataset.metadata?.smokeCap?.rows_emitted_total ?? (dataset.metadata.rowCount || 0),
           regimesUsed: dataset.metadata.regimeK,
           filesLoaded: files.length
         }
@@ -293,7 +312,7 @@ export class EdgeDiscoveryPipeline {
         rejectedPatterns,
         metadata: {
           duration: Date.now() - startTime,
-          dataRowCount: dataset.metadata.rowCount || 0,
+          dataRowCount: dataset.metadata?.smokeCap?.rows_emitted_total ?? (dataset.metadata.rowCount || 0),
           regimesUsed: dataset.metadata.regimeK,
           filesLoaded: files.length
         }
@@ -354,7 +373,7 @@ export class EdgeDiscoveryPipeline {
       rejectedPatterns,
       metadata: {
         duration,
-        dataRowCount: dataset.metadata.rowCount || 0,
+        dataRowCount: dataset.metadata?.smokeCap?.rows_emitted_total ?? (dataset.metadata.rowCount || 0),
         regimesUsed: dataset.metadata.regimeK,
         filesLoaded: files.length
       }

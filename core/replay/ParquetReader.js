@@ -231,6 +231,95 @@ export class ParquetReader {
   }
 
   /**
+   * Query a deterministic slice of rows (smoke helper).
+   * Returned rows are always ASC (ts_event, seq) ordered.
+   * @param {Object} params
+   * @param {'head'|'tail'|'head_tail'} params.slice
+   * @param {number} params.limit
+   * @param {number} [params.startTs]
+   * @param {number} [params.endTs]
+   * @returns {Promise<import('./types.js').Row[]>}
+   */
+  async querySliceRows({ slice, limit, startTs, endTs }) {
+    await this.init();
+
+    if (!Number.isFinite(limit) || limit < 1) {
+      throw new Error(`INVALID_LIMIT: ${limit}`);
+    }
+
+    const conditions = [];
+    if (startTs !== undefined) {
+      conditions.push(`ts_event >= CAST('${startTs}' AS UBIGINT)`);
+    }
+    if (endTs !== undefined) {
+      conditions.push(`ts_event <= CAST('${endTs}' AS UBIGINT)`);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const source = this.#getParquetSource();
+
+    const runAll = (sql, op) =>
+      new Promise((resolve, reject) => {
+        this.#conn.all(sql, (err, rows) => {
+          if (err) return reject(this.#wrapDuckdbError(err, op));
+          resolve(rows);
+        });
+      });
+
+    const headSql = (n) => `
+      SELECT * FROM read_parquet(${source})
+      ${whereClause}
+      ${SQL_ORDER_CLAUSE}
+      LIMIT ${n}
+    `;
+
+    const tailSql = (n) => `
+      SELECT * FROM read_parquet(${source})
+      ${whereClause}
+      ORDER BY ts_event DESC, seq DESC
+      LIMIT ${n}
+    `;
+
+    if (slice === 'head') {
+      return runAll(headSql(limit), 'query_slice_head');
+    }
+
+    if (slice === 'tail') {
+      const rows = await runAll(tailSql(limit), 'query_slice_tail');
+      rows.reverse(); // normalize to ASC (ts_event, seq)
+      return rows;
+    }
+
+    if (slice === 'head_tail') {
+      const headN = Math.floor(limit / 2);
+      const tailN = limit - headN;
+      const headRows = headN > 0 ? await runAll(headSql(headN), 'query_slice_head') : [];
+      const tailRowsDesc = tailN > 0 ? await runAll(tailSql(tailN), 'query_slice_tail') : [];
+      tailRowsDesc.reverse(); // normalize to ASC
+
+      // Preserve ordering: head rows are earliest; tail rows are latest.
+      // Dedup defensively in case head/tail overlap (e.g., small files).
+      const out = [];
+      const seen = new Set();
+      for (const row of headRows) {
+        const k = `${row.ts_event}:${row.seq}`;
+        if (seen.has(k)) continue;
+        seen.add(k);
+        out.push(row);
+      }
+      for (const row of tailRowsDesc) {
+        const k = `${row.ts_event}:${row.seq}`;
+        if (seen.has(k)) continue;
+        seen.add(k);
+        out.push(row);
+      }
+      return out;
+    }
+
+    throw new Error(`INVALID_SLICE: ${slice}`);
+  }
+
+  /**
    * Get filtered row count (for validation when using time filters)
    * @param {number} [startTs]
    * @param {number} [endTs]

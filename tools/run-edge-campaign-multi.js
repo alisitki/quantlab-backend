@@ -8,6 +8,7 @@ import path from "node:path";
 const DEFAULT_EXCHANGE = "binance";
 const DEFAULT_DAY_QUALITY = "GOOD";
 const VALID_DAY_QUALITY = new Set(["GOOD"]);
+const DEFAULT_CURATED_ROOT = "/home/deploy/quantlab-cache/curated";
 const DEFAULT_SYMBOLS = [
   "BTC/USDT",
   "ETH/USDT",
@@ -28,7 +29,7 @@ Optional flags:
 
 Behavior:
   - If --streams is not provided, streams are auto-discovered from:
-    data/curated/exchange=<exchange>/stream=*
+    ${process.env.QUANTLAB_CURATED_ROOT || DEFAULT_CURATED_ROOT}/exchange=<exchange>/stream=*
   - For each stream, one master pack is produced:
     edge-campaign-multi-v0-<exchange>_<stream>_<YYYYMMDD>_<HHMMSS>
 `.trim();
@@ -86,6 +87,12 @@ function normalizeSymbol(symbol) {
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]/g, "");
+}
+
+function curatedRoot() {
+  return String(process.env.QUANTLAB_CURATED_ROOT || DEFAULT_CURATED_ROOT)
+    .trim()
+    .replace(/\/+$/, "");
 }
 
 function todayUTCYYYYMMDD() {
@@ -286,8 +293,8 @@ function selectBestWindow(summaryRows) {
   return rank1 || summaryRows[0];
 }
 
-async function discoverStreams(exchange) {
-  const exchangeRoot = path.join("data", "curated", `exchange=${exchange}`);
+async function discoverStreams(exchange, curatedRootPath) {
+  const exchangeRoot = path.join(curatedRootPath, `exchange=${exchange}`);
   if (!(await fileExists(exchangeRoot))) {
     throw new Error(`exchange curated root not found: ${exchangeRoot}`);
   }
@@ -609,6 +616,7 @@ async function main() {
     fatal(`Unsupported --dayQuality: ${dayQuality} (v0 supports GOOD only)`);
   }
 
+  const curatedRootPath = curatedRoot();
   let streams;
   if (args.streams !== undefined) {
     streams = parseCsvList(args.streams);
@@ -616,13 +624,14 @@ async function main() {
       fatal("--streams provided but empty after parsing");
     }
   } else {
-    streams = await discoverStreams(exchange);
+    streams = await discoverStreams(exchange, curatedRootPath);
     if (streams.length === 0) {
-      fatal(`No streams discovered under data/curated/exchange=${exchange}`);
+      fatal(`No streams discovered under ${curatedRootPath}/exchange=${exchange}`);
     }
   }
 
   console.log(`[Multi] exchange=${exchange} dayQuality=${dayQuality}`);
+  console.log(`[Multi] curated_root=${curatedRootPath}`);
   console.log(`[Multi] discovered_streams=${streams.join(",")}`);
 
   const outcomes = [];

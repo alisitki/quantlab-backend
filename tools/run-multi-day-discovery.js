@@ -22,6 +22,7 @@ const VALID_EXCHANGES = new Set(['binance', 'bybit', 'okx']);
 const VALID_MODES = new Set(['smoke', 'acceptance']);
 const VALID_PERMUTATION = new Set(['on', 'off']);
 const VALID_SMOKE_SLICES = new Set(['head', 'tail', 'head_tail']);
+const DEFAULT_CURATED_ROOT = '/home/deploy/quantlab-cache/curated';
 
 function printHelp(exitCode = 0) {
   const msg = `
@@ -161,6 +162,12 @@ function normalizeSymbolForPath(symbol) {
     .replace(/[^a-z0-9]/g, '');
 }
 
+function curatedRoot() {
+  return String(process.env.QUANTLAB_CURATED_ROOT || DEFAULT_CURATED_ROOT)
+    .trim()
+    .replace(/\/+$/, '');
+}
+
 function currentHeapLimitMB() {
   const heapStats = v8.getHeapStatistics();
   return Math.floor(heapStats.heap_size_limit / 1024 / 1024);
@@ -176,8 +183,14 @@ function buildNodeOptions(existing, heapMB) {
   return parts.join(' ');
 }
 
-function resolveDayFiles({ exchange, stream, symbolSlug, date }) {
-  const curatedDir = `data/curated/exchange=${exchange}/stream=${stream}/symbol=${symbolSlug}/date=${date}`;
+function resolveDayFiles({ exchange, stream, symbolSlug, date, curatedRootPath }) {
+  const curatedDir = path.join(
+    curatedRootPath,
+    `exchange=${exchange}`,
+    `stream=${stream}`,
+    `symbol=${symbolSlug}`,
+    `date=${date}`
+  );
   const legacyDir = `data/exchange=${exchange}/stream=${stream}/symbol=${symbolSlug}/date=${date}`;
 
   /** @type {Array<{parquetPath: string, metaCandidates: string[]}>} */
@@ -332,6 +345,7 @@ async function main() {
 
   const symbolSlug = normalizeSymbolForPath(symbol);
   if (!symbolSlug) fatal(`Invalid --symbol: ${symbol} (cannot derive path slug)`);
+  const curatedRootPath = curatedRoot();
 
   // Header log (required)
   console.log('='.repeat(80));
@@ -342,6 +356,7 @@ async function main() {
   console.log(`stream:            ${stream}`);
   console.log(`symbol:            ${symbol}`);
   console.log(`date_range:        ${start}..${end} (${dates.length} day(s))`);
+  console.log(`curated_root:      ${curatedRootPath}`);
   console.log(`permutation_test:  ${permutationEnabled ? 'ON' : 'OFF'} (${permutationSource})`);
   if (process.env.DISCOVERY_PERMUTATION_TEST === 'false' && permutationSource !== 'CLI') {
     console.log(`permutation_note:  DISABLED via env DISCOVERY_PERMUTATION_TEST=false`);
@@ -358,12 +373,12 @@ async function main() {
   const resolved = [];
   for (let i = 0; i < dates.length; i++) {
     const date = dates[i];
-    const found = resolveDayFiles({ exchange, stream, symbolSlug, date });
+    const found = resolveDayFiles({ exchange, stream, symbolSlug, date, curatedRootPath });
     if (!found) {
       console.error('');
       console.error(`[Dataset] Missing files for date=${date}`);
       console.error(`[Dataset] Tried patterns (first existing parquet wins, requires meta):`);
-      console.error(`  data/curated/exchange=${exchange}/stream=${stream}/symbol=${symbolSlug}/date=${date}/data.parquet + meta.json`);
+      console.error(`  ${curatedRootPath}/exchange=${exchange}/stream=${stream}/symbol=${symbolSlug}/date=${date}/data.parquet + meta.json`);
       console.error(`  data/exchange=${exchange}/stream=${stream}/symbol=${symbolSlug}/date=${date}/data.parquet + meta.json`);
       console.error(`  data/test/${symbolSlug}_${date}.parquet + ${symbolSlug}_${date}_meta.json`);
       console.error(`  data/sprint2/${symbolSlug}_${date}.parquet + ${symbolSlug}_${date}_meta.json`);

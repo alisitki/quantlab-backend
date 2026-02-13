@@ -53,3 +53,9 @@ services/strategyd/runs/
 services/strategyd/validation_reports/
 **/reports/
 **/*.generated.json
+data/curated/**
+**/*.parquet
+evidence/*.tar.gz
+evidence/*.tar.gz.sha256
+evidence/*.moved_to.txt
+evidence/*/

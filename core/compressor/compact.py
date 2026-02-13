@@ -554,7 +554,7 @@ class CompactionJob:
                 output_path = Path(temp_dir) / 'data.parquet'
                 
                 t_merge = time.perf_counter()
-                metadata = self._merge_parquet_files(local_files, output_path)
+                metadata = self._merge_parquet_files(local_files, output_path, stream)
                 result['merge_time'] = time.perf_counter() - t_merge
                 
                 # Copy breakdown from merger if available
@@ -720,7 +720,7 @@ class CompactionJob:
         
         return sorted(local_files)
     
-    def _merge_parquet_files(self, input_files: List[Path], output_path: Path) -> dict:
+    def _merge_parquet_files(self, input_files: List[Path], output_path: Path, stream: str) -> dict:
         """
         Merge parquet files using streaming k-way merge.
         
@@ -731,10 +731,15 @@ class CompactionJob:
         Schema output: ts_event, seq, ts_recv, exchange, symbol, ...
         seq: 0 to (row_count - 1), monotonically increasing
         """
+        stream_norm = (stream or "").lower()
+        trade_plain_mode = stream_norm == "trade"
         merger = StreamingMergeWriter(
             input_files=input_files,
             output_path=output_path,
-            check_shutdown=self.check_shutdown
+            check_shutdown=self.check_shutdown,
+            decode_dictionaries=trade_plain_mode,
+            force_plain_output=trade_plain_mode,
+            force_disable_fastpath=trade_plain_mode
         )
         return merger.merge()
     

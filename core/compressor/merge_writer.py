@@ -37,13 +37,22 @@ class FileStream:
     Holds only one batch in memory at a time.
     """
     
-    __slots__ = ['file_idx', 'path', 'pf', 'batch_iter', 'current_batch', 
-                 'batch_row_idx', 'global_row_idx', 'exhausted', 'schema', 'col_names', 'decode_dicts']
+    __slots__ = ['file_idx', 'path', 'pf', 'batch_iter', 'current_batch',
+                 'batch_row_idx', 'global_row_idx', 'exhausted', 'schema', 'col_names',
+                 'decode_dicts', 'trade_fallback_enabled']
     
-    def __init__(self, file_idx: int, path: Path, batch_size: int, decode_dicts: bool = False):
+    def __init__(
+        self,
+        file_idx: int,
+        path: Path,
+        batch_size: int,
+        decode_dicts: bool = False,
+        trade_fallback_enabled: bool = False
+    ):
         self.file_idx = file_idx
         self.path = path
         self.decode_dicts = decode_dicts
+        self.trade_fallback_enabled = trade_fallback_enabled
         try:
             self.pf = pq.ParquetFile(path)
         except Exception as e:
@@ -55,7 +64,10 @@ class FileStream:
             self.schema = self.pf.schema_arrow
             
         self.col_names = self.schema.names
-        self.batch_iter = self.pf.iter_batches(batch_size=batch_size)
+        if self.decode_dicts:
+            self.batch_iter = self._iter_decoded_batches(batch_size)
+        else:
+            self.batch_iter = self.pf.iter_batches(batch_size=batch_size)
         self.current_batch: Optional[pa.RecordBatch] = None
         self.batch_row_idx = 0
         self.global_row_idx = 0
@@ -86,6 +98,64 @@ class FileStream:
             else:
                 new_fields.append(field)
         return pa.schema(new_fields)
+
+    def _iter_decoded_batches(self, batch_size: int):
+        for row_group_idx in range(self.pf.num_row_groups):
+            try:
+                table = self.pf.read_row_group(row_group_idx, use_threads=False)
+            except Exception as e:
+                if self.trade_fallback_enabled and self._is_dict_conflict_error(e):
+                    yield from self._iter_read_table_fallback(batch_size)
+                    return
+                raise
+            arrays = []
+            for i, field in enumerate(table.schema):
+                col = table.column(i).combine_chunks()
+                if pa.types.is_dictionary(field.type):
+                    decoded = pa.compute.dictionary_decode(col)
+                    target_type = field.type.value_type
+                    if not decoded.type.equals(target_type):
+                        decoded = pa.compute.cast(decoded, target_type, safe=False)
+                    arrays.append(decoded)
+                else:
+                    arrays.append(col)
+            decoded_table = pa.Table.from_arrays(arrays, schema=self.schema)
+            for batch in decoded_table.to_batches(max_chunksize=batch_size):
+                yield batch
+
+    def _is_dict_conflict_error(self, err: Exception) -> bool:
+        msg = str(err).lower()
+        return "more than one dictionary" in msg or "dict_conflict" in msg
+
+    def _iter_read_table_fallback(self, batch_size: int):
+        logger.warning(
+            f"[TradeFallback] DICT_CONFLICT detected -> using pq.read_table(read_dictionary=[]) path={self.path}"
+        )
+        table = pq.read_table(self.path, use_threads=False, read_dictionary=[])
+        table = table.combine_chunks()
+        arrays = []
+        fields = []
+        for i, field in enumerate(table.schema):
+            col = table.column(i).combine_chunks()
+            if pa.types.is_dictionary(field.type):
+                decoded = pa.compute.dictionary_decode(col)
+                target_type = field.type.value_type
+                if not decoded.type.equals(target_type):
+                    decoded = pa.compute.cast(decoded, target_type, safe=False)
+                arrays.append(decoded)
+                fields.append(pa.field(field.name, target_type, nullable=field.nullable))
+            else:
+                arrays.append(col)
+                fields.append(field)
+        fallback_table = pa.Table.from_arrays(arrays, schema=pa.schema(fields))
+        schema_short = ", ".join(
+            f"{f.name}:{f.type}" for f in fallback_table.schema[: min(6, len(fallback_table.schema))]
+        )
+        logger.info(
+            f"[TradeFallback] table rows={fallback_table.num_rows} cols={fallback_table.num_columns} schema={schema_short}"
+        )
+        for batch in fallback_table.to_batches(max_chunksize=batch_size):
+            yield batch
 
     def _decode_batch(self, batch: pa.RecordBatch) -> pa.RecordBatch:
         new_arrays = []
@@ -152,7 +222,9 @@ class StreamingMergeWriter:
         max_open_files: int = MAX_OPEN_FILES,
         add_seq_column: bool = True,
         check_shutdown: Optional[Callable[[], bool]] = None,
-        decode_dictionaries: bool = False
+        decode_dictionaries: bool = False,
+        force_plain_output: bool = False,
+        force_disable_fastpath: bool = False
     ):
         self.input_files = sorted(input_files)
         self.output_path = output_path
@@ -163,6 +235,8 @@ class StreamingMergeWriter:
         self.add_seq_column = add_seq_column
         self.check_shutdown = check_shutdown or (lambda: False)
         self.decode_dictionaries = decode_dictionaries
+        self.force_plain_output = force_plain_output
+        self.force_disable_fastpath = force_disable_fastpath
         
         # State
         self.streams: List[FileStream] = []
@@ -191,6 +265,18 @@ class StreamingMergeWriter:
         if num_files > self.max_open_files:
             return self._hierarchical_merge()
         else:
+            if self.force_disable_fastpath:
+                logger.info("[TradeGuard] FASTPATH forced OFF for stream=trade")
+                if self.decode_dictionaries:
+                    logger.info("[TradeGuard] dictionary_decode=ON (read_dictionary=[]) for stream=trade")
+                try:
+                    return self._direct_merge()
+                except Exception as e:
+                    if "more than one dictionary" in str(e).lower() and not self.decode_dictionaries:
+                        logger.warning("TRADEGUARD=FALLBACK: dictionary_conflict in direct merge. Retrying with decoding.")
+                        self.decode_dictionaries = True
+                        return self.merge()
+                    raise
             is_ordered, reason = self._check_ordering()
 
             if is_ordered:
@@ -237,6 +323,8 @@ class StreamingMergeWriter:
                     add_seq_column=False,
                     check_shutdown=self.check_shutdown,
                     decode_dictionaries=self.decode_dictionaries,
+                    force_plain_output=self.force_plain_output,
+                    force_disable_fastpath=self.force_disable_fastpath,
                 )
                 try:
                     chunk_merger.merge()
@@ -259,6 +347,8 @@ class StreamingMergeWriter:
                 add_seq_column=self.add_seq_column,
                 check_shutdown=self.check_shutdown,
                 decode_dictionaries=self.decode_dictionaries,
+                force_plain_output=self.force_plain_output,
+                force_disable_fastpath=self.force_disable_fastpath,
             )
             try:
                 return final_merger.merge()
@@ -305,6 +395,8 @@ class StreamingMergeWriter:
         t0 = time.perf_counter()
         first_pf = pq.ParquetFile(self.input_files[0])
         base_schema = first_pf.schema_arrow
+        if self.force_plain_output:
+            base_schema = self._plain_schema(base_schema)
         ts_pos = -1
         
         if self.add_seq_column:
@@ -318,7 +410,13 @@ class StreamingMergeWriter:
         else:
             self.schema = base_schema
             
-        self.writer = pq.ParquetWriter(self.output_path, self.schema, compression='zstd')
+        self.writer = pq.ParquetWriter(
+            self.output_path,
+            self.schema,
+            compression='zstd',
+            write_statistics=True,
+            use_dictionary=not self.force_plain_output
+        )
         seq = 0
         
         for path in self.input_files:
@@ -331,6 +429,8 @@ class StreamingMergeWriter:
                 if self.ts_event_max is None or stats.max > self.ts_event_max: self.ts_event_max = stats.max
                 
             for batch in pf.iter_batches(batch_size=self.batch_size):
+                if self.force_plain_output:
+                    batch = self._plain_batch(batch)
                 if self.add_seq_column:
                     seq_arr = pa.array(range(seq, seq + batch.num_rows), type=pa.int64())
                     arrays = [batch.column(j) for j in range(batch.num_columns)]
@@ -373,7 +473,15 @@ class StreamingMergeWriter:
 
     def _init_streams(self):
         for idx, path in enumerate(self.input_files):
-            self.streams.append(FileStream(idx, path, self.batch_size, self.decode_dictionaries))
+            self.streams.append(
+                FileStream(
+                    idx,
+                    path,
+                    self.batch_size,
+                    self.decode_dictionaries,
+                    trade_fallback_enabled=self.force_disable_fastpath,
+                )
+            )
 
     def _init_heap(self):
         for s in self.streams:
@@ -381,6 +489,8 @@ class StreamingMergeWriter:
 
     def _init_schema_and_writer(self):
         base_schema = self.streams[0].schema
+        if self.force_plain_output:
+            base_schema = self._plain_schema(base_schema)
         if self.add_seq_column:
             fields = []
             for f in base_schema:
@@ -389,7 +499,45 @@ class StreamingMergeWriter:
             self.schema = pa.schema(fields)
         else:
             self.schema = base_schema
-        self.writer = pq.ParquetWriter(self.output_path, self.schema, compression='zstd', write_statistics=True)
+        self.writer = pq.ParquetWriter(
+            self.output_path,
+            self.schema,
+            compression='zstd',
+            write_statistics=True,
+            use_dictionary=not self.force_plain_output
+        )
+
+    def _plain_schema(self, schema: pa.Schema) -> pa.Schema:
+        fields = []
+        for field in schema:
+            if pa.types.is_dictionary(field.type):
+                value_type = field.type.value_type
+                if pa.types.is_string(value_type):
+                    value_type = pa.large_string()
+                fields.append(pa.field(field.name, value_type, nullable=field.nullable))
+            else:
+                fields.append(field)
+        return pa.schema(fields)
+
+    def _plain_batch(self, batch: pa.RecordBatch) -> pa.RecordBatch:
+        table = pa.Table.from_batches([batch]).combine_chunks()
+        arrays = []
+        fields = []
+        for i, field in enumerate(table.schema):
+            col = table.column(i).combine_chunks()
+            if pa.types.is_dictionary(field.type):
+                arr = pa.compute.dictionary_decode(col)
+                target_type = field.type.value_type
+                if pa.types.is_string(target_type):
+                    target_type = pa.large_string()
+                if not arr.type.equals(target_type):
+                    arr = pa.compute.cast(arr, target_type, safe=False)
+                arrays.append(arr)
+                fields.append(pa.field(field.name, target_type, nullable=field.nullable))
+            else:
+                arrays.append(col)
+                fields.append(field)
+        return pa.RecordBatch.from_arrays(arrays, schema=pa.schema(fields))
 
     def _merge_loop(self):
         last_log = 0

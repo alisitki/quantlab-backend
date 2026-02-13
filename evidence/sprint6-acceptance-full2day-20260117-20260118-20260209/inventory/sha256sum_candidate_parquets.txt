@@ -1,5 +1,0 @@
-e44d3f536b311cbdbd063fb0ca478e7a724600ff95cd3558ed96395fb6f71d98  data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260116/data.parquet
-c5202ebdabfb548a486ec01c7ae936848ec47196e92f4345010d3fa501ce6ab3  data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260117/data.parquet
-e6d1fba5da080e44af1c907ec061ccad8d35d912e82f257d7ba82610bb1a181e  data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260118/data.parquet
-c7df4cdcd681369b7225c627be41497b2a996c4945a7442eee558077c35e6685  data/sprint2/adausdt_20260110.parquet
-1f29d6cda536be29b0a55dedb641aef23d8719372f92c58b1e290a799237d23d  data/sprint2/adausdt_20260111.parquet

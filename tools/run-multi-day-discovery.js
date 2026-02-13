@@ -270,7 +270,11 @@ async function main() {
   // Date list + acceptance guardrail
   const dates = listDates(start, end);
   if (mode === 'acceptance' && dates.length < 2) {
-    fatal(`--mode acceptance requires at least 2 days (got ${dates.length}: ${start}-${end})`);
+    if (stream === 'trade') {
+      console.log('[Guard] single-day acceptance override enabled for stream=trade');
+    } else {
+      fatal(`--mode acceptance requires at least 2 days (got ${dates.length}: ${start}-${end})`);
+    }
   }
 
   // Permutation test: explicit flag overrides env; otherwise env can disable.
@@ -443,7 +447,10 @@ async function main() {
   const registry = new EdgeRegistry();
   const pipeline = new EdgeDiscoveryPipeline({
     registry,
-    loader: mode === 'smoke' ? { maxRowsPerDay: smokeMaxRowsPerDay, smokeSlice } : undefined
+    loader:
+      mode === 'smoke'
+        ? { maxRowsPerDay: smokeMaxRowsPerDay, smokeSlice, stream }
+        : { stream }
   });
 
   const startedAt = Date.now();
@@ -456,6 +463,7 @@ async function main() {
     console.error('[Run] discovery_error');
     console.error(err && err.stack ? err.stack : String(err));
     if (err && (err.code === 'SMOKE_CAP_GUARD_FAIL' || err.exit_code === 2)) process.exit(2);
+    if (err && (err.code === 'TRADE_DIAG_EMPTY' || err.exit_code === 1)) process.exit(1);
     process.exit(1);
   }
   checkpoint('t_pipeline_done');

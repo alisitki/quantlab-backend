@@ -1,5 +1,0 @@
-FULL_DEFINITION_APPLIED=day_quality==GOOD
-rank	start	end	rows_total	day1_rows	day2_rows	day1_parquet	day2_parquet	day1_meta	day2_meta
-1	20260117	20260118	3685629	1525727	2159902	data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260117/data.parquet	data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260118/data.parquet	data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260117/meta.json	data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260118/meta.json
-2	20260116	20260117	3744041	2218314	1525727	data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260116/data.parquet	data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260117/data.parquet	data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260116/meta.json	data/curated/exchange=binance/stream=bbo/symbol=adausdt/date=20260117/meta.json
-3	20260110	20260111	3923697	1728582	2195115	data/sprint2/adausdt_20260110.parquet	data/sprint2/adausdt_20260111.parquet	data/sprint2/adausdt_20260110_meta.json	data/sprint2/adausdt_20260111_meta.json

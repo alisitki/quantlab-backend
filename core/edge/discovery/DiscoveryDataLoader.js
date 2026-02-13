@@ -29,6 +29,48 @@ export class DiscoveryDataLoader {
     this.seed = config.seed || DISCOVERY_CONFIG.seed;
     this.maxRowsPerDay = config.maxRowsPerDay ?? null;
     this.smokeSlice = config.smokeSlice ?? 'head';
+    this.stream = config.stream ?? null;
+  }
+
+  /**
+   * Trade-only adapter: provide BBO-compatible fields for feature builders.
+   * No-op for non-trade streams.
+   * @param {Object} event
+   * @param {Object|null} adapterStats
+   * @param {string|null} stage
+   * @returns {Object}
+   */
+  adaptTradeEventForFeatures(event, adapterStats = null, stage = null) {
+    if (this.stream !== 'trade') return event;
+
+    const px = Number(event?.price ?? event?.trade_price ?? event?.last_trade_price);
+    if (!Number.isFinite(px)) {
+      if (adapterStats) {
+        adapterStats.px_missing_passthrough++;
+      }
+      return event;
+    }
+
+    let qty = Number(event?.qty ?? event?.trade_qty ?? event?.size);
+    if (!Number.isFinite(qty) || qty <= 0) {
+      qty = 1e-9;
+    }
+
+    const spread = Math.max(Math.abs(px) * 1e-6, 1e-8);
+
+    if (adapterStats && stage === 'step1') {
+      adapterStats.step1_applied++;
+    } else if (adapterStats && stage === 'day_collect') {
+      adapterStats.day_collect_applied++;
+    }
+
+    return {
+      ...event,
+      bid_price: px - spread / 2,
+      ask_price: px + spread / 2,
+      bid_qty: qty,
+      ask_qty: qty
+    };
   }
 
   /**
@@ -95,7 +137,8 @@ export class DiscoveryDataLoader {
         console.log(`[DiscoveryDataLoader] Event ${eventCount}: symbol=${event.symbol}, bid=${event.bid_price}, ask=${event.ask_price}`);
       }
 
-      const features = featureBuilder.onEvent(event);
+      const adaptedEvent = this.adaptTradeEventForFeatures(event);
+      const features = featureBuilder.onEvent(adaptedEvent);
 
       if (eventCount <= 3 || eventCount === 100 || eventCount === 1000) {
         console.log(`[DiscoveryDataLoader] Features ${eventCount}: ${features ? `mid_price=${features.mid_price}` : 'null'}`);
@@ -272,6 +315,32 @@ export class DiscoveryDataLoader {
     const smokeCapEnabled = maxRowsPerDay !== null;
     let smokeSelectedMax = 0;
     let smokeEmittedMax = 0;
+    const isTradeStream = this.stream === 'trade';
+    const tradeAdapterStats = {
+      step1_applied: 0,
+      day_collect_applied: 0,
+      px_missing_passthrough: 0
+    };
+    let tradeTotalRowsSeen = 0;
+    let tradeRowsWithRequiredFields = 0;
+    let tradeFeatureableRowsAfterWarmup = 0;
+    const tradeHasRequiredFields = (event) => {
+      const parseFinite = (value) => {
+        const n = Number(value);
+        return Number.isFinite(n);
+      };
+
+      const price = event?.price ?? event?.trade_price ?? event?.last_trade_price;
+      const qty = event?.qty ?? event?.trade_qty ?? event?.size;
+      if (parseFinite(price) && parseFinite(qty)) {
+        return true;
+      }
+
+      for (const value of Object.values(event || {})) {
+        if (parseFinite(value)) return true;
+      }
+      return false;
+    };
 
     // Step 1: Train regime model on first file (STREAMING - no full load)
     console.log('[DiscoveryDataLoader] Training regime model on first file (streaming)...');
@@ -302,7 +371,14 @@ export class DiscoveryDataLoader {
 
     for await (const event of replayEngine.replay(replayOpts)) {
       eventCount++;
-      const features = featureBuilder.onEvent(event);
+      if (isTradeStream) {
+        tradeTotalRowsSeen++;
+        if (tradeHasRequiredFields(event)) {
+          tradeRowsWithRequiredFields++;
+        }
+      }
+      const adaptedEvent = this.adaptTradeEventForFeatures(event, tradeAdapterStats, 'step1');
+      const features = featureBuilder.onEvent(adaptedEvent);
 
       if (!features || features.mid_price === null || features.mid_price === undefined) {
         warmupCount++;
@@ -320,6 +396,9 @@ export class DiscoveryDataLoader {
         regimeVector[fname] = features[fname] || 0;
       }
       regimeVectors.push(regimeVector);
+      if (isTradeStream) {
+        tradeFeatureableRowsAfterWarmup++;
+      }
 
       if (maxRowsPerDay !== null && regimeVectors.length >= maxRowsPerDay) {
         break;
@@ -327,6 +406,24 @@ export class DiscoveryDataLoader {
     }
 
     console.log(`[DiscoveryDataLoader] Collected ${regimeVectors.length} regime vectors from ${eventCount} events (${warmupCount} warmup)`);
+    if (isTradeStream) {
+      const tradeCoverage = tradeTotalRowsSeen > 0
+        ? tradeFeatureableRowsAfterWarmup / tradeTotalRowsSeen
+        : 0;
+      console.log(
+        `[TradeDiag] total_rows=${tradeTotalRowsSeen} ` +
+        `rows_with_required_fields=${tradeRowsWithRequiredFields} ` +
+        `featureable_rows=${tradeFeatureableRowsAfterWarmup} ` +
+        `coverage=${tradeCoverage.toFixed(6)}`
+      );
+      if (tradeFeatureableRowsAfterWarmup === 0) {
+        console.error('[TradeDiag] FAIL: Training data would be empty (featureable_rows=0)');
+        const err = new Error('TRADE_DIAG_EMPTY');
+        err.code = 'TRADE_DIAG_EMPTY';
+        err.exit_code = 1;
+        throw err;
+      }
+    }
 
     // Train regime cluster (full data - exact semantics)
     const regimeModel = new RegimeCluster({
@@ -375,7 +472,8 @@ export class DiscoveryDataLoader {
         // Collect day data
         for await (const event of replayEngine.replay(replayOpts)) {
           eventCount++;
-          const features = featureBuilder.onEvent(event);
+          const adaptedEvent = self.adaptTradeEventForFeatures(event, tradeAdapterStats, 'day_collect');
+          const features = featureBuilder.onEvent(adaptedEvent);
 
           if (!features || features.mid_price === null || features.mid_price === undefined) {
             warmupCount++;
@@ -430,6 +528,19 @@ export class DiscoveryDataLoader {
         console.log(`[DiscoveryDataLoader] Day streamed: ${dayRows.length} rows yielded`);
       }
       } finally {
+        if (isTradeStream) {
+          console.log(
+            `[TradeAdapter] step1_applied=${tradeAdapterStats.step1_applied} ` +
+            `day_collect_applied=${tradeAdapterStats.day_collect_applied} ` +
+            `px_missing_passthrough=${tradeAdapterStats.px_missing_passthrough}`
+          );
+          iteratorFactory.metadata.tradeAdapter = {
+            step1_applied: tradeAdapterStats.step1_applied,
+            day_collect_applied: tradeAdapterStats.day_collect_applied,
+            px_missing_passthrough: tradeAdapterStats.px_missing_passthrough
+          };
+        }
+
         if (smokeCapEnabled) {
           if (passSelectedTotal > smokeSelectedMax) smokeSelectedMax = passSelectedTotal;
           if (passEmittedTotal > smokeEmittedMax) smokeEmittedMax = passEmittedTotal;
@@ -460,6 +571,25 @@ export class DiscoveryDataLoader {
       regimeK: this.regimeK,
       regimeModel,
       featureNames: this.featureNames,
+      ...(isTradeStream
+        ? {
+          tradeAdapter: {
+            step1_applied: tradeAdapterStats.step1_applied,
+            day_collect_applied: tradeAdapterStats.day_collect_applied,
+            px_missing_passthrough: tradeAdapterStats.px_missing_passthrough
+          }
+        }
+        : {}),
+      ...(isTradeStream
+        ? {
+          tradeDiag: {
+            total_rows_seen: tradeTotalRowsSeen,
+            rows_with_required_fields: tradeRowsWithRequiredFields,
+            featureable_rows_after_warmup: tradeFeatureableRowsAfterWarmup,
+            coverage: tradeTotalRowsSeen > 0 ? tradeFeatureableRowsAfterWarmup / tradeTotalRowsSeen : 0
+          }
+        }
+        : {}),
       ...(smokeCapEnabled
         ? {
           smokeCap: {

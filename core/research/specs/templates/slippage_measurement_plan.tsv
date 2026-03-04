@@ -1,0 +1,1 @@
+exchange,symbol,mode(maker|taker),notional_usd_band,reference_mid(t1|submit),H_ms,metric(p50|p90|p99),target_slippage_bps,notes

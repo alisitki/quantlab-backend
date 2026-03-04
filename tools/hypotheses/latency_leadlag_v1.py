@@ -5,13 +5,14 @@ import argparse
 import bisect
 import csv
 import datetime as dt
+import itertools
 import json
 import math
 import os
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 import boto3
 import pyarrow.parquet as pq
@@ -25,6 +26,8 @@ class GridMetric:
     event_count: int
     mean_forward_return_bps: float
     t_stat: float
+    metric_kind: str
+    value_def: str
 
 
 @dataclass(frozen=True)
@@ -65,9 +68,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--downloads-dir", required=True)
     p.add_argument("--exchange-order", required=True, help="csv, e.g. binance,bybit,okx")
     p.add_argument("--symbol", required=True)
+    p.add_argument("--stream", default="bbo")
     p.add_argument("--start", required=True, help="YYYYMMDD")
     p.add_argument("--end", required=True, help="YYYYMMDD")
     p.add_argument("--tolerance-ms", type=int, default=20)
+    p.add_argument("--pair-mode", choices=["triad", "all6"], default="triad")
+    p.add_argument("--cells_file", default="", help="Targeted mode TSV path")
     p.add_argument("--delta-ms-list", required=True, help="csv ints")
     p.add_argument("--h-ms-list", required=True, help="csv ints")
     p.add_argument("--results-out", required=True)
@@ -86,6 +92,23 @@ def parse_csv_ints(raw: str) -> List[int]:
     if not out:
         raise ValueError("empty integer list")
     return out
+
+
+def normalize_symbol(sym: str) -> str:
+    return str(sym).replace("/", "").replace("-", "").strip().lower()
+
+
+def metric_contract(stream: str) -> Tuple[str, str]:
+    st = stream.strip().lower()
+    if st == "bbo":
+        return "log_return", "mid"
+    if st == "trade":
+        return "log_return", "last"
+    if st == "mark_price":
+        return "log_return", "mark"
+    if st == "funding":
+        return "diff_bps", "funding_rate"
+    raise ValueError(f"unsupported stream for latency_leadlag_v1: {stream}")
 
 
 def ymd_days(start: str, end: str) -> List[str]:
@@ -137,6 +160,50 @@ def parse_tsv(path: Path) -> List[Dict[str, str]]:
         for row in reader:
             rows.append({k: (v.strip() if isinstance(v, str) else "") for k, v in row.items()})
     return rows
+
+
+def parse_cells_file(
+    path: Path,
+    stream: str,
+    symbol: str,
+    expected_metric_kind: str,
+    expected_value_def: str,
+) -> Tuple[Dict[str, Set[Tuple[int, int]]], int]:
+    rows = parse_tsv(path)
+    stream_norm = stream.strip().lower()
+    symbol_norm = normalize_symbol(symbol)
+
+    out: Dict[str, Set[Tuple[int, int]]] = {}
+    tol_vals: Set[int] = set()
+    for r in rows:
+        row_stream = r.get("stream", "").strip().lower()
+        row_symbol = normalize_symbol(r.get("symbol", ""))
+        if row_stream != stream_norm or row_symbol != symbol_norm:
+            continue
+
+        pair = r.get("pair", "").strip().lower()
+        if not pair or "->" not in pair:
+            raise ValueError(f"invalid pair in cells_file row: {r}")
+        dt_ms = int(r.get("dt_ms", ""))
+        h_ms = int(r.get("h_ms", ""))
+        tol = int(r.get("tolerance_ms", ""))
+        metric_kind = r.get("metric_kind", "").strip()
+        value_def = r.get("value_def", "").strip()
+
+        if metric_kind != expected_metric_kind or value_def != expected_value_def:
+            raise ValueError(
+                "cells_file metric contract mismatch "
+                f"(expected {expected_metric_kind}/{expected_value_def}, got {metric_kind}/{value_def})"
+            )
+
+        out.setdefault(pair, set()).add((dt_ms, h_ms))
+        tol_vals.add(tol)
+
+    if not out:
+        raise ValueError(f"cells_file has no rows for stream={stream_norm} symbol={symbol_norm}")
+    if len(tol_vals) != 1:
+        raise ValueError("cells_file must contain exactly one tolerance_ms value per run job")
+    return out, list(tol_vals)[0]
 
 
 def parse_object_keys(rows: List[Dict[str, str]]) -> Dict[Tuple[str, str], Tuple[str, str]]:
@@ -193,40 +260,86 @@ def download_inputs(
 
 
 def load_exchange_events(paths: List[Path]) -> Tuple[List[int], List[int], List[float]]:
+    raise RuntimeError("load_exchange_events(paths) signature changed; call with stream and value_def")
+
+
+def load_exchange_events_by_stream(
+    paths: List[Path],
+    stream: str,
+    value_def: str,
+) -> Tuple[List[int], List[int], List[float]]:
     ts_out: List[int] = []
     seq_out: List[int] = []
-    mid_out: List[float] = []
+    val_out: List[float] = []
+
+    st = stream.strip().lower()
+    if st == "bbo":
+        columns = ["ts_event", "seq", "bid_price", "ask_price"]
+    elif st == "trade":
+        columns = ["ts_event", "seq", "price"]
+    elif st == "mark_price":
+        columns = ["ts_event", "seq", "mark_price"]
+    elif st == "funding":
+        columns = ["ts_event", "seq", "funding_rate"]
+    else:
+        raise ValueError(f"unsupported stream: {stream}")
 
     for p in paths:
         pf = pq.ParquetFile(p)
-        for batch in pf.iter_batches(columns=["ts_event", "seq", "bid_price", "ask_price"], batch_size=131072):
+        for batch in pf.iter_batches(columns=columns, batch_size=131072):
             cols = batch.to_pydict()
             ts_col = cols["ts_event"]
             seq_col = cols["seq"]
-            bid_col = cols["bid_price"]
-            ask_col = cols["ask_price"]
+
             for i in range(len(ts_col)):
                 ts = ts_col[i]
                 seq = seq_col[i]
-                bid = bid_col[i]
-                ask = ask_col[i]
-                if ts is None or seq is None or bid is None or ask is None:
+                if ts is None or seq is None:
                     continue
-                bid_f = float(bid)
-                ask_f = float(ask)
-                if bid_f <= 0.0 or ask_f <= 0.0:
+
+                val = None
+                if st == "bbo":
+                    bid = cols["bid_price"][i]
+                    ask = cols["ask_price"][i]
+                    if bid is None or ask is None:
+                        continue
+                    bid_f = float(bid)
+                    ask_f = float(ask)
+                    if bid_f <= 0.0 or ask_f <= 0.0:
+                        continue
+                    val = (bid_f + ask_f) / 2.0
+                elif st == "trade":
+                    price = cols["price"][i]
+                    if price is None:
+                        continue
+                    val = float(price)
+                elif st == "mark_price":
+                    mark = cols["mark_price"][i]
+                    if mark is None:
+                        continue
+                    val = float(mark)
+                elif st == "funding":
+                    fr = cols["funding_rate"][i]
+                    if fr is None:
+                        continue
+                    val = float(fr)
+
+                if val is None:
                     continue
+                if value_def in {"mid", "last", "mark"} and val <= 0.0:
+                    continue
+
                 ts_out.append(int(ts))
                 seq_out.append(int(seq))
-                mid_out.append((bid_f + ask_f) / 2.0)
+                val_out.append(val)
 
-    # Input order is deterministic in parquet. Stable sort by (ts, seq, idx) to guarantee tie-break order.
+    # Stable deterministic ordering by (ts, seq, idx)
     idx = list(range(len(ts_out)))
     idx.sort(key=lambda i: (ts_out[i], seq_out[i], i))
     ts_sorted = [ts_out[i] for i in idx]
     seq_sorted = [seq_out[i] for i in idx]
-    mid_sorted = [mid_out[i] for i in idx]
-    return ts_sorted, seq_sorted, mid_sorted
+    val_sorted = [val_out[i] for i in idx]
+    return ts_sorted, seq_sorted, val_sorted
 
 
 def nearest_index_within_tol(
@@ -276,74 +389,118 @@ def nearest_index_within_tol(
 
 def compute_pair_metrics(
     source_ts: List[int],
-    source_mid: List[float],
+    source_val: List[float],
     target_ts: List[int],
     target_seq: List[int],
-    target_mid: List[float],
+    target_val: List[float],
     pair_name: str,
+    metric_kind: str,
+    value_def: str,
     delta_list: List[int],
     h_list: List[int],
     tolerance_ms: int,
+    targeted_cells: Set[Tuple[int, int]] | None = None,
 ) -> Tuple[List[GridMetric], PairSupport]:
+    if targeted_cells is not None and len(targeted_cells) == 0:
+        return [], PairSupport(pair=pair_name, event_count_pair=0)
+
+    if targeted_cells is None:
+        cell_keys = [(dt_ms, h_ms) for dt_ms in delta_list for h_ms in h_list]
+    else:
+        cell_keys = sorted(targeted_cells, key=lambda x: (x[0], x[1]))
+    dt_to_hs: Dict[int, List[int]] = {}
+    for dt_ms, h_ms in cell_keys:
+        dt_to_hs.setdefault(dt_ms, []).append(h_ms)
+    dt_iter = sorted(dt_to_hs.keys())
+
     if len(source_ts) < 2 or len(target_ts) < 2:
         metrics = [
-            GridMetric(pair=pair_name, delta_t_ms=dt_ms, h_ms=h_ms, event_count=0, mean_forward_return_bps=0.0, t_stat=0.0)
-            for dt_ms in delta_list
-            for h_ms in h_list
+            GridMetric(
+                pair=pair_name,
+                delta_t_ms=dt_ms,
+                h_ms=h_ms,
+                event_count=0,
+                mean_forward_return_bps=0.0,
+                t_stat=0.0,
+                metric_kind=metric_kind,
+                value_def=value_def,
+            )
+            for (dt_ms, h_ms) in cell_keys
         ]
         return metrics, PairSupport(pair=pair_name, event_count_pair=0)
 
     signal_ts: List[int] = []
     signal_sign: List[int] = []
     for i in range(1, len(source_ts)):
-        prev_mid = source_mid[i - 1]
-        cur_mid = source_mid[i]
-        if prev_mid <= 0.0 or cur_mid <= 0.0:
-            continue
-        r = math.log(cur_mid / prev_mid)
-        if r > 0.0:
-            signal_ts.append(source_ts[i])
-            signal_sign.append(1)
-        elif r < 0.0:
-            signal_ts.append(source_ts[i])
-            signal_sign.append(-1)
+        prev_val = source_val[i - 1]
+        cur_val = source_val[i]
+        if metric_kind == "log_return":
+            if prev_val <= 0.0 or cur_val <= 0.0:
+                continue
+            lr = math.log(cur_val / prev_val)
+            if lr > 0.0:
+                signal_ts.append(source_ts[i])
+                signal_sign.append(1)
+            elif lr < 0.0:
+                signal_ts.append(source_ts[i])
+                signal_sign.append(-1)
+        elif metric_kind == "diff_bps":
+            delta = cur_val - prev_val
+            if delta > 0.0:
+                signal_ts.append(source_ts[i])
+                signal_sign.append(1)
+            elif delta < 0.0:
+                signal_ts.append(source_ts[i])
+                signal_sign.append(-1)
+        else:
+            raise ValueError(f"unsupported metric_kind: {metric_kind}")
 
     if not signal_ts:
         metrics = [
-            GridMetric(pair=pair_name, delta_t_ms=dt_ms, h_ms=h_ms, event_count=0, mean_forward_return_bps=0.0, t_stat=0.0)
-            for dt_ms in delta_list
-            for h_ms in h_list
+            GridMetric(
+                pair=pair_name,
+                delta_t_ms=dt_ms,
+                h_ms=h_ms,
+                event_count=0,
+                mean_forward_return_bps=0.0,
+                t_stat=0.0,
+                metric_kind=metric_kind,
+                value_def=value_def,
+            )
+            for (dt_ms, h_ms) in cell_keys
         ]
         return metrics, PairSupport(pair=pair_name, event_count_pair=0)
 
     cell_stats: Dict[Tuple[int, int], OnlineStats] = {}
-    for dt_ms in delta_list:
-        for h_ms in h_list:
-            cell_stats[(dt_ms, h_ms)] = OnlineStats()
+    for dt_ms, h_ms in cell_keys:
+        cell_stats[(dt_ms, h_ms)] = OnlineStats()
 
     valid_src_any = [False] * len(signal_ts)
 
     for si, t0 in enumerate(signal_ts):
         sgn = signal_sign[si]
         src_valid = False
-        for dt_ms in delta_list:
+        for dt_ms in dt_iter:
             target_time = t0 + dt_ms
             j = nearest_index_within_tol(target_ts, target_seq, target_time, tolerance_ms)
             if j < 0:
                 continue
-            mid1 = target_mid[j]
-            if mid1 <= 0.0:
+            val1 = target_val[j]
+            if metric_kind == "log_return" and val1 <= 0.0:
                 continue
 
             t1 = target_ts[j]
-            for h_ms in h_list:
+            for h_ms in dt_to_hs[dt_ms]:
                 k = bisect.bisect_left(target_ts, t1 + h_ms, lo=j)
                 if k >= len(target_ts):
                     continue
-                mid2 = target_mid[k]
-                if mid2 <= 0.0:
+                val2 = target_val[k]
+                if metric_kind == "log_return" and val2 <= 0.0:
                     continue
-                rb = 10000.0 * math.log(mid2 / mid1)
+                if metric_kind == "log_return":
+                    rb = 10000.0 * math.log(val2 / val1)
+                else:
+                    rb = 10000.0 * (val2 - val1)
                 rsigned = sgn * rb
                 cell_stats[(dt_ms, h_ms)].add(rsigned)
                 src_valid = True
@@ -351,19 +508,20 @@ def compute_pair_metrics(
             valid_src_any[si] = True
 
     out_metrics: List[GridMetric] = []
-    for dt_ms in delta_list:
-        for h_ms in h_list:
-            n, mean, t = cell_stats[(dt_ms, h_ms)].final()
-            out_metrics.append(
-                GridMetric(
-                    pair=pair_name,
-                    delta_t_ms=dt_ms,
-                    h_ms=h_ms,
-                    event_count=n,
-                    mean_forward_return_bps=mean,
-                    t_stat=t,
-                )
+    for dt_ms, h_ms in cell_keys:
+        n, mean, t = cell_stats[(dt_ms, h_ms)].final()
+        out_metrics.append(
+            GridMetric(
+                pair=pair_name,
+                delta_t_ms=dt_ms,
+                h_ms=h_ms,
+                event_count=n,
+                mean_forward_return_bps=mean,
+                t_stat=t,
+                metric_kind=metric_kind,
+                value_def=value_def,
             )
+        )
 
     pair_support = sum(1 for x in valid_src_any if x)
     return out_metrics, PairSupport(pair=pair_name, event_count_pair=pair_support)
@@ -382,6 +540,8 @@ def write_results(path: Path, window: str, metrics: List[GridMetric], determinis
                 "event_count",
                 "mean_forward_return_bps",
                 "t_stat",
+                "metric_kind",
+                "value_def",
                 "determinism_status",
             ]
         )
@@ -395,6 +555,8 @@ def write_results(path: Path, window: str, metrics: List[GridMetric], determinis
                     m.event_count,
                     f"{m.mean_forward_return_bps:.15f}",
                     f"{m.t_stat:.15f}",
+                    m.metric_kind,
+                    m.value_def,
                     determinism_status,
                 ]
             )
@@ -418,6 +580,8 @@ def metrics_hash(metrics: List[GridMetric]) -> str:
             "event_count": int(m.event_count),
             "mean_forward_return_bps": f"{m.mean_forward_return_bps:.15f}",
             "t_stat": f"{m.t_stat:.15f}",
+            "metric_kind": m.metric_kind,
+            "value_def": m.value_def,
         }
         for m in sorted(metrics, key=lambda x: (x.pair, x.delta_t_ms, x.h_ms))
     ]
@@ -432,11 +596,13 @@ def main() -> int:
     if len(exchange_order) != 3:
         raise SystemExit("exchange-order must contain exactly 3 exchanges")
 
+    stream = args.stream.strip().lower()
+    metric_kind, value_def = metric_contract(stream)
     delta_list = parse_csv_ints(args.delta_ms_list)
     h_list = parse_csv_ints(args.h_ms_list)
     days = ymd_days(args.start, args.end)
-    if len(days) != 2:
-        raise SystemExit("this diagnostic runner expects exactly 2 days")
+    if len(days) not in {1, 2}:
+        raise SystemExit("this diagnostic runner expects 1 or 2 days")
 
     rows = parse_tsv(Path(args.object_keys_tsv))
     mapping = parse_object_keys(rows)
@@ -444,32 +610,61 @@ def main() -> int:
     downloads_dir = Path(args.downloads_dir)
     resolved = download_inputs(mapping, exchange_order, days, downloads_dir)
 
+    targeted_cells_by_pair: Dict[str, Set[Tuple[int, int]]] | None = None
+    if args.cells_file:
+        targeted_cells_by_pair, tol_from_cells = parse_cells_file(
+            path=Path(args.cells_file),
+            stream=stream,
+            symbol=args.symbol,
+            expected_metric_kind=metric_kind,
+            expected_value_def=value_def,
+        )
+        if int(tol_from_cells) != int(args.tolerance_ms):
+            raise SystemExit(
+                f"cells_file tolerance mismatch: file={tol_from_cells} cli={int(args.tolerance_ms)}"
+            )
+
     events: Dict[str, Tuple[List[int], List[int], List[float]]] = {}
     for ex in exchange_order:
-        events[ex] = load_exchange_events(resolved[ex])
+        events[ex] = load_exchange_events_by_stream(
+            paths=resolved[ex],
+            stream=stream,
+            value_def=value_def,
+        )
 
-    pairs = [
-        (exchange_order[0], exchange_order[1]),
-        (exchange_order[0], exchange_order[2]),
-        (exchange_order[1], exchange_order[2]),
-    ]
+    if args.pair_mode == "triad":
+        pairs = [
+            (exchange_order[0], exchange_order[1]),
+            (exchange_order[0], exchange_order[2]),
+            (exchange_order[1], exchange_order[2]),
+        ]
+    else:
+        pairs = [(src, dst) for src, dst in itertools.permutations(exchange_order, 2)]
 
     all_metrics: List[GridMetric] = []
     all_support: List[PairSupport] = []
     for src, dst in pairs:
-        src_ts, _src_seq, src_mid = events[src]
-        dst_ts, dst_seq, dst_mid = events[dst]
+        src_ts, _src_seq, src_vals = events[src]
+        dst_ts, dst_seq, dst_vals = events[dst]
         pair_name = f"{src}->{dst}"
+        targeted_for_pair = None
+        if targeted_cells_by_pair is not None:
+            targeted_for_pair = targeted_cells_by_pair.get(pair_name)
+            if not targeted_for_pair:
+                continue
         metrics, support = compute_pair_metrics(
             source_ts=src_ts,
-            source_mid=src_mid,
+            source_val=src_vals,
             target_ts=dst_ts,
             target_seq=dst_seq,
-            target_mid=dst_mid,
+            target_val=dst_vals,
             pair_name=pair_name,
+            metric_kind=metric_kind,
+            value_def=value_def,
             delta_list=delta_list,
             h_list=h_list,
             tolerance_ms=args.tolerance_ms,
+            targeted_cells=targeted_for_pair,
         )
         all_metrics.extend(metrics)
         all_support.append(support)
@@ -482,25 +677,30 @@ def main() -> int:
         "family_id": "latency_leadlag_v1",
         "window": window,
         "symbol": args.symbol,
-        "stream": "bbo",
+        "stream": stream,
         "exchanges": exchange_order,
         "params": {
             "tolerance_ms": int(args.tolerance_ms),
             "delta_t_ms": delta_list,
             "h_ms": h_list,
+            "pair_mode": args.pair_mode,
+            "targeted_mode": bool(args.cells_file),
+            "metric_kind": metric_kind,
+            "value_def": value_def,
         },
         "inputs": {
             "object_keys_tsv": str(Path(args.object_keys_tsv)),
             "downloads_dir": str(downloads_dir),
             "rows_loaded_by_exchange": {ex: len(events[ex][0]) for ex in exchange_order},
             "parquet_paths": {ex: [str(p) for p in resolved[ex]] for ex in exchange_order},
+            "cells_file": str(Path(args.cells_file)) if args.cells_file else "",
         },
         "pair_support": [
             {"pair": s.pair, "event_count_pair": int(s.event_count_pair)}
             for s in sorted(all_support, key=lambda x: x.pair)
         ],
         "primary_hash": metrics_hash(all_metrics),
-        "compare_basis": "pair,delta_t_ms,h_ms,event_count,mean_forward_return_bps,t_stat",
+        "compare_basis": "pair,delta_t_ms,h_ms,event_count,mean_forward_return_bps,t_stat,metric_kind,value_def",
     }
 
     summary_path = Path(args.summary_out)

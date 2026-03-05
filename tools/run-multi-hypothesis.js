@@ -247,6 +247,8 @@ function fixed15(v) {
   return toFinite(v, 0).toFixed(15);
 }
 
+const SKIPPED_HASH_PLACEHOLDER = "-";
+
 function parseTsvRows(raw, requiredHeader = null) {
   const lines = String(raw || "").split(/\r?\n/).filter((x) => x.trim().length > 0);
   if (!lines.length) {
@@ -272,6 +274,10 @@ function parseTsvRows(raw, requiredHeader = null) {
     rows.push(row);
   }
   return rows;
+}
+
+function compareBasisFromHeader(headerArr) {
+  return headerArr.join(",");
 }
 
 const RR_HEADER = [
@@ -983,7 +989,23 @@ async function writeMinimalEvidenceFiles({
   const labelRel = `${baseRel}/label_report.txt`;
   const integrityRel = `${baseRel}/integrity_check.txt`;
 
-  const stableEntries = (entries || []).slice().sort((a, b) => String(a.familyId || "").localeCompare(String(b.familyId || "")));
+  const stableEntries = (entries || [])
+    .map((entry) => {
+      const status = String(entry && entry.determinismStatus ? entry.determinismStatus : "");
+      const isSkipped = status.startsWith("SKIPPED_");
+      return {
+        familyId: String(entry && entry.familyId ? entry.familyId : ""),
+        primaryHash: isSkipped
+          ? SKIPPED_HASH_PLACEHOLDER
+          : String(entry && entry.primaryHash ? entry.primaryHash : ""),
+        replayHash: isSkipped
+          ? SKIPPED_HASH_PLACEHOLDER
+          : String(entry && entry.replayHash ? entry.replayHash : ""),
+        determinismStatus: status,
+        compareBasis: String(entry && entry.compareBasis ? entry.compareBasis : ""),
+      };
+    })
+    .sort((a, b) => String(a.familyId || "").localeCompare(String(b.familyId || "")));
   const determinismLines = [
     "window\tfamily_id\tprimary_hash\treplay_hash\tdeterminism_status\tcompare_basis",
     ...stableEntries.map((e) => [
@@ -1062,7 +1084,7 @@ async function parseFamilyReturnReversal({ args, outRoot }) {
 
   const streamNorm = String(args.stream || "").trim().toLowerCase();
   const supported = streamNorm === "trade" || streamNorm === "mark_price";
-  const compareBasis = "exchange,symbol,date,stream,delta_ms,h_ms,event_count,mean_product,t_stat";
+  const compareBasis = compareBasisFromHeader(RR_HEADER);
 
   let primaryExitCode = 0;
   let primaryRows = [];
@@ -1122,8 +1144,8 @@ async function parseFamilyReturnReversal({ args, outRoot }) {
   }
 
   let replayRows = [];
-  let primaryHash = "";
-  let replayHash = "";
+  let primaryHash = SKIPPED_HASH_PLACEHOLDER;
+  let replayHash = SKIPPED_HASH_PLACEHOLDER;
   let determinismStatus = supported ? "FAIL" : "SKIPPED_UNSUPPORTED_STREAM";
 
   if (supported) {
@@ -1218,7 +1240,7 @@ async function parseFamilyMomentum({ args, outRoot }) {
 
   const streamNorm = String(args.stream || "").trim().toLowerCase();
   const supported = streamNorm === "trade" || streamNorm === "mark_price";
-  const compareBasis = "exchange,symbol,date,stream,delta_ms,h_ms,event_count,mean_product,t_stat";
+  const compareBasis = compareBasisFromHeader(MOM_HEADER);
 
   let primaryExitCode = 0;
   let primaryRows = [];
@@ -1278,8 +1300,8 @@ async function parseFamilyMomentum({ args, outRoot }) {
   }
 
   let replayRows = [];
-  let primaryHash = "";
-  let replayHash = "";
+  let primaryHash = SKIPPED_HASH_PLACEHOLDER;
+  let replayHash = SKIPPED_HASH_PLACEHOLDER;
   let determinismStatus = supported ? "FAIL" : "SKIPPED_UNSUPPORTED_STREAM";
 
   if (supported) {
@@ -1374,7 +1396,7 @@ async function parseFamilyVolumeVolLink({ args, outRoot }) {
 
   const streamNorm = String(args.stream || "").trim().toLowerCase();
   const supported = streamNorm === "trade";
-  const compareBasis = "exchange,symbol,date,stream,delta_ms,h_ms,sample_count,mean_activity,mean_rv_fwd,corr,t_stat";
+  const compareBasis = compareBasisFromHeader(VVL_HEADER);
 
   let primaryExitCode = 0;
   let primaryRows = [];
@@ -1434,8 +1456,8 @@ async function parseFamilyVolumeVolLink({ args, outRoot }) {
   }
 
   let replayRows = [];
-  let primaryHash = "";
-  let replayHash = "";
+  let primaryHash = SKIPPED_HASH_PLACEHOLDER;
+  let replayHash = SKIPPED_HASH_PLACEHOLDER;
   let determinismStatus = supported ? "FAIL" : "SKIPPED_UNSUPPORTED_STREAM";
 
   if (supported) {
@@ -1531,7 +1553,7 @@ async function parseFamilyJumpReversion({ args, outRoot }) {
 
   const streamNorm = String(args.stream || "").trim().toLowerCase();
   const supported = streamNorm === "trade" || streamNorm === "mark_price";
-  const compareBasis = "exchange,symbol,date,stream,jump_thresh_bps,h_ms,jump_count,mean_signed_reversal,t_stat";
+  const compareBasis = compareBasisFromHeader(JR_HEADER);
 
   let primaryExitCode = 0;
   let primaryRows = [];
@@ -1591,8 +1613,8 @@ async function parseFamilyJumpReversion({ args, outRoot }) {
   }
 
   let replayRows = [];
-  let primaryHash = "";
-  let replayHash = "";
+  let primaryHash = SKIPPED_HASH_PLACEHOLDER;
+  let replayHash = SKIPPED_HASH_PLACEHOLDER;
   let determinismStatus = supported ? "FAIL" : "SKIPPED_UNSUPPORTED_STREAM";
 
   if (supported) {
@@ -1687,7 +1709,7 @@ async function parseFamilyVolClust({ args, outRoot }) {
 
   const streamNorm = String(args.stream || "").trim().toLowerCase();
   const supported = streamNorm === "trade" || streamNorm === "mark_price";
-  const compareBasis = "exchange,symbol,date,stream,delta_ms,h_ms,sample_count,mean_rv_past,mean_rv_fwd,corr,t_stat";
+  const compareBasis = compareBasisFromHeader(VC_HEADER);
 
   let primaryExitCode = 0;
   let primaryRows = [];
@@ -1747,8 +1769,8 @@ async function parseFamilyVolClust({ args, outRoot }) {
   }
 
   let replayRows = [];
-  let primaryHash = "";
-  let replayHash = "";
+  let primaryHash = SKIPPED_HASH_PLACEHOLDER;
+  let replayHash = SKIPPED_HASH_PLACEHOLDER;
   let determinismStatus = supported ? "FAIL" : "SKIPPED_UNSUPPORTED_STREAM";
 
   if (supported) {
@@ -1843,7 +1865,7 @@ async function parseFamilySpreadReversion({ args, outRoot }) {
 
   const streamNorm = String(args.stream || "").trim().toLowerCase();
   const supported = streamNorm === "bbo";
-  const compareBasis = "exchange,symbol,date,stream,delta_ms,h_ms,event_count,mean_product,t_stat";
+  const compareBasis = compareBasisFromHeader(SR_HEADER);
 
   let primaryExitCode = 0;
   let primaryRows = [];
@@ -1903,8 +1925,8 @@ async function parseFamilySpreadReversion({ args, outRoot }) {
   }
 
   let replayRows = [];
-  let primaryHash = "";
-  let replayHash = "";
+  let primaryHash = SKIPPED_HASH_PLACEHOLDER;
+  let replayHash = SKIPPED_HASH_PLACEHOLDER;
   let determinismStatus = supported ? "FAIL" : "SKIPPED_UNSUPPORTED_STREAM";
 
   if (supported) {
@@ -1943,6 +1965,89 @@ async function parseFamilySpreadReversion({ args, outRoot }) {
   return out;
 }
 
+const FAMILY_TABLE = Object.freeze([
+  {
+    familyId: "family_a_patternscanner",
+    kind: "legacy",
+    supportedStreams: [],
+    headerConst: null,
+    compareBasis: "",
+    parseFn: parseFamilyA,
+    selectionFn: null,
+    evidenceEligible: false,
+  },
+  {
+    familyId: "family_b_simple_momentum",
+    kind: "legacy",
+    supportedStreams: [],
+    headerConst: null,
+    compareBasis: "",
+    parseFn: parseFamilyB,
+    selectionFn: null,
+    evidenceEligible: false,
+  },
+  {
+    familyId: "return_reversal_v1",
+    kind: "hypothesis",
+    supportedStreams: ["trade", "mark_price"],
+    headerConst: RR_HEADER,
+    compareBasis: compareBasisFromHeader(RR_HEADER),
+    parseFn: parseFamilyReturnReversal,
+    selectionFn: pickReturnReversalSelected,
+    evidenceEligible: true,
+  },
+  {
+    familyId: "momentum_v1",
+    kind: "hypothesis",
+    supportedStreams: ["trade", "mark_price"],
+    headerConst: MOM_HEADER,
+    compareBasis: compareBasisFromHeader(MOM_HEADER),
+    parseFn: parseFamilyMomentum,
+    selectionFn: pickMomentumSelected,
+    evidenceEligible: true,
+  },
+  {
+    familyId: "volatility_clustering_v1",
+    kind: "hypothesis",
+    supportedStreams: ["trade", "mark_price"],
+    headerConst: VC_HEADER,
+    compareBasis: compareBasisFromHeader(VC_HEADER),
+    parseFn: parseFamilyVolClust,
+    selectionFn: pickVolatilityClusteringSelected,
+    evidenceEligible: true,
+  },
+  {
+    familyId: "spread_reversion_v1",
+    kind: "hypothesis",
+    supportedStreams: ["bbo"],
+    headerConst: SR_HEADER,
+    compareBasis: compareBasisFromHeader(SR_HEADER),
+    parseFn: parseFamilySpreadReversion,
+    selectionFn: pickSpreadReversionSelected,
+    evidenceEligible: true,
+  },
+  {
+    familyId: "volume_vol_link_v1",
+    kind: "hypothesis",
+    supportedStreams: ["trade"],
+    headerConst: VVL_HEADER,
+    compareBasis: compareBasisFromHeader(VVL_HEADER),
+    parseFn: parseFamilyVolumeVolLink,
+    selectionFn: pickVolumeVolLinkSelected,
+    evidenceEligible: true,
+  },
+  {
+    familyId: "jump_reversion_v1",
+    kind: "hypothesis",
+    supportedStreams: ["trade", "mark_price"],
+    headerConst: JR_HEADER,
+    compareBasis: compareBasisFromHeader(JR_HEADER),
+    parseFn: parseFamilyJumpReversion,
+    selectionFn: pickJumpReversionSelected,
+    evidenceEligible: true,
+  },
+]);
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const outRoot = path.resolve(process.cwd(), args.outDir);
@@ -1951,6 +2056,7 @@ async function main() {
   const resolved = await resolveParquetInputs({ args, outRoot });
 
   let rows = [];
+  const familyRowsById = new Map();
   let rrRow = null;
   let vcRow = null;
   let srRow = null;
@@ -1960,25 +2066,26 @@ async function main() {
   let evidenceFiles = null;
   try {
     rows = [];
-    rows.push(await parseFamilyA({ args, outRoot }));
-    rows.push(await parseFamilyB({ args, outRoot }));
-    rrRow = await parseFamilyReturnReversal({ args, outRoot });
-    rows.push(rrRow);
-    momRow = await parseFamilyMomentum({ args, outRoot });
-    rows.push(momRow);
-    vcRow = await parseFamilyVolClust({ args, outRoot });
-    rows.push(vcRow);
-    srRow = await parseFamilySpreadReversion({ args, outRoot });
-    rows.push(srRow);
-    vvlRow = await parseFamilyVolumeVolLink({ args, outRoot });
-    rows.push(vvlRow);
-    jrRow = await parseFamilyJumpReversion({ args, outRoot });
-    rows.push(jrRow);
+    familyRowsById.clear();
+    for (const familyMeta of FAMILY_TABLE) {
+      const familyRow = await familyMeta.parseFn({ args, outRoot });
+      rows.push(familyRow);
+      familyRowsById.set(familyMeta.familyId, familyRow);
+    }
+
+    rrRow = familyRowsById.get("return_reversal_v1") || null;
+    momRow = familyRowsById.get("momentum_v1") || null;
+    vcRow = familyRowsById.get("volatility_clustering_v1") || null;
+    srRow = familyRowsById.get("spread_reversion_v1") || null;
+    vvlRow = familyRowsById.get("volume_vol_link_v1") || null;
+    jrRow = familyRowsById.get("jump_reversion_v1") || null;
 
     if (args.evidenceOn) {
       const evidenceEntries = [];
       const evidenceDecisions = [];
-      for (const familyRow of [rrRow, momRow, vcRow, srRow, vvlRow, jrRow]) {
+      for (const familyMeta of FAMILY_TABLE) {
+        if (!familyMeta.evidenceEligible) continue;
+        const familyRow = familyRowsById.get(familyMeta.familyId);
         if (familyRow && familyRow.evidenceEntry) evidenceEntries.push(familyRow.evidenceEntry);
         if (familyRow && familyRow.evidenceDecision) evidenceDecisions.push(familyRow.evidenceDecision);
       }

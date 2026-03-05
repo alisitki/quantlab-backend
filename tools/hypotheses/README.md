@@ -3,6 +3,12 @@
 - families:
   - `family_a_patternscanner`
   - `family_b_simple_momentum`
+  - `return_reversal_v1`
+  - `volatility_clustering_v1`
+  - `spread_reversion_v1`
+  - `momentum_v1`
+  - `volume_vol_link_v1`
+  - `jump_reversion_v1`
 - input:
   - `exchange`, `stream`, `symbol`, `start`, `end` (2-day window)
 - output per family report:
@@ -11,3 +17,9 @@
 - pass bar:
   - Family-A: unchanged current acceptance signal metrics (`patternsScanned`, edges fields)
   - Family-B: `mean_forward_return > 0` and `|t_stat| > 2` with `support >= 200`
+  - ReturnReversal-v1: selected cell must satisfy `mean_product < 0`, `t_stat <= -2`, `event_count >= 200`
+  - VolatilityClustering-v1: selected cell must satisfy `corr > 0`, `t_stat >= 2`, `sample_count >= 200`
+  - SpreadReversion-v1: selected cell must satisfy `mean_product < 0`, `t_stat <= -2`, `event_count >= 200`
+  - Momentum-v1: selected cell must satisfy `mean_product > 0`, `t_stat >= 2`, `event_count >= 200`
+  - VolumeVolLink-v1: selected cell must satisfy `corr > 0`, `t_stat >= 2`, `sample_count >= 200`
+  - JumpReversion-v1: selected cell must satisfy `mean_signed_reversal > 0`, `t_stat >= 2`, `jump_count >= 200`

@@ -1,0 +1,30 @@
+{
+  "pack_latest": {
+    "multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR__9709a89edd8ac89da2f29e17cf403c04ce1488383aff7204e582bd1a70243325": {
+      "_line_no": 1,
+      "decision": "PROMOTE",
+      "det_pass": 45,
+      "det_skipped": 9,
+      "det_supported": 45,
+      "guards": {
+        "G1_EVIDENCE": "PASS",
+        "G2_DETERMINISM": "PASS",
+        "G3_RESOURCE": "PASS"
+      },
+      "max_elapsed_sec": 290.3,
+      "max_rss_kb": 2121568.0,
+      "pack_id": "multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR__9709a89edd8ac89da2f29e17cf403c04ce1488383aff7204e582bd1a70243325",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR",
+      "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+      "sha_tar_ok": true,
+      "ts_utc": "2026-03-05T08:13:36Z"
+    }
+  },
+  "promote_pack_ids": [
+    "multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR__9709a89edd8ac89da2f29e17cf403c04ce1488383aff7204e582bd1a70243325"
+  ],
+  "promote_packs": [
+    "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR"
+  ],
+  "record_count": 1
+}

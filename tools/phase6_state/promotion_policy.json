@@ -1,0 +1,15 @@
+{
+  "exclude_statuses": [
+    "SKIPPED_UNSUPPORTED_STREAM"
+  ],
+  "max_elapsed_sec": 900,
+  "max_rss_kb": 2500000,
+  "pass_ratio": 1.0,
+  "require_sha_ok_lines": 1,
+  "supported_statuses": [
+    "PASS",
+    "FAIL",
+    "MISMATCH",
+    "SKIPPED_UNSUPPORTED_STREAM"
+  ]
+}

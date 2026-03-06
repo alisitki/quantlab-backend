@@ -1,0 +1,14 @@
+{
+  "default": {
+    "max_symbols": 20,
+    "max_wall_min": 120,
+    "per_run_timeout_min": 12
+  },
+  "overrides": {
+    "binance/bbo": {
+      "max_symbols": 4,
+      "max_wall_min": 180,
+      "per_run_timeout_min": 25
+    }
+  }
+}

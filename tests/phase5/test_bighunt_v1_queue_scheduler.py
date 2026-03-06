@@ -5,6 +5,7 @@ import shutil
 import tempfile
 import unittest
 from contextlib import redirect_stdout
+from datetime import datetime, timezone
 from pathlib import Path
 from subprocess import CompletedProcess
 from unittest.mock import patch
@@ -12,7 +13,7 @@ from unittest.mock import patch
 from tools.phase5_bighunt_state_v1 import canonical_plan_id, load_queue_records, rebuild_index
 from tools.phase5_big_hunt_plan_v1 import generate_plans
 from tools.phase5_big_hunt_scheduler_v1 import parse_args as parse_scheduler_args
-from tools.phase5_big_hunt_scheduler_v1 import run_scheduler
+from tools.phase5_big_hunt_scheduler_v1 import pick_next_plan, run_scheduler
 
 
 def write_tsv(path: Path, header, rows) -> None:
@@ -297,6 +298,134 @@ class BigHuntV1QueueSchedulerTests(unittest.TestCase):
         self.assertEqual(idx["plan_latest"][pid]["status"], "FAILED")
         self.assertEqual(int(idx["plan_latest"][pid]["tries"]), 2)
         self.assertEqual(idx["retryable_failed_plan_ids"], [])
+
+    def test_pick_next_plan_prefers_older_pending_over_newer_failed_retry(self):
+        index_obj = {
+            "plan_latest": {
+                "newer-failed": {
+                    "plan_id": "newer-failed",
+                    "status": "FAILED",
+                    "tries": 1,
+                    "exchange": "binance",
+                    "stream": "bbo",
+                    "start": "20260105",
+                    "end": "20260105",
+                    "created_ts_utc": "2026-03-06T11:33:14Z",
+                },
+                "older-pending": {
+                    "plan_id": "older-pending",
+                    "status": "PENDING",
+                    "tries": 0,
+                    "exchange": "binance",
+                    "stream": "trade",
+                    "start": "20260104",
+                    "end": "20260104",
+                    "created_ts_utc": "2026-03-06T12:33:14Z",
+                },
+            },
+            "created_order_plan_ids": ["newer-failed", "older-pending"],
+        }
+        picked = pick_next_plan(
+            index_obj,
+            max_tries=2,
+            stale_running_min=180.0,
+            now_dt=datetime(2026, 3, 6, 12, 0, tzinfo=timezone.utc),
+        )
+        self.assertIsNotNone(picked)
+        self.assertEqual(picked[0], "older-pending")
+        self.assertEqual(picked[2], "PENDING")
+
+    def test_pick_next_plan_tie_breaks_by_exchange_then_stream_then_reason(self):
+        index_obj = {
+            "plan_latest": {
+                "okx-trade": {
+                    "plan_id": "okx-trade",
+                    "status": "PENDING",
+                    "tries": 0,
+                    "exchange": "okx",
+                    "stream": "trade",
+                    "start": "20260104",
+                    "end": "20260104",
+                    "created_ts_utc": "2026-03-06T11:33:14Z",
+                },
+                "binance-trade": {
+                    "plan_id": "binance-trade",
+                    "status": "PENDING",
+                    "tries": 0,
+                    "exchange": "binance",
+                    "stream": "trade",
+                    "start": "20260104",
+                    "end": "20260104",
+                    "created_ts_utc": "2026-03-06T11:34:14Z",
+                },
+                "binance-bbo": {
+                    "plan_id": "binance-bbo",
+                    "status": "PENDING",
+                    "tries": 0,
+                    "exchange": "binance",
+                    "stream": "bbo",
+                    "start": "20260104",
+                    "end": "20260104",
+                    "created_ts_utc": "2026-03-06T11:35:14Z",
+                },
+            },
+            "created_order_plan_ids": ["okx-trade", "binance-trade", "binance-bbo"],
+        }
+        picked = pick_next_plan(
+            index_obj,
+            max_tries=2,
+            stale_running_min=180.0,
+            now_dt=datetime(2026, 3, 6, 12, 0, tzinfo=timezone.utc),
+        )
+        self.assertIsNotNone(picked)
+        self.assertEqual(picked[0], "binance-bbo")
+
+    def test_pick_next_plan_same_lane_prefers_pending_then_failed_then_stale(self):
+        index_obj = {
+            "plan_latest": {
+                "same-lane-stale": {
+                    "plan_id": "same-lane-stale",
+                    "status": "RUNNING",
+                    "tries": 0,
+                    "exchange": "binance",
+                    "stream": "trade",
+                    "start": "20260104",
+                    "end": "20260104",
+                    "created_ts_utc": "2026-03-06T11:33:14Z",
+                    "updated_ts_utc": "2026-03-01T00:00:00Z",
+                },
+                "same-lane-failed": {
+                    "plan_id": "same-lane-failed",
+                    "status": "FAILED",
+                    "tries": 1,
+                    "exchange": "binance",
+                    "stream": "trade",
+                    "start": "20260104",
+                    "end": "20260104",
+                    "created_ts_utc": "2026-03-06T11:32:14Z",
+                },
+                "same-lane-pending": {
+                    "plan_id": "same-lane-pending",
+                    "status": "PENDING",
+                    "tries": 0,
+                    "exchange": "binance",
+                    "stream": "trade",
+                    "start": "20260104",
+                    "end": "20260104",
+                    "created_ts_utc": "2026-03-06T11:31:14Z",
+                },
+            },
+            "created_order_plan_ids": ["same-lane-stale", "same-lane-failed", "same-lane-pending"],
+        }
+        picked = pick_next_plan(
+            index_obj,
+            max_tries=2,
+            stale_running_min=180.0,
+            now_dt=datetime(2026, 3, 6, 12, 0, tzinfo=timezone.utc),
+        )
+        self.assertIsNotNone(picked)
+        self.assertEqual(picked[0], "same-lane-pending")
+        self.assertEqual(picked[2], "PENDING")
 
 
 if __name__ == "__main__":

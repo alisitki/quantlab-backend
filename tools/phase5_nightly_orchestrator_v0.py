@@ -23,6 +23,7 @@ DEFAULT_INVENTORY_STATE_JSON = "/tmp/compacted__state.json"
 DEFAULT_INVENTORY_BUCKET = "quantlab-compact"
 DEFAULT_INVENTORY_KEY = "compacted/_state.json"
 DEFAULT_INVENTORY_S3_TOOL = "/tmp/s3_compact_tool.py"
+DEFAULT_LANE_POLICY = "tools/phase5_state/lane_policy_v0.json"
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -49,6 +50,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     p.add_argument("--inventory-bucket", default=DEFAULT_INVENTORY_BUCKET)
     p.add_argument("--inventory-key", default=DEFAULT_INVENTORY_KEY)
     p.add_argument("--inventory-s3-tool", default=DEFAULT_INVENTORY_S3_TOOL)
+    p.add_argument("--lane-policy", default=DEFAULT_LANE_POLICY)
     p.add_argument(
         "--inventory-require-quality-pass",
         dest="inventory_require_quality_pass",

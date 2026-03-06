@@ -1,0 +1,68 @@
+{
+  "counts": {
+    "budget_stops": 0,
+    "done": 2,
+    "failed": 0,
+    "processed": 2,
+    "reclaimed_running": 0,
+    "skipped": 0
+  },
+  "dry_run": false,
+  "failures": [],
+  "finished_ts_utc": "2026-03-06T13:30:25Z",
+  "index_path": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json",
+  "lane_policy_path": "/home/deploy/quantlab-backend/tools/phase5_state/lane_policy_v0.json",
+  "max_jobs": 2,
+  "max_tries": 2,
+  "processed": [
+    {
+      "archive_dir": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260104..20260104-20260306_132910-64ab9364-t1__FULLSCAN_MAJOR",
+      "decision": "PROMOTE",
+      "elapsed_min": 0.59549,
+      "estimated_wall_min": 120.0,
+      "final_status": "DONE",
+      "lane_policy_applied": "DEFAULT",
+      "lane_policy_key": "binance/trade",
+      "last_error": "",
+      "max_symbols_used": 20,
+      "max_wall_min_used": 120,
+      "per_run_timeout_min_used": 12,
+      "plan_id": "64ab9364db2f2cc92a49ddbd0a0fb656e4fbd2f5354343644b23cd0a536979ca",
+      "record_appended": "true",
+      "run_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260104..20260104-20260306_132910-64ab9364-t1__FULLSCAN_MAJOR",
+      "selection_reason": "PENDING"
+    },
+    {
+      "archive_dir": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260104..20260104-20260306_133014-73b441ce-t1__FULLSCAN_MAJOR",
+      "decision": "PROMOTE",
+      "elapsed_min": 0.184304,
+      "estimated_wall_min": 120.0,
+      "final_status": "DONE",
+      "lane_policy_applied": "DEFAULT",
+      "lane_policy_key": "bybit/bbo",
+      "last_error": "",
+      "max_symbols_used": 20,
+      "max_wall_min_used": 120,
+      "per_run_timeout_min_used": 12,
+      "plan_id": "73b441ce513a23f511ea95dd2c3ccd1e0f6f9872f11140c85dc3ea9de163079f",
+      "record_appended": "true",
+      "run_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260104..20260104-20260306_133014-73b441ce-t1__FULLSCAN_MAJOR",
+      "selection_reason": "PENDING"
+    }
+  ],
+  "promote_new_count": 2,
+  "queue_path": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl",
+  "session_wall_budget_min": 180.0,
+  "sleep_config": {
+    "failure_backoff_sec": 120.0,
+    "sleep_between_jobs_sec": 20.0,
+    "sleep_jitter_sec": 10.0
+  },
+  "started_ts_utc": "2026-03-06T13:29:10Z",
+  "stop_policy": {
+    "stale_running_min": 180.0,
+    "stop_after_failures": 1
+  },
+  "stop_reason": "",
+  "wall_used_min": 1.243928
+}

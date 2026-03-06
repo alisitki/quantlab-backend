@@ -1,0 +1,8 @@
+label	partition_key	date	data_key	meta_key	bucket
+day1	binance/trade/adausdt/20260303	20260303	exchange=binance/stream=trade/symbol=adausdt/date=20260303/data.parquet	exchange=binance/stream=trade/symbol=adausdt/date=20260303/meta.json	quantlab-compact
+day1	binance/trade/avaxusdt/20260303	20260303	exchange=binance/stream=trade/symbol=avaxusdt/date=20260303/data.parquet	exchange=binance/stream=trade/symbol=avaxusdt/date=20260303/meta.json	quantlab-compact
+day1	binance/trade/bnbusdt/20260303	20260303	exchange=binance/stream=trade/symbol=bnbusdt/date=20260303/data.parquet	exchange=binance/stream=trade/symbol=bnbusdt/date=20260303/meta.json	quantlab-compact
+day1	binance/trade/linkusdt/20260303	20260303	exchange=binance/stream=trade/symbol=linkusdt/date=20260303/data.parquet	exchange=binance/stream=trade/symbol=linkusdt/date=20260303/meta.json	quantlab-compact
+day1	binance/trade/ltcusdt/20260303	20260303	exchange=binance/stream=trade/symbol=ltcusdt/date=20260303/data.parquet	exchange=binance/stream=trade/symbol=ltcusdt/date=20260303/meta.json	quantlab-compact
+day1	binance/trade/solusdt/20260303	20260303	exchange=binance/stream=trade/symbol=solusdt/date=20260303/data.parquet	exchange=binance/stream=trade/symbol=solusdt/date=20260303/meta.json	quantlab-compact
+day1	binance/trade/xrpusdt/20260303	20260303	exchange=binance/stream=trade/symbol=xrpusdt/date=20260303/data.parquet	exchange=binance/stream=trade/symbol=xrpusdt/date=20260303/meta.json	quantlab-compact

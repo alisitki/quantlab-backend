@@ -14,9 +14,11 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 try:
     from phase5_big_hunt_plan_v2 import ensure_inventory_state
+    from phase5_lane_policy_v0 import DEFAULT_LANE_POLICY_PATH, load_lane_policy, resolve_lane_policy
     from phase5_state_selection_v1 import build_object_keys_tsv, filter_rows, load_inventory
 except ImportError:  # pragma: no cover
     from tools.phase5_big_hunt_plan_v2 import ensure_inventory_state
+    from tools.phase5_lane_policy_v0 import DEFAULT_LANE_POLICY_PATH, load_lane_policy, resolve_lane_policy
     from tools.phase5_state_selection_v1 import build_object_keys_tsv, filter_rows, load_inventory
 
 
@@ -63,6 +65,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     p.add_argument("--inventory-bucket", default=DEFAULT_INVENTORY_BUCKET)
     p.add_argument("--inventory-key", default=DEFAULT_INVENTORY_KEY)
     p.add_argument("--inventory-s3-tool", default=DEFAULT_INVENTORY_S3_TOOL)
+    p.add_argument("--lane-policy", default=DEFAULT_LANE_POLICY_PATH)
     p.add_argument(
         "--require-quality-pass",
         dest="require_quality_pass",
@@ -292,7 +295,10 @@ def run_pair(
     stream: str,
     rows: Sequence[Any],
     args: argparse.Namespace,
+    lane_policy_json: Dict[str, Any],
 ) -> Dict[str, Any]:
+    runtime = resolve_lane_policy(exchange, stream, lane_policy_json)
+    lane_policy_applied = "OVERRIDE" if f"{exchange}/{stream}" in dict(lane_policy_json.get("overrides") or {}) else "DEFAULT"
     pair_dir = bench_root / f"{exchange}_{stream}"
     object_keys_tsv = pair_dir / "state_selection" / "object_keys_selected.tsv"
     selected_rows, selected_symbols, _days = filter_rows(
@@ -303,7 +309,7 @@ def run_pair(
         end=date,
         require_status="success",
         require_quality_pass=bool(args.require_quality_pass),
-        max_symbols=int(args.max_symbols),
+        max_symbols=int(runtime["max_symbols"]),
     )
     if not selected_rows or not selected_symbols:
         build_object_keys_tsv([], object_keys_tsv)
@@ -332,6 +338,11 @@ def run_pair(
                 "phase6_stderr_path": str(pair_dir / "phase6_stderr.log"),
                 "phase6_time_path": str(pair_dir / "phase6_time-v.log"),
                 "selected_symbols": [],
+                "lane_policy_key": f"{exchange}/{stream}",
+                "lane_policy_applied": lane_policy_applied,
+                "max_symbols_used": int(runtime["max_symbols"]),
+                "per_run_timeout_min_used": int(runtime["per_run_timeout_min"]),
+                "max_wall_min_used": int(runtime["max_wall_min"]),
             },
         }
 
@@ -357,11 +368,11 @@ def run_pair(
         "--objectKeysTsv",
         str(object_keys_tsv),
         "--max-symbols",
-        str(int(args.max_symbols)),
+        str(int(runtime["max_symbols"])),
         "--per-run-timeout-min",
-        str(int(args.per_run_timeout_min)),
+        str(int(runtime["per_run_timeout_min"])),
         "--max-wall-min",
-        str(int(args.max_wall_min)),
+        str(int(runtime["max_wall_min"])),
         "--archive-root",
         str(archive_root),
         "--run-id",
@@ -421,6 +432,11 @@ def run_pair(
                 "selected_symbols": selected_symbols,
                 "run_id": run_id,
                 "phase5_stdout_kv": phase5_kv,
+                "lane_policy_key": f"{exchange}/{stream}",
+                "lane_policy_applied": lane_policy_applied,
+                "max_symbols_used": int(runtime["max_symbols"]),
+                "per_run_timeout_min_used": int(runtime["per_run_timeout_min"]),
+                "max_wall_min_used": int(runtime["max_wall_min"]),
             },
         }
 
@@ -471,6 +487,11 @@ def run_pair(
             "run_id": run_id,
             "phase5_stdout_kv": phase5_kv,
             "phase6_stdout_kv": phase6_kv,
+            "lane_policy_key": f"{exchange}/{stream}",
+            "lane_policy_applied": lane_policy_applied,
+            "max_symbols_used": int(runtime["max_symbols"]),
+            "per_run_timeout_min_used": int(runtime["per_run_timeout_min"]),
+            "max_wall_min_used": int(runtime["max_wall_min"]),
         },
     }
 
@@ -480,6 +501,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     repo = Path(__file__).resolve().parents[1]
     state_dir = Path(args.state_dir).resolve()
     archive_root = Path(args.archive_root).resolve()
+    lane_policy_json = load_lane_policy(Path(args.lane_policy).resolve())
     inventory_state_json = ensure_inventory_state(
         state_path=Path(args.inventory_state_json).resolve(),
         bucket=str(args.inventory_bucket),
@@ -525,6 +547,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             stream=stream,
             rows=rows,
             args=args,
+            lane_policy_json=lane_policy_json,
         )
         rows_out.append(result["summary"])
         details_out.append(result["detail"])

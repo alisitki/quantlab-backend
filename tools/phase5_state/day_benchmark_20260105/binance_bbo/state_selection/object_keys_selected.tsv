@@ -1,0 +1,5 @@
+label	partition_key	date	data_key	meta_key	bucket
+day1	binance/bbo/adausdt/20260105	20260105	exchange=binance/stream=bbo/symbol=adausdt/date=20260105/data.parquet	exchange=binance/stream=bbo/symbol=adausdt/date=20260105/meta.json	quantlab-compact
+day1	binance/bbo/avaxusdt/20260105	20260105	exchange=binance/stream=bbo/symbol=avaxusdt/date=20260105/data.parquet	exchange=binance/stream=bbo/symbol=avaxusdt/date=20260105/meta.json	quantlab-compact
+day1	binance/bbo/bnbusdt/20260105	20260105	exchange=binance/stream=bbo/symbol=bnbusdt/date=20260105/data.parquet	exchange=binance/stream=bbo/symbol=bnbusdt/date=20260105/meta.json	quantlab-compact
+day1	binance/bbo/btcusdt/20260105	20260105	exchange=binance/stream=bbo/symbol=btcusdt/date=20260105/data.parquet	exchange=binance/stream=bbo/symbol=btcusdt/date=20260105/meta.json	quantlab-compact

@@ -43,6 +43,11 @@ try:
 except ImportError:  # pragma: no cover
     from tools.phase5_state_selection_v1 import build_object_keys_tsv, filter_rows, load_inventory
 
+try:
+    from phase5_lane_policy_v0 import DEFAULT_LANE_POLICY_PATH, lane_key, load_lane_policy, resolve_lane_policy
+except ImportError:  # pragma: no cover
+    from tools.phase5_lane_policy_v0 import DEFAULT_LANE_POLICY_PATH, lane_key, load_lane_policy, resolve_lane_policy
+
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Phase-5 Big Hunt v1 scheduler")
@@ -66,6 +71,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     p.add_argument("--inventory-bucket", default="quantlab-compact")
     p.add_argument("--inventory-key", default="compacted/_state.json")
     p.add_argument("--inventory-s3-tool", default="/tmp/s3_compact_tool.py")
+    p.add_argument("--lane-policy", default=DEFAULT_LANE_POLICY_PATH)
     p.add_argument(
         "--inventory-require-quality-pass",
         dest="inventory_require_quality_pass",
@@ -213,6 +219,34 @@ def build_v0_command(plan: Dict[str, Any], run_id: str) -> List[str]:
     ]
 
 
+def resolve_lane_policy_path(repo: Path, raw: str) -> Path:
+    candidate = Path(str(raw or "").strip())
+    if candidate.is_absolute():
+        return candidate
+    repo_relative = repo / candidate
+    if repo_relative.exists():
+        return repo_relative
+    return candidate.resolve()
+
+
+def apply_runtime_lane_policy(plan: Dict[str, Any], lane_policy_json: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    exchange = str(plan.get("exchange", "")).strip().lower()
+    stream = str(plan.get("stream", "")).strip().lower()
+    key = lane_key(exchange, stream)
+    resolved = resolve_lane_policy(exchange, stream, lane_policy_json)
+    effective = dict(plan)
+    effective.update(resolved)
+    applied = "OVERRIDE" if key in dict(lane_policy_json.get("overrides") or {}) else "DEFAULT"
+    meta = {
+        "lane_policy_key": key,
+        "lane_policy_applied": applied,
+        "max_symbols_used": int(resolved["max_symbols"]),
+        "per_run_timeout_min_used": int(resolved["per_run_timeout_min"]),
+        "max_wall_min_used": int(resolved["max_wall_min"]),
+    }
+    return effective, meta
+
+
 def selection_reason(
     rec: Dict[str, Any],
     *,
@@ -240,17 +274,41 @@ def selection_reason(
     return None
 
 
-def pick_next_plan(
+def selection_sort_key(
+    plan_id: str,
+    rec: Dict[str, Any],
+    *,
+    reason: str,
+) -> Tuple[str, str, str, str, int, str, str]:
+    # Oldest date wins before retry class. Retry/stale reclaim only break ties
+    # within the same lane/date bucket so a newer retry cannot jump ahead of
+    # an older pending plan.
+    retry_rank = {
+        "PENDING": 0,
+        "FAILED_RETRY": 1,
+        "RUNNING_STALE_RECLAIM": 2,
+    }.get(str(reason), 9)
+    return (
+        str(rec.get("start", "")),
+        str(rec.get("end", "")),
+        str(rec.get("exchange", "")),
+        str(rec.get("stream", "")),
+        retry_rank,
+        str(rec.get("created_ts_utc", "")),
+        str(plan_id),
+    )
+
+
+def build_effective_eligible_plans(
     index_obj: Dict[str, Any],
     *,
     max_tries: int,
     stale_running_min: float,
     now_dt: datetime,
-) -> Optional[Tuple[str, Dict[str, Any], str]]:
+) -> List[Tuple[str, Dict[str, Any], str]]:
     latest = index_obj.get("plan_latest", {})
-    order = index_obj.get("created_order_plan_ids", [])
-    for plan_id in order:
-        rec = latest.get(plan_id)
+    eligible: List[Tuple[str, Dict[str, Any], str]] = []
+    for plan_id, rec in latest.items():
         if not isinstance(rec, dict):
             continue
         reason = selection_reason(
@@ -259,9 +317,37 @@ def pick_next_plan(
             stale_running_min=stale_running_min,
             now_dt=now_dt,
         )
-        if reason is not None:
-            return str(plan_id), rec, reason
-    return None
+        if reason is None:
+            continue
+        eligible.append((str(plan_id), rec, reason))
+    return eligible
+
+
+def sort_eligible_plans_oldest_first(
+    eligible: Sequence[Tuple[str, Dict[str, Any], str]],
+) -> List[Tuple[str, Dict[str, Any], str]]:
+    return sorted(
+        eligible,
+        key=lambda item: selection_sort_key(item[0], item[1], reason=item[2]),
+    )
+
+
+def pick_next_plan(
+    index_obj: Dict[str, Any],
+    *,
+    max_tries: int,
+    stale_running_min: float,
+    now_dt: datetime,
+) -> Optional[Tuple[str, Dict[str, Any], str]]:
+    eligible = build_effective_eligible_plans(
+        index_obj,
+        max_tries=max_tries,
+        stale_running_min=stale_running_min,
+        now_dt=now_dt,
+    )
+    if not eligible:
+        return None
+    return sort_eligible_plans_oldest_first(eligible)[0]
 
 
 def resolve_campaign_report(repo: Path, run_id: str, kv: Dict[str, str]) -> Tuple[Optional[Path], Dict[str, Any]]:
@@ -481,6 +567,8 @@ def run_scheduler(
     state_dir = Path(args.state_dir).resolve() if args.state_dir else DEFAULT_STATE_DIR
     lock_path = Path(args.lock_file).resolve() if args.lock_file else (state_dir / "bighunt_scheduler.lock")
     inventory_state_path = Path(args.inventory_state_json).resolve()
+    lane_policy_path = resolve_lane_policy_path(repo, str(args.lane_policy))
+    lane_policy_json = load_lane_policy(lane_policy_path)
     queue_path, index_path = ensure_state_files(state_dir)
     records = load_queue_records(queue_path)
     index_obj = rebuild_index(records, max_tries=int(args.max_tries))
@@ -532,6 +620,7 @@ def run_scheduler(
                 },
                 "queue_path": str(queue_path),
                 "index_path": str(index_path),
+                "lane_policy_path": str(lane_policy_path),
                 "processed": [],
                 "counts": {
                     "processed": 0,
@@ -605,10 +694,11 @@ def run_scheduler(
 
             base = dict(latest)
             base.pop("_line_no", None)
+            effective_plan, lane_meta = apply_runtime_lane_policy(base, lane_policy_json)
             next_tries = int(base.get("tries", 0) or 0) + 1
             run_id = build_run_id(base, next_tries, now_dt=now_dt)
             resolved_tsv_path, selected_symbols, selected_row_count = prepare_plan_object_keys_tsv(
-                plan=base,
+                plan=effective_plan,
                 run_id=run_id,
                 repo=repo,
                 inventory_state_path=inventory_state_path,
@@ -642,12 +732,13 @@ def run_scheduler(
                         "selection_reason": reason,
                         "run_id": run_id,
                         "final_status": "FAILED",
-                        "estimated_wall_min": round(estimate_plan_wall_min(base), 6),
+                        "estimated_wall_min": round(estimate_plan_wall_min(effective_plan), 6),
                         "elapsed_min": 0.0,
                         "archive_dir": "",
                         "decision": "",
                         "record_appended": "",
                         "last_error": "STOP_NO_COVERAGE",
+                        **lane_meta,
                     }
                 )
                 failure_rows.append({"plan_id": plan_id, "last_error": "STOP_NO_COVERAGE"})
@@ -655,6 +746,11 @@ def run_scheduler(
                 print(f"selection_reason={reason}")
                 print(f"run_id={run_id}")
                 print(f"resolved_object_keys_tsv_path={resolved_tsv_path}")
+                print(f"lane_policy_key={lane_meta['lane_policy_key']}")
+                print(f"lane_policy_applied={lane_meta['lane_policy_applied']}")
+                print(f"max_symbols_used={lane_meta['max_symbols_used']}")
+                print(f"per_run_timeout_min_used={lane_meta['per_run_timeout_min_used']}")
+                print(f"max_wall_min_used={lane_meta['max_wall_min_used']}")
                 print("selected_symbols_csv=")
                 print("selected_symbol_count=0")
                 print("status=FAILED")
@@ -666,11 +762,11 @@ def run_scheduler(
                     break
                 continue
 
-            cmd = build_v0_command(base, run_id)
+            cmd = build_v0_command(effective_plan, run_id)
             # Replace plan input TSV with state-compatible window TSV built for this run.
             tsv_arg_idx = cmd.index("--objectKeysTsv") + 1
             cmd[tsv_arg_idx] = str(resolved_tsv_path)
-            est_plan_min = estimate_plan_wall_min(base)
+            est_plan_min = estimate_plan_wall_min(effective_plan)
 
             # Quota gate (estimate-based pre-check).
             if budget_min > 0 and (wall_used_min + est_plan_min) > budget_min:
@@ -685,6 +781,11 @@ def run_scheduler(
             print(f"selection_reason={reason}")
             print(f"run_id={run_id}")
             print(f"resolved_object_keys_tsv_path={resolved_tsv_path}")
+            print(f"lane_policy_key={lane_meta['lane_policy_key']}")
+            print(f"lane_policy_applied={lane_meta['lane_policy_applied']}")
+            print(f"max_symbols_used={lane_meta['max_symbols_used']}")
+            print(f"per_run_timeout_min_used={lane_meta['per_run_timeout_min_used']}")
+            print(f"max_wall_min_used={lane_meta['max_wall_min_used']}")
             print("selected_symbols_csv=" + ",".join(selected_symbols))
             print(f"selected_symbol_count={len(selected_symbols)}")
             print(f"selected_row_count={selected_row_count}")
@@ -706,6 +807,7 @@ def run_scheduler(
                         "decision": "",
                         "record_appended": "",
                         "last_error": "",
+                        **lane_meta,
                     }
                 )
                 # simulate progression without mutating queue/index
@@ -806,6 +908,7 @@ def run_scheduler(
                         "decision": decision,
                         "record_appended": record_appended,
                         "last_error": "",
+                        **lane_meta,
                     }
                 )
                 state_diff = post_eval.get("state_diff", {}) if isinstance(post_eval, dict) else {}
@@ -875,6 +978,7 @@ def run_scheduler(
                     "decision": "",
                     "record_appended": "",
                     "last_error": err,
+                    **lane_meta,
                 }
             )
             failure_rows.append({"plan_id": plan_id, "last_error": err})
@@ -916,6 +1020,7 @@ def run_scheduler(
         },
         "queue_path": str(queue_path),
         "index_path": str(index_path),
+        "lane_policy_path": str(lane_policy_path),
         "processed": processed_rows,
         "counts": {
             "processed": jobs_processed,

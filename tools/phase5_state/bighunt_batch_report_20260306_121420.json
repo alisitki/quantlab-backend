@@ -1,0 +1,74 @@
+{
+  "counts": {
+    "budget_stops": 0,
+    "done": 2,
+    "failed": 1,
+    "processed": 3,
+    "reclaimed_running": 0,
+    "skipped": 0
+  },
+  "dry_run": false,
+  "failures": [
+    {
+      "last_error": "exit_code=2;report_status=STOP_RUN_FAILURE;stop_reason=symbol=ethusdt ec=124;report=/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_115119-4bc2f481-t1__FULLSCAN_MAJOR/campaign_report.json;stderr_tail=",
+      "plan_id": "4bc2f481cfac25899d41cd18e74a3c62744f898a98c954fc481111caf27b8742"
+    }
+  ],
+  "finished_ts_utc": "2026-03-06T12:14:20Z",
+  "index_path": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json",
+  "max_jobs": 3,
+  "max_tries": 2,
+  "processed": [
+    {
+      "archive_dir": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260303..20260304-20260306_113334-eacbdf5c-t1__FULLSCAN_MAJOR",
+      "decision": "PROMOTE",
+      "elapsed_min": 4.878373,
+      "estimated_wall_min": 120.0,
+      "final_status": "DONE",
+      "last_error": "",
+      "plan_id": "eacbdf5ce2fcba59de901835d126317185a2774e30188a972953830974ad5801",
+      "record_appended": "true",
+      "run_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260303..20260304-20260306_113334-eacbdf5c-t1__FULLSCAN_MAJOR",
+      "selection_reason": "PENDING"
+    },
+    {
+      "archive_dir": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-binance-bbo-20260104..20260104-20260306_113828-2df022fc-t1__FULLSCAN_MAJOR",
+      "decision": "HOLD",
+      "elapsed_min": 12.808513,
+      "estimated_wall_min": 120.0,
+      "final_status": "DONE",
+      "last_error": "",
+      "plan_id": "2df022fcf49bee224d51ac4b8245115dec17ad11bed94b7d2c2aa6f90e4b6556",
+      "record_appended": "true",
+      "run_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260104..20260104-20260306_113828-2df022fc-t1__FULLSCAN_MAJOR",
+      "selection_reason": "PENDING"
+    },
+    {
+      "archive_dir": "",
+      "decision": "",
+      "elapsed_min": 23.014867,
+      "estimated_wall_min": 120.0,
+      "final_status": "FAILED",
+      "last_error": "exit_code=2;report_status=STOP_RUN_FAILURE;stop_reason=symbol=ethusdt ec=124;report=/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_115119-4bc2f481-t1__FULLSCAN_MAJOR/campaign_report.json;stderr_tail=",
+      "plan_id": "4bc2f481cfac25899d41cd18e74a3c62744f898a98c954fc481111caf27b8742",
+      "record_appended": "",
+      "run_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_115119-4bc2f481-t1__FULLSCAN_MAJOR",
+      "selection_reason": "PENDING"
+    }
+  ],
+  "promote_new_count": 2,
+  "queue_path": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl",
+  "session_wall_budget_min": 240.0,
+  "sleep_config": {
+    "failure_backoff_sec": 30.0,
+    "sleep_between_jobs_sec": 2.0,
+    "sleep_jitter_sec": 0.0
+  },
+  "started_ts_utc": "2026-03-06T11:33:34Z",
+  "stop_policy": {
+    "stale_running_min": 180.0,
+    "stop_after_failures": 1
+  },
+  "stop_reason": "STOP_AFTER_FAILURES failures=1 threshold=1",
+  "wall_used_min": 40.768419
+}

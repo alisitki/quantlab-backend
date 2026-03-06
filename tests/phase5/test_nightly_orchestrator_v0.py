@@ -36,6 +36,7 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             "inventory_bucket": "quantlab-compact",
             "inventory_key": "compacted/_state.json",
             "inventory_s3_tool": "/tmp/s3_compact_tool.py",
+            "lane_policy": "tools/phase5_state/lane_policy_v0.json",
             "inventory_require_quality_pass": True,
             "dry_run": False,
             "now_utc": "2026-03-06T12:00:00Z",

@@ -1,0 +1,7 @@
+label	partition_key	date	data_key	meta_key	bucket
+day1	bybit/trade/adausdt/20260104	20260104	exchange=bybit/stream=trade/symbol=adausdt/date=20260104/data.parquet	exchange=bybit/stream=trade/symbol=adausdt/date=20260104/meta.json	quantlab-compact
+day1	bybit/trade/bnbusdt/20260104	20260104	exchange=bybit/stream=trade/symbol=bnbusdt/date=20260104/data.parquet	exchange=bybit/stream=trade/symbol=bnbusdt/date=20260104/meta.json	quantlab-compact
+day1	bybit/trade/btcusdt/20260104	20260104	exchange=bybit/stream=trade/symbol=btcusdt/date=20260104/data.parquet	exchange=bybit/stream=trade/symbol=btcusdt/date=20260104/meta.json	quantlab-compact
+day1	bybit/trade/ethusdt/20260104	20260104	exchange=bybit/stream=trade/symbol=ethusdt/date=20260104/data.parquet	exchange=bybit/stream=trade/symbol=ethusdt/date=20260104/meta.json	quantlab-compact
+day1	bybit/trade/linkusdt/20260104	20260104	exchange=bybit/stream=trade/symbol=linkusdt/date=20260104/data.parquet	exchange=bybit/stream=trade/symbol=linkusdt/date=20260104/meta.json	quantlab-compact
+day1	bybit/trade/ltcusdt/20260104	20260104	exchange=bybit/stream=trade/symbol=ltcusdt/date=20260104/data.parquet	exchange=bybit/stream=trade/symbol=ltcusdt/date=20260104/meta.json	quantlab-compact

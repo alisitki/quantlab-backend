@@ -6,5 +6,5 @@ After=network-online.target
 Type=oneshot
 User=deploy
 WorkingDirectory=/home/deploy/quantlab-backend
-ExecStart=/usr/bin/python3 /home/deploy/quantlab-backend/tools/phase5_big_hunt_scheduler_v1.py --max-jobs 20 --session-wall-budget-min 360 --sleep-between-jobs-sec 20 --sleep-jitter-sec 10 --failure-backoff-sec 120 --stop-after-failures 1 --stale-running-min 180 --active-window-start 21:00 --active-window-end 08:00 --active-window-tz Europe/Istanbul
+ExecStart=/usr/bin/python3 /home/deploy/quantlab-backend/tools/phase5_nightly_orchestrator_v0.py --exchanges binance,bybit,okx --streams trade,bbo --window-days 1 --all-dates --max-symbols 20 --per-run-timeout-min 12 --session-wall-budget-min 360 --max-jobs 20 --sleep-between-jobs-sec 20 --sleep-jitter-sec 10 --failure-backoff-sec 120 --stop-after-failures 1 --stale-running-min 180 --active-window-start 20:00 --active-window-end 07:00 --active-window-tz Europe/Istanbul
 Nice=10

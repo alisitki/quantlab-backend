@@ -1,0 +1,7 @@
+date	exchange	stream	status	selected_symbol_count	selected_row_count	elapsed_sec	max_rss_kb	archive_dir	phase6_v2_decision	candidate_export_delta
+20260104	binance	bbo	OK	9	9	775.520000	5004796.0	/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-bbo-20260104-20260306_101521__FULLSCAN_MAJOR	HOLD	0
+20260104	binance	trade	OK	2	2	34.270000	562684.0	/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR	PROMOTE	1
+20260104	bybit	bbo	OK	3	3	9.580000	99944.0	/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-bbo-20260104-20260306_103000__FULLSCAN_MAJOR	HOLD	0
+20260104	bybit	trade	OK	6	6	130.080000	331072.0	/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-trade-20260104-20260306_103009__FULLSCAN_MAJOR	HOLD	0
+20260104	okx	bbo	OK	2	2	15.890000	184796.0	/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-bbo-20260104-20260306_103220__FULLSCAN_MAJOR	HOLD	0
+20260104	okx	trade	OK	3	3	23.970000	98176.0	/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-trade-20260104-20260306_103236__FULLSCAN_MAJOR	HOLD	0

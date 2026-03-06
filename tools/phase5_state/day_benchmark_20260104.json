@@ -1,0 +1,387 @@
+{
+  "candidate_count_after": 9,
+  "candidate_count_before": 8,
+  "candidate_export_summary": {
+    "exit_code": 0,
+    "kv": {
+      "candidate_count_total": "9",
+      "candidate_index_path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_index.json",
+      "candidate_queue_path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_queue.jsonl",
+      "candidate_report_path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_report.tsv",
+      "exported_count": "1",
+      "latest_3_candidate_pack_ids": "multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR__b56c960fa2b5365433d20003eae450803cc5929382ae44940b179c73487bc969|multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094633-d5dbd181-t1__FULLSCAN_MAJOR__ff80c569bcaa0490aa4ffb44aa9a9c286eda5828222da2a9996fe20a1495eacf|multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR__9709a89edd8ac89da2f29e17cf403c04ce1488383aff7204e582bd1a70243325",
+      "latest_export_ts_utc": "2026-03-06T10:33:00Z",
+      "skipped_existing_count": "8",
+      "strong_count": "0"
+    },
+    "stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/candidate_export.stderr.log",
+    "stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/candidate_export.stdout.log",
+    "time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/candidate_export.time-v.log"
+  },
+  "candidate_review_summary": {
+    "exit_code": 0,
+    "kv": {
+      "candidate_review_json": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review.json",
+      "candidate_review_tsv": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review.tsv",
+      "review_count": "9",
+      "top_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094633-d5dbd181-t1__FULLSCAN_MAJOR__ff80c569bcaa0490aa4ffb44aa9a9c286eda5828222da2a9996fe20a1495eacf",
+      "top_score": "57.280893"
+    },
+    "stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/candidate_review.stderr.log",
+    "stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/candidate_review.stdout.log",
+    "time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/candidate_review.time-v.log"
+  },
+  "chosen_day": "20260104",
+  "discovery": {
+    "chosen_day": "20260104",
+    "coverage_score": 6,
+    "pair_presence": {
+      "binance/bbo": true,
+      "binance/trade": true,
+      "bybit/bbo": true,
+      "bybit/trade": true,
+      "okx/bbo": true,
+      "okx/trade": true
+    },
+    "selection_rule": "oldest_full_coverage_score=6"
+  },
+  "generated_ts_utc": "2026-03-06T10:33:00Z",
+  "row_details": [
+    {
+      "phase5_exit_code": 0,
+      "phase5_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_bbo/phase5_stderr.log",
+      "phase5_stdout_kv": {
+        "ARCHIVE_DIR": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-bbo-20260104-20260306_101521__FULLSCAN_MAJOR",
+        "FINAL": "PASS",
+        "PACK_DIR": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-day-benchmark-binance-bbo-20260104-20260306_101521__FULLSCAN_MAJOR",
+        "RUN_ID": "multi-hypothesis-phase5-day-benchmark-binance-bbo-20260104-20260306_101521__FULLSCAN_MAJOR",
+        "SELECTED_SYMBOLS": "adausdt,avaxusdt,bnbusdt,btcusdt,ethusdt,linkusdt,ltcusdt,solusdt,xrpusdt",
+        "decision": "HOLD",
+        "record_appended": "true"
+      },
+      "phase5_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_bbo/phase5_stdout.log",
+      "phase5_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_bbo/phase5_time-v.log",
+      "phase6_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_bbo/phase6_stderr.log",
+      "phase6_stdout_kv": {
+        "context_policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/context_policy_v2.json",
+        "decision": "HOLD",
+        "index_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_index.json",
+        "pack_id": "multi-hypothesis-phase5-day-benchmark-binance-bbo-20260104-20260306_101521__FULLSCAN_MAJOR__43dbdb31be236bbed3bda1d357aa919928ead8ab32cbd3dde0dcdef745a8b36d",
+        "policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_policy.json",
+        "promote_packs": "8",
+        "promote_strong_packs": "0",
+        "record_appended": "true",
+        "record_count": "11",
+        "records_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_records.jsonl",
+        "report_json": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-bbo-20260104-20260306_101521__FULLSCAN_MAJOR/guards/guard_details.json",
+        "report_tsv": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-bbo-20260104-20260306_101521__FULLSCAN_MAJOR/guards/decision_report.tsv",
+        "report_txt": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-bbo-20260104-20260306_101521__FULLSCAN_MAJOR/guards/decision_report.txt",
+        "state_dir": "/home/deploy/quantlab-backend/tools/phase6_state"
+      },
+      "phase6_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_bbo/phase6_stdout.log",
+      "phase6_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_bbo/phase6_time-v.log",
+      "phase6_v2_exit_code": 0,
+      "run_id": "multi-hypothesis-phase5-day-benchmark-binance-bbo-20260104-20260306_102925__FULLSCAN_MAJOR",
+      "selected_symbols": [
+        "adausdt",
+        "avaxusdt",
+        "bnbusdt",
+        "btcusdt",
+        "ethusdt",
+        "linkusdt",
+        "ltcusdt",
+        "solusdt",
+        "xrpusdt"
+      ]
+    },
+    {
+      "phase5_exit_code": 0,
+      "phase5_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_trade/phase5_stderr.log",
+      "phase5_stdout_kv": {
+        "ARCHIVE_DIR": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR",
+        "FINAL": "PASS",
+        "PACK_DIR": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR",
+        "RUN_ID": "multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR",
+        "SELECTED_SYMBOLS": "avaxusdt,ltcusdt",
+        "decision": "PROMOTE",
+        "record_appended": "true"
+      },
+      "phase5_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_trade/phase5_stdout.log",
+      "phase5_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_trade/phase5_time-v.log",
+      "phase6_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_trade/phase6_stderr.log",
+      "phase6_stdout_kv": {
+        "context_policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/context_policy_v2.json",
+        "decision": "PROMOTE",
+        "index_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_index.json",
+        "pack_id": "multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR__b56c960fa2b5365433d20003eae450803cc5929382ae44940b179c73487bc969",
+        "policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_policy.json",
+        "promote_packs": "9",
+        "promote_strong_packs": "0",
+        "record_appended": "true",
+        "record_count": "13",
+        "records_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_records.jsonl",
+        "report_json": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR/guards/guard_details.json",
+        "report_tsv": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR/guards/decision_report.tsv",
+        "report_txt": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR/guards/decision_report.txt",
+        "state_dir": "/home/deploy/quantlab-backend/tools/phase6_state"
+      },
+      "phase6_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_trade/phase6_stdout.log",
+      "phase6_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/binance_trade/phase6_time-v.log",
+      "phase6_v2_exit_code": 0,
+      "run_id": "multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR",
+      "selected_symbols": [
+        "avaxusdt",
+        "ltcusdt"
+      ]
+    },
+    {
+      "phase5_exit_code": 0,
+      "phase5_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_bbo/phase5_stderr.log",
+      "phase5_stdout_kv": {
+        "ARCHIVE_DIR": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-bbo-20260104-20260306_103000__FULLSCAN_MAJOR",
+        "FINAL": "PASS",
+        "PACK_DIR": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-day-benchmark-bybit-bbo-20260104-20260306_103000__FULLSCAN_MAJOR",
+        "RUN_ID": "multi-hypothesis-phase5-day-benchmark-bybit-bbo-20260104-20260306_103000__FULLSCAN_MAJOR",
+        "SELECTED_SYMBOLS": "bnbusdt,ltcusdt,solusdt",
+        "decision": "PROMOTE",
+        "record_appended": "true"
+      },
+      "phase5_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_bbo/phase5_stdout.log",
+      "phase5_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_bbo/phase5_time-v.log",
+      "phase6_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_bbo/phase6_stderr.log",
+      "phase6_stdout_kv": {
+        "context_policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/context_policy_v2.json",
+        "decision": "HOLD",
+        "index_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_index.json",
+        "pack_id": "multi-hypothesis-phase5-day-benchmark-bybit-bbo-20260104-20260306_103000__FULLSCAN_MAJOR__af1678f410de4fcee4e87f0fc54e36ae2b334fa6ae9d72e7e45e21a1fa90e4d8",
+        "policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_policy.json",
+        "promote_packs": "9",
+        "promote_strong_packs": "0",
+        "record_appended": "true",
+        "record_count": "15",
+        "records_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_records.jsonl",
+        "report_json": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-bbo-20260104-20260306_103000__FULLSCAN_MAJOR/guards/guard_details.json",
+        "report_tsv": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-bbo-20260104-20260306_103000__FULLSCAN_MAJOR/guards/decision_report.tsv",
+        "report_txt": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-bbo-20260104-20260306_103000__FULLSCAN_MAJOR/guards/decision_report.txt",
+        "state_dir": "/home/deploy/quantlab-backend/tools/phase6_state"
+      },
+      "phase6_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_bbo/phase6_stdout.log",
+      "phase6_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_bbo/phase6_time-v.log",
+      "phase6_v2_exit_code": 0,
+      "run_id": "multi-hypothesis-phase5-day-benchmark-bybit-bbo-20260104-20260306_103000__FULLSCAN_MAJOR",
+      "selected_symbols": [
+        "bnbusdt",
+        "ltcusdt",
+        "solusdt"
+      ]
+    },
+    {
+      "phase5_exit_code": 0,
+      "phase5_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_trade/phase5_stderr.log",
+      "phase5_stdout_kv": {
+        "ARCHIVE_DIR": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-trade-20260104-20260306_103009__FULLSCAN_MAJOR",
+        "FINAL": "PASS",
+        "PACK_DIR": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-day-benchmark-bybit-trade-20260104-20260306_103009__FULLSCAN_MAJOR",
+        "RUN_ID": "multi-hypothesis-phase5-day-benchmark-bybit-trade-20260104-20260306_103009__FULLSCAN_MAJOR",
+        "SELECTED_SYMBOLS": "adausdt,bnbusdt,btcusdt,ethusdt,linkusdt,ltcusdt",
+        "decision": "PROMOTE",
+        "record_appended": "true"
+      },
+      "phase5_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_trade/phase5_stdout.log",
+      "phase5_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_trade/phase5_time-v.log",
+      "phase6_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_trade/phase6_stderr.log",
+      "phase6_stdout_kv": {
+        "context_policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/context_policy_v2.json",
+        "decision": "HOLD",
+        "index_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_index.json",
+        "pack_id": "multi-hypothesis-phase5-day-benchmark-bybit-trade-20260104-20260306_103009__FULLSCAN_MAJOR__94e557247cbc9caf446d370a10519ab7eb55cb9ae4b72d41f5e5184c477cccf8",
+        "policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_policy.json",
+        "promote_packs": "9",
+        "promote_strong_packs": "0",
+        "record_appended": "true",
+        "record_count": "17",
+        "records_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_records.jsonl",
+        "report_json": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-trade-20260104-20260306_103009__FULLSCAN_MAJOR/guards/guard_details.json",
+        "report_tsv": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-trade-20260104-20260306_103009__FULLSCAN_MAJOR/guards/decision_report.tsv",
+        "report_txt": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-trade-20260104-20260306_103009__FULLSCAN_MAJOR/guards/decision_report.txt",
+        "state_dir": "/home/deploy/quantlab-backend/tools/phase6_state"
+      },
+      "phase6_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_trade/phase6_stdout.log",
+      "phase6_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/bybit_trade/phase6_time-v.log",
+      "phase6_v2_exit_code": 0,
+      "run_id": "multi-hypothesis-phase5-day-benchmark-bybit-trade-20260104-20260306_103009__FULLSCAN_MAJOR",
+      "selected_symbols": [
+        "adausdt",
+        "bnbusdt",
+        "btcusdt",
+        "ethusdt",
+        "linkusdt",
+        "ltcusdt"
+      ]
+    },
+    {
+      "phase5_exit_code": 0,
+      "phase5_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_bbo/phase5_stderr.log",
+      "phase5_stdout_kv": {
+        "ARCHIVE_DIR": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-bbo-20260104-20260306_103220__FULLSCAN_MAJOR",
+        "FINAL": "PASS",
+        "PACK_DIR": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-day-benchmark-okx-bbo-20260104-20260306_103220__FULLSCAN_MAJOR",
+        "RUN_ID": "multi-hypothesis-phase5-day-benchmark-okx-bbo-20260104-20260306_103220__FULLSCAN_MAJOR",
+        "SELECTED_SYMBOLS": "ethusdt,xrpusdt",
+        "decision": "PROMOTE",
+        "record_appended": "true"
+      },
+      "phase5_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_bbo/phase5_stdout.log",
+      "phase5_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_bbo/phase5_time-v.log",
+      "phase6_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_bbo/phase6_stderr.log",
+      "phase6_stdout_kv": {
+        "context_policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/context_policy_v2.json",
+        "decision": "HOLD",
+        "index_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_index.json",
+        "pack_id": "multi-hypothesis-phase5-day-benchmark-okx-bbo-20260104-20260306_103220__FULLSCAN_MAJOR__61144e50a93e0c2f8c7c7665dc3ecdfec94538195525aafaffe6d7aa876e3b16",
+        "policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_policy.json",
+        "promote_packs": "9",
+        "promote_strong_packs": "0",
+        "record_appended": "true",
+        "record_count": "19",
+        "records_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_records.jsonl",
+        "report_json": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-bbo-20260104-20260306_103220__FULLSCAN_MAJOR/guards/guard_details.json",
+        "report_tsv": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-bbo-20260104-20260306_103220__FULLSCAN_MAJOR/guards/decision_report.tsv",
+        "report_txt": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-bbo-20260104-20260306_103220__FULLSCAN_MAJOR/guards/decision_report.txt",
+        "state_dir": "/home/deploy/quantlab-backend/tools/phase6_state"
+      },
+      "phase6_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_bbo/phase6_stdout.log",
+      "phase6_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_bbo/phase6_time-v.log",
+      "phase6_v2_exit_code": 0,
+      "run_id": "multi-hypothesis-phase5-day-benchmark-okx-bbo-20260104-20260306_103220__FULLSCAN_MAJOR",
+      "selected_symbols": [
+        "ethusdt",
+        "xrpusdt"
+      ]
+    },
+    {
+      "phase5_exit_code": 0,
+      "phase5_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_trade/phase5_stderr.log",
+      "phase5_stdout_kv": {
+        "ARCHIVE_DIR": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-trade-20260104-20260306_103236__FULLSCAN_MAJOR",
+        "FINAL": "PASS",
+        "PACK_DIR": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-day-benchmark-okx-trade-20260104-20260306_103236__FULLSCAN_MAJOR",
+        "RUN_ID": "multi-hypothesis-phase5-day-benchmark-okx-trade-20260104-20260306_103236__FULLSCAN_MAJOR",
+        "SELECTED_SYMBOLS": "avaxusdt,bnbusdt,ltcusdt",
+        "decision": "PROMOTE",
+        "record_appended": "true"
+      },
+      "phase5_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_trade/phase5_stdout.log",
+      "phase5_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_trade/phase5_time-v.log",
+      "phase6_stderr_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_trade/phase6_stderr.log",
+      "phase6_stdout_kv": {
+        "context_policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/context_policy_v2.json",
+        "decision": "HOLD",
+        "index_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_index.json",
+        "pack_id": "multi-hypothesis-phase5-day-benchmark-okx-trade-20260104-20260306_103236__FULLSCAN_MAJOR__a2966fb857844520eba9cd2d6916972e1119c062216a7ef68461251422e5b021",
+        "policy_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_policy.json",
+        "promote_packs": "9",
+        "promote_strong_packs": "0",
+        "record_appended": "true",
+        "record_count": "21",
+        "records_path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_records.jsonl",
+        "report_json": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-trade-20260104-20260306_103236__FULLSCAN_MAJOR/guards/guard_details.json",
+        "report_tsv": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-trade-20260104-20260306_103236__FULLSCAN_MAJOR/guards/decision_report.tsv",
+        "report_txt": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-trade-20260104-20260306_103236__FULLSCAN_MAJOR/guards/decision_report.txt",
+        "state_dir": "/home/deploy/quantlab-backend/tools/phase6_state"
+      },
+      "phase6_stdout_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_trade/phase6_stdout.log",
+      "phase6_time_path": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104/okx_trade/phase6_time-v.log",
+      "phase6_v2_exit_code": 0,
+      "run_id": "multi-hypothesis-phase5-day-benchmark-okx-trade-20260104-20260306_103236__FULLSCAN_MAJOR",
+      "selected_symbols": [
+        "avaxusdt",
+        "bnbusdt",
+        "ltcusdt"
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "archive_dir": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-bbo-20260104-20260306_101521__FULLSCAN_MAJOR",
+      "candidate_export_delta": "0",
+      "date": "20260104",
+      "elapsed_sec": "775.520000",
+      "exchange": "binance",
+      "max_rss_kb": "5004796.0",
+      "phase6_v2_decision": "HOLD",
+      "selected_row_count": "9",
+      "selected_symbol_count": "9",
+      "status": "OK",
+      "stream": "bbo"
+    },
+    {
+      "archive_dir": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR",
+      "candidate_export_delta": "1",
+      "date": "20260104",
+      "elapsed_sec": "34.270000",
+      "exchange": "binance",
+      "max_rss_kb": "562684.0",
+      "phase6_v2_decision": "PROMOTE",
+      "selected_row_count": "2",
+      "selected_symbol_count": "2",
+      "status": "OK",
+      "stream": "trade"
+    },
+    {
+      "archive_dir": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-bbo-20260104-20260306_103000__FULLSCAN_MAJOR",
+      "candidate_export_delta": "0",
+      "date": "20260104",
+      "elapsed_sec": "9.580000",
+      "exchange": "bybit",
+      "max_rss_kb": "99944.0",
+      "phase6_v2_decision": "HOLD",
+      "selected_row_count": "3",
+      "selected_symbol_count": "3",
+      "status": "OK",
+      "stream": "bbo"
+    },
+    {
+      "archive_dir": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-bybit-trade-20260104-20260306_103009__FULLSCAN_MAJOR",
+      "candidate_export_delta": "0",
+      "date": "20260104",
+      "elapsed_sec": "130.080000",
+      "exchange": "bybit",
+      "max_rss_kb": "331072.0",
+      "phase6_v2_decision": "HOLD",
+      "selected_row_count": "6",
+      "selected_symbol_count": "6",
+      "status": "OK",
+      "stream": "trade"
+    },
+    {
+      "archive_dir": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-bbo-20260104-20260306_103220__FULLSCAN_MAJOR",
+      "candidate_export_delta": "0",
+      "date": "20260104",
+      "elapsed_sec": "15.890000",
+      "exchange": "okx",
+      "max_rss_kb": "184796.0",
+      "phase6_v2_decision": "HOLD",
+      "selected_row_count": "2",
+      "selected_symbol_count": "2",
+      "status": "OK",
+      "stream": "bbo"
+    },
+    {
+      "archive_dir": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-okx-trade-20260104-20260306_103236__FULLSCAN_MAJOR",
+      "candidate_export_delta": "0",
+      "date": "20260104",
+      "elapsed_sec": "23.970000",
+      "exchange": "okx",
+      "max_rss_kb": "98176.0",
+      "phase6_v2_decision": "HOLD",
+      "selected_row_count": "3",
+      "selected_symbol_count": "3",
+      "status": "OK",
+      "stream": "trade"
+    }
+  ],
+  "summary_json": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104.json",
+  "summary_tsv": "/home/deploy/quantlab-backend/tools/phase5_state/day_benchmark_20260104.tsv",
+  "total_wall_sec": 214.598181
+}

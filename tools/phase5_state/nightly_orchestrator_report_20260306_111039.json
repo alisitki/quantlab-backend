@@ -1,0 +1,101 @@
+{
+  "active_window": {
+    "local_time": "14:10",
+    "tz": "Europe/Istanbul",
+    "window": "20:00..07:00"
+  },
+  "candidate": {
+    "candidate_count_total": 9,
+    "review_count": 9,
+    "strong_count": 0,
+    "top_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094633-d5dbd181-t1__FULLSCAN_MAJOR__ff80c569bcaa0490aa4ffb44aa9a9c286eda5828222da2a9996fe20a1495eacf",
+    "top_score": "57.280893"
+  },
+  "commands": {
+    "candidate_export": [
+      "python3",
+      "tools/phase6_candidate_export_v0.py"
+    ],
+    "candidate_review": [
+      "python3",
+      "tools/phase6_candidate_review_v0.py"
+    ],
+    "planner": [
+      "python3",
+      "tools/phase5_big_hunt_plan_v2.py",
+      "--exchanges",
+      "binance,bybit,okx",
+      "--streams",
+      "trade,bbo",
+      "--window-days",
+      "1",
+      "--max-symbols",
+      "20",
+      "--per-run-timeout-min",
+      "12",
+      "--state-dir",
+      "tools/phase5_state",
+      "--inventory-state-json",
+      "/tmp/compacted__state.json",
+      "--inventory-bucket",
+      "quantlab-compact",
+      "--inventory-key",
+      "compacted/_state.json",
+      "--inventory-s3-tool",
+      "/tmp/s3_compact_tool.py",
+      "--all-dates",
+      "--require-quality-pass"
+    ],
+    "scheduler": [
+      "python3",
+      "tools/phase5_big_hunt_scheduler_v1.py",
+      "--max-jobs",
+      "20",
+      "--session-wall-budget-min",
+      "360.0",
+      "--sleep-between-jobs-sec",
+      "20.0",
+      "--sleep-jitter-sec",
+      "10.0",
+      "--failure-backoff-sec",
+      "120.0",
+      "--stop-after-failures",
+      "1",
+      "--stale-running-min",
+      "180.0",
+      "--active-window-start",
+      "20:00",
+      "--active-window-end",
+      "07:00",
+      "--active-window-tz",
+      "Europe/Istanbul",
+      "--state-dir",
+      "tools/phase5_state",
+      "--inventory-state-json",
+      "/tmp/compacted__state.json",
+      "--inventory-bucket",
+      "quantlab-compact",
+      "--inventory-key",
+      "compacted/_state.json",
+      "--inventory-s3-tool",
+      "/tmp/s3_compact_tool.py",
+      "--inventory-require-quality-pass"
+    ]
+  },
+  "finished_ts_utc": "2026-03-06T11:10:39Z",
+  "planner": {
+    "added_count": 0,
+    "skipped_done_count": 0,
+    "skipped_existing_count": 0,
+    "windows_total": 0
+  },
+  "scheduler": {
+    "batch_report_path": "",
+    "done_count": 0,
+    "failed_count": 0,
+    "jobs_processed": 0,
+    "promote_new_count": 0
+  },
+  "started_ts_utc": "2026-03-06T11:10:39Z",
+  "status": "NOOP_OUTSIDE_ACTIVE_WINDOW"
+}

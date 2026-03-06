@@ -1,0 +1,4 @@
+label	partition_key	date	data_key	meta_key	bucket
+day1	okx/trade/avaxusdt/20260104	20260104	exchange=okx/stream=trade/symbol=avaxusdt/date=20260104/data.parquet	exchange=okx/stream=trade/symbol=avaxusdt/date=20260104/meta.json	quantlab-compact
+day1	okx/trade/bnbusdt/20260104	20260104	exchange=okx/stream=trade/symbol=bnbusdt/date=20260104/data.parquet	exchange=okx/stream=trade/symbol=bnbusdt/date=20260104/meta.json	quantlab-compact
+day1	okx/trade/ltcusdt/20260104	20260104	exchange=okx/stream=trade/symbol=ltcusdt/date=20260104/data.parquet	exchange=okx/stream=trade/symbol=ltcusdt/date=20260104/meta.json	quantlab-compact

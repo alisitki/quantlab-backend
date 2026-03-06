@@ -46,7 +46,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--stream", default="")
     p.add_argument("--exchanges", default="")
     p.add_argument("--streams", default="")
-    p.add_argument("--window-days", type=int, default=2)
+    p.add_argument("--window-days", type=int, default=1)
     p.add_argument("--lookback-days", type=int, default=30)
     p.add_argument("--all-dates", action="store_true")
     p.add_argument("--max-windows", type=int, default=0, help="legacy cap (0=unlimited)")

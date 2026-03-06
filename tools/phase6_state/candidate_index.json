@@ -1,0 +1,416 @@
+{
+  "by_tier": {
+    "PROMOTE": 9,
+    "PROMOTE_STRONG": 0
+  },
+  "candidate_pack_ids": [
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_083648__FULLSCAN_MAJOR__ebd38ebaf46bc6e517de467e8934695a51b2ddfaa11fd85c6c3cd7e3aa2c37d9",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_092410-67fecfdd-t1__FULLSCAN_MAJOR__69497c795097c9ae2f088717297d039f279126d919515ba75c95931a0f7dcdeb",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_143035-3a902547-t1__FULLSCAN_MAJOR__1b6f450b5fdc49667e1a8876dc3ebe7e852f9b681f074025f0f408840c4bc1d6",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_140837-a1512783-t2__FULLSCAN_MAJOR__8736983bb5e4c7826c7d88085a27231e2fb834bc9a2f4e6cfcf149988c4330e8",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260227-20260305_151319-51538807-t1__FULLSCAN_MAJOR__8ac2b96b23fa74bc83b194c6873debdbd2fe5d3c46556b1ef0a8725a137a758a",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260227..20260228-20260305_151704-70b0f1f2-t1__FULLSCAN_MAJOR__019c89bf9e4986b03df85ef2f7f72e6367aec30c55fe59a76329e81e716e3e1d",
+    "multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR__9709a89edd8ac89da2f29e17cf403c04ce1488383aff7204e582bd1a70243325",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094633-d5dbd181-t1__FULLSCAN_MAJOR__ff80c569bcaa0490aa4ffb44aa9a9c286eda5828222da2a9996fe20a1495eacf",
+    "multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR__b56c960fa2b5365433d20003eae450803cc5929382ae44940b179c73487bc969"
+  ],
+  "latest_by_pack_id": {
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_083648__FULLSCAN_MAJOR__ebd38ebaf46bc6e517de467e8934695a51b2ddfaa11fd85c6c3cd7e3aa2c37d9": {
+      "candidate_status": "NEW",
+      "context_policy_hash": "",
+      "decision_tier": "PROMOTE",
+      "det_pass": 45,
+      "det_skipped": 9,
+      "det_supported": 45,
+      "export_ts_utc": "2026-03-06T09:15:42Z",
+      "guards": {
+        "G1_EVIDENCE": "PASS",
+        "G2_DETERMINISM": "PASS",
+        "G3_RESOURCE": "PASS"
+      },
+      "max_elapsed_sec": 283.01,
+      "max_rss_kb": 2305968.0,
+      "notes": "",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_083648__FULLSCAN_MAJOR__ebd38ebaf46bc6e517de467e8934695a51b2ddfaa11fd85c6c3cd7e3aa2c37d9",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_083648__FULLSCAN_MAJOR",
+      "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+      "source_decision": "PROMOTE"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_092410-67fecfdd-t1__FULLSCAN_MAJOR__69497c795097c9ae2f088717297d039f279126d919515ba75c95931a0f7dcdeb": {
+      "candidate_status": "NEW",
+      "context_policy_hash": "",
+      "decision_tier": "PROMOTE",
+      "det_pass": 45,
+      "det_skipped": 9,
+      "det_supported": 45,
+      "export_ts_utc": "2026-03-06T09:15:42Z",
+      "guards": {
+        "G1_EVIDENCE": "PASS",
+        "G2_DETERMINISM": "PASS",
+        "G3_RESOURCE": "PASS"
+      },
+      "max_elapsed_sec": 286.96,
+      "max_rss_kb": 2303252.0,
+      "notes": "",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_092410-67fecfdd-t1__FULLSCAN_MAJOR__69497c795097c9ae2f088717297d039f279126d919515ba75c95931a0f7dcdeb",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_092410-67fecfdd-t1__FULLSCAN_MAJOR",
+      "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+      "source_decision": "PROMOTE"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_143035-3a902547-t1__FULLSCAN_MAJOR__1b6f450b5fdc49667e1a8876dc3ebe7e852f9b681f074025f0f408840c4bc1d6": {
+      "candidate_status": "NEW",
+      "context_policy_hash": "",
+      "decision_tier": "PROMOTE",
+      "det_pass": 45,
+      "det_skipped": 9,
+      "det_supported": 45,
+      "export_ts_utc": "2026-03-06T09:15:42Z",
+      "guards": {
+        "G1_EVIDENCE": "PASS",
+        "G2_DETERMINISM": "PASS",
+        "G3_RESOURCE": "PASS"
+      },
+      "max_elapsed_sec": 285.84,
+      "max_rss_kb": 2117556.0,
+      "notes": "",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_143035-3a902547-t1__FULLSCAN_MAJOR__1b6f450b5fdc49667e1a8876dc3ebe7e852f9b681f074025f0f408840c4bc1d6",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_143035-3a902547-t1__FULLSCAN_MAJOR",
+      "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+      "source_decision": "PROMOTE"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_140837-a1512783-t2__FULLSCAN_MAJOR__8736983bb5e4c7826c7d88085a27231e2fb834bc9a2f4e6cfcf149988c4330e8": {
+      "candidate_status": "NEW",
+      "context_policy_hash": "",
+      "decision_tier": "PROMOTE",
+      "det_pass": 45,
+      "det_skipped": 9,
+      "det_supported": 45,
+      "export_ts_utc": "2026-03-06T09:15:42Z",
+      "guards": {
+        "G1_EVIDENCE": "PASS",
+        "G2_DETERMINISM": "PASS",
+        "G3_RESOURCE": "PASS"
+      },
+      "max_elapsed_sec": 292.3,
+      "max_rss_kb": 2125480.0,
+      "notes": "",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_140837-a1512783-t2__FULLSCAN_MAJOR__8736983bb5e4c7826c7d88085a27231e2fb834bc9a2f4e6cfcf149988c4330e8",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_140837-a1512783-t2__FULLSCAN_MAJOR",
+      "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+      "source_decision": "PROMOTE"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260227-20260305_151319-51538807-t1__FULLSCAN_MAJOR__8ac2b96b23fa74bc83b194c6873debdbd2fe5d3c46556b1ef0a8725a137a758a": {
+      "candidate_status": "NEW",
+      "context_policy_hash": "",
+      "decision_tier": "PROMOTE",
+      "det_pass": 35,
+      "det_skipped": 7,
+      "det_supported": 35,
+      "export_ts_utc": "2026-03-06T09:15:42Z",
+      "guards": {
+        "G1_EVIDENCE": "PASS",
+        "G2_DETERMINISM": "PASS",
+        "G3_RESOURCE": "PASS"
+      },
+      "max_elapsed_sec": 54.5,
+      "max_rss_kb": 268996.0,
+      "notes": "",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260227-20260305_151319-51538807-t1__FULLSCAN_MAJOR__8ac2b96b23fa74bc83b194c6873debdbd2fe5d3c46556b1ef0a8725a137a758a",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260227-20260305_151319-51538807-t1__FULLSCAN_MAJOR",
+      "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+      "source_decision": "PROMOTE"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260227..20260228-20260305_151704-70b0f1f2-t1__FULLSCAN_MAJOR__019c89bf9e4986b03df85ef2f7f72e6367aec30c55fe59a76329e81e716e3e1d": {
+      "candidate_status": "NEW",
+      "context_policy_hash": "",
+      "decision_tier": "PROMOTE",
+      "det_pass": 35,
+      "det_skipped": 7,
+      "det_supported": 35,
+      "export_ts_utc": "2026-03-06T09:15:42Z",
+      "guards": {
+        "G1_EVIDENCE": "PASS",
+        "G2_DETERMINISM": "PASS",
+        "G3_RESOURCE": "PASS"
+      },
+      "max_elapsed_sec": 59.2,
+      "max_rss_kb": 292500.0,
+      "notes": "",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260227..20260228-20260305_151704-70b0f1f2-t1__FULLSCAN_MAJOR__019c89bf9e4986b03df85ef2f7f72e6367aec30c55fe59a76329e81e716e3e1d",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260227..20260228-20260305_151704-70b0f1f2-t1__FULLSCAN_MAJOR",
+      "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+      "source_decision": "PROMOTE"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094633-d5dbd181-t1__FULLSCAN_MAJOR__ff80c569bcaa0490aa4ffb44aa9a9c286eda5828222da2a9996fe20a1495eacf": {
+      "candidate_status": "NEW",
+      "context_policy_hash": "f756f7b0f12df61d157dd774c78c59da2bf953f535e855c12d73beb56086ae85",
+      "decision_tier": "PROMOTE",
+      "det_pass": 35,
+      "det_skipped": 7,
+      "det_supported": 35,
+      "export_ts_utc": "2026-03-06T09:51:55Z",
+      "guards": {
+        "G1_EVIDENCE": "PASS",
+        "G2_DETERMINISM": "PASS",
+        "G3_RESOURCE": "PASS",
+        "G4_MARK_CONTEXT": "WARN",
+        "G5_FUNDING_CONTEXT": "PASS",
+        "G6_OI_CONTEXT": "PASS"
+      },
+      "max_elapsed_sec": 65.74,
+      "max_rss_kb": 324688.0,
+      "notes": "",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094633-d5dbd181-t1__FULLSCAN_MAJOR__ff80c569bcaa0490aa4ffb44aa9a9c286eda5828222da2a9996fe20a1495eacf",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094633-d5dbd181-t1__FULLSCAN_MAJOR",
+      "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+      "source_decision": "PROMOTE"
+    },
+    "multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR__b56c960fa2b5365433d20003eae450803cc5929382ae44940b179c73487bc969": {
+      "candidate_status": "NEW",
+      "context_policy_hash": "f756f7b0f12df61d157dd774c78c59da2bf953f535e855c12d73beb56086ae85",
+      "decision_tier": "PROMOTE",
+      "det_pass": 10,
+      "det_skipped": 2,
+      "det_supported": 10,
+      "export_ts_utc": "2026-03-06T10:33:00Z",
+      "guards": {
+        "G1_EVIDENCE": "PASS",
+        "G2_DETERMINISM": "PASS",
+        "G3_RESOURCE": "PASS",
+        "G4_MARK_CONTEXT": "WARN",
+        "G5_FUNDING_CONTEXT": "PASS",
+        "G6_OI_CONTEXT": "PASS"
+      },
+      "max_elapsed_sec": 23.46,
+      "max_rss_kb": 562684.0,
+      "notes": "",
+      "pack_id": "multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR__b56c960fa2b5365433d20003eae450803cc5929382ae44940b179c73487bc969",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR",
+      "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+      "source_decision": "PROMOTE"
+    },
+    "multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR__9709a89edd8ac89da2f29e17cf403c04ce1488383aff7204e582bd1a70243325": {
+      "candidate_status": "NEW",
+      "context_policy_hash": "",
+      "decision_tier": "PROMOTE",
+      "det_pass": 45,
+      "det_skipped": 9,
+      "det_supported": 45,
+      "export_ts_utc": "2026-03-06T09:15:42Z",
+      "guards": {
+        "G1_EVIDENCE": "PASS",
+        "G2_DETERMINISM": "PASS",
+        "G3_RESOURCE": "PASS"
+      },
+      "max_elapsed_sec": 290.3,
+      "max_rss_kb": 2121568.0,
+      "notes": "",
+      "pack_id": "multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR__9709a89edd8ac89da2f29e17cf403c04ce1488383aff7204e582bd1a70243325",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR",
+      "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+      "source_decision": "PROMOTE"
+    }
+  },
+  "latest_by_tier": {
+    "PROMOTE": [
+      {
+        "candidate_status": "NEW",
+        "context_policy_hash": "",
+        "decision_tier": "PROMOTE",
+        "det_pass": 45,
+        "det_skipped": 9,
+        "det_supported": 45,
+        "export_ts_utc": "2026-03-06T09:15:42Z",
+        "guards": {
+          "G1_EVIDENCE": "PASS",
+          "G2_DETERMINISM": "PASS",
+          "G3_RESOURCE": "PASS"
+        },
+        "max_elapsed_sec": 283.01,
+        "max_rss_kb": 2305968.0,
+        "notes": "",
+        "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_083648__FULLSCAN_MAJOR__ebd38ebaf46bc6e517de467e8934695a51b2ddfaa11fd85c6c3cd7e3aa2c37d9",
+        "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_083648__FULLSCAN_MAJOR",
+        "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+        "source_decision": "PROMOTE"
+      },
+      {
+        "candidate_status": "NEW",
+        "context_policy_hash": "",
+        "decision_tier": "PROMOTE",
+        "det_pass": 45,
+        "det_skipped": 9,
+        "det_supported": 45,
+        "export_ts_utc": "2026-03-06T09:15:42Z",
+        "guards": {
+          "G1_EVIDENCE": "PASS",
+          "G2_DETERMINISM": "PASS",
+          "G3_RESOURCE": "PASS"
+        },
+        "max_elapsed_sec": 286.96,
+        "max_rss_kb": 2303252.0,
+        "notes": "",
+        "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_092410-67fecfdd-t1__FULLSCAN_MAJOR__69497c795097c9ae2f088717297d039f279126d919515ba75c95931a0f7dcdeb",
+        "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_092410-67fecfdd-t1__FULLSCAN_MAJOR",
+        "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+        "source_decision": "PROMOTE"
+      },
+      {
+        "candidate_status": "NEW",
+        "context_policy_hash": "",
+        "decision_tier": "PROMOTE",
+        "det_pass": 45,
+        "det_skipped": 9,
+        "det_supported": 45,
+        "export_ts_utc": "2026-03-06T09:15:42Z",
+        "guards": {
+          "G1_EVIDENCE": "PASS",
+          "G2_DETERMINISM": "PASS",
+          "G3_RESOURCE": "PASS"
+        },
+        "max_elapsed_sec": 285.84,
+        "max_rss_kb": 2117556.0,
+        "notes": "",
+        "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_143035-3a902547-t1__FULLSCAN_MAJOR__1b6f450b5fdc49667e1a8876dc3ebe7e852f9b681f074025f0f408840c4bc1d6",
+        "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_143035-3a902547-t1__FULLSCAN_MAJOR",
+        "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+        "source_decision": "PROMOTE"
+      },
+      {
+        "candidate_status": "NEW",
+        "context_policy_hash": "",
+        "decision_tier": "PROMOTE",
+        "det_pass": 45,
+        "det_skipped": 9,
+        "det_supported": 45,
+        "export_ts_utc": "2026-03-06T09:15:42Z",
+        "guards": {
+          "G1_EVIDENCE": "PASS",
+          "G2_DETERMINISM": "PASS",
+          "G3_RESOURCE": "PASS"
+        },
+        "max_elapsed_sec": 292.3,
+        "max_rss_kb": 2125480.0,
+        "notes": "",
+        "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_140837-a1512783-t2__FULLSCAN_MAJOR__8736983bb5e4c7826c7d88085a27231e2fb834bc9a2f4e6cfcf149988c4330e8",
+        "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_140837-a1512783-t2__FULLSCAN_MAJOR",
+        "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+        "source_decision": "PROMOTE"
+      },
+      {
+        "candidate_status": "NEW",
+        "context_policy_hash": "",
+        "decision_tier": "PROMOTE",
+        "det_pass": 35,
+        "det_skipped": 7,
+        "det_supported": 35,
+        "export_ts_utc": "2026-03-06T09:15:42Z",
+        "guards": {
+          "G1_EVIDENCE": "PASS",
+          "G2_DETERMINISM": "PASS",
+          "G3_RESOURCE": "PASS"
+        },
+        "max_elapsed_sec": 54.5,
+        "max_rss_kb": 268996.0,
+        "notes": "",
+        "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260227-20260305_151319-51538807-t1__FULLSCAN_MAJOR__8ac2b96b23fa74bc83b194c6873debdbd2fe5d3c46556b1ef0a8725a137a758a",
+        "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260227-20260305_151319-51538807-t1__FULLSCAN_MAJOR",
+        "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+        "source_decision": "PROMOTE"
+      },
+      {
+        "candidate_status": "NEW",
+        "context_policy_hash": "",
+        "decision_tier": "PROMOTE",
+        "det_pass": 35,
+        "det_skipped": 7,
+        "det_supported": 35,
+        "export_ts_utc": "2026-03-06T09:15:42Z",
+        "guards": {
+          "G1_EVIDENCE": "PASS",
+          "G2_DETERMINISM": "PASS",
+          "G3_RESOURCE": "PASS"
+        },
+        "max_elapsed_sec": 59.2,
+        "max_rss_kb": 292500.0,
+        "notes": "",
+        "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260227..20260228-20260305_151704-70b0f1f2-t1__FULLSCAN_MAJOR__019c89bf9e4986b03df85ef2f7f72e6367aec30c55fe59a76329e81e716e3e1d",
+        "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260227..20260228-20260305_151704-70b0f1f2-t1__FULLSCAN_MAJOR",
+        "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+        "source_decision": "PROMOTE"
+      },
+      {
+        "candidate_status": "NEW",
+        "context_policy_hash": "",
+        "decision_tier": "PROMOTE",
+        "det_pass": 45,
+        "det_skipped": 9,
+        "det_supported": 45,
+        "export_ts_utc": "2026-03-06T09:15:42Z",
+        "guards": {
+          "G1_EVIDENCE": "PASS",
+          "G2_DETERMINISM": "PASS",
+          "G3_RESOURCE": "PASS"
+        },
+        "max_elapsed_sec": 290.3,
+        "max_rss_kb": 2121568.0,
+        "notes": "",
+        "pack_id": "multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR__9709a89edd8ac89da2f29e17cf403c04ce1488383aff7204e582bd1a70243325",
+        "pack_path": "/home/deploy/quantlab-evidence-archive/20260305_slim/multi-hypothesis-phase5-mini-fullscan-trade-state-20260305_072046__FULLSCAN_MAJOR",
+        "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+        "source_decision": "PROMOTE"
+      },
+      {
+        "candidate_status": "NEW",
+        "context_policy_hash": "f756f7b0f12df61d157dd774c78c59da2bf953f535e855c12d73beb56086ae85",
+        "decision_tier": "PROMOTE",
+        "det_pass": 35,
+        "det_skipped": 7,
+        "det_supported": 35,
+        "export_ts_utc": "2026-03-06T09:51:55Z",
+        "guards": {
+          "G1_EVIDENCE": "PASS",
+          "G2_DETERMINISM": "PASS",
+          "G3_RESOURCE": "PASS",
+          "G4_MARK_CONTEXT": "WARN",
+          "G5_FUNDING_CONTEXT": "PASS",
+          "G6_OI_CONTEXT": "PASS"
+        },
+        "max_elapsed_sec": 65.74,
+        "max_rss_kb": 324688.0,
+        "notes": "",
+        "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094633-d5dbd181-t1__FULLSCAN_MAJOR__ff80c569bcaa0490aa4ffb44aa9a9c286eda5828222da2a9996fe20a1495eacf",
+        "pack_path": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094633-d5dbd181-t1__FULLSCAN_MAJOR",
+        "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+        "source_decision": "PROMOTE"
+      },
+      {
+        "candidate_status": "NEW",
+        "context_policy_hash": "f756f7b0f12df61d157dd774c78c59da2bf953f535e855c12d73beb56086ae85",
+        "decision_tier": "PROMOTE",
+        "det_pass": 10,
+        "det_skipped": 2,
+        "det_supported": 10,
+        "export_ts_utc": "2026-03-06T10:33:00Z",
+        "guards": {
+          "G1_EVIDENCE": "PASS",
+          "G2_DETERMINISM": "PASS",
+          "G3_RESOURCE": "PASS",
+          "G4_MARK_CONTEXT": "WARN",
+          "G5_FUNDING_CONTEXT": "PASS",
+          "G6_OI_CONTEXT": "PASS"
+        },
+        "max_elapsed_sec": 23.46,
+        "max_rss_kb": 562684.0,
+        "notes": "",
+        "pack_id": "multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR__b56c960fa2b5365433d20003eae450803cc5929382ae44940b179c73487bc969",
+        "pack_path": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-day-benchmark-binance-trade-20260104-20260306_102926__FULLSCAN_MAJOR",
+        "policy_hash": "359ff0dc78b34a0687af1d406c76bdf9488f533de21d80da86c86a507e1ade89",
+        "source_decision": "PROMOTE"
+      }
+    ],
+    "PROMOTE_STRONG": []
+  },
+  "latest_export_ts_utc": "2026-03-06T10:33:00Z",
+  "record_count": 9
+}

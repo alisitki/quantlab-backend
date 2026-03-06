@@ -1,0 +1,10 @@
+[Unit]
+Description=QuantLab BigHunt Scheduler
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=deploy
+WorkingDirectory=/home/deploy/quantlab-backend
+ExecStart=/usr/bin/python3 /home/deploy/quantlab-backend/tools/phase5_big_hunt_scheduler_v1.py --max-jobs 20 --session-wall-budget-min 360 --sleep-between-jobs-sec 20 --sleep-jitter-sec 10 --failure-backoff-sec 120 --stop-after-failures 1 --stale-running-min 180 --active-window-start 21:00 --active-window-end 08:00 --active-window-tz Europe/Istanbul
+Nice=10

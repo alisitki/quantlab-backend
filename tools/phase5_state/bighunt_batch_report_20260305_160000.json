@@ -1,0 +1,39 @@
+{
+  "active_window": {
+    "end": "08:00",
+    "ignored": false,
+    "local_time": "19:00",
+    "start": "21:00",
+    "tz": "Europe/Istanbul"
+  },
+  "counts": {
+    "budget_stops": 0,
+    "done": 0,
+    "failed": 0,
+    "processed": 0,
+    "reclaimed_running": 0,
+    "skipped": 1
+  },
+  "dry_run": true,
+  "failures": [],
+  "finished_ts_utc": "2026-03-05T16:00:00Z",
+  "index_path": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json",
+  "max_jobs": 1,
+  "max_tries": 2,
+  "processed": [],
+  "promote_new_count": 0,
+  "queue_path": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl",
+  "session_wall_budget_min": 0.0,
+  "sleep_config": {
+    "failure_backoff_sec": 120.0,
+    "sleep_between_jobs_sec": 30.0,
+    "sleep_jitter_sec": 10.0
+  },
+  "started_ts_utc": "2026-03-05T16:00:00Z",
+  "stop_policy": {
+    "stale_running_min": 180.0,
+    "stop_after_failures": 1
+  },
+  "stop_reason": "NOOP_OUTSIDE_ACTIVE_WINDOW local_time=19:00 tz=Europe/Istanbul window=21:00..08:00",
+  "wall_used_min": 0.0
+}

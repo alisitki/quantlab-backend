@@ -1,0 +1,12 @@
+[Unit]
+Description=Run QuantLab BigHunt Scheduler periodically
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=30min
+Timezone=Europe/Istanbul
+Persistent=true
+Unit=quantlab-bighunt-scheduler.service
+
+[Install]
+WantedBy=timers.target

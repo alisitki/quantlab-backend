@@ -8,7 +8,8 @@ import { createRequire } from 'node:module';
 const require = createRequire(new URL('../core/package.json', import.meta.url));
 const dotenv = require('dotenv');
 
-dotenv.config({ path: new URL('../core/.env', import.meta.url).pathname, override: true });
+// Keep repo defaults from core/.env, but let explicit caller env win.
+dotenv.config({ path: new URL('../core/.env', import.meta.url).pathname, override: false });
 
 function envBool(val) {
   return val === '1' || val === 'true' || val === 'yes';
@@ -170,18 +171,33 @@ async function main() {
 
   try {
     const result = await runner.run({ handleSignals: false });
+    const executionSummary = runner.getExecutionSummary();
     clearInterval(heartbeat);
     const output = {
       live_run_id: result.live_run_id,
       started_at: result.started_at,
       finished_at: result.finished_at,
-      stop_reason: result.stop_reason
+      stop_reason: result.stop_reason,
+      execution_summary: executionSummary || {
+        snapshot_present: false,
+        positions_count: 0,
+        fills_count: 0,
+        total_realized_pnl: null,
+        total_unrealized_pnl: null,
+        equity: null,
+        max_position_value: null
+      }
     };
     await writeFile('/tmp/quantlab-soft-live.json', JSON.stringify(output));
     console.log(JSON.stringify({ event: 'soft_live_done', ...output }));
   } catch (err) {
     clearInterval(heartbeat);
-    console.error(JSON.stringify({ event: 'soft_live_error', error: err.message || String(err) }));
+    console.error(JSON.stringify({
+      event: 'soft_live_error',
+      error: err.message || String(err),
+      error_name: err?.name || null,
+      error_stack: err?.stack || null
+    }));
     process.exit(1);
   }
 }

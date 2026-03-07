@@ -1,0 +1,39 @@
+{
+  "schema_version": "shadow_execution_review_queue_v0",
+  "generated_ts_utc": "2026-03-07T15:33:06Z",
+  "source_operator_snapshot": "tools/shadow_state/shadow_operator_snapshot_v0.json",
+  "operator_snapshot_generated_ts_utc": "2026-03-07T15:20:12Z",
+  "selected_count": 3,
+  "items": [
+    {
+      "review_rank": 1,
+      "source_rank": 1,
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590",
+      "trend_class": "STABLE",
+      "trend_direction": "FLAT",
+      "trend_attention_flag": "true",
+      "review_priority_bucket": "HIGH",
+      "review_reason_short": "stable flat execution trend, attention active"
+    },
+    {
+      "review_rank": 2,
+      "source_rank": 2,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260208..20260208-20260307_034832-0180ff20-t1__FULLSCAN_MAJOR__65f7f57b37b7eb88e3d6d3ce0a5cfd5ca153cf3c5254ea651fe2b8c30ef9d88f",
+      "trend_class": "NO_HISTORY",
+      "trend_direction": "UNKNOWN",
+      "trend_attention_flag": "false",
+      "review_priority_bucket": "LOW",
+      "review_reason_short": "no execution trend history"
+    },
+    {
+      "review_rank": 3,
+      "source_rank": 3,
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR__3ae0e007060d81a7180ef37ac6ce9b44a0baa407b2edb9c69a835ffb62783ad8",
+      "trend_class": "NO_HISTORY",
+      "trend_direction": "UNKNOWN",
+      "trend_attention_flag": "false",
+      "review_priority_bucket": "LOW",
+      "review_reason_short": "no execution trend history"
+    }
+  ]
+}

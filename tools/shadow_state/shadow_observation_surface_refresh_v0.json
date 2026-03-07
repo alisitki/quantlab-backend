@@ -1,0 +1,16 @@
+{
+  "candidate_review_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/phase6_candidate_review_v0.py --state-dir /home/deploy/quantlab-backend/tools/phase6_state --observation-index /home/deploy/quantlab-backend/tools/shadow_state/shadow_observation_index_v0.json --observation-history /home/deploy/quantlab-backend/tools/shadow_state/shadow_observation_history_v0.jsonl --recent-observation-hours 24.0",
+  "candidate_review_exit_code": 0,
+  "candidate_review_json": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review.json",
+  "candidate_review_tsv": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review.tsv",
+  "dry_run": false,
+  "generated_ts_utc": "2026-03-07T13:39:26Z",
+  "schema_version": "shadow_observation_surface_refresh_v0",
+  "shadow_state_dir": "/home/deploy/quantlab-backend/tools/shadow_state",
+  "state_dir": "/home/deploy/quantlab-backend/tools/phase6_state",
+  "sync_ok": true,
+  "watchlist_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/shadow_candidate_bridge_v0.py --state-dir /home/deploy/quantlab-backend/tools/phase6_state --out-dir /home/deploy/quantlab-backend/tools/shadow_state --top-n 3",
+  "watchlist_exit_code": 0,
+  "watchlist_json": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_watchlist_v0.json",
+  "watchlist_tsv": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_watchlist_v0.tsv"
+}

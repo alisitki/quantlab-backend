@@ -196,6 +196,33 @@ export class LiveStrategyRunner {
   get liveRunId() { return this.#liveRunId; }
   get decisionCount() { return this.#runtime.decisions.length; }
   get decisionHash() { return this.#runtime.decisionHash; }
+  getExecutionSummary() {
+    if (!this.#runtime || typeof this.#runtime.getSnapshot !== 'function') return null;
+    const snapshot = this.#runtime.getSnapshot();
+    const executionState = snapshot?.executionState;
+    if (!executionState || typeof executionState !== 'object') return null;
+    const positions = executionState.positions && typeof executionState.positions === 'object'
+      ? executionState.positions
+      : {};
+    const fillsCount = Number.isFinite(executionState.fillsCount)
+      ? Number(executionState.fillsCount)
+      : Array.isArray(executionState.fills)
+        ? executionState.fills.length
+        : 0;
+    const toFiniteNumber = (value) => {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : null;
+    };
+    return {
+      snapshot_present: true,
+      positions_count: Object.keys(positions).length,
+      fills_count: fillsCount,
+      total_realized_pnl: toFiniteNumber(executionState.totalRealizedPnl),
+      total_unrealized_pnl: toFiniteNumber(executionState.totalUnrealizedPnl),
+      equity: toFiniteNumber(executionState.equity),
+      max_position_value: toFiniteNumber(executionState.maxPositionValue)
+    };
+  }
 
   stop(reason = 'MANUAL_STOP') {
     this.#stopRequested = true;

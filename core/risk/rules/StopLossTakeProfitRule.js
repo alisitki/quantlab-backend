@@ -45,6 +45,7 @@ export class StopLossTakeProfitRule {
     if (!ctx.execution) return null;
 
     const state = ctx.execution.snapshot();
+    if (!state || !state.positions) return null;
     const ts_event = event.ts_event;
 
     for (const [symbol, pos] of Object.entries(state.positions)) {

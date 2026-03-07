@@ -24,6 +24,7 @@ DEFAULT_INVENTORY_BUCKET = "quantlab-compact"
 DEFAULT_INVENTORY_KEY = "compacted/_state.json"
 DEFAULT_INVENTORY_S3_TOOL = "/tmp/s3_compact_tool.py"
 DEFAULT_LANE_POLICY = "tools/phase5_state/lane_policy_v0.json"
+DEFAULT_PHASE6_STATE_DIR = "tools/phase6_state"
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -215,6 +216,69 @@ def review_command() -> List[str]:
     return ["python3", "tools/phase6_candidate_review_v0.py"]
 
 
+def v2_command(pack_path: str) -> List[str]:
+    return ["python3", "tools/phase6_promotion_guards_v2.py", "--pack", str(pack_path)]
+
+
+def new_pack_paths_from_batch_report(path: str) -> List[str]:
+    raw = str(path or "").strip()
+    if not raw:
+        return []
+    report_path = Path(raw)
+    if not report_path.exists() or report_path.is_dir():
+        return []
+    obj = json.loads(report_path.read_text(encoding="utf-8"))
+    processed = list(obj.get("processed") or [])
+    pack_paths = []
+    for row in processed:
+        if not isinstance(row, dict):
+            continue
+        if str(row.get("final_status", "")).strip() != "DONE":
+            continue
+        archive_dir = str(row.get("archive_dir", "")).strip()
+        if archive_dir:
+            pack_paths.append(archive_dir)
+    return sorted(set(pack_paths))
+
+
+def phase6_v2_auto_apply(
+    pack_paths: Sequence[str],
+    *,
+    repo: Path,
+    runner: Callable[[List[str], Path], Dict[str, Any]],
+) -> Dict[str, Any]:
+    results: List[Dict[str, Any]] = []
+    invoked_count = 0
+    record_appended_count = 0
+    failed_count = 0
+    for pack_path in sorted({str(p).strip() for p in pack_paths if str(p).strip()}):
+        invoked_count += 1
+        result = runner(v2_command(pack_path), repo)
+        kv = dict(result.get("kv") or {})
+        exit_code = int(result.get("exit_code", 0) or 0)
+        record_appended = str(kv.get("record_appended", "")).strip().lower() == "true"
+        if record_appended:
+            record_appended_count += 1
+        if exit_code != 0:
+            failed_count += 1
+        results.append(
+            {
+                "pack_path": pack_path,
+                "exit_code": exit_code,
+                "decision": str(kv.get("decision", "")).strip(),
+                "record_appended": "true" if record_appended else "false",
+                "stderr_tail": "\n".join(str(result.get("stderr", "")).splitlines()[-20:]),
+            }
+        )
+    return {
+        "pack_count": len(sorted({str(p).strip() for p in pack_paths if str(p).strip()})),
+        "invoked_count": invoked_count,
+        "record_appended_count": record_appended_count,
+        "failed_count": failed_count,
+        "packs": results,
+    }
+
+
 def planner_summary(result: Dict[str, Any]) -> Dict[str, Any]:
     kv = dict(result.get("kv") or {})
     return {
@@ -300,9 +364,17 @@ def run_orchestrator(
             "top_pack_id": "",
             "top_score": "",
         },
+        "phase6_v2": {
+            "pack_count": 0,
+            "invoked_count": 0,
+            "record_appended_count": 0,
+            "failed_count": 0,
+            "packs": [],
+        },
         "commands": {
             "planner": planner_command(args),
             "scheduler": scheduler_command(args),
+            "phase6_v2": [],
             "candidate_export": export_command(),
             "candidate_review": review_command(),
         },
@@ -350,6 +422,19 @@ def run_orchestrator(
             report["finished_ts_utc"] = utc_now_iso()
             write_report(report_path, report)
             return 2, report, report_path
+        new_pack_paths = new_pack_paths_from_batch_report(str(report["scheduler"].get("batch_report_path", "")))
+        report["commands"]["phase6_v2"] = [v2_command(pack_path) for pack_path in new_pack_paths]
+        report["phase6_v2"] = phase6_v2_auto_apply(new_pack_paths, repo=repo, runner=runner)
+        if int(report["phase6_v2"].get("failed_count", 0) or 0) != 0:
+            report["status"] = "FAIL_PHASE6_V2_AUTO_APPLY"
+            tails = []
+            for item in report["phase6_v2"].get("packs", []):
+                if int(item.get("exit_code", 0) or 0) != 0:
+                    tails.append(f"{item.get('pack_path','')}: {item.get('stderr_tail','')}")
+            report["phase6_v2"]["stderr_tail"] = "\n".join(tails[-20:])
+            report["finished_ts_utc"] = utc_now_iso()
+            write_report(report_path, report)
+            return 2, report, report_path
 
     export_result = runner(export_command(), repo)
     review_result = runner(review_command(), repo)
@@ -393,6 +478,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(f"scheduler_failed_count={report['scheduler']['failed_count']}")
         print(f"scheduler_promote_new_count={report['scheduler']['promote_new_count']}")
         print(f"scheduler_batch_report_path={report['scheduler']['batch_report_path']}")
+        print(f"phase6_v2_pack_count={report['phase6_v2']['pack_count']}")
+        print(f"phase6_v2_invoked_count={report['phase6_v2']['invoked_count']}")
+        print(f"phase6_v2_record_appended_count={report['phase6_v2']['record_appended_count']}")
+        print(f"phase6_v2_failed_count={report['phase6_v2']['failed_count']}")
     print(f"candidate_count_total={report['candidate']['candidate_count_total']}")
     print(f"strong_count={report['candidate']['strong_count']}")
     print(f"review_count={report['candidate']['review_count']}")

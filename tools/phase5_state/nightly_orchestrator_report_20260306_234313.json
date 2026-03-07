@@ -1,0 +1,102 @@
+{
+  "candidate": {
+    "candidate_count_total": 114,
+    "export_exit_code": 0,
+    "review_count": 114,
+    "review_exit_code": 0,
+    "strong_count": 0,
+    "top_pack_id": "multi-hypothesis-phase5-day-benchmark-binance-trade-20260303-20260306_122929__FULLSCAN_MAJOR__ddc202fbb2ed6b765494fd68ed2aa0d9d3dd4a0049c29a8b5e9c9788201677f4",
+    "top_score": "58.443460"
+  },
+  "commands": {
+    "candidate_export": [
+      "python3",
+      "tools/phase6_candidate_export_v0.py"
+    ],
+    "candidate_review": [
+      "python3",
+      "tools/phase6_candidate_review_v0.py"
+    ],
+    "planner": [
+      "python3",
+      "tools/phase5_big_hunt_plan_v2.py",
+      "--exchanges",
+      "binance,bybit,okx",
+      "--streams",
+      "trade,bbo",
+      "--window-days",
+      "1",
+      "--max-symbols",
+      "20",
+      "--per-run-timeout-min",
+      "12",
+      "--state-dir",
+      "tools/phase5_state",
+      "--inventory-state-json",
+      "/tmp/compacted__state.json",
+      "--inventory-bucket",
+      "quantlab-compact",
+      "--inventory-key",
+      "compacted/_state.json",
+      "--inventory-s3-tool",
+      "/tmp/s3_compact_tool.py",
+      "--all-dates",
+      "--require-quality-pass"
+    ],
+    "scheduler": [
+      "python3",
+      "tools/phase5_big_hunt_scheduler_v1.py",
+      "--max-jobs",
+      "20",
+      "--session-wall-budget-min",
+      "360.0",
+      "--sleep-between-jobs-sec",
+      "20.0",
+      "--sleep-jitter-sec",
+      "10.0",
+      "--failure-backoff-sec",
+      "120.0",
+      "--stop-after-failures",
+      "1",
+      "--stale-running-min",
+      "180.0",
+      "--active-window-start",
+      "20:00",
+      "--active-window-end",
+      "07:00",
+      "--active-window-tz",
+      "Europe/Istanbul",
+      "--state-dir",
+      "tools/phase5_state",
+      "--inventory-state-json",
+      "/tmp/compacted__state.json",
+      "--inventory-bucket",
+      "quantlab-compact",
+      "--inventory-key",
+      "compacted/_state.json",
+      "--inventory-s3-tool",
+      "/tmp/s3_compact_tool.py",
+      "--inventory-require-quality-pass"
+    ]
+  },
+  "finished_ts_utc": "2026-03-07T02:10:08Z",
+  "planner": {
+    "added_count": 0,
+    "exit_code": 0,
+    "skipped_done_count": 103,
+    "skipped_existing_count": 173,
+    "windows_total": 276
+  },
+  "scheduler": {
+    "batch_report_path": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_batch_report_20260307_021008.json",
+    "command_preview": "",
+    "done_count": 20,
+    "dry_run": false,
+    "exit_code": 0,
+    "failed_count": 0,
+    "jobs_processed": 20,
+    "promote_new_count": 20
+  },
+  "started_ts_utc": "2026-03-06T23:43:13Z",
+  "status": "OK"
+}

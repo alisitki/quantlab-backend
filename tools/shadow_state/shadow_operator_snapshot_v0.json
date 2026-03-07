@@ -1,0 +1,91 @@
+{
+  "schema_version": "shadow_operator_snapshot_v0",
+  "generated_ts_utc": "2026-03-07T15:20:12Z",
+  "source_watchlist": "tools/shadow_state/shadow_watchlist_v0.json",
+  "watchlist_generated_ts_utc": "2026-03-07T14:09:53Z",
+  "selected_count": 3,
+  "items": [
+    {
+      "rank": 1,
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590",
+      "decision_tier": "PROMOTE_STRONG",
+      "score": "84.534273",
+      "exchange": "bybit",
+      "stream": "bbo",
+      "symbols": [
+        "bnbusdt"
+      ],
+      "observation_status": "OBSERVED_PASS",
+      "next_action_hint": "ALREADY_OBSERVED_GOOD",
+      "reobserve_status": "RECENTLY_OBSERVED",
+      "observation_last_outcome_short": "PASS(82)",
+      "pnl_interpretation": "FLAT_NO_FILLS",
+      "pnl_attention_flag": "false",
+      "latest_realized_sign": "FLAT",
+      "latest_unrealized_sign": "FLAT",
+      "outcome_class": "STABLE_FLAT",
+      "latest_vs_recent_consistency": "CONSISTENT",
+      "outcome_attention_flag": "true",
+      "outcome_review_short": "latest and recent outcomes both lean flat, but attention remains active",
+      "recent_observation_trail": "2026-03-07T13:39:26Z/PASS(82)/STREAM_END | 2026-03-07T12:52:02Z/PASS(15)/STREAM_END | 2026-03-07T12:06:25Z/PASS(42)/STREAM_END",
+      "combined_status_short": "OBSERVED_PASS/FLAT_NO_FILLS"
+    },
+    {
+      "rank": 2,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260208..20260208-20260307_034832-0180ff20-t1__FULLSCAN_MAJOR__65f7f57b37b7eb88e3d6d3ce0a5cfd5ca153cf3c5254ea651fe2b8c30ef9d88f",
+      "decision_tier": "PROMOTE_STRONG",
+      "score": "77.456613",
+      "exchange": "binance",
+      "stream": "bbo",
+      "symbols": [
+        "adausdt",
+        "avaxusdt",
+        "bnbusdt",
+        "linkusdt"
+      ],
+      "observation_status": "NEW",
+      "next_action_hint": "READY_TO_OBSERVE",
+      "reobserve_status": "NOT_OBSERVED",
+      "observation_last_outcome_short": "NO_HISTORY",
+      "pnl_interpretation": "UNKNOWN",
+      "pnl_attention_flag": "false",
+      "latest_realized_sign": "UNKNOWN",
+      "latest_unrealized_sign": "UNKNOWN",
+      "outcome_class": "UNKNOWN",
+      "latest_vs_recent_consistency": "UNKNOWN",
+      "outcome_attention_flag": "false",
+      "outcome_review_short": "",
+      "recent_observation_trail": "",
+      "combined_status_short": "NEW/UNKNOWN"
+    },
+    {
+      "rank": 3,
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR__3ae0e007060d81a7180ef37ac6ce9b44a0baa407b2edb9c69a835ffb62783ad8",
+      "decision_tier": "PROMOTE_STRONG",
+      "score": "84.219813",
+      "exchange": "bybit",
+      "stream": "trade",
+      "symbols": [
+        "avaxusdt",
+        "bnbusdt",
+        "ltcusdt",
+        "solusdt",
+        "xrpusdt"
+      ],
+      "observation_status": "NEW",
+      "next_action_hint": "READY_TO_OBSERVE",
+      "reobserve_status": "NOT_OBSERVED",
+      "observation_last_outcome_short": "NO_HISTORY",
+      "pnl_interpretation": "UNKNOWN",
+      "pnl_attention_flag": "false",
+      "latest_realized_sign": "UNKNOWN",
+      "latest_unrealized_sign": "UNKNOWN",
+      "outcome_class": "UNKNOWN",
+      "latest_vs_recent_consistency": "UNKNOWN",
+      "outcome_attention_flag": "false",
+      "outcome_review_short": "",
+      "recent_observation_trail": "",
+      "combined_status_short": "NEW/UNKNOWN"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "generated_ts_utc": "2026-03-07T14:31:01Z",
+  "latest_by_pack_id": {
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590": {
+      "last_equity": null,
+      "last_fills_count": 0,
+      "last_live_run_id": "bd264cae-7935-4738-9450-8379098e201f",
+      "last_max_position_value": null,
+      "last_observed_at": "2026-03-07T13:39:26Z",
+      "last_pnl_state": "FLAT_NO_FILLS",
+      "last_positions_count": 0,
+      "last_snapshot_present": true,
+      "last_stop_reason": "STREAM_END",
+      "last_total_realized_pnl": 0.0,
+      "last_total_unrealized_pnl": 0.0,
+      "latest_realized_sign": "FLAT",
+      "latest_unrealized_sign": "FLAT",
+      "pnl_attention_flag": false,
+      "pnl_interpretation": "FLAT_NO_FILLS",
+      "recent_attention_count": 2,
+      "recent_flat_count": 1,
+      "recent_gain_count": 0,
+      "recent_loss_count": 0,
+      "recent_pnl_bias": "FLAT_BIAS",
+      "recent_run_count": 3,
+      "run_count": 4,
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590"
+    }
+  },
+  "pack_count": 1,
+  "record_count": 4,
+  "schema_version": "shadow_execution_pack_summary_v0"
+}

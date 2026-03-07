@@ -99,6 +99,65 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             self.assertTrue(report_path.exists())
             self.assertEqual(len(calls), 4)
 
+    def test_phase6_v2_auto_apply_runs_before_candidate_refresh(self):
+        with tempfile.TemporaryDirectory(prefix="nightly_orch_v2_") as td:
+            root = Path(td)
+            state_dir = root / "phase5_state"
+            (root / "tools" / "phase6_state").mkdir(parents=True, exist_ok=True)
+            (root / "tools" / "phase6_state" / "candidate_index.json").write_text(
+                json.dumps({"record_count": 1, "by_tier": {"PROMOTE": 1, "PROMOTE_STRONG": 0}}, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            (root / "tools" / "phase6_state" / "candidate_review.json").write_text(
+                json.dumps({"record_count": 1, "top_candidates": [{"pack_id": "pack-z", "score": "51.0"}]}, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            batch_report_path = state_dir / "bighunt_batch_report_20260307_120000.json"
+            batch_report_path.parent.mkdir(parents=True, exist_ok=True)
+            batch_report_path.write_text(
+                json.dumps(
+                    {
+                        "processed": [
+                            {
+                                "plan_id": "p1",
+                                "final_status": "DONE",
+                                "archive_dir": str(root / "archive" / "pack_new"),
+                                "decision": "PROMOTE",
+                            }
+                        ]
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            calls = []
+
+            def runner(cmd, cwd):
+                calls.append(list(cmd))
+                text = " ".join(cmd)
+                if "phase5_big_hunt_plan_v2.py" in text:
+                    return {"exit_code": 0, "stdout": "added_count=0\nskipped_existing_count=1\nskipped_done_count=0\nwindows_total=1\n", "stderr": "", "kv": {"added_count": "0", "skipped_existing_count": "1", "skipped_done_count": "0", "windows_total": "1"}}
+                if "phase5_big_hunt_scheduler_v1.py" in text:
+                    return {"exit_code": 0, "stdout": f"jobs_processed=1\ndone_count=1\nfailed_count=0\npromote_new_count=1\nbatch_report_path={batch_report_path}\n", "stderr": "", "kv": {"jobs_processed": "1", "done_count": "1", "failed_count": "0", "promote_new_count": "1", "batch_report_path": str(batch_report_path)}}
+                if "phase6_promotion_guards_v2.py" in text:
+                    return {"exit_code": 0, "stdout": "decision=PROMOTE_STRONG\nrecord_appended=true\n", "stderr": "", "kv": {"decision": "PROMOTE_STRONG", "record_appended": "true"}}
+                if "phase6_candidate_export_v0.py" in text:
+                    return {"exit_code": 0, "stdout": "candidate_count_total=2\nstrong_count=1\n", "stderr": "", "kv": {"candidate_count_total": "2", "strong_count": "1"}}
+                if "phase6_candidate_review_v0.py" in text:
+                    return {"exit_code": 0, "stdout": "review_count=2\ntop_pack_id=pack-new\ntop_score=61.0\n", "stderr": "", "kv": {"review_count": "2", "top_pack_id": "pack-new", "top_score": "61.0"}}
+                raise AssertionError(text)
+
+            args = self._args(state_dir, ignore_active_window=True)
+            exit_code, report, _report_path = run_orchestrator(args, repo=root, runner=runner)
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(report["phase6_v2"]["pack_count"], 1)
+            self.assertEqual(report["phase6_v2"]["record_appended_count"], 1)
+            call_text = [" ".join(cmd) for cmd in calls]
+            self.assertLess(call_text.index(next(x for x in call_text if "phase6_promotion_guards_v2.py" in x)), call_text.index(next(x for x in call_text if "phase6_candidate_export_v0.py" in x)))
+
     def test_dry_run_skips_scheduler_but_refreshes_candidate(self):
         with tempfile.TemporaryDirectory(prefix="nightly_orch_dry_") as td:
             root = Path(td)

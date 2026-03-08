@@ -1,0 +1,135 @@
+{
+  "active_window": {
+    "local_time": "16:37",
+    "tz": "Europe/Istanbul",
+    "window": "20:00..07:00"
+  },
+  "candidate": {
+    "candidate_count_total": 93,
+    "review_count": 93,
+    "strong_count": 33,
+    "top_pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590",
+    "top_score": "84.534273"
+  },
+  "commands": {
+    "candidate_export": [
+      "python3",
+      "tools/phase6_candidate_export_v0.py"
+    ],
+    "candidate_review": [
+      "python3",
+      "tools/phase6_candidate_review_v0.py"
+    ],
+    "inventory_refresh": [
+      "python3",
+      "/tmp/s3_compact_tool.py",
+      "get",
+      "quantlab-compact",
+      "compacted/_state.json",
+      "/tmp/compacted__state.json"
+    ],
+    "phase6_v2": [],
+    "planner": [
+      "python3",
+      "tools/phase5_big_hunt_plan_v2.py",
+      "--exchanges",
+      "binance,bybit,okx",
+      "--streams",
+      "trade,bbo",
+      "--window-days",
+      "1",
+      "--max-symbols",
+      "20",
+      "--per-run-timeout-min",
+      "12",
+      "--state-dir",
+      "tools/phase5_state",
+      "--inventory-state-json",
+      "/tmp/compacted__state.json",
+      "--inventory-bucket",
+      "quantlab-compact",
+      "--inventory-key",
+      "compacted/_state.json",
+      "--inventory-s3-tool",
+      "/tmp/s3_compact_tool.py",
+      "--all-dates",
+      "--require-quality-pass"
+    ],
+    "scheduler": [
+      "python3",
+      "tools/phase5_big_hunt_scheduler_v1.py",
+      "--max-jobs",
+      "20",
+      "--session-wall-budget-min",
+      "360.0",
+      "--sleep-between-jobs-sec",
+      "20.0",
+      "--sleep-jitter-sec",
+      "10.0",
+      "--failure-backoff-sec",
+      "120.0",
+      "--stop-after-failures",
+      "1",
+      "--stale-running-min",
+      "180.0",
+      "--active-window-start",
+      "20:00",
+      "--active-window-end",
+      "07:00",
+      "--active-window-tz",
+      "Europe/Istanbul",
+      "--state-dir",
+      "tools/phase5_state",
+      "--inventory-state-json",
+      "/tmp/compacted__state.json",
+      "--inventory-bucket",
+      "quantlab-compact",
+      "--inventory-key",
+      "compacted/_state.json",
+      "--inventory-s3-tool",
+      "/tmp/s3_compact_tool.py",
+      "--inventory-require-quality-pass"
+    ],
+    "shadow_refresh": [
+      "python3",
+      "tools/refresh-shadow-derived-surfaces-v0.py",
+      "--skip-candidate-review",
+      "--result-json",
+      "tools/shadow_state/shadow_derived_surface_refresh_v0.json"
+    ]
+  },
+  "finished_ts_utc": "2026-03-08T13:37:45Z",
+  "inventory_refresh": {
+    "bytes": 0,
+    "exit_code": 0,
+    "state_path": "/tmp/compacted__state.json"
+  },
+  "phase6_v2": {
+    "failed_count": 0,
+    "invoked_count": 0,
+    "pack_count": 0,
+    "packs": [],
+    "record_appended_count": 0
+  },
+  "planner": {
+    "added_count": 0,
+    "skipped_done_count": 0,
+    "skipped_existing_count": 0,
+    "windows_total": 0
+  },
+  "scheduler": {
+    "batch_report_path": "",
+    "done_count": 0,
+    "failed_count": 0,
+    "jobs_processed": 0,
+    "promote_new_count": 0
+  },
+  "shadow_refresh": {
+    "exit_code": "not_run",
+    "failed_step": "",
+    "result_json": "tools/shadow_state/shadow_derived_surface_refresh_v0.json",
+    "sync_ok": false
+  },
+  "started_ts_utc": "2026-03-08T13:37:45Z",
+  "status": "NOOP_OUTSIDE_ACTIVE_WINDOW"
+}

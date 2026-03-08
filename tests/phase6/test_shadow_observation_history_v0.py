@@ -53,6 +53,28 @@ def make_summary(*, pack_id: str, live_run_id: str, generated_ts_utc: str, proce
             "equity": 10001.15,
             "max_position_value": 250.0,
         },
+        "execution_events": [
+            {
+                "event_seq": 1,
+                "event_type": "DECISION",
+                "ts_event": "1700000000000000000",
+                "symbol": "BNBUSDT",
+                "side": "BUY",
+                "qty": 1.0,
+                "fill_price": None,
+                "reason": "",
+            },
+            {
+                "event_seq": 2,
+                "event_type": "FILL",
+                "ts_event": "1700000000000000100",
+                "symbol": "BNBUSDT",
+                "side": "BUY",
+                "qty": 1.0,
+                "fill_price": 612.5,
+                "reason": "",
+            },
+        ],
         "note": "verify_soft_live_pass_inferred_from_summary_json_and_audit",
     }
 
@@ -96,6 +118,8 @@ class ShadowObservationHistoryV0Tests(unittest.TestCase):
             self.assertEqual(len(entries), 1)
             self.assertEqual(entries[0]["observation_key"], "pack_a|run_a")
             self.assertEqual(entries[0]["execution_summary"]["fills_count"], 2)
+            self.assertEqual(len(entries[0]["execution_events"]), 2)
+            self.assertEqual(entries[0]["execution_events"][0]["event_type"], "DECISION")
             payload = load_json(index)
             self.assertEqual(payload["schema_version"], "shadow_observation_index_v0")
             self.assertEqual(payload["record_count"], 1)
@@ -210,6 +234,7 @@ class ShadowObservationHistoryV0Tests(unittest.TestCase):
                 processed_event_count=16,
             )
             payload.pop("execution_summary", None)
+            payload.pop("execution_events", None)
             write_json(summary, payload)
 
             res = self._run(
@@ -247,6 +272,7 @@ class ShadowObservationHistoryV0Tests(unittest.TestCase):
                     "max_position_value": None,
                 },
             )
+            self.assertEqual(entries[0]["execution_events"], [])
 
     def test_bad_summary_shape_fails(self):
         with tempfile.TemporaryDirectory(prefix="shadow_history_bad_") as td:

@@ -1,17 +1,17 @@
 {
   "schema_version": "shadow_execution_outcome_review_v0",
-  "generated_ts_utc": "2026-03-07T15:14:02Z",
-  "source_rollup_snapshot": "tools/shadow_state/shadow_execution_rollup_snapshot_v0.json",
-  "rollup_snapshot_generated_ts_utc": "2026-03-07T14:35:30Z",
+  "generated_ts_utc": "2026-03-08T15:35:08Z",
+  "source_rollup_snapshot": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_execution_rollup_snapshot_v0.json",
+  "rollup_snapshot_generated_ts_utc": "2026-03-08T15:35:08Z",
   "selected_count": 1,
   "items": [
     {
       "selected_pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590",
-      "last_observed_at": "2026-03-07T13:39:26Z",
+      "last_observed_at": "2026-03-08T15:35:07Z",
       "outcome_class": "STABLE_FLAT",
       "latest_vs_recent_consistency": "CONSISTENT",
-      "outcome_attention_flag": "true",
-      "outcome_review_short": "latest and recent outcomes both lean flat, but attention remains active"
+      "outcome_attention_flag": "false",
+      "outcome_review_short": "latest and recent outcomes both lean flat"
     }
   ]
 }

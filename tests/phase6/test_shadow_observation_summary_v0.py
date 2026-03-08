@@ -93,6 +93,49 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
                         "metadata": {"live_run_id": "live_run_123"},
                     },
                     {
+                        "action": "DECISION",
+                        "metadata": {
+                            "live_run_id": "live_run_123",
+                            "ts_event": "1700000000000000000",
+                            "symbol": "bnbusdt",
+                            "side": "buy",
+                            "qty": 1,
+                        },
+                    },
+                    {
+                        "action": "RISK_REJECT",
+                        "metadata": {
+                            "live_run_id": "live_run_123",
+                            "ts_event": "1700000000000000100",
+                            "symbol": "bnbusdt",
+                            "side": "sell",
+                            "qty": 0.5,
+                            "risk_reason": "max_position_exceeded",
+                        },
+                    },
+                    {
+                        "action": "FILL",
+                        "metadata": {
+                            "live_run_id": "live_run_123",
+                            "ts_event": "1700000000000000200",
+                            "symbol": "bnbusdt",
+                            "side": "buy",
+                            "qty": 1,
+                            "fill_price": 612.5,
+                        },
+                    },
+                    {
+                        "action": "FILL",
+                        "metadata": {
+                            "live_run_id": "live_run_123",
+                            "ts_event": "1700000000000000300",
+                            "symbol": "bnbusdt",
+                            "side": "buy",
+                            "qty": 0,
+                            "fill_price": 0,
+                        },
+                    },
+                    {
                         "action": "RUN_STOP",
                         "metadata": {"live_run_id": "live_run_123"},
                     },
@@ -152,6 +195,41 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
                     "equity": 10001.15,
                     "max_position_value": 250.0,
                 },
+            )
+            self.assertEqual(
+                payload["execution_events"],
+                [
+                    {
+                        "event_seq": 1,
+                        "event_type": "DECISION",
+                        "ts_event": "1700000000000000000",
+                        "symbol": "BNBUSDT",
+                        "side": "BUY",
+                        "qty": 1.0,
+                        "fill_price": None,
+                        "reason": "",
+                    },
+                    {
+                        "event_seq": 2,
+                        "event_type": "RISK_REJECT",
+                        "ts_event": "1700000000000000100",
+                        "symbol": "BNBUSDT",
+                        "side": "SELL",
+                        "qty": 0.5,
+                        "fill_price": None,
+                        "reason": "max_position_exceeded",
+                    },
+                    {
+                        "event_seq": 3,
+                        "event_type": "FILL",
+                        "ts_event": "1700000000000000200",
+                        "symbol": "BNBUSDT",
+                        "side": "BUY",
+                        "qty": 1.0,
+                        "fill_price": 612.5,
+                        "reason": "",
+                    },
+                ],
             )
 
     def test_missing_summary_file_fails_fast(self):
@@ -219,6 +297,7 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
             self.assertFalse(payload["verify_soft_live_pass"])
             self.assertEqual(payload["processed_event_count"], "unknown")
             self.assertEqual(payload["heartbeat_seen"], "unknown")
+            self.assertEqual(payload["execution_events"], [])
             self.assertIn("audit_spool_missing", payload["note"])
             self.assertEqual(
                 payload["execution_summary"],

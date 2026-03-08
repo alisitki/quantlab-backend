@@ -1,6 +1,6 @@
 {
-  "generated_ts_utc": "2026-03-07T14:07:07Z",
-  "record_count": 52,
+  "generated_ts_utc": "2026-03-08T15:35:08Z",
+  "record_count": 93,
   "scoring_version": "candidate_review_v0",
   "top_candidates": [
     {
@@ -11,10 +11,10 @@
       "det_ratio": "1.000000",
       "det_skipped": "5",
       "det_supported": "1",
-      "last_observation_age_hours": "0.462",
-      "last_observed_at": "2026-03-07T13:39:26Z",
+      "last_observation_age_hours": "0.000",
+      "last_observed_at": "2026-03-08T15:35:07Z",
       "last_pnl_state": "FLAT_NO_FILLS",
-      "last_processed_event_count": "82",
+      "last_processed_event_count": "115",
       "last_stop_reason": "STREAM_END",
       "last_verify_soft_live_pass": "true",
       "latest_realized_sign": "FLAT",
@@ -23,8 +23,8 @@
       "max_rss_kb": "85212.0",
       "next_action_hint": "ALREADY_OBSERVED_GOOD",
       "observation_attention_flag": "false",
-      "observation_count": "4",
-      "observation_last_outcome_short": "PASS(82)",
+      "observation_count": "10",
+      "observation_last_outcome_short": "PASS(115)",
       "observation_recency_bucket": "WITHIN_24H",
       "observation_status": "OBSERVED_PASS",
       "observed_before": "true",
@@ -33,7 +33,7 @@
       "pnl_attention_flag": "false",
       "pnl_interpretation": "FLAT_NO_FILLS",
       "rank": "1",
-      "recent_observation_trail": "2026-03-07T13:39:26Z/PASS(82)/STREAM_END | 2026-03-07T12:52:02Z/PASS(15)/STREAM_END | 2026-03-07T12:06:25Z/PASS(42)/STREAM_END",
+      "recent_observation_trail": "2026-03-08T15:35:07Z/PASS(115)/STREAM_END | 2026-03-08T15:33:27Z/PASS_NO_EVENTS/STREAM_END | 2026-03-08T14:02:35Z/PASS(193)/STREAM_END",
       "reobserve_status": "RECENTLY_OBSERVED",
       "score": "84.534273"
     },
@@ -325,8 +325,8 @@
       "last_verify_soft_live_pass": "unknown",
       "latest_realized_sign": "UNKNOWN",
       "latest_unrealized_sign": "UNKNOWN",
-      "max_elapsed_sec": "73.48",
-      "max_rss_kb": "1263744.0",
+      "max_elapsed_sec": "48.38",
+      "max_rss_kb": "933452.0",
       "next_action_hint": "READY_TO_OBSERVE",
       "observation_attention_flag": "false",
       "observation_count": "0",
@@ -334,14 +334,14 @@
       "observation_recency_bucket": "NEVER_OBSERVED",
       "observation_status": "NEW",
       "observed_before": "false",
-      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260208..20260208-20260307_034832-0180ff20-t1__FULLSCAN_MAJOR__65f7f57b37b7eb88e3d6d3ce0a5cfd5ca153cf3c5254ea651fe2b8c30ef9d88f",
-      "pack_path": "/home/deploy/quantlab-evidence-archive/20260307_slim/multi-hypothesis-phase5-bighunt-binance-bbo-20260208..20260208-20260307_034832-0180ff20-t1__FULLSCAN_MAJOR",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260214..20260214-20260307_193745-90a25ab8-t1__FULLSCAN_MAJOR__d25d0eb32d0b9a3b47bc55e50d0e730f7bd126e4bd24699b209822f620c4f0b5",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260307_slim/multi-hypothesis-phase5-bighunt-binance-bbo-20260214..20260214-20260307_193745-90a25ab8-t1__FULLSCAN_MAJOR",
       "pnl_attention_flag": "false",
       "pnl_interpretation": "UNKNOWN",
       "rank": "10",
       "recent_observation_trail": "",
       "reobserve_status": "NOT_OBSERVED",
-      "score": "77.456613"
+      "score": "79.526407"
     }
   ]
 }

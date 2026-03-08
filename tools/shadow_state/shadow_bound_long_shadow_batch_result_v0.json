@@ -1,0 +1,49 @@
+{
+  "attempted_count": 1,
+  "completed_count": 1,
+  "dry_run": false,
+  "execution_artifacts_synced": true,
+  "execution_ledger_path": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_execution_ledger_v0.jsonl",
+  "execution_ledger_rebuild_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/shadow_execution_ledger_v0.py --history-jsonl /home/deploy/quantlab-backend/tools/shadow_state/shadow_observation_history_v0.jsonl --out-jsonl /home/deploy/quantlab-backend/tools/shadow_state/shadow_execution_ledger_v0.jsonl",
+  "execution_ledger_rebuild_executed": true,
+  "execution_ledger_rebuild_exit_code": 0,
+  "execution_pack_summary_path": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_execution_pack_summary_v0.json",
+  "execution_pack_summary_rebuild_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/shadow_execution_pack_summary_v0.py --ledger-jsonl /home/deploy/quantlab-backend/tools/shadow_state/shadow_execution_ledger_v0.jsonl --out-json /home/deploy/quantlab-backend/tools/shadow_state/shadow_execution_pack_summary_v0.json",
+  "execution_pack_summary_rebuild_executed": true,
+  "execution_pack_summary_rebuild_exit_code": 0,
+  "execution_rebuild_note": "",
+  "generated_ts_utc": "2026-03-08T15:35:08Z",
+  "max_items": 1,
+  "refresh_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/refresh-shadow-derived-surfaces-v0.py --state-dir /home/deploy/quantlab-backend/tools/phase6_state --shadow-state-dir /home/deploy/quantlab-backend/tools/shadow_state --observation-index /home/deploy/quantlab-backend/tools/shadow_state/shadow_observation_index_v0.json --observation-history /home/deploy/quantlab-backend/tools/shadow_state/shadow_observation_history_v0.jsonl --execution-ledger-tool /home/deploy/quantlab-backend/tools/shadow_execution_ledger_v0.py --execution-pack-summary-tool /home/deploy/quantlab-backend/tools/shadow_execution_pack_summary_v0.py --execution-ledger-jsonl /home/deploy/quantlab-backend/tools/shadow_state/shadow_execution_ledger_v0.jsonl --execution-pack-summary-json /home/deploy/quantlab-backend/tools/shadow_state/shadow_execution_pack_summary_v0.json --result-json /home/deploy/quantlab-backend/tools/shadow_state/shadow_derived_surface_refresh_v0.json",
+  "refresh_executed": true,
+  "refresh_exit_code": 0,
+  "refresh_note": "",
+  "refresh_result_json_path": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_derived_surface_refresh_v0.json",
+  "results": [
+    {
+      "audit_spool_dir": "/tmp/quantlab-bound-shadow-audit-v0-real/rank01_multi_hypothesis_phase5_bighunt_bybit_bbo_20260123_20260123_20260306_223808_e82e",
+      "exchange": "bybit",
+      "history_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/shadow_observation_history_v0.py --summary-json /tmp/quantlab-bound-shadow-out-v0-real/rank01_multi_hypothesis_phase5_bighunt_bybit_bbo_20260123_20260123_20260306_223808_e82e/summary.json --history-jsonl /home/deploy/quantlab-backend/tools/shadow_state/shadow_observation_history_v0.jsonl --index-json /home/deploy/quantlab-backend/tools/shadow_state/shadow_observation_index_v0.json",
+      "history_updated": true,
+      "note": "",
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590",
+      "rank": 1,
+      "run_executed": true,
+      "run_exit_code": 0,
+      "stderr_log_path": "/tmp/quantlab-bound-shadow-out-v0-real/rank01_multi_hypothesis_phase5_bighunt_bybit_bbo_20260123_20260123_20260306_223808_e82e/stderr.log",
+      "stdout_log_path": "/tmp/quantlab-bound-shadow-out-v0-real/rank01_multi_hypothesis_phase5_bighunt_bybit_bbo_20260123_20260123_20260306_223808_e82e/stdout.log",
+      "summary_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/shadow_observation_summary_v0.py --watchlist /home/deploy/quantlab-backend/tools/shadow_state/shadow_bound_launch_watchlist_v0.json --pack-id multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590 --summary-json /tmp/quantlab-soft-live.json --audit-spool-dir /tmp/quantlab-bound-shadow-audit-v0-real/rank01_multi_hypothesis_phase5_bighunt_bybit_bbo_20260123_20260123_20260306_223808_e82e --stdout-log /tmp/quantlab-bound-shadow-out-v0-real/rank01_multi_hypothesis_phase5_bighunt_bybit_bbo_20260123_20260123_20260306_223808_e82e/stdout.log --out-json /tmp/quantlab-bound-shadow-out-v0-real/rank01_multi_hypothesis_phase5_bighunt_bybit_bbo_20260123_20260123_20260306_223808_e82e/summary.json",
+      "summary_generated": true,
+      "summary_json_path": "/tmp/quantlab-bound-shadow-out-v0-real/rank01_multi_hypothesis_phase5_bighunt_bybit_bbo_20260123_20260123_20260306_223808_e82e/summary.json",
+      "symbols": [
+        "BNBUSDT"
+      ],
+      "verify_command": "node /home/deploy/quantlab-backend/tools/verify-soft-live.js",
+      "verify_soft_live_pass": true,
+      "wrapper_command": "node /home/deploy/quantlab-backend/tools/run-shadow-watchlist-v0.js --watchlist /home/deploy/quantlab-backend/tools/shadow_state/shadow_bound_launch_watchlist_v0.json --pack-id multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590"
+    }
+  ],
+  "schema_version": "shadow_observation_batch_result_v0",
+  "surfaces_synced": true,
+  "watchlist_path": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_bound_launch_watchlist_v0.json"
+}

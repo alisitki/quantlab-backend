@@ -1,8 +1,8 @@
 {
   "schema_version": "shadow_operator_snapshot_v0",
-  "generated_ts_utc": "2026-03-07T15:20:12Z",
-  "source_watchlist": "tools/shadow_state/shadow_watchlist_v0.json",
-  "watchlist_generated_ts_utc": "2026-03-07T14:09:53Z",
+  "generated_ts_utc": "2026-03-08T15:35:08Z",
+  "source_watchlist": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_watchlist_v0.json",
+  "watchlist_generated_ts_utc": "2026-03-08T15:35:08Z",
   "selected_count": 3,
   "items": [
     {
@@ -18,23 +18,23 @@
       "observation_status": "OBSERVED_PASS",
       "next_action_hint": "ALREADY_OBSERVED_GOOD",
       "reobserve_status": "RECENTLY_OBSERVED",
-      "observation_last_outcome_short": "PASS(82)",
+      "observation_last_outcome_short": "PASS(115)",
       "pnl_interpretation": "FLAT_NO_FILLS",
       "pnl_attention_flag": "false",
       "latest_realized_sign": "FLAT",
       "latest_unrealized_sign": "FLAT",
       "outcome_class": "STABLE_FLAT",
       "latest_vs_recent_consistency": "CONSISTENT",
-      "outcome_attention_flag": "true",
-      "outcome_review_short": "latest and recent outcomes both lean flat, but attention remains active",
-      "recent_observation_trail": "2026-03-07T13:39:26Z/PASS(82)/STREAM_END | 2026-03-07T12:52:02Z/PASS(15)/STREAM_END | 2026-03-07T12:06:25Z/PASS(42)/STREAM_END",
+      "outcome_attention_flag": "false",
+      "outcome_review_short": "latest and recent outcomes both lean flat",
+      "recent_observation_trail": "2026-03-08T15:35:07Z/PASS(115)/STREAM_END | 2026-03-08T15:33:27Z/PASS_NO_EVENTS/STREAM_END | 2026-03-08T14:02:35Z/PASS(193)/STREAM_END",
       "combined_status_short": "OBSERVED_PASS/FLAT_NO_FILLS"
     },
     {
       "rank": 2,
-      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260208..20260208-20260307_034832-0180ff20-t1__FULLSCAN_MAJOR__65f7f57b37b7eb88e3d6d3ce0a5cfd5ca153cf3c5254ea651fe2b8c30ef9d88f",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260214..20260214-20260307_193745-90a25ab8-t1__FULLSCAN_MAJOR__d25d0eb32d0b9a3b47bc55e50d0e730f7bd126e4bd24699b209822f620c4f0b5",
       "decision_tier": "PROMOTE_STRONG",
-      "score": "77.456613",
+      "score": "79.526407",
       "exchange": "binance",
       "stream": "bbo",
       "symbols": [

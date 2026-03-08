@@ -723,6 +723,19 @@ export class StrategyRuntime extends EventEmitter {
       throw new Error('RUNTIME_ERROR: No execution engine attached');
     }
 
+    const cursorTsEvent = this.#context?.cursor?.ts_event;
+    const normalizedTsEvent = cursorTsEvent == null ? null : String(cursorTsEvent);
+    const normalizedSymbol = typeof intent?.symbol === 'string' ? intent.symbol.trim().toUpperCase() : '';
+    const normalizedSide = typeof intent?.side === 'string' ? intent.side.trim().toUpperCase() : '';
+    const normalizedQty = Number(intent?.qty);
+    const hasIntentShape = Boolean(
+      normalizedTsEvent &&
+      normalizedSymbol &&
+      normalizedSide &&
+      Number.isFinite(normalizedQty) &&
+      normalizedQty > 0
+    );
+
     // Risk validation (skip for forced exits marked with _riskForced)
     if (this.#riskManager && !intent._riskForced) {
       const { allowed, reason } = this.#riskManager.allow(intent, this.#context);
@@ -738,6 +751,23 @@ export class StrategyRuntime extends EventEmitter {
         if (this.#metrics) {
           this.#metrics.increment('risk_rejections_total');
         }
+        emitAudit({
+          actor: 'system',
+          action: 'RISK_REJECT',
+          target_type: 'decision',
+          target_id: null,
+          reason: reason,
+          metadata: {
+            live_run_id: this.#replayRunId,
+            strategy_id: this.#config.strategy?.id || null,
+            ts_event: normalizedTsEvent,
+            symbol: normalizedSymbol || null,
+            side: normalizedSide || null,
+            qty: Number.isFinite(normalizedQty) ? normalizedQty : null,
+            risk_reason: reason,
+            risk_forced: false
+          }
+        });
         return {
           fill_id: null,
           status: 'REJECTED',
@@ -768,7 +798,13 @@ export class StrategyRuntime extends EventEmitter {
         live_run_id: this.#replayRunId,
         strategy_id: this.#config.strategy?.id || null,
         decision_id: decisionHash,
-        decision_hash: decisionHash
+        decision_hash: decisionHash,
+        ts_event: normalizedTsEvent,
+        symbol: normalizedSymbol || null,
+        side: normalizedSide || null,
+        qty: Number.isFinite(normalizedQty) ? normalizedQty : null,
+        risk_forced: Boolean(intent?._riskForced),
+        risk_reason: intent?._riskReason || null
       }
     });
     
@@ -782,6 +818,39 @@ export class StrategyRuntime extends EventEmitter {
     
     if (this.#metrics) {
       this.#metrics.increment('fills_total');
+    }
+
+    const fillSymbol = typeof fill?.symbol === 'string' ? fill.symbol.trim().toUpperCase() : '';
+    const fillSide = typeof fill?.side === 'string' ? fill.side.trim().toUpperCase() : '';
+    const fillQty = Number(fill?.qty);
+    const fillPrice = Number(fill?.fillPrice);
+    const fillTsEvent = fill?.ts_event == null ? normalizedTsEvent : String(fill.ts_event);
+    if (
+      hasIntentShape &&
+      fillTsEvent &&
+      fillSymbol &&
+      fillSide &&
+      Number.isFinite(fillQty) &&
+      fillQty > 0 &&
+      Number.isFinite(fillPrice) &&
+      fillPrice > 0
+    ) {
+      emitAudit({
+        actor: 'system',
+        action: 'FILL',
+        target_type: 'fill',
+        target_id: typeof fill?.fill_id === 'string' && fill.fill_id.trim() ? fill.fill_id.trim() : null,
+        reason: null,
+        metadata: {
+          live_run_id: this.#replayRunId,
+          strategy_id: this.#config.strategy?.id || null,
+          ts_event: fillTsEvent,
+          symbol: fillSymbol,
+          side: fillSide,
+          qty: fillQty,
+          fill_price: fillPrice
+        }
+      });
     }
     
     this.emit('fill', fill);

@@ -1,5 +1,5 @@
 {
-  "generated_ts_utc": "2026-03-07T13:39:26Z",
+  "generated_ts_utc": "2026-03-08T15:35:07Z",
   "latest_by_pack_id": {
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590": {
       "last_execution_summary": {
@@ -11,12 +11,12 @@
         "total_realized_pnl": 0.0,
         "total_unrealized_pnl": 0.0
       },
-      "last_live_run_id": "bd264cae-7935-4738-9450-8379098e201f",
-      "last_observed_at": "2026-03-07T13:39:26Z",
-      "last_processed_event_count": 82,
+      "last_live_run_id": "b01b7bd7-5417-4382-bf83-b85f75fe19cd",
+      "last_observed_at": "2026-03-08T15:35:07Z",
+      "last_processed_event_count": 115,
       "last_stop_reason": "STREAM_END",
       "last_verify_soft_live_pass": true,
-      "observation_count": 4,
+      "observation_count": 10,
       "selected_pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590"
     }
   },
@@ -24,12 +24,18 @@
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|c456ded2-daea-4ee3-9c32-0cd3a73ec55a",
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|33f59c90-8f03-4b69-b914-30dce86a7e78",
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|e6164602-1990-4d51-bb2c-073566098a64",
-    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|bd264cae-7935-4738-9450-8379098e201f"
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|bd264cae-7935-4738-9450-8379098e201f",
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|b4a8b7ef-ff95-40de-9492-91edbf59ad5a",
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|ce15187c-11b8-4fad-b1a1-b5737162a07a",
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|9b22d872-6dd1-4661-96d7-85a9224e67db",
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|42b3fd24-fcf1-4c6b-af7c-c884bb3bb8c6",
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|eab0e233-e2db-467d-8e31-5d498727cd4b",
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|b01b7bd7-5417-4382-bf83-b85f75fe19cd"
   ],
   "pack_count": 1,
   "pack_ids": [
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590"
   ],
-  "record_count": 4,
+  "record_count": 10,
   "schema_version": "shadow_observation_index_v0"
 }

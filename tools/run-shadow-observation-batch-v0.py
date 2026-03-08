@@ -24,8 +24,8 @@ DEFAULT_HISTORY_JSONL = ROOT / "tools" / "shadow_state" / "shadow_observation_hi
 DEFAULT_INDEX_JSON = ROOT / "tools" / "shadow_state" / "shadow_observation_index_v0.json"
 DEFAULT_PHASE6_STATE_DIR = ROOT / "tools" / "phase6_state"
 DEFAULT_SHADOW_STATE_DIR = ROOT / "tools" / "shadow_state"
-DEFAULT_REFRESH_TOOL = ROOT / "tools" / "refresh-shadow-observation-surfaces-v0.py"
-DEFAULT_REFRESH_RESULT_JSON = ROOT / "tools" / "shadow_state" / "shadow_observation_surface_refresh_v0.json"
+DEFAULT_REFRESH_TOOL = ROOT / "tools" / "refresh-shadow-derived-surfaces-v0.py"
+DEFAULT_REFRESH_RESULT_JSON = ROOT / "tools" / "shadow_state" / "shadow_derived_surface_refresh_v0.json"
 DEFAULT_EXECUTION_LEDGER_TOOL = ROOT / "tools" / "shadow_execution_ledger_v0.py"
 DEFAULT_EXECUTION_PACK_SUMMARY_TOOL = ROOT / "tools" / "shadow_execution_pack_summary_v0.py"
 DEFAULT_EXECUTION_LEDGER_JSONL = ROOT / "tools" / "shadow_state" / "shadow_execution_ledger_v0.jsonl"
@@ -57,6 +57,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--watchlist", default=str(DEFAULT_WATCHLIST))
     parser.add_argument("--max-items", type=int, default=DEFAULT_MAX_ITEMS)
     parser.add_argument("--strategy", default=DEFAULT_STRATEGY)
+    parser.add_argument("--strategy-config-json", default="{}")
     parser.add_argument("--wrapper-script", default=str(DEFAULT_WRAPPER))
     parser.add_argument("--summary-tool", default=str(DEFAULT_SUMMARY_TOOL))
     parser.add_argument("--history-tool", default=str(DEFAULT_HISTORY_TOOL))
@@ -88,6 +89,13 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         fail(f"invalid_run_max_duration_sec:{args.run_max_duration_sec}")
     if args.heartbeat_ms <= 0:
         fail(f"invalid_heartbeat_ms:{args.heartbeat_ms}")
+    try:
+        parsed_strategy_config = json.loads(str(args.strategy_config_json))
+    except json.JSONDecodeError as exc:
+        fail(f"invalid_strategy_config_json:{exc}")
+    if not isinstance(parsed_strategy_config, dict):
+        fail("strategy_config_json_not_object")
+    args.strategy_config_json = json.dumps(parsed_strategy_config, sort_keys=True)
     return args
 
 
@@ -263,7 +271,7 @@ def build_wrapper_env(args: argparse.Namespace, audit_root: Path) -> dict[str, s
         "STRATEGY_MODE": "OBSERVE_ONLY",
         "POSITION_SIZE_MODE": "ZERO",
         "GO_LIVE_STRATEGY": str(args.strategy),
-        "GO_LIVE_STRATEGY_CONFIG": "{}",
+        "GO_LIVE_STRATEGY_CONFIG": str(args.strategy_config_json),
         "GO_LIVE_DATASET_PARQUET": "live",
         "GO_LIVE_DATASET_META": "live",
         "PROMOTION_GUARD_MIN_DECISIONS_ENABLED": "0",
@@ -388,9 +396,85 @@ def refresh_command(args: argparse.Namespace) -> list[str]:
         str(Path(args.index_json).resolve()),
         "--observation-history",
         str(Path(args.history_jsonl).resolve()),
+        "--execution-ledger-tool",
+        str(Path(args.execution_ledger_tool).resolve()),
+        "--execution-pack-summary-tool",
+        str(Path(args.execution_pack_summary_tool).resolve()),
+        "--execution-ledger-jsonl",
+        str(Path(args.execution_ledger_jsonl).resolve()),
+        "--execution-pack-summary-json",
+        str(Path(args.execution_pack_summary_json).resolve()),
         "--result-json",
         str(Path(args.refresh_result_json).resolve()),
     ]
+
+
+def load_refresh_result(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    try:
+        obj = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(obj, dict):
+        return None
+    return obj
+
+
+def refresh_step(refresh_result: dict[str, Any] | None, name: str) -> dict[str, Any] | None:
+    if not isinstance(refresh_result, dict):
+        return None
+    steps = refresh_result.get("steps")
+    if not isinstance(steps, list):
+        return None
+    for step in steps:
+        if isinstance(step, dict) and str(step.get("name") or "").strip() == name:
+            return step
+    return None
+
+
+def step_executed(step: dict[str, Any] | None) -> bool:
+    if not isinstance(step, dict):
+        return False
+    return str(step.get("status") or "").strip().upper() in {"OK", "FAILED"}
+
+
+def step_exit_code(step: dict[str, Any] | None) -> int | str:
+    if not isinstance(step, dict):
+        return "not_run"
+    raw = step.get("exit_code", "not_run")
+    if isinstance(raw, int):
+        return raw
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return str(raw)
+
+
+def execution_rebuild_note_from_steps(
+    ledger_step: dict[str, Any] | None,
+    pack_step: dict[str, Any] | None,
+    *,
+    refresh_executed: bool,
+    refresh_exit_code: int | str,
+) -> str:
+    if not refresh_executed:
+        return "no_history_updates_for_execution_rebuild"
+    if refresh_exit_code == "timeout":
+        return "refresh_timeout"
+    if isinstance(ledger_step, dict):
+        ledger_status = str(ledger_step.get("status") or "").strip().upper()
+        if ledger_status == "FAILED":
+            return f"execution_ledger_exit_{step_exit_code(ledger_step)}"
+        if ledger_status == "NOT_RUN":
+            return "execution_ledger_not_run"
+    if isinstance(pack_step, dict):
+        pack_status = str(pack_step.get("status") or "").strip().upper()
+        if pack_status == "FAILED":
+            return f"execution_pack_summary_exit_{step_exit_code(pack_step)}"
+        if pack_status == "NOT_RUN":
+            return "execution_pack_summary_not_run"
+    return ""
 
 
 def run_refresh(args: argparse.Namespace, results: list[dict[str, Any]]) -> dict[str, Any]:
@@ -402,90 +486,80 @@ def run_refresh(args: argparse.Namespace, results: list[dict[str, Any]]) -> dict
         "surfaces_synced": False,
         "refresh_command": command_preview(command),
         "refresh_note": "",
+        "execution_ledger_rebuild_executed": False,
+        "execution_ledger_rebuild_exit_code": "not_run",
+        "execution_ledger_path": str(Path(args.execution_ledger_jsonl).resolve()),
+        "execution_ledger_rebuild_command": "",
+        "execution_pack_summary_rebuild_executed": False,
+        "execution_pack_summary_rebuild_exit_code": "not_run",
+        "execution_pack_summary_path": str(Path(args.execution_pack_summary_json).resolve()),
+        "execution_pack_summary_rebuild_command": "",
+        "execution_artifacts_synced": False,
+        "execution_rebuild_note": "",
     }
     if args.dry_run:
+        payload["execution_rebuild_note"] = "no_history_updates_for_execution_rebuild"
         return payload
     if not any(result.get("history_updated") is True for result in results):
         payload["refresh_note"] = "no_history_updates_to_refresh"
+        payload["execution_rebuild_note"] = "no_history_updates_for_execution_rebuild"
         return payload
+
     refresh_res = run_command(command, cwd=ROOT)
     payload["refresh_executed"] = True
     if refresh_res["timed_out"]:
         payload["refresh_exit_code"] = "timeout"
         payload["refresh_note"] = "refresh_timeout"
+        payload["execution_rebuild_note"] = "refresh_timeout"
         return payload
+
     payload["refresh_exit_code"] = int(refresh_res["exit_code"])
+    refresh_result = load_refresh_result(Path(args.refresh_result_json).resolve())
+    failed_step = ""
+    if isinstance(refresh_result, dict):
+        payload["surfaces_synced"] = bool(refresh_result.get("sync_ok"))
+        failed_step = str(refresh_result.get("failed_step") or "").strip()
+
+        ledger_step = refresh_step(refresh_result, "execution_ledger")
+        pack_step = refresh_step(refresh_result, "execution_pack_summary")
+
+        if isinstance(ledger_step, dict):
+            payload["execution_ledger_rebuild_executed"] = step_executed(ledger_step)
+            payload["execution_ledger_rebuild_exit_code"] = step_exit_code(ledger_step)
+            payload["execution_ledger_path"] = str(
+                ledger_step.get("output_path") or payload["execution_ledger_path"]
+            )
+            payload["execution_ledger_rebuild_command"] = str(ledger_step.get("command") or "")
+        if isinstance(pack_step, dict):
+            payload["execution_pack_summary_rebuild_executed"] = step_executed(pack_step)
+            payload["execution_pack_summary_rebuild_exit_code"] = step_exit_code(pack_step)
+            payload["execution_pack_summary_path"] = str(
+                pack_step.get("output_path") or payload["execution_pack_summary_path"]
+            )
+            payload["execution_pack_summary_rebuild_command"] = str(pack_step.get("command") or "")
+        payload["execution_artifacts_synced"] = (
+            isinstance(ledger_step, dict)
+            and str(ledger_step.get("status") or "").strip().upper() == "OK"
+            and isinstance(pack_step, dict)
+            and str(pack_step.get("status") or "").strip().upper() == "OK"
+        )
+        payload["execution_rebuild_note"] = execution_rebuild_note_from_steps(
+            ledger_step,
+            pack_step,
+            refresh_executed=True,
+            refresh_exit_code=payload["refresh_exit_code"],
+        )
+
     if int(refresh_res["exit_code"]) != 0:
-        payload["refresh_note"] = f"refresh_exit_{int(refresh_res['exit_code'])}"
+        payload["refresh_note"] = (
+            f"refresh_exit_{int(refresh_res['exit_code'])}:{failed_step}"
+            if failed_step
+            else f"refresh_exit_{int(refresh_res['exit_code'])}"
+        )
         return payload
-    payload["surfaces_synced"] = True
-    return payload
-
-
-def execution_rebuild_commands(args: argparse.Namespace) -> dict[str, list[str]]:
-    return {
-        "execution_ledger": [
-            sys.executable,
-            str(Path(args.execution_ledger_tool).resolve()),
-            "--history-jsonl",
-            str(Path(args.history_jsonl).resolve()),
-            "--out-jsonl",
-            str(Path(args.execution_ledger_jsonl).resolve()),
-        ],
-        "execution_pack_summary": [
-            sys.executable,
-            str(Path(args.execution_pack_summary_tool).resolve()),
-            "--ledger-jsonl",
-            str(Path(args.execution_ledger_jsonl).resolve()),
-            "--out-json",
-            str(Path(args.execution_pack_summary_json).resolve()),
-        ],
-    }
-
-
-def run_execution_rebuild(args: argparse.Namespace, results: list[dict[str, Any]]) -> dict[str, Any]:
-    commands = execution_rebuild_commands(args)
-    payload = {
-        "execution_ledger_rebuild_executed": False,
-        "execution_ledger_rebuild_exit_code": "not_run",
-        "execution_ledger_path": str(Path(args.execution_ledger_jsonl).resolve()),
-        "execution_ledger_rebuild_command": command_preview(commands["execution_ledger"]),
-        "execution_pack_summary_rebuild_executed": False,
-        "execution_pack_summary_rebuild_exit_code": "not_run",
-        "execution_pack_summary_path": str(Path(args.execution_pack_summary_json).resolve()),
-        "execution_pack_summary_rebuild_command": command_preview(commands["execution_pack_summary"]),
-        "execution_artifacts_synced": False,
-        "execution_rebuild_note": "",
-    }
-    if args.dry_run:
+    if not payload["surfaces_synced"]:
+        payload["refresh_note"] = f"refresh_failed_step_{failed_step}" if failed_step else "refresh_sync_incomplete"
         return payload
-    if not any(result.get("history_updated") is True for result in results):
-        payload["execution_rebuild_note"] = "no_history_updates_for_execution_rebuild"
-        return payload
-
-    ledger_res = run_command(commands["execution_ledger"], cwd=ROOT)
-    payload["execution_ledger_rebuild_executed"] = True
-    if ledger_res["timed_out"]:
-        payload["execution_ledger_rebuild_exit_code"] = "timeout"
-        payload["execution_rebuild_note"] = "execution_ledger_timeout"
-        return payload
-    payload["execution_ledger_rebuild_exit_code"] = int(ledger_res["exit_code"])
-    if int(ledger_res["exit_code"]) != 0:
-        payload["execution_rebuild_note"] = f"execution_ledger_exit_{int(ledger_res['exit_code'])}"
-        return payload
-
-    pack_res = run_command(commands["execution_pack_summary"], cwd=ROOT)
-    payload["execution_pack_summary_rebuild_executed"] = True
-    if pack_res["timed_out"]:
-        payload["execution_pack_summary_rebuild_exit_code"] = "timeout"
-        payload["execution_rebuild_note"] = "execution_pack_summary_timeout"
-        return payload
-    payload["execution_pack_summary_rebuild_exit_code"] = int(pack_res["exit_code"])
-    if int(pack_res["exit_code"]) != 0:
-        payload["execution_rebuild_note"] = f"execution_pack_summary_exit_{int(pack_res['exit_code'])}"
-        return payload
-
-    payload["execution_artifacts_synced"] = True
     return payload
 
 
@@ -494,7 +568,6 @@ def build_batch_result(
     watchlist_path: Path,
     results: list[dict[str, Any]],
     refresh_payload: dict[str, Any],
-    execution_rebuild_payload: dict[str, Any],
 ) -> dict[str, Any]:
     completed_count = sum(
         1
@@ -519,22 +592,16 @@ def build_batch_result(
         "surfaces_synced": bool(refresh_payload["surfaces_synced"]),
         "refresh_command": refresh_payload["refresh_command"],
         "refresh_note": refresh_payload["refresh_note"],
-        "execution_ledger_rebuild_executed": bool(execution_rebuild_payload["execution_ledger_rebuild_executed"]),
-        "execution_ledger_rebuild_exit_code": execution_rebuild_payload["execution_ledger_rebuild_exit_code"],
-        "execution_ledger_path": execution_rebuild_payload["execution_ledger_path"],
-        "execution_ledger_rebuild_command": execution_rebuild_payload["execution_ledger_rebuild_command"],
-        "execution_pack_summary_rebuild_executed": bool(
-            execution_rebuild_payload["execution_pack_summary_rebuild_executed"]
-        ),
-        "execution_pack_summary_rebuild_exit_code": execution_rebuild_payload[
-            "execution_pack_summary_rebuild_exit_code"
-        ],
-        "execution_pack_summary_path": execution_rebuild_payload["execution_pack_summary_path"],
-        "execution_pack_summary_rebuild_command": execution_rebuild_payload[
-            "execution_pack_summary_rebuild_command"
-        ],
-        "execution_artifacts_synced": bool(execution_rebuild_payload["execution_artifacts_synced"]),
-        "execution_rebuild_note": execution_rebuild_payload["execution_rebuild_note"],
+        "execution_ledger_rebuild_executed": bool(refresh_payload["execution_ledger_rebuild_executed"]),
+        "execution_ledger_rebuild_exit_code": refresh_payload["execution_ledger_rebuild_exit_code"],
+        "execution_ledger_path": refresh_payload["execution_ledger_path"],
+        "execution_ledger_rebuild_command": refresh_payload["execution_ledger_rebuild_command"],
+        "execution_pack_summary_rebuild_executed": bool(refresh_payload["execution_pack_summary_rebuild_executed"]),
+        "execution_pack_summary_rebuild_exit_code": refresh_payload["execution_pack_summary_rebuild_exit_code"],
+        "execution_pack_summary_path": refresh_payload["execution_pack_summary_path"],
+        "execution_pack_summary_rebuild_command": refresh_payload["execution_pack_summary_rebuild_command"],
+        "execution_artifacts_synced": bool(refresh_payload["execution_artifacts_synced"]),
+        "execution_rebuild_note": refresh_payload["execution_rebuild_note"],
         "results": results,
     }
 
@@ -549,8 +616,7 @@ def main(argv: list[str] | None = None) -> int:
     items = selected_items(watchlist, int(args.max_items))
     results = [process_item(args, watchlist_path, item, out_dir) for item in items]
     refresh_payload = run_refresh(args, results)
-    execution_rebuild_payload = run_execution_rebuild(args, results)
-    payload = build_batch_result(args, watchlist_path, results, refresh_payload, execution_rebuild_payload)
+    payload = build_batch_result(args, watchlist_path, results, refresh_payload)
     write_json(result_json_path, payload)
 
     print(f"batch_result_json={result_json_path}")

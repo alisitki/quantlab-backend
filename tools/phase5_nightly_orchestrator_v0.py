@@ -25,6 +25,8 @@ DEFAULT_INVENTORY_KEY = "compacted/_state.json"
 DEFAULT_INVENTORY_S3_TOOL = "/tmp/s3_compact_tool.py"
 DEFAULT_LANE_POLICY = "tools/phase5_state/lane_policy_v0.json"
 DEFAULT_PHASE6_STATE_DIR = "tools/phase6_state"
+DEFAULT_SHADOW_DERIVED_REFRESH_TOOL = "tools/refresh-shadow-derived-surfaces-v0.py"
+DEFAULT_SHADOW_DERIVED_REFRESH_RESULT_JSON = "tools/shadow_state/shadow_derived_surface_refresh_v0.json"
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -52,6 +54,8 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     p.add_argument("--inventory-key", default=DEFAULT_INVENTORY_KEY)
     p.add_argument("--inventory-s3-tool", default=DEFAULT_INVENTORY_S3_TOOL)
     p.add_argument("--lane-policy", default=DEFAULT_LANE_POLICY)
+    p.add_argument("--shadow-derived-refresh-tool", default=DEFAULT_SHADOW_DERIVED_REFRESH_TOOL)
+    p.add_argument("--shadow-derived-refresh-result-json", default=DEFAULT_SHADOW_DERIVED_REFRESH_RESULT_JSON)
     p.add_argument(
         "--inventory-require-quality-pass",
         dest="inventory_require_quality_pass",
@@ -208,12 +212,56 @@ def scheduler_command(args: argparse.Namespace) -> List[str]:
     return cmd
 
 
+def inventory_refresh_command(args: argparse.Namespace) -> List[str]:
+    return [
+        "python3",
+        str(args.inventory_s3_tool),
+        "get",
+        str(args.inventory_bucket),
+        str(args.inventory_key),
+        str(args.inventory_state_json),
+    ]
+
+
+def inventory_refresh_summary(result: Dict[str, Any], args: argparse.Namespace) -> Dict[str, Any]:
+    meta: Dict[str, Any] = {}
+    stdout = str(result.get("stdout", "")).strip()
+    if stdout:
+        try:
+            payload = json.loads(stdout)
+        except json.JSONDecodeError:
+            payload = {}
+        if isinstance(payload, dict):
+            meta = payload
+    kv = dict(result.get("kv") or {})
+    raw_bytes = meta.get("bytes", kv.get("bytes", 0))
+    try:
+        byte_count = int(raw_bytes or 0)
+    except (TypeError, ValueError):
+        byte_count = 0
+    state_path = str(meta.get("out", kv.get("out", args.inventory_state_json))).strip()
+    return {
+        "state_path": state_path or str(args.inventory_state_json),
+        "bytes": byte_count,
+    }
+
+
 def export_command() -> List[str]:
     return ["python3", "tools/phase6_candidate_export_v0.py"]
 
 
 def review_command() -> List[str]:
     return ["python3", "tools/phase6_candidate_review_v0.py"]
+
+
+def shadow_derived_refresh_command(args: argparse.Namespace) -> List[str]:
+    return [
+        "python3",
+        str(args.shadow_derived_refresh_tool),
+        "--skip-candidate-review",
+        "--result-json",
+        str(args.shadow_derived_refresh_result_json),
+    ]
 
 
 def v2_command(pack_path: str) -> List[str]:
@@ -327,6 +375,18 @@ def candidate_summary(export_result: Dict[str, Any], review_result: Dict[str, An
     }
 
 
+def shadow_refresh_summary(result: Dict[str, Any], args: argparse.Namespace) -> Dict[str, Any]:
+    kv = dict(result.get("kv") or {})
+    sync_ok_raw = str(kv.get("sync_ok", "")).strip().lower()
+    sync_ok = sync_ok_raw in {"1", "true", "yes"}
+    return {
+        "result_json": str(kv.get("refresh_result_json", args.shadow_derived_refresh_result_json)).strip(),
+        "exit_code": int(result.get("exit_code", 0) or 0),
+        "sync_ok": sync_ok,
+        "failed_step": str(kv.get("failed_step", "")).strip(),
+    }
+
+
 def write_report(path: Path, report: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -344,6 +404,11 @@ def run_orchestrator(
         "started_ts_utc": utc_now_iso(started),
         "finished_ts_utc": "",
         "status": "",
+        "inventory_refresh": {
+            "state_path": str(args.inventory_state_json),
+            "bytes": 0,
+            "exit_code": 0,
+        },
         "planner": {
             "added_count": 0,
             "skipped_existing_count": 0,
@@ -364,6 +429,12 @@ def run_orchestrator(
             "top_pack_id": "",
             "top_score": "",
         },
+        "shadow_refresh": {
+            "result_json": str(args.shadow_derived_refresh_result_json),
+            "exit_code": "not_run",
+            "sync_ok": False,
+            "failed_step": "",
+        },
         "phase6_v2": {
             "pack_count": 0,
             "invoked_count": 0,
@@ -372,11 +443,13 @@ def run_orchestrator(
             "packs": [],
         },
         "commands": {
+            "inventory_refresh": inventory_refresh_command(args),
             "planner": planner_command(args),
             "scheduler": scheduler_command(args),
             "phase6_v2": [],
             "candidate_export": export_command(),
             "candidate_review": review_command(),
+            "shadow_refresh": shadow_derived_refresh_command(args),
         },
     }
 
@@ -398,6 +471,16 @@ def run_orchestrator(
             report["finished_ts_utc"] = utc_now_iso()
             write_report(report_path, report)
             return 0, report, report_path
+
+    inventory_result = runner(inventory_refresh_command(args), repo)
+    report["inventory_refresh"] = inventory_refresh_summary(inventory_result, args)
+    report["inventory_refresh"]["exit_code"] = int(inventory_result.get("exit_code", 0) or 0)
+    if int(inventory_result.get("exit_code", 0) or 0) != 0:
+        report["status"] = "FAIL_INVENTORY_REFRESH"
+        report["inventory_refresh"]["stderr_tail"] = "\n".join(str(inventory_result.get("stderr", "")).splitlines()[-40:])
+        report["finished_ts_utc"] = utc_now_iso()
+        write_report(report_path, report)
+        return 2, report, report_path
 
     planner_result = runner(planner_command(args), repo)
     report["planner"] = planner_summary(planner_result)
@@ -454,6 +537,15 @@ def run_orchestrator(
         write_report(report_path, report)
         return 2, report, report_path
 
+    shadow_refresh_result = runner(shadow_derived_refresh_command(args), repo)
+    report["shadow_refresh"] = shadow_refresh_summary(shadow_refresh_result, args)
+    if int(shadow_refresh_result.get("exit_code", 0) or 0) != 0 or not bool(report["shadow_refresh"]["sync_ok"]):
+        report["status"] = "FAIL_SHADOW_DERIVED_REFRESH"
+        report["shadow_refresh"]["stderr_tail"] = "\n".join(str(shadow_refresh_result.get("stderr", "")).splitlines()[-40:])
+        report["finished_ts_utc"] = utc_now_iso()
+        write_report(report_path, report)
+        return 2, report, report_path
+
     report["status"] = "OK"
     report["finished_ts_utc"] = utc_now_iso()
     write_report(report_path, report)
@@ -464,6 +556,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
     repo = Path(__file__).resolve().parents[1]
     exit_code, report, report_path = run_orchestrator(args, repo=repo)
+    print(f"inventory_refresh_exit_code={report['inventory_refresh']['exit_code']}")
+    print(f"inventory_refresh_state_path={report['inventory_refresh']['state_path']}")
+    print(f"inventory_refresh_bytes={report['inventory_refresh']['bytes']}")
     print(f"status={report['status']}")
     print(f"planner_added_count={report['planner']['added_count']}")
     print(f"planner_skipped_existing_count={report['planner']['skipped_existing_count']}")
@@ -487,6 +582,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"review_count={report['candidate']['review_count']}")
     print(f"top_pack_id={report['candidate']['top_pack_id']}")
     print(f"top_score={report['candidate']['top_score']}")
+    print(f"shadow_refresh_exit_code={report['shadow_refresh']['exit_code']}")
+    print(f"shadow_refresh_sync_ok={'1' if report['shadow_refresh']['sync_ok'] else '0'}")
+    print(f"shadow_refresh_result_json={report['shadow_refresh']['result_json']}")
     print(f"report_path={report_path}")
     return exit_code
 

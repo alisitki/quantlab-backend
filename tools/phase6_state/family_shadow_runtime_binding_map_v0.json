@@ -1,0 +1,19 @@
+{
+  "bindings": {
+    "spread_reversion_v1": {
+      "strategy_config": {
+        "binding_mode": "OBSERVE_ONLY"
+      },
+      "strategy_file": "core/strategy/strategies/SpreadReversionV1Strategy.js",
+      "supported_exchanges": [
+        "bybit",
+        "okx"
+      ],
+      "supported_streams": [
+        "bbo"
+      ]
+    }
+  },
+  "generated_ts_utc": "2026-03-08T00:00:00Z",
+  "schema_version": "family_shadow_runtime_binding_map_v0"
+}

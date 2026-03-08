@@ -232,8 +232,10 @@ def load_execution_pack_summary(path: Path) -> Dict[str, Dict[str, Any]]:
     if not isinstance(obj, dict):
         raise RuntimeError(f"execution_pack_summary_not_object:{path}")
     latest = obj.get("latest_by_pack_id")
+    if latest is None:
+        return {}
     if not isinstance(latest, dict):
-        raise RuntimeError(f"execution_pack_summary_invalid_latest_by_pack_id:{path}")
+        return {}
     return {str(k): dict(v or {}) for k, v in latest.items() if isinstance(v, dict)}
 
 

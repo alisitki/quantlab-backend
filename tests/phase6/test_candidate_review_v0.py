@@ -645,6 +645,16 @@ class CandidateReviewV0Tests(unittest.TestCase):
             self.assertEqual(missing_rows[0]["latest_realized_sign"], "UNKNOWN")
             self.assertEqual(missing_rows[0]["latest_unrealized_sign"], "UNKNOWN")
 
+            execution_pack_summary.write_text("{}\n", encoding="utf-8")
+            invalid_rows_res = self._run(state_dir, execution_pack_summary=execution_pack_summary)
+            self.assertEqual(invalid_rows_res.returncode, 0, msg=invalid_rows_res.stderr)
+            invalid_rows = load_review_rows(state_dir / "candidate_review.tsv")
+            self.assertEqual(invalid_rows[0]["last_pnl_state"], "UNKNOWN")
+            self.assertEqual(invalid_rows[0]["pnl_interpretation"], "UNKNOWN")
+            self.assertEqual(invalid_rows[0]["pnl_attention_flag"], "false")
+            self.assertEqual(invalid_rows[0]["latest_realized_sign"], "UNKNOWN")
+            self.assertEqual(invalid_rows[0]["latest_unrealized_sign"], "UNKNOWN")
+
 
 if __name__ == "__main__":
     unittest.main()

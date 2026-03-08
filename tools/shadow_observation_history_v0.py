@@ -123,6 +123,62 @@ def normalize_execution_summary(value: Any) -> dict[str, Any]:
     }
 
 
+def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        return []
+
+    normalized: list[dict[str, Any]] = []
+    for index, raw_event in enumerate(value, start=1):
+        if not isinstance(raw_event, dict):
+            continue
+        event_type = str(raw_event.get("event_type", "")).strip().upper()
+        ts_event = str(raw_event.get("ts_event", "")).strip()
+        symbol = str(raw_event.get("symbol", "")).strip().upper()
+        side = str(raw_event.get("side", "")).strip().upper()
+        reason = str(raw_event.get("reason", "")).strip()
+        try:
+            event_seq = int(raw_event.get("event_seq", index))
+        except (TypeError, ValueError):
+            event_seq = index
+        try:
+            qty = float(raw_event.get("qty"))
+        except (TypeError, ValueError):
+            continue
+        try:
+            fill_price = float(raw_event.get("fill_price"))
+        except (TypeError, ValueError):
+            fill_price = None
+        if event_type not in {"DECISION", "RISK_REJECT", "FILL"}:
+            continue
+        if not ts_event or not symbol or not side or qty <= 0:
+            continue
+        if event_type == "FILL":
+            if fill_price is None or fill_price <= 0:
+                continue
+        else:
+            fill_price = None
+        normalized.append(
+            {
+                "event_seq": event_seq if event_seq > 0 else index,
+                "event_type": event_type,
+                "ts_event": ts_event,
+                "symbol": symbol,
+                "side": side,
+                "qty": qty,
+                "fill_price": fill_price,
+                "reason": reason,
+            }
+        )
+    return sorted(
+        normalized,
+        key=lambda event: (
+            int(event.get("event_seq", 0)),
+            str(event.get("event_type", "")),
+            str(event.get("ts_event", "")),
+        ),
+    )
+
+
 def validate_summary(summary: dict[str, Any], path: Path) -> None:
     if summary.get("schema_version") != SUMMARY_SCHEMA_VERSION:
         fail(f"summary_schema_mismatch:{path}")
@@ -164,6 +220,7 @@ def build_history_entry(summary: dict[str, Any]) -> dict[str, Any]:
         "processed_event_count": summary.get("processed_event_count", "unknown"),
         "heartbeat_seen": summary.get("heartbeat_seen", "unknown"),
         "execution_summary": normalize_execution_summary(summary.get("execution_summary")),
+        "execution_events": normalize_execution_events(summary.get("execution_events")),
     }
     entry["observation_key"] = f"{entry['selected_pack_id']}|{entry['live_run_id']}"
     return entry

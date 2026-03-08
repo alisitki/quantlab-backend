@@ -37,6 +37,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             "inventory_key": "compacted/_state.json",
             "inventory_s3_tool": "/tmp/s3_compact_tool.py",
             "lane_policy": "tools/phase5_state/lane_policy_v0.json",
+            "shadow_derived_refresh_tool": "tools/refresh-shadow-derived-surfaces-v0.py",
+            "shadow_derived_refresh_result_json": "tools/shadow_state/shadow_derived_surface_refresh_v0.json",
             "inventory_require_quality_pass": True,
             "dry_run": False,
             "now_utc": "2026-03-06T12:00:00Z",
@@ -79,6 +81,13 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             def runner(cmd, cwd):
                 calls.append(list(cmd))
                 text = " ".join(cmd)
+                if "s3_compact_tool.py get" in text:
+                    return {
+                        "exit_code": 0,
+                        "stdout": json.dumps({"bucket": "quantlab-compact", "key": "compacted/_state.json", "out": "/tmp/compacted__state.json", "bytes": 123}) + "\n",
+                        "stderr": "",
+                        "kv": {},
+                    }
                 if "phase5_big_hunt_plan_v2.py" in text:
                     return {"exit_code": 0, "stdout": "added_count=3\nskipped_existing_count=2\nskipped_done_count=1\nwindows_total=6\n", "stderr": "", "kv": {"added_count": "3", "skipped_existing_count": "2", "skipped_done_count": "1", "windows_total": "6"}}
                 if "phase5_big_hunt_scheduler_v1.py" in text:
@@ -87,6 +96,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                     return {"exit_code": 0, "stdout": "candidate_count_total=2\nstrong_count=0\n", "stderr": "", "kv": {"candidate_count_total": "2", "strong_count": "0"}}
                 if "phase6_candidate_review_v0.py" in text:
                     return {"exit_code": 0, "stdout": "review_count=2\ntop_pack_id=pack-1\ntop_score=55.000000\n", "stderr": "", "kv": {"review_count": "2", "top_pack_id": "pack-1", "top_score": "55.000000"}}
+                if "refresh-shadow-derived-surfaces-v0.py" in text:
+                    return {"exit_code": 0, "stdout": "refresh_result_json=/tmp/shadow_refresh.json\nsync_ok=1\nfailed_step=\n", "stderr": "", "kv": {"refresh_result_json": "/tmp/shadow_refresh.json", "sync_ok": "1", "failed_step": ""}}
                 raise AssertionError(text)
 
             args = self._args(state_dir, ignore_active_window=True)
@@ -96,8 +107,9 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             self.assertEqual(report["planner"]["added_count"], 3)
             self.assertEqual(report["scheduler"]["done_count"], 2)
             self.assertEqual(report["candidate"]["top_pack_id"], "pack-1")
+            self.assertTrue(report["shadow_refresh"]["sync_ok"])
             self.assertTrue(report_path.exists())
-            self.assertEqual(len(calls), 4)
+            self.assertEqual(len(calls), 6)
 
     def test_phase6_v2_auto_apply_runs_before_candidate_refresh(self):
         with tempfile.TemporaryDirectory(prefix="nightly_orch_v2_") as td:
@@ -138,6 +150,13 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             def runner(cmd, cwd):
                 calls.append(list(cmd))
                 text = " ".join(cmd)
+                if "s3_compact_tool.py get" in text:
+                    return {
+                        "exit_code": 0,
+                        "stdout": json.dumps({"bucket": "quantlab-compact", "key": "compacted/_state.json", "out": "/tmp/compacted__state.json", "bytes": 123}) + "\n",
+                        "stderr": "",
+                        "kv": {},
+                    }
                 if "phase5_big_hunt_plan_v2.py" in text:
                     return {"exit_code": 0, "stdout": "added_count=0\nskipped_existing_count=1\nskipped_done_count=0\nwindows_total=1\n", "stderr": "", "kv": {"added_count": "0", "skipped_existing_count": "1", "skipped_done_count": "0", "windows_total": "1"}}
                 if "phase5_big_hunt_scheduler_v1.py" in text:
@@ -148,6 +167,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                     return {"exit_code": 0, "stdout": "candidate_count_total=2\nstrong_count=1\n", "stderr": "", "kv": {"candidate_count_total": "2", "strong_count": "1"}}
                 if "phase6_candidate_review_v0.py" in text:
                     return {"exit_code": 0, "stdout": "review_count=2\ntop_pack_id=pack-new\ntop_score=61.0\n", "stderr": "", "kv": {"review_count": "2", "top_pack_id": "pack-new", "top_score": "61.0"}}
+                if "refresh-shadow-derived-surfaces-v0.py" in text:
+                    return {"exit_code": 0, "stdout": "refresh_result_json=/tmp/shadow_refresh.json\nsync_ok=1\nfailed_step=\n", "stderr": "", "kv": {"refresh_result_json": "/tmp/shadow_refresh.json", "sync_ok": "1", "failed_step": ""}}
                 raise AssertionError(text)
 
             args = self._args(state_dir, ignore_active_window=True)
@@ -157,6 +178,7 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             self.assertEqual(report["phase6_v2"]["record_appended_count"], 1)
             call_text = [" ".join(cmd) for cmd in calls]
             self.assertLess(call_text.index(next(x for x in call_text if "phase6_promotion_guards_v2.py" in x)), call_text.index(next(x for x in call_text if "phase6_candidate_export_v0.py" in x)))
+            self.assertLess(call_text.index(next(x for x in call_text if "phase6_candidate_review_v0.py" in x)), call_text.index(next(x for x in call_text if "refresh-shadow-derived-surfaces-v0.py" in x)))
 
     def test_dry_run_skips_scheduler_but_refreshes_candidate(self):
         with tempfile.TemporaryDirectory(prefix="nightly_orch_dry_") as td:
@@ -177,12 +199,21 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             def runner(cmd, cwd):
                 calls.append(list(cmd))
                 text = " ".join(cmd)
+                if "s3_compact_tool.py get" in text:
+                    return {
+                        "exit_code": 0,
+                        "stdout": json.dumps({"bucket": "quantlab-compact", "key": "compacted/_state.json", "out": "/tmp/compacted__state.json", "bytes": 123}) + "\n",
+                        "stderr": "",
+                        "kv": {},
+                    }
                 if "phase5_big_hunt_plan_v2.py" in text:
                     return {"exit_code": 0, "stdout": "would_add_count=4\nwindows_total=4\n", "stderr": "", "kv": {"would_add_count": "4", "windows_total": "4"}}
                 if "phase6_candidate_export_v0.py" in text:
                     return {"exit_code": 0, "stdout": "candidate_count_total=1\nstrong_count=0\n", "stderr": "", "kv": {"candidate_count_total": "1", "strong_count": "0"}}
                 if "phase6_candidate_review_v0.py" in text:
                     return {"exit_code": 0, "stdout": "review_count=1\ntop_pack_id=pack-a\ntop_score=42.0\n", "stderr": "", "kv": {"review_count": "1", "top_pack_id": "pack-a", "top_score": "42.0"}}
+                if "refresh-shadow-derived-surfaces-v0.py" in text:
+                    return {"exit_code": 0, "stdout": "refresh_result_json=/tmp/shadow_refresh.json\nsync_ok=1\nfailed_step=\n", "stderr": "", "kv": {"refresh_result_json": "/tmp/shadow_refresh.json", "sync_ok": "1", "failed_step": ""}}
                 raise AssertionError(text)
 
             args = self._args(state_dir, ignore_active_window=True, dry_run=True)
@@ -191,7 +222,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             self.assertEqual(report["status"], "OK")
             self.assertTrue(report["scheduler"]["dry_run"])
             self.assertEqual(report["planner"]["added_count"], 4)
-            self.assertEqual(len(calls), 3)
+            self.assertTrue(report["shadow_refresh"]["sync_ok"])
+            self.assertEqual(len(calls), 5)
 
     def test_planner_failure_stops_before_scheduler(self):
         with tempfile.TemporaryDirectory(prefix="nightly_orch_fail_") as td:
@@ -202,12 +234,41 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
 
             def runner(cmd, cwd):
                 calls.append(list(cmd))
+                text = " ".join(cmd)
+                if "s3_compact_tool.py get" in text:
+                    return {
+                        "exit_code": 0,
+                        "stdout": json.dumps({"bucket": "quantlab-compact", "key": "compacted/_state.json", "out": "/tmp/compacted__state.json", "bytes": 123}) + "\n",
+                        "stderr": "",
+                        "kv": {},
+                    }
                 return {"exit_code": 2, "stdout": "", "stderr": "planner failed", "kv": {}}
 
             args = self._args(state_dir, ignore_active_window=True)
             exit_code, report, report_path = run_orchestrator(args, repo=root, runner=runner)
             self.assertEqual(exit_code, 2)
             self.assertEqual(report["status"], "FAIL_PLANNER")
+            self.assertTrue(report_path.exists())
+            self.assertEqual(len(calls), 2)
+
+    def test_inventory_refresh_failure_stops_before_planner(self):
+        with tempfile.TemporaryDirectory(prefix="nightly_orch_refresh_fail_") as td:
+            root = Path(td)
+            state_dir = root / "phase5_state"
+
+            calls = []
+
+            def runner(cmd, cwd):
+                calls.append(list(cmd))
+                text = " ".join(cmd)
+                if "s3_compact_tool.py get" in text:
+                    return {"exit_code": 2, "stdout": "", "stderr": "refresh failed", "kv": {}}
+                raise AssertionError(text)
+
+            args = self._args(state_dir, ignore_active_window=True)
+            exit_code, report, report_path = run_orchestrator(args, repo=root, runner=runner)
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(report["status"], "FAIL_INVENTORY_REFRESH")
             self.assertTrue(report_path.exists())
             self.assertEqual(len(calls), 1)
 
@@ -221,6 +282,13 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
 
             def runner(cmd, cwd):
                 text = " ".join(cmd)
+                if "s3_compact_tool.py get" in text:
+                    return {
+                        "exit_code": 0,
+                        "stdout": json.dumps({"bucket": "quantlab-compact", "key": "compacted/_state.json", "out": "/tmp/compacted__state.json", "bytes": 123}) + "\n",
+                        "stderr": "",
+                        "kv": {},
+                    }
                 if "phase5_big_hunt_plan_v2.py" in text:
                     return {"exit_code": 0, "stdout": "added_count=0\nskipped_existing_count=0\nskipped_done_count=0\nwindows_total=0\n", "stderr": "", "kv": {"added_count": "0", "skipped_existing_count": "0", "skipped_done_count": "0", "windows_total": "0"}}
                 if "phase5_big_hunt_scheduler_v1.py" in text:
@@ -229,6 +297,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                     return {"exit_code": 0, "stdout": "candidate_count_total=0\nstrong_count=0\n", "stderr": "", "kv": {"candidate_count_total": "0", "strong_count": "0"}}
                 if "phase6_candidate_review_v0.py" in text:
                     return {"exit_code": 0, "stdout": "review_count=0\ntop_pack_id=\ntop_score=\n", "stderr": "", "kv": {"review_count": "0", "top_pack_id": "", "top_score": ""}}
+                if "refresh-shadow-derived-surfaces-v0.py" in text:
+                    return {"exit_code": 0, "stdout": "refresh_result_json=/tmp/shadow_refresh.json\nsync_ok=1\nfailed_step=\n", "stderr": "", "kv": {"refresh_result_json": "/tmp/shadow_refresh.json", "sync_ok": "1", "failed_step": ""}}
                 raise AssertionError(text)
 
             args = self._args(state_dir, ignore_active_window=True)
@@ -236,6 +306,48 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             loaded = json.loads(report_path.read_text(encoding="utf-8"))
             self.assertEqual(sorted(loaded.keys()), sorted(report.keys()))
             self.assertEqual(sorted(loaded["planner"].keys())[:4], ["added_count", "exit_code", "skipped_done_count", "skipped_existing_count"])
+
+    def test_shadow_refresh_failure_marks_report_failed(self):
+        with tempfile.TemporaryDirectory(prefix="nightly_orch_shadow_refresh_fail_") as td:
+            root = Path(td)
+            state_dir = root / "phase5_state"
+            (root / "tools" / "phase6_state").mkdir(parents=True, exist_ok=True)
+            (root / "tools" / "phase6_state" / "candidate_index.json").write_text(
+                json.dumps({"record_count": 1, "by_tier": {"PROMOTE": 1, "PROMOTE_STRONG": 0}}, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            (root / "tools" / "phase6_state" / "candidate_review.json").write_text(
+                json.dumps({"record_count": 1, "top_candidates": [{"pack_id": "pack-a", "score": "42.0"}]}, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+
+            def runner(cmd, cwd):
+                text = " ".join(cmd)
+                if "s3_compact_tool.py get" in text:
+                    return {
+                        "exit_code": 0,
+                        "stdout": json.dumps({"bucket": "quantlab-compact", "key": "compacted/_state.json", "out": "/tmp/compacted__state.json", "bytes": 123}) + "\n",
+                        "stderr": "",
+                        "kv": {},
+                    }
+                if "phase5_big_hunt_plan_v2.py" in text:
+                    return {"exit_code": 0, "stdout": "added_count=1\nskipped_existing_count=0\nskipped_done_count=0\nwindows_total=1\n", "stderr": "", "kv": {"added_count": "1", "skipped_existing_count": "0", "skipped_done_count": "0", "windows_total": "1"}}
+                if "phase5_big_hunt_scheduler_v1.py" in text:
+                    return {"exit_code": 0, "stdout": "jobs_processed=0\ndone_count=0\nfailed_count=0\npromote_new_count=0\nbatch_report_path=\n", "stderr": "", "kv": {"jobs_processed": "0", "done_count": "0", "failed_count": "0", "promote_new_count": "0", "batch_report_path": ""}}
+                if "phase6_candidate_export_v0.py" in text:
+                    return {"exit_code": 0, "stdout": "candidate_count_total=1\nstrong_count=0\n", "stderr": "", "kv": {"candidate_count_total": "1", "strong_count": "0"}}
+                if "phase6_candidate_review_v0.py" in text:
+                    return {"exit_code": 0, "stdout": "review_count=1\ntop_pack_id=pack-a\ntop_score=42.0\n", "stderr": "", "kv": {"review_count": "1", "top_pack_id": "pack-a", "top_score": "42.0"}}
+                if "refresh-shadow-derived-surfaces-v0.py" in text:
+                    return {"exit_code": 2, "stdout": "refresh_result_json=/tmp/shadow_refresh.json\nsync_ok=0\nfailed_step=watchlist\n", "stderr": "refresh failed", "kv": {"refresh_result_json": "/tmp/shadow_refresh.json", "sync_ok": "0", "failed_step": "watchlist"}}
+                raise AssertionError(text)
+
+            args = self._args(state_dir, ignore_active_window=True)
+            exit_code, report, report_path = run_orchestrator(args, repo=root, runner=runner)
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(report["status"], "FAIL_SHADOW_DERIVED_REFRESH")
+            self.assertEqual(report["shadow_refresh"]["failed_step"], "watchlist")
+            self.assertTrue(report_path.exists())
 
 
 if __name__ == "__main__":

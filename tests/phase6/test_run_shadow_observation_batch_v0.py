@@ -116,12 +116,80 @@ def write_fake_refresh(path: Path, *, exit_code: int = 0) -> None:
             "import sys\n"
             "from pathlib import Path\n"
             "args = sys.argv[1:]\n"
+            "state_dir = Path(args[args.index('--state-dir') + 1])\n"
+            "shadow_state_dir = Path(args[args.index('--shadow-state-dir') + 1])\n"
+            "execution_ledger_jsonl = Path(args[args.index('--execution-ledger-jsonl') + 1])\n"
+            "execution_pack_summary_json = Path(args[args.index('--execution-pack-summary-json') + 1])\n"
             "result_path = Path(args[args.index('--result-json') + 1])\n"
+            "execution_ledger_jsonl.parent.mkdir(parents=True, exist_ok=True)\n"
+            "execution_pack_summary_json.parent.mkdir(parents=True, exist_ok=True)\n"
+            "execution_ledger_jsonl.write_text('{}\\n', encoding='utf-8')\n"
+            "execution_pack_summary_json.write_text('{}\\n', encoding='utf-8')\n"
             "result_path.parent.mkdir(parents=True, exist_ok=True)\n"
-            "result_path.write_text(json.dumps({'schema_version':'shadow_observation_surface_refresh_v0','sync_ok':%s}) + '\\n', encoding='utf-8')\n"
+            "result_path.write_text(json.dumps({'schema_version':'shadow_derived_surface_refresh_v0','sync_ok':%s,'failed_step':'','steps':[{'name':'candidate_review','status':'OK','exit_code':0,'command':'candidate_review','output_path':str(state_dir / 'candidate_review.json')},{'name':'watchlist','status':'OK','exit_code':0,'command':'watchlist','output_path':str(shadow_state_dir / 'shadow_watchlist_v0.json')},{'name':'execution_ledger','status':'OK','exit_code':0,'command':'execution_ledger','output_path':str(execution_ledger_jsonl)},{'name':'execution_pack_summary','status':'OK','exit_code':0,'command':'execution_pack_summary','output_path':str(execution_pack_summary_json)}]}) + '\\n', encoding='utf-8')\n"
             "raise SystemExit(%d)\n"
         )
         % ("True" if exit_code == 0 else "False", exit_code),
+        encoding="utf-8",
+    )
+    path.chmod(0o755)
+
+
+def write_fake_refresh_with_steps(
+    path: Path,
+    *,
+    exit_code: int,
+    sync_ok: bool,
+    failed_step: str,
+    execution_ledger_status: str,
+    execution_ledger_exit_code: int | str,
+    execution_pack_summary_status: str,
+    execution_pack_summary_exit_code: int | str,
+) -> None:
+    path.write_text(
+        (
+            "#!/usr/bin/env python3\n"
+            "import json\n"
+            "import sys\n"
+            "from pathlib import Path\n"
+            "args = sys.argv[1:]\n"
+            "state_dir = Path(args[args.index('--state-dir') + 1])\n"
+            "shadow_state_dir = Path(args[args.index('--shadow-state-dir') + 1])\n"
+            "execution_ledger_jsonl = Path(args[args.index('--execution-ledger-jsonl') + 1])\n"
+            "execution_pack_summary_json = Path(args[args.index('--execution-pack-summary-json') + 1])\n"
+            "result_path = Path(args[args.index('--result-json') + 1])\n"
+            "if %r == 'OK':\n"
+            "    execution_ledger_jsonl.parent.mkdir(parents=True, exist_ok=True)\n"
+            "    execution_ledger_jsonl.write_text('{}\\n', encoding='utf-8')\n"
+            "if %r == 'OK':\n"
+            "    execution_pack_summary_json.parent.mkdir(parents=True, exist_ok=True)\n"
+            "    execution_pack_summary_json.write_text('{}\\n', encoding='utf-8')\n"
+            "payload = {\n"
+            "    'schema_version': 'shadow_derived_surface_refresh_v0',\n"
+            "    'sync_ok': %s,\n"
+            "    'failed_step': %r,\n"
+            "    'steps': [\n"
+            "        {'name': 'candidate_review', 'status': 'OK', 'exit_code': 0, 'command': 'candidate_review', 'output_path': str(state_dir / 'candidate_review.json')},\n"
+            "        {'name': 'watchlist', 'status': 'OK', 'exit_code': 0, 'command': 'watchlist', 'output_path': str(shadow_state_dir / 'shadow_watchlist_v0.json')},\n"
+            "        {'name': 'execution_ledger', 'status': %r, 'exit_code': %r, 'command': 'execution_ledger', 'output_path': str(execution_ledger_jsonl)},\n"
+            "        {'name': 'execution_pack_summary', 'status': %r, 'exit_code': %r, 'command': 'execution_pack_summary', 'output_path': str(execution_pack_summary_json)}\n"
+            "    ]\n"
+            "}\n"
+            "result_path.parent.mkdir(parents=True, exist_ok=True)\n"
+            "result_path.write_text(json.dumps(payload) + '\\n', encoding='utf-8')\n"
+            "raise SystemExit(%d)\n"
+        )
+        % (
+            execution_ledger_status,
+            execution_pack_summary_status,
+            "True" if sync_ok else "False",
+            failed_step,
+            execution_ledger_status,
+            execution_ledger_exit_code,
+            execution_pack_summary_status,
+            execution_pack_summary_exit_code,
+            exit_code,
+        ),
         encoding="utf-8",
     )
     path.chmod(0o755)
@@ -310,7 +378,16 @@ class ShadowObservationBatchV0Tests(unittest.TestCase):
             refresh_json = root / "refresh.json"
             refresh_tool = root / "fake-refresh.py"
             write_fake_wrapper(wrapper)
-            write_fake_refresh(refresh_tool, exit_code=7)
+            write_fake_refresh_with_steps(
+                refresh_tool,
+                exit_code=7,
+                sync_ok=False,
+                failed_step="operator_snapshot",
+                execution_ledger_status="OK",
+                execution_ledger_exit_code=0,
+                execution_pack_summary_status="OK",
+                execution_pack_summary_exit_code=0,
+            )
             write_watchlist(
                 watchlist,
                 [
@@ -370,7 +447,7 @@ class ShadowObservationBatchV0Tests(unittest.TestCase):
             self.assertEqual(payload["refresh_executed"], True)
             self.assertEqual(payload["refresh_exit_code"], 7)
             self.assertEqual(payload["surfaces_synced"], False)
-            self.assertEqual(payload["refresh_note"], "refresh_exit_7")
+            self.assertEqual(payload["refresh_note"], "refresh_exit_7:operator_snapshot")
             self.assertEqual(payload["execution_ledger_rebuild_executed"], True)
             self.assertEqual(payload["execution_ledger_rebuild_exit_code"], 0)
             self.assertEqual(payload["execution_pack_summary_rebuild_executed"], True)
@@ -384,7 +461,7 @@ class ShadowObservationBatchV0Tests(unittest.TestCase):
             self.assertEqual(second["run_exit_code"], 0)
             self.assertEqual(second["history_updated"], True)
 
-    def test_execution_rebuild_failure_is_recorded_separately(self):
+    def test_canonical_refresh_failure_exposes_execution_step_status(self):
         with tempfile.TemporaryDirectory(prefix="shadow_batch_exec_fail_") as td:
             root = Path(td)
             watchlist = root / "watchlist.json"
@@ -399,10 +476,17 @@ class ShadowObservationBatchV0Tests(unittest.TestCase):
             wrapper = root / "fake-wrapper.js"
             refresh_json = root / "refresh.json"
             refresh_tool = root / "fake-refresh.py"
-            fake_execution_ledger_tool = root / "fake-execution-ledger.py"
             write_fake_wrapper(wrapper)
-            write_fake_refresh(refresh_tool)
-            write_fake_python_exit(fake_execution_ledger_tool, exit_code=9)
+            write_fake_refresh_with_steps(
+                refresh_tool,
+                exit_code=2,
+                sync_ok=False,
+                failed_step="execution_ledger",
+                execution_ledger_status="FAILED",
+                execution_ledger_exit_code=9,
+                execution_pack_summary_status="NOT_RUN",
+                execution_pack_summary_exit_code="not_run",
+            )
             write_watchlist(watchlist, [make_item(1, "pack_ok", "bybit", ["BNBUSDT"])])
 
             res = self._run(
@@ -424,10 +508,6 @@ class ShadowObservationBatchV0Tests(unittest.TestCase):
                 str(history_jsonl),
                 "--index-json",
                 str(index_json),
-                "--execution-ledger-tool",
-                str(fake_execution_ledger_tool),
-                "--execution-pack-summary-tool",
-                str(EXECUTION_PACK_SUMMARY_TOOL),
                 "--execution-ledger-jsonl",
                 str(execution_ledger_jsonl),
                 "--execution-pack-summary-json",
@@ -453,13 +533,15 @@ class ShadowObservationBatchV0Tests(unittest.TestCase):
             payload = json.loads(result_json.read_text(encoding="utf-8"))
             self.assertEqual(payload["completed_count"], 1)
             self.assertEqual(payload["refresh_executed"], True)
-            self.assertEqual(payload["surfaces_synced"], True)
+            self.assertEqual(payload["refresh_exit_code"], 2)
+            self.assertEqual(payload["surfaces_synced"], False)
             self.assertEqual(payload["execution_ledger_rebuild_executed"], True)
             self.assertEqual(payload["execution_ledger_rebuild_exit_code"], 9)
             self.assertEqual(payload["execution_pack_summary_rebuild_executed"], False)
             self.assertEqual(payload["execution_pack_summary_rebuild_exit_code"], "not_run")
             self.assertEqual(payload["execution_artifacts_synced"], False)
             self.assertEqual(payload["execution_rebuild_note"], "execution_ledger_exit_9")
+            self.assertEqual(payload["refresh_note"], "refresh_exit_2:execution_ledger")
 
 
 if __name__ == "__main__":

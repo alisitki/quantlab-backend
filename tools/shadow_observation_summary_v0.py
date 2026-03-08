@@ -198,15 +198,56 @@ def normalize_execution_summary(run_summary: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def normalize_execution_event(action: Any, metadata: Any, *, event_seq: int) -> dict[str, Any] | None:
+    if not isinstance(metadata, dict):
+        return None
+    event_type = str(action or "").strip().upper()
+    symbol = str(metadata.get("symbol", "")).strip().upper()
+    side = str(metadata.get("side", "")).strip().upper()
+    ts_event = str(metadata.get("ts_event", "")).strip()
+    reason = str(metadata.get("risk_reason") or metadata.get("reason") or "").strip()
+    try:
+        qty = float(metadata.get("qty"))
+    except (TypeError, ValueError):
+        qty = None
+    try:
+        fill_price = float(metadata.get("fill_price"))
+    except (TypeError, ValueError):
+        fill_price = None
+
+    if event_type not in {"DECISION", "RISK_REJECT", "FILL"}:
+        return None
+    if not ts_event or not symbol or not side or qty is None or qty <= 0:
+        return None
+    if event_type == "FILL":
+        if fill_price is None or fill_price <= 0:
+            return None
+    else:
+        fill_price = None
+
+    return {
+        "event_seq": int(event_seq),
+        "event_type": event_type,
+        "ts_event": ts_event,
+        "symbol": symbol,
+        "side": side,
+        "qty": qty,
+        "fill_price": fill_price,
+        "reason": reason,
+    }
+
+
 def scan_audit(audit_spool_dir: Path, live_run_id: str) -> dict[str, Any]:
     if not audit_spool_dir.exists():
         return {
             "audit_dir_exists": False,
             "audit_run_start_seen": False,
             "audit_run_stop_seen": False,
+            "execution_events": [],
         }
     start_seen = False
     stop_seen = False
+    execution_events: list[dict[str, Any]] = []
     for file_path in sorted(audit_spool_dir.rglob("*.jsonl")):
         try:
             lines = file_path.read_text(encoding="utf-8").splitlines()
@@ -227,10 +268,14 @@ def scan_audit(audit_spool_dir: Path, live_run_id: str) -> dict[str, Any]:
                 start_seen = True
             if action == "RUN_STOP":
                 stop_seen = True
+            normalized_event = normalize_execution_event(action, metadata, event_seq=len(execution_events) + 1)
+            if normalized_event is not None:
+                execution_events.append(normalized_event)
     return {
         "audit_dir_exists": True,
         "audit_run_start_seen": start_seen,
         "audit_run_stop_seen": stop_seen,
+        "execution_events": execution_events,
     }
 
 
@@ -312,6 +357,7 @@ def build_summary(
         "heartbeat_seen": log_info["heartbeat_seen"],
         "heartbeat_count": log_info["heartbeat_count"],
         "execution_summary": normalize_execution_summary(run_summary),
+        "execution_events": list(audit_info["execution_events"]),
         "note": build_note(audit_info, log_info),
     }
 

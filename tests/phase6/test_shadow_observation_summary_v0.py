@@ -74,6 +74,26 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
                     "started_at": "2026-03-07T07:16:21.367Z",
                     "finished_at": "2026-03-07T07:16:43.420Z",
                     "stop_reason": "STREAM_END",
+                    "funding_events": [
+                        {
+                            "event_seq": 1,
+                            "ts_event": "1700000000000",
+                            "exchange": "bybit",
+                            "symbol": "bnbusdt",
+                            "funding_rate": 0.0001,
+                            "next_funding_ts": "1700003600000",
+                        }
+                    ],
+                    "mark_price_events": [
+                        {
+                            "event_seq": 1,
+                            "ts_event": "1700000000000",
+                            "exchange": "bybit",
+                            "symbol": "bnbusdt",
+                            "mark_price": 612.45,
+                            "index_price": 612.4,
+                        }
+                    ],
                     "execution_summary": {
                         "snapshot_present": True,
                         "positions_count": 1,
@@ -82,6 +102,15 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
                         "total_unrealized_pnl": -0.1,
                         "equity": 10001.15,
                         "max_position_value": 250.0,
+                        "positions": {
+                            "bnbusdt": {
+                                "size": 1.0,
+                                "avg_entry_price": 612.5,
+                                "realized_pnl": 1.25,
+                                "unrealized_pnl": -0.1,
+                                "current_price": 612.4,
+                            }
+                        },
                     },
                 },
             )
@@ -122,6 +151,8 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
                             "side": "buy",
                             "qty": 1,
                             "fill_price": 612.5,
+                            "fill_fee": 0.245,
+                            "fill_value": 612.5,
                         },
                     },
                     {
@@ -185,6 +216,32 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
             self.assertTrue(payload["heartbeat_seen"])
             self.assertEqual(payload["heartbeat_count"], 1)
             self.assertEqual(
+                payload["funding_events"],
+                [
+                    {
+                        "event_seq": 1,
+                        "ts_event": "1700000000000",
+                        "exchange": "bybit",
+                        "symbol": "BNBUSDT",
+                        "funding_rate": 0.0001,
+                        "next_funding_ts": "1700003600000",
+                    }
+                ],
+            )
+            self.assertEqual(
+                payload["mark_price_events"],
+                [
+                    {
+                        "event_seq": 1,
+                        "ts_event": "1700000000000",
+                        "exchange": "bybit",
+                        "symbol": "BNBUSDT",
+                        "mark_price": 612.45,
+                        "index_price": 612.4,
+                    }
+                ],
+            )
+            self.assertEqual(
                 payload["execution_summary"],
                 {
                     "snapshot_present": True,
@@ -194,6 +251,16 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
                     "total_unrealized_pnl": -0.1,
                     "equity": 10001.15,
                     "max_position_value": 250.0,
+                    "positions": {
+                        "BNBUSDT": {
+                            "symbol": "BNBUSDT",
+                            "size": 1.0,
+                            "avg_entry_price": 612.5,
+                            "realized_pnl": 1.25,
+                            "unrealized_pnl": -0.1,
+                            "current_price": 612.4,
+                        }
+                    },
                 },
             )
             self.assertEqual(
@@ -207,6 +274,8 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
                         "side": "BUY",
                         "qty": 1.0,
                         "fill_price": None,
+                        "fill_fee": None,
+                        "fill_value": None,
                         "reason": "",
                     },
                     {
@@ -217,6 +286,8 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
                         "side": "SELL",
                         "qty": 0.5,
                         "fill_price": None,
+                        "fill_fee": None,
+                        "fill_value": None,
                         "reason": "max_position_exceeded",
                     },
                     {
@@ -227,6 +298,8 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
                         "side": "BUY",
                         "qty": 1.0,
                         "fill_price": 612.5,
+                        "fill_fee": 0.245,
+                        "fill_value": 612.5,
                         "reason": "",
                     },
                 ],
@@ -298,6 +371,8 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
             self.assertEqual(payload["processed_event_count"], "unknown")
             self.assertEqual(payload["heartbeat_seen"], "unknown")
             self.assertEqual(payload["execution_events"], [])
+            self.assertEqual(payload["funding_events"], [])
+            self.assertEqual(payload["mark_price_events"], [])
             self.assertIn("audit_spool_missing", payload["note"])
             self.assertEqual(
                 payload["execution_summary"],
@@ -309,6 +384,7 @@ class ShadowObservationSummaryV0Tests(unittest.TestCase):
                     "total_unrealized_pnl": None,
                     "equity": None,
                     "max_position_value": None,
+                    "positions": {},
                 },
             )
 

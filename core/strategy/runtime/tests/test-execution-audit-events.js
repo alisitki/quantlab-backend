@@ -94,6 +94,8 @@ test('StrategyRuntime audit persists minimal decision and fill metadata', { conc
           side: intent.side,
           qty: intent.qty,
           fillPrice: 612.5,
+          fillValue: 612.5,
+          fee: 0.245,
           ts_event: intent.ts_event
         };
       },
@@ -122,6 +124,8 @@ test('StrategyRuntime audit persists minimal decision and fill metadata', { conc
   assert.equal(relevant[0].metadata.qty, 1);
   assert.equal(relevant[0].metadata.ts_event, '1700000000000000000');
   assert.equal(relevant[1].metadata.fill_price, 612.5);
+  assert.equal(relevant[1].metadata.fill_fee, 0.245);
+  assert.equal(relevant[1].metadata.fill_value, 612.5);
 });
 
 

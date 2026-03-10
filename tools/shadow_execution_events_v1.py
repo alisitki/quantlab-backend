@@ -87,6 +87,14 @@ def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
             fill_price = float(raw_event.get("fill_price"))
         except (TypeError, ValueError):
             fill_price = None
+        try:
+            fill_fee = float(raw_event.get("fill_fee"))
+        except (TypeError, ValueError):
+            fill_fee = None
+        try:
+            fill_value = float(raw_event.get("fill_value"))
+        except (TypeError, ValueError):
+            fill_value = None
         if event_type not in {"DECISION", "RISK_REJECT", "FILL"}:
             continue
         if not ts_event or not symbol or not side or qty <= 0:
@@ -105,6 +113,8 @@ def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
                 "side": side,
                 "qty": qty,
                 "fill_price": fill_price,
+                "fill_fee": fill_fee if event_type == "FILL" and fill_fee is not None and fill_fee >= 0 else None,
+                "fill_value": fill_value if event_type == "FILL" and fill_value is not None and fill_value > 0 else None,
                 "reason": reason,
             }
         )
@@ -144,6 +154,8 @@ def build_event_rows(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "side": event["side"],
                     "qty": event["qty"],
                     "fill_price": event["fill_price"],
+                    "fill_fee": event.get("fill_fee"),
+                    "fill_value": event.get("fill_value"),
                     "reason": event["reason"],
                 }
             )

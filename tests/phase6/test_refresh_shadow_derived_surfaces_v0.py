@@ -135,6 +135,7 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
             watchlist_tool = root / "watchlist.py"
             execution_ledger_tool = root / "execution_ledger.py"
             execution_events_tool = root / "execution_events.py"
+            futures_paper_ledger_tool = root / "futures_paper_ledger.py"
             trade_ledger_tool = root / "trade_ledger.py"
             execution_pack_summary_tool = root / "execution_pack_summary.py"
             execution_rollup_tool = root / "execution_rollup.py"
@@ -146,6 +147,7 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
             write_watchlist_script(watchlist_tool, trace=trace)
             write_flag_output_script(execution_ledger_tool, trace=trace, step_name="execution_ledger", output_flag="--out-jsonl")
             write_flag_output_script(execution_events_tool, trace=trace, step_name="execution_events", output_flag="--out-jsonl")
+            write_flag_output_script(futures_paper_ledger_tool, trace=trace, step_name="futures_paper_ledger", output_flag="--out-json")
             write_flag_output_script(trade_ledger_tool, trace=trace, step_name="trade_ledger", output_flag="--out-jsonl")
             write_flag_output_script(
                 execution_pack_summary_tool,
@@ -191,6 +193,8 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
                 str(execution_ledger_tool),
                 "--execution-events-tool",
                 str(execution_events_tool),
+                "--futures-paper-ledger-tool",
+                str(futures_paper_ledger_tool),
                 "--trade-ledger-tool",
                 str(trade_ledger_tool),
                 "--execution-pack-summary-tool",
@@ -217,6 +221,7 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
                     "watchlist",
                     "execution_ledger",
                     "execution_events",
+                    "futures_paper_ledger",
                     "trade_ledger",
                     "execution_pack_summary",
                     "execution_rollup_snapshot",
@@ -228,6 +233,7 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
             self.assertTrue((shadow_dir / "shadow_operator_snapshot_v0.json").exists())
             self.assertTrue((shadow_dir / "shadow_execution_review_queue_v0.json").exists())
             self.assertTrue((shadow_dir / "shadow_execution_events_v1.jsonl").exists())
+            self.assertTrue((shadow_dir / "shadow_futures_paper_ledger_v1.json").exists())
             self.assertTrue((shadow_dir / "shadow_trade_ledger_v1.jsonl").exists())
 
     def test_skip_candidate_review_starts_with_watchlist(self):
@@ -245,6 +251,7 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
             watchlist_tool = root / "watchlist.py"
             execution_ledger_tool = root / "execution_ledger.py"
             execution_events_tool = root / "execution_events.py"
+            futures_paper_ledger_tool = root / "futures_paper_ledger.py"
             trade_ledger_tool = root / "trade_ledger.py"
             execution_pack_summary_tool = root / "execution_pack_summary.py"
             execution_rollup_tool = root / "execution_rollup.py"
@@ -256,6 +263,7 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
             write_watchlist_script(watchlist_tool, trace=trace)
             write_flag_output_script(execution_ledger_tool, trace=trace, step_name="execution_ledger", output_flag="--out-jsonl")
             write_flag_output_script(execution_events_tool, trace=trace, step_name="execution_events", output_flag="--out-jsonl")
+            write_flag_output_script(futures_paper_ledger_tool, trace=trace, step_name="futures_paper_ledger", output_flag="--out-json")
             write_flag_output_script(trade_ledger_tool, trace=trace, step_name="trade_ledger", output_flag="--out-jsonl")
             write_flag_output_script(
                 execution_pack_summary_tool,
@@ -302,6 +310,8 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
                 str(execution_ledger_tool),
                 "--execution-events-tool",
                 str(execution_events_tool),
+                "--futures-paper-ledger-tool",
+                str(futures_paper_ledger_tool),
                 "--trade-ledger-tool",
                 str(trade_ledger_tool),
                 "--execution-pack-summary-tool",
@@ -336,6 +346,7 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
             watchlist_tool = root / "watchlist.py"
             execution_ledger_tool = root / "execution_ledger.py"
             execution_events_tool = root / "execution_events.py"
+            futures_paper_ledger_tool = root / "futures_paper_ledger.py"
             trade_ledger_tool = root / "trade_ledger.py"
             execution_pack_summary_tool = root / "execution_pack_summary.py"
             execution_rollup_tool = root / "execution_rollup_fail.py"
@@ -347,6 +358,7 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
             write_watchlist_script(watchlist_tool, trace=trace)
             write_flag_output_script(execution_ledger_tool, trace=trace, step_name="execution_ledger", output_flag="--out-jsonl")
             write_flag_output_script(execution_events_tool, trace=trace, step_name="execution_events", output_flag="--out-jsonl")
+            write_flag_output_script(futures_paper_ledger_tool, trace=trace, step_name="futures_paper_ledger", output_flag="--out-json")
             write_flag_output_script(trade_ledger_tool, trace=trace, step_name="trade_ledger", output_flag="--out-jsonl")
             write_flag_output_script(
                 execution_pack_summary_tool,
@@ -392,6 +404,8 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
                 str(execution_ledger_tool),
                 "--execution-events-tool",
                 str(execution_events_tool),
+                "--futures-paper-ledger-tool",
+                str(futures_paper_ledger_tool),
                 "--trade-ledger-tool",
                 str(trade_ledger_tool),
                 "--execution-pack-summary-tool",
@@ -419,14 +433,15 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
                     "watchlist",
                     "execution_ledger",
                     "execution_events",
+                    "futures_paper_ledger",
                     "trade_ledger",
                     "execution_pack_summary",
                     "execution_rollup_snapshot",
                 ],
             )
-            self.assertEqual(payload["steps"][7]["status"], "NOT_RUN")
             self.assertEqual(payload["steps"][8]["status"], "NOT_RUN")
             self.assertEqual(payload["steps"][9]["status"], "NOT_RUN")
+            self.assertEqual(payload["steps"][10]["status"], "NOT_RUN")
 
 
 if __name__ == "__main__":

@@ -50,8 +50,8 @@ def make_pack(
             write_json(report_dir / f"family_{suffix}_report.json", report)
 
 
-def supported_report(*, family_id: str, exchange: str, stream: str, symbol: str) -> dict:
-    return {
+def supported_report(*, family_id: str, exchange: str, stream: str, symbol: str, pass_signal: bool = True) -> dict:
+    report = {
         "family_id": family_id,
         "status": "ok",
         "exchange": exchange,
@@ -70,6 +70,16 @@ def supported_report(*, family_id: str, exchange: str, stream: str, symbol: str)
             }
         },
     }
+    if family_id == "momentum_v1":
+        report["result"]["selected_cell"].update(
+            {
+                "event_count": 1000,
+                "mean_product": 0.25 if pass_signal else -0.25,
+                "t_stat": 4.0 if pass_signal else -4.0,
+            }
+        )
+        report["result"]["pass_signal"] = pass_signal
+    return report
 
 
 def unsupported_report(*, family_id: str, exchange: str, stream: str, symbol: str) -> dict:
@@ -228,3 +238,87 @@ class CandidateStrategyContractV0Tests(unittest.TestCase):
             item = payload["items"][0]
             self.assertEqual(item["translation_status"], "NOT_TRANSLATABLE_YET")
             self.assertEqual(item["reject_reason"], "MULTIPLE_SUPPORTED_FAMILY_REPORTS")
+
+    def test_selected_primary_family_can_resolve_multi_supported_pack(self):
+        with tempfile.TemporaryDirectory(prefix="candidate_strategy_preferred_family_") as td:
+            root = Path(td)
+            pack = root / "pack_preferred"
+            make_pack(
+                pack,
+                symbols=["btcusdt"],
+                reports_by_symbol={
+                    "btcusdt": [
+                        supported_report(
+                            family_id="momentum_v1",
+                            exchange="binance",
+                            stream="trade",
+                            symbol="btcusdt",
+                            pass_signal=True,
+                        ),
+                        supported_report(
+                            family_id="return_reversal_v1",
+                            exchange="binance",
+                            stream="trade",
+                            symbol="btcusdt",
+                        ),
+                    ]
+                },
+            )
+            candidate_review_tsv = root / "candidate_review.tsv"
+            out_json = root / "candidate_strategy_contract.json"
+            write_candidate_review_tsv(candidate_review_tsv, [make_row(1, "pack_preferred", pack)])
+
+            res = self._run(
+                "--candidate-review-tsv",
+                str(candidate_review_tsv),
+                "--preferred-family-id",
+                "momentum_v1",
+                "--out-json",
+                str(out_json),
+            )
+
+            self.assertEqual(res.returncode, 0, msg=res.stderr)
+            payload = json.loads(out_json.read_text(encoding="utf-8"))
+            self.assertEqual(payload["preferred_family_id"], "momentum_v1")
+            item = payload["items"][0]
+            self.assertEqual(item["translation_status"], "TRANSLATABLE")
+            self.assertEqual(item["strategy_spec"]["family_id"], "momentum_v1")
+            self.assertEqual(item["strategy_spec"]["stream"], "trade")
+
+    def test_momentum_report_without_pass_signal_stays_unsupported(self):
+        with tempfile.TemporaryDirectory(prefix="candidate_strategy_momentum_nopass_") as td:
+            root = Path(td)
+            pack = root / "pack_momentum_no_pass"
+            make_pack(
+                pack,
+                symbols=["btcusdt"],
+                reports_by_symbol={
+                    "btcusdt": [
+                        supported_report(
+                            family_id="momentum_v1",
+                            exchange="binance",
+                            stream="trade",
+                            symbol="btcusdt",
+                            pass_signal=False,
+                        )
+                    ]
+                },
+            )
+            candidate_review_tsv = root / "candidate_review.tsv"
+            out_json = root / "candidate_strategy_contract.json"
+            write_candidate_review_tsv(candidate_review_tsv, [make_row(1, "pack_no_pass", pack)])
+
+            res = self._run(
+                "--candidate-review-tsv",
+                str(candidate_review_tsv),
+                "--preferred-family-id",
+                "momentum_v1",
+                "--out-json",
+                str(out_json),
+            )
+
+            self.assertEqual(res.returncode, 0, msg=res.stderr)
+            payload = json.loads(out_json.read_text(encoding="utf-8"))
+            item = payload["items"][0]
+            self.assertEqual(item["translation_status"], "UNSUPPORTED_FAMILY")
+            self.assertEqual(item["reject_reason"], "NO_SUPPORTED_FAMILY_REPORT")

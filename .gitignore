@@ -61,3 +61,5 @@ evidence/*.tar.gz.sha256
 evidence/*.moved_to.txt
 evidence/*.sha_verify.txt
 evidence/
+tools/phase5_state/
+tools/shadow_state/

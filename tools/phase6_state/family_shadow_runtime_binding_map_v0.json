@@ -1,5 +1,19 @@
 {
   "bindings": {
+    "momentum_v1": {
+      "strategy_config": {
+        "binding_mode": "PAPER_DIRECTIONAL_V1",
+        "orderQty": 1
+      },
+      "strategy_file": "core/strategy/strategies/MomentumV1Strategy.js",
+      "supported_exchanges": [
+        "binance",
+        "okx"
+      ],
+      "supported_streams": [
+        "trade"
+      ]
+    },
     "spread_reversion_v1": {
       "strategy_config": {
         "binding_mode": "OBSERVE_ONLY"

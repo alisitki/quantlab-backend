@@ -1,0 +1,278 @@
+{
+  "schema_version": "hypothesis_family_role_classification_v0",
+  "generated_ts_utc": "2026-03-09T06:07:41Z",
+  "source_hypotheses_readme": "tools/hypotheses/README.md",
+  "source_candidate_review_tsv": "tools/phase6_state/candidate_review.tsv",
+  "source_candidate_strategy_contract_json": "tools/phase6_state/candidate_strategy_contract_v0.json",
+  "source_candidate_strategy_runtime_binding_json": "tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
+  "source_candidate_row_count": 98,
+  "current_multi_hypothesis_family_count": 8,
+  "current_multi_hypothesis_family_ids": [
+    "family_a_patternscanner",
+    "family_b_simple_momentum",
+    "return_reversal_v1",
+    "volatility_clustering_v1",
+    "spread_reversion_v1",
+    "momentum_v1",
+    "volume_vol_link_v1",
+    "jump_reversion_v1"
+  ],
+  "repo_extra_hypothesis_ids": [
+    "latency_leadlag_v1"
+  ],
+  "repo_reality_note": "Current repo reality contains eight family ids in tools/hypotheses/README.md; latency_leadlag_v1 exists in repo code but is outside the current multi-hypothesis contract and candidate pack surface.",
+  "role_bucket_definitions": {
+    "PRIMARY_DIRECTIONAL": "Family signal targets signed future return or signed reversal strongly enough to justify an outright long/short strategy contract once runtime work exists.",
+    "CONTEXT_GUARD": "Family signal measures context, regime, volatility, liquidity, or spread quality that can guard or filter a primary strategy but should not be forced into outright futures direction.",
+    "DISCOVERY_RESEARCH": "Family output is useful for discovery, edge enumeration, or research, but it does not yet define a clean runtime strategy or support/guard contract."
+  },
+  "role_counts": {
+    "DISCOVERY_RESEARCH": 1,
+    "PRIMARY_DIRECTIONAL": 4,
+    "CONTEXT_GUARD": 3
+  },
+  "items": [
+    {
+      "family_id": "family_a_patternscanner",
+      "role": "DISCOVERY_RESEARCH",
+      "rationale": "Family-A reports pattern and edge enumeration metrics (`patternsScanned`, `edgeCandidatesGenerated`, `edgeCandidatesRegistered`, `edges`) rather than a signed forward-return contract.",
+      "hypothesis_source_paths": [
+        "tools/hypotheses/family_a_patternscanner.md"
+      ],
+      "sample_candidate_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_A_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_A_report.json"
+      ],
+      "evidence_paths": [
+        "tools/hypotheses/family_a_patternscanner.md",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_A_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_A_report.json"
+      ],
+      "candidate_report_count": 481,
+      "candidate_pack_count": 98,
+      "translated_spec_count": 0,
+      "bound_shadow_runnable_count": 0,
+      "strategy_translatable_now": false,
+      "runtime_bindable_now": false,
+      "paper_execution_ready_now": false,
+      "support_only_now": false,
+      "not_ready_now": true,
+      "strategy_translation_eligibility": "NOT_FOR_DIRECT_STRATEGY_TRANSLATION",
+      "runtime_binding_eligibility": "NOT_FOR_DIRECT_RUNTIME_BINDING",
+      "paper_execution_eligibility": "RESEARCH_ONLY_NOT_READY",
+      "next_path": "Keep in discovery/edge-mining lane; only promote later if a separate edge-to-guard or edge-to-direction contract is defined."
+    },
+    {
+      "family_id": "family_b_simple_momentum",
+      "role": "PRIMARY_DIRECTIONAL",
+      "rationale": "Simple-momentum family explicitly measures forward signed return (`mean_forward_return`, `t_stat`, `signal_support`) after strong prior returns, so it is the closest legacy trade-stream continuation family to an outright directional contract.",
+      "hypothesis_source_paths": [
+        "tools/hypotheses/family_b_simple_momentum.md",
+        "tools/hypotheses/simple_momentum_family.py"
+      ],
+      "sample_candidate_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR/runs/avaxusdt/artifacts/multi_hypothesis/family_B_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_B_report.json"
+      ],
+      "evidence_paths": [
+        "tools/hypotheses/family_b_simple_momentum.md",
+        "tools/hypotheses/simple_momentum_family.py",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR/runs/avaxusdt/artifacts/multi_hypothesis/family_B_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_B_report.json"
+      ],
+      "candidate_report_count": 353,
+      "candidate_pack_count": 62,
+      "translated_spec_count": 0,
+      "bound_shadow_runnable_count": 0,
+      "strategy_translatable_now": false,
+      "runtime_bindable_now": false,
+      "paper_execution_ready_now": false,
+      "support_only_now": false,
+      "not_ready_now": true,
+      "strategy_translation_eligibility": "PRIMARY_DIRECTIONAL_NOT_IN_TRANSLATOR_SCOPE",
+      "runtime_binding_eligibility": "NO_RUNTIME_BINDING_FOR_FAMILY",
+      "paper_execution_eligibility": "PRIMARY_DIRECTIONAL_BUT_NOT_IMPLEMENTED",
+      "next_path": "Add a narrow single-symbol trade-stream translator slice, then bind a family-specific paper runtime after the directional open/close contract is written."
+    },
+    {
+      "family_id": "return_reversal_v1",
+      "role": "PRIMARY_DIRECTIONAL",
+      "rationale": "Return-reversal scores `past_return_bps * fwd_return_bps` and passes only when `mean_product < 0` with negative `t_stat`, which is a signed price-reversion contract.",
+      "hypothesis_source_paths": [
+        "tools/hypotheses/return_reversal_v1.py"
+      ],
+      "sample_candidate_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_return_reversal_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_return_reversal_report.json"
+      ],
+      "evidence_paths": [
+        "tools/hypotheses/return_reversal_v1.py",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_return_reversal_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_return_reversal_report.json"
+      ],
+      "candidate_report_count": 481,
+      "candidate_pack_count": 98,
+      "translated_spec_count": 0,
+      "bound_shadow_runnable_count": 0,
+      "strategy_translatable_now": false,
+      "runtime_bindable_now": false,
+      "paper_execution_ready_now": false,
+      "support_only_now": false,
+      "not_ready_now": true,
+      "strategy_translation_eligibility": "PRIMARY_DIRECTIONAL_NOT_IN_TRANSLATOR_SCOPE",
+      "runtime_binding_eligibility": "NO_RUNTIME_BINDING_FOR_FAMILY",
+      "paper_execution_eligibility": "PRIMARY_DIRECTIONAL_BUT_NOT_IMPLEMENTED",
+      "next_path": "Prioritize as a future primary directional family: define a one-position return-reversion paper contract, then add translator and binding support."
+    },
+    {
+      "family_id": "volatility_clustering_v1",
+      "role": "CONTEXT_GUARD",
+      "rationale": "Volatility-clustering measures correlation between past and future realized volatility (`corr`, `t_stat`) and does not predict signed price direction.",
+      "hypothesis_source_paths": [
+        "tools/hypotheses/volatility_clustering_v1.py"
+      ],
+      "sample_candidate_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volatility_clustering_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volatility_clustering_report.json"
+      ],
+      "evidence_paths": [
+        "tools/hypotheses/volatility_clustering_v1.py",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volatility_clustering_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volatility_clustering_report.json"
+      ],
+      "candidate_report_count": 481,
+      "candidate_pack_count": 98,
+      "translated_spec_count": 0,
+      "bound_shadow_runnable_count": 0,
+      "strategy_translatable_now": false,
+      "runtime_bindable_now": false,
+      "paper_execution_ready_now": false,
+      "support_only_now": true,
+      "not_ready_now": false,
+      "strategy_translation_eligibility": "NOT_FOR_DIRECT_STRATEGY_TRANSLATION",
+      "runtime_binding_eligibility": "NOT_FOR_DIRECT_RUNTIME_BINDING",
+      "paper_execution_eligibility": "SUPPORT_ONLY_CONTEXT_FAMILY",
+      "next_path": "Treat as regime/volatility context for guards, risk throttles, or watchlist hints rather than an outright long/short family."
+    },
+    {
+      "family_id": "spread_reversion_v1",
+      "role": "CONTEXT_GUARD",
+      "rationale": "Spread-reversion scores `past_change * fwd_change` on spread width and passes when `mean_product < 0`; this supports spread-quality reversion context, not honest outright futures direction.",
+      "hypothesis_source_paths": [
+        "tools/hypotheses/spread_reversion_v1.py"
+      ],
+      "sample_candidate_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_spread_reversion_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_spread_reversion_report.json"
+      ],
+      "evidence_paths": [
+        "tools/hypotheses/spread_reversion_v1.py",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_spread_reversion_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_spread_reversion_report.json"
+      ],
+      "candidate_report_count": 481,
+      "candidate_pack_count": 98,
+      "translated_spec_count": 4,
+      "bound_shadow_runnable_count": 4,
+      "strategy_translatable_now": true,
+      "runtime_bindable_now": true,
+      "paper_execution_ready_now": false,
+      "support_only_now": true,
+      "not_ready_now": false,
+      "strategy_translation_eligibility": "CURRENT_TRANSLATABLE_SUBSET_PRESENT",
+      "runtime_binding_eligibility": "CURRENT_BOUND_RUNTIME_PRESENT",
+      "paper_execution_eligibility": "SUPPORT_ONLY_NON_DIRECTIONAL",
+      "next_path": "Keep on the support/guard path. Do not force into outright futures long/short paper execution unless future family evidence adds explicit directional semantics."
+    },
+    {
+      "family_id": "momentum_v1",
+      "role": "PRIMARY_DIRECTIONAL",
+      "rationale": "Momentum-v1 passes when `past_return_bps * fwd_return_bps` is positive with positive `t_stat`, which is an explicit signed continuation contract.",
+      "hypothesis_source_paths": [
+        "tools/hypotheses/momentum_v1.py"
+      ],
+      "sample_candidate_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_momentum_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_momentum_report.json"
+      ],
+      "evidence_paths": [
+        "tools/hypotheses/momentum_v1.py",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_momentum_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_momentum_report.json"
+      ],
+      "candidate_report_count": 481,
+      "candidate_pack_count": 98,
+      "translated_spec_count": 0,
+      "bound_shadow_runnable_count": 0,
+      "strategy_translatable_now": false,
+      "runtime_bindable_now": false,
+      "paper_execution_ready_now": false,
+      "support_only_now": false,
+      "not_ready_now": true,
+      "strategy_translation_eligibility": "PRIMARY_DIRECTIONAL_NOT_IN_TRANSLATOR_SCOPE",
+      "runtime_binding_eligibility": "NO_RUNTIME_BINDING_FOR_FAMILY",
+      "paper_execution_eligibility": "PRIMARY_DIRECTIONAL_BUT_NOT_IMPLEMENTED",
+      "next_path": "Prioritize for direct candidate->strategy translation after spread-reversion is removed from the primary-runtime path expectation."
+    },
+    {
+      "family_id": "volume_vol_link_v1",
+      "role": "CONTEXT_GUARD",
+      "rationale": "Volume-vol-link measures whether activity intensity predicts future realized volatility (`corr`, `mean_activity`, `mean_rv_fwd`) rather than directional return sign.",
+      "hypothesis_source_paths": [
+        "tools/hypotheses/volume_vol_link_v1.py"
+      ],
+      "sample_candidate_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volume_vol_link_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volume_vol_link_report.json"
+      ],
+      "evidence_paths": [
+        "tools/hypotheses/volume_vol_link_v1.py",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volume_vol_link_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volume_vol_link_report.json"
+      ],
+      "candidate_report_count": 481,
+      "candidate_pack_count": 98,
+      "translated_spec_count": 0,
+      "bound_shadow_runnable_count": 0,
+      "strategy_translatable_now": false,
+      "runtime_bindable_now": false,
+      "paper_execution_ready_now": false,
+      "support_only_now": true,
+      "not_ready_now": false,
+      "strategy_translation_eligibility": "NOT_FOR_DIRECT_STRATEGY_TRANSLATION",
+      "runtime_binding_eligibility": "NOT_FOR_DIRECT_RUNTIME_BINDING",
+      "paper_execution_eligibility": "SUPPORT_ONLY_CONTEXT_FAMILY",
+      "next_path": "Use as execution-quality, liquidity, or volatility guard/context input; keep it off the outright strategy runtime path."
+    },
+    {
+      "family_id": "jump_reversion_v1",
+      "role": "PRIMARY_DIRECTIONAL",
+      "rationale": "Jump-reversion uses `mean_signed_reversal` after signed jumps, which is directly tied to directional post-jump reversion.",
+      "hypothesis_source_paths": [
+        "tools/hypotheses/jump_reversion_v1.py"
+      ],
+      "sample_candidate_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_jump_reversion_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_jump_reversion_report.json"
+      ],
+      "evidence_paths": [
+        "tools/hypotheses/jump_reversion_v1.py",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_jump_reversion_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_jump_reversion_report.json"
+      ],
+      "candidate_report_count": 481,
+      "candidate_pack_count": 98,
+      "translated_spec_count": 0,
+      "bound_shadow_runnable_count": 0,
+      "strategy_translatable_now": false,
+      "runtime_bindable_now": false,
+      "paper_execution_ready_now": false,
+      "support_only_now": false,
+      "not_ready_now": true,
+      "strategy_translation_eligibility": "PRIMARY_DIRECTIONAL_NOT_IN_TRANSLATOR_SCOPE",
+      "runtime_binding_eligibility": "NO_RUNTIME_BINDING_FOR_FAMILY",
+      "paper_execution_eligibility": "PRIMARY_DIRECTIONAL_BUT_NOT_IMPLEMENTED",
+      "next_path": "Add a small signed jump-reversion runtime contract once a primary-directional family slot is opened beyond the current spread-reversion observe-only slice."
+    }
+  ]
+}

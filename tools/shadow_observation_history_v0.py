@@ -96,6 +96,7 @@ def normalize_execution_summary(value: Any) -> dict[str, Any]:
             "total_unrealized_pnl": None,
             "equity": None,
             "max_position_value": None,
+            "positions": {},
         }
 
     def parse_int(raw: Any) -> int:
@@ -112,6 +113,24 @@ def normalize_execution_summary(value: Any) -> dict[str, Any]:
             return None
         return parsed if parsed == parsed else None
 
+    positions: dict[str, dict[str, Any]] = {}
+    raw_positions = value.get("positions")
+    if isinstance(raw_positions, dict):
+        for symbol, raw_position in raw_positions.items():
+            if not isinstance(raw_position, dict):
+                continue
+            normalized_symbol = str(symbol or raw_position.get("symbol") or "").strip().upper()
+            if not normalized_symbol:
+                continue
+            positions[normalized_symbol] = {
+                "symbol": normalized_symbol,
+                "size": parse_float_or_none(raw_position.get("size")),
+                "avg_entry_price": parse_float_or_none(raw_position.get("avg_entry_price")),
+                "realized_pnl": parse_float_or_none(raw_position.get("realized_pnl")),
+                "unrealized_pnl": parse_float_or_none(raw_position.get("unrealized_pnl")),
+                "current_price": parse_float_or_none(raw_position.get("current_price")),
+            }
+
     return {
         "snapshot_present": bool(value.get("snapshot_present")),
         "positions_count": parse_int(value.get("positions_count")),
@@ -120,6 +139,7 @@ def normalize_execution_summary(value: Any) -> dict[str, Any]:
         "total_unrealized_pnl": parse_float_or_none(value.get("total_unrealized_pnl")),
         "equity": parse_float_or_none(value.get("equity")),
         "max_position_value": parse_float_or_none(value.get("max_position_value")),
+        "positions": positions,
     }
 
 
@@ -148,6 +168,14 @@ def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
             fill_price = float(raw_event.get("fill_price"))
         except (TypeError, ValueError):
             fill_price = None
+        try:
+            fill_fee = float(raw_event.get("fill_fee"))
+        except (TypeError, ValueError):
+            fill_fee = None
+        try:
+            fill_value = float(raw_event.get("fill_value"))
+        except (TypeError, ValueError):
+            fill_value = None
         if event_type not in {"DECISION", "RISK_REJECT", "FILL"}:
             continue
         if not ts_event or not symbol or not side or qty <= 0:
@@ -166,6 +194,8 @@ def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
                 "side": side,
                 "qty": qty,
                 "fill_price": fill_price,
+                "fill_fee": fill_fee if event_type == "FILL" and fill_fee is not None and fill_fee >= 0 else None,
+                "fill_value": fill_value if event_type == "FILL" and fill_value is not None and fill_value > 0 else None,
                 "reason": reason,
             }
         )
@@ -175,6 +205,93 @@ def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
             int(event.get("event_seq", 0)),
             str(event.get("event_type", "")),
             str(event.get("ts_event", "")),
+        ),
+    )
+
+
+def normalize_funding_events(value: Any) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        return []
+
+    normalized: list[dict[str, Any]] = []
+    for index, raw_event in enumerate(value, start=1):
+        if not isinstance(raw_event, dict):
+            continue
+        ts_event = str(raw_event.get("ts_event", "")).strip()
+        next_funding_ts = str(raw_event.get("next_funding_ts", "")).strip()
+        exchange = str(raw_event.get("exchange", "")).strip().lower()
+        symbol = str(raw_event.get("symbol", "")).strip().upper()
+        try:
+            event_seq = int(raw_event.get("event_seq", index))
+        except (TypeError, ValueError):
+            event_seq = index
+        try:
+            funding_rate = float(raw_event.get("funding_rate"))
+        except (TypeError, ValueError):
+            continue
+        if not ts_event or not next_funding_ts or not exchange or not symbol:
+            continue
+        normalized.append(
+            {
+                "event_seq": event_seq if event_seq > 0 else index,
+                "ts_event": ts_event,
+                "exchange": exchange,
+                "symbol": symbol,
+                "funding_rate": funding_rate,
+                "next_funding_ts": next_funding_ts,
+            }
+        )
+    return sorted(
+        normalized,
+        key=lambda event: (
+            int(event.get("event_seq", 0)),
+            str(event.get("ts_event", "")),
+            str(event.get("symbol", "")),
+        ),
+    )
+
+
+def normalize_mark_price_events(value: Any) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        return []
+
+    normalized: list[dict[str, Any]] = []
+    for index, raw_event in enumerate(value, start=1):
+        if not isinstance(raw_event, dict):
+            continue
+        ts_event = str(raw_event.get("ts_event", "")).strip()
+        exchange = str(raw_event.get("exchange", "")).strip().lower()
+        symbol = str(raw_event.get("symbol", "")).strip().upper()
+        try:
+            event_seq = int(raw_event.get("event_seq", index))
+        except (TypeError, ValueError):
+            event_seq = index
+        try:
+            mark_price = float(raw_event.get("mark_price"))
+        except (TypeError, ValueError):
+            continue
+        try:
+            index_price = float(raw_event.get("index_price"))
+        except (TypeError, ValueError):
+            index_price = None
+        if not ts_event or not exchange or not symbol or mark_price <= 0:
+            continue
+        normalized.append(
+            {
+                "event_seq": event_seq if event_seq > 0 else index,
+                "ts_event": ts_event,
+                "exchange": exchange,
+                "symbol": symbol,
+                "mark_price": mark_price,
+                "index_price": index_price if index_price is not None and index_price > 0 else None,
+            }
+        )
+    return sorted(
+        normalized,
+        key=lambda event: (
+            int(event.get("event_seq", 0)),
+            str(event.get("ts_event", "")),
+            str(event.get("symbol", "")),
         ),
     )
 
@@ -220,6 +337,8 @@ def build_history_entry(summary: dict[str, Any]) -> dict[str, Any]:
         "processed_event_count": summary.get("processed_event_count", "unknown"),
         "heartbeat_seen": summary.get("heartbeat_seen", "unknown"),
         "execution_summary": normalize_execution_summary(summary.get("execution_summary")),
+        "funding_events": normalize_funding_events(summary.get("funding_events")),
+        "mark_price_events": normalize_mark_price_events(summary.get("mark_price_events")),
         "execution_events": normalize_execution_events(summary.get("execution_events")),
     }
     entry["observation_key"] = f"{entry['selected_pack_id']}|{entry['live_run_id']}"

@@ -44,6 +44,26 @@ def make_summary(*, pack_id: str, live_run_id: str, generated_ts_utc: str, proce
         "processed_event_count": processed_event_count,
         "heartbeat_seen": True,
         "heartbeat_count": 5,
+        "funding_events": [
+            {
+                "event_seq": 1,
+                "ts_event": "1700000000000",
+                "exchange": "bybit",
+                "symbol": "BNBUSDT",
+                "funding_rate": 0.0001,
+                "next_funding_ts": "1700003600000",
+            }
+        ],
+        "mark_price_events": [
+            {
+                "event_seq": 1,
+                "ts_event": "1700000000000",
+                "exchange": "bybit",
+                "symbol": "BNBUSDT",
+                "mark_price": 612.45,
+                "index_price": 612.4,
+            }
+        ],
         "execution_summary": {
             "snapshot_present": True,
             "positions_count": 1,
@@ -52,6 +72,16 @@ def make_summary(*, pack_id: str, live_run_id: str, generated_ts_utc: str, proce
             "total_unrealized_pnl": -0.1,
             "equity": 10001.15,
             "max_position_value": 250.0,
+            "positions": {
+                "BNBUSDT": {
+                    "symbol": "BNBUSDT",
+                    "size": 1.0,
+                    "avg_entry_price": 612.5,
+                    "realized_pnl": 1.25,
+                    "unrealized_pnl": -0.1,
+                    "current_price": 612.4,
+                }
+            },
         },
         "execution_events": [
             {
@@ -72,6 +102,8 @@ def make_summary(*, pack_id: str, live_run_id: str, generated_ts_utc: str, proce
                 "side": "BUY",
                 "qty": 1.0,
                 "fill_price": 612.5,
+                "fill_fee": 0.245,
+                "fill_value": 612.5,
                 "reason": "",
             },
         ],
@@ -118,8 +150,12 @@ class ShadowObservationHistoryV0Tests(unittest.TestCase):
             self.assertEqual(len(entries), 1)
             self.assertEqual(entries[0]["observation_key"], "pack_a|run_a")
             self.assertEqual(entries[0]["execution_summary"]["fills_count"], 2)
+            self.assertEqual(entries[0]["execution_summary"]["positions"]["BNBUSDT"]["current_price"], 612.4)
+            self.assertEqual(entries[0]["funding_events"][0]["funding_rate"], 0.0001)
+            self.assertEqual(entries[0]["mark_price_events"][0]["mark_price"], 612.45)
             self.assertEqual(len(entries[0]["execution_events"]), 2)
             self.assertEqual(entries[0]["execution_events"][0]["event_type"], "DECISION")
+            self.assertEqual(entries[0]["execution_events"][1]["fill_fee"], 0.245)
             payload = load_json(index)
             self.assertEqual(payload["schema_version"], "shadow_observation_index_v0")
             self.assertEqual(payload["record_count"], 1)
@@ -235,6 +271,8 @@ class ShadowObservationHistoryV0Tests(unittest.TestCase):
             )
             payload.pop("execution_summary", None)
             payload.pop("execution_events", None)
+            payload.pop("funding_events", None)
+            payload.pop("mark_price_events", None)
             write_json(summary, payload)
 
             res = self._run(
@@ -257,6 +295,7 @@ class ShadowObservationHistoryV0Tests(unittest.TestCase):
                     "total_unrealized_pnl": None,
                     "equity": None,
                     "max_position_value": None,
+                    "positions": {},
                 },
             )
             latest = load_json(index)["latest_by_pack_id"]["pack_a"]["last_execution_summary"]
@@ -270,9 +309,12 @@ class ShadowObservationHistoryV0Tests(unittest.TestCase):
                     "total_unrealized_pnl": None,
                     "equity": None,
                     "max_position_value": None,
+                    "positions": {},
                 },
             )
             self.assertEqual(entries[0]["execution_events"], [])
+            self.assertEqual(entries[0]["funding_events"], [])
+            self.assertEqual(entries[0]["mark_price_events"], [])
 
     def test_bad_summary_shape_fails(self):
         with tempfile.TemporaryDirectory(prefix="shadow_history_bad_") as td:

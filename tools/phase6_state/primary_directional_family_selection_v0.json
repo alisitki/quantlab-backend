@@ -1,0 +1,116 @@
+{
+  "schema_version": "primary_directional_family_selection_v0",
+  "generated_ts_utc": "2026-03-09T06:39:14Z",
+  "source_role_classification_json": "tools/phase6_state/hypothesis_family_role_classification_v0.json",
+  "source_candidate_review_tsv": "tools/phase6_state/candidate_review.tsv",
+  "source_candidate_strategy_contract_json": "tools/phase6_state/candidate_strategy_contract_v0.json",
+  "source_candidate_strategy_runtime_binding_json": "tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
+  "selection_rule": [
+    "eligible_families = role == PRIMARY_DIRECTIONAL only",
+    "sort by promote_strong_pack_count descending",
+    "then promote_pack_count descending",
+    "then total_candidate_pack_count descending",
+    "then single_symbol_candidate_pack_count descending",
+    "then selected_support_median descending",
+    "then selected_abs_t_stat_median descending",
+    "then strategy_translatable_now_count descending",
+    "then runtime_bindable_now_count descending",
+    "then paper_execution_ready_now_count descending",
+    "then family_id ascending"
+  ],
+  "eligible_families": [
+    "family_b_simple_momentum",
+    "jump_reversion_v1",
+    "momentum_v1",
+    "return_reversal_v1"
+  ],
+  "scorecard": [
+    {
+      "family_id": "momentum_v1",
+      "role": "PRIMARY_DIRECTIONAL",
+      "promote_strong_pack_count": 35,
+      "promote_pack_count": 63,
+      "total_candidate_pack_count": 98,
+      "single_symbol_candidate_pack_count": 13,
+      "strategy_translatable_now_count": 0,
+      "runtime_bindable_now_count": 0,
+      "paper_execution_ready_now_count": 0,
+      "selected_support_metric_name": "event_count",
+      "selected_support_median": 118444.0,
+      "selected_abs_t_stat_median": 25.804133400959415,
+      "short_rationale": "Momentum-v1 passes when `past_return_bps * fwd_return_bps` is positive with positive `t_stat`, which is an explicit signed continuation contract.",
+      "sample_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_momentum_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_momentum_report.json"
+      ],
+      "next_path": "Prioritize for direct candidate->strategy translation after spread-reversion is removed from the primary-runtime path expectation.",
+      "selection_rank": 1
+    },
+    {
+      "family_id": "return_reversal_v1",
+      "role": "PRIMARY_DIRECTIONAL",
+      "promote_strong_pack_count": 35,
+      "promote_pack_count": 63,
+      "total_candidate_pack_count": 98,
+      "single_symbol_candidate_pack_count": 13,
+      "strategy_translatable_now_count": 0,
+      "runtime_bindable_now_count": 0,
+      "paper_execution_ready_now_count": 0,
+      "selected_support_metric_name": "event_count",
+      "selected_support_median": 118218.0,
+      "selected_abs_t_stat_median": 35.2933918057686,
+      "short_rationale": "Return-reversal scores `past_return_bps * fwd_return_bps` and passes only when `mean_product < 0` with negative `t_stat`, which is a signed price-reversion contract.",
+      "sample_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_return_reversal_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_return_reversal_report.json"
+      ],
+      "next_path": "Prioritize as a future primary directional family: define a one-position return-reversion paper contract, then add translator and binding support.",
+      "selection_rank": 2
+    },
+    {
+      "family_id": "jump_reversion_v1",
+      "role": "PRIMARY_DIRECTIONAL",
+      "promote_strong_pack_count": 35,
+      "promote_pack_count": 63,
+      "total_candidate_pack_count": 98,
+      "single_symbol_candidate_pack_count": 13,
+      "strategy_translatable_now_count": 0,
+      "runtime_bindable_now_count": 0,
+      "paper_execution_ready_now_count": 0,
+      "selected_support_metric_name": "jump_count",
+      "selected_support_median": 17.0,
+      "selected_abs_t_stat_median": 3.6528668103403414,
+      "short_rationale": "Jump-reversion uses `mean_signed_reversal` after signed jumps, which is directly tied to directional post-jump reversion.",
+      "sample_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_jump_reversion_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_jump_reversion_report.json"
+      ],
+      "next_path": "Add a small signed jump-reversion runtime contract once a primary-directional family slot is opened beyond the current spread-reversion observe-only slice.",
+      "selection_rank": 3
+    },
+    {
+      "family_id": "family_b_simple_momentum",
+      "role": "PRIMARY_DIRECTIONAL",
+      "promote_strong_pack_count": 4,
+      "promote_pack_count": 58,
+      "total_candidate_pack_count": 62,
+      "single_symbol_candidate_pack_count": 9,
+      "strategy_translatable_now_count": 0,
+      "runtime_bindable_now_count": 0,
+      "paper_execution_ready_now_count": 0,
+      "selected_support_metric_name": "signal_support",
+      "selected_support_median": 13434.0,
+      "selected_abs_t_stat_median": 17.295678964683937,
+      "short_rationale": "Simple-momentum family explicitly measures forward signed return (`mean_forward_return`, `t_stat`, `signal_support`) after strong prior returns, so it is the closest legacy trade-stream continuation family to an outright directional contract.",
+      "sample_report_paths": [
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR/runs/avaxusdt/artifacts/multi_hypothesis/family_B_report.json",
+        "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR/runs/btcusdt/artifacts/multi_hypothesis/family_B_report.json"
+      ],
+      "next_path": "Add a narrow single-symbol trade-stream translator slice, then bind a family-specific paper runtime after the directional open/close contract is written.",
+      "selection_rank": 4
+    }
+  ],
+  "selected_family_id": "momentum_v1",
+  "selected_reason": "momentum_v1 won because it is PRIMARY_DIRECTIONAL and ranked first by PROMOTE_STRONG (35), PROMOTE (63), candidate-pack coverage (98), single-symbol coverage (13), selected-support median (118444.0), and |t_stat| median (25.804133400959415).",
+  "next_path": "momentum_v1 is the next target for candidate->strategy translation scope improvement, runtime strategy implementation, runtime binding, and paper execution contract work."
+}

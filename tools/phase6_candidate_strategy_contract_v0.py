@@ -12,6 +12,7 @@ from typing import Any, Dict, List
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CANDIDATE_REVIEW_TSV = ROOT / "tools" / "phase6_state" / "candidate_review.tsv"
+DEFAULT_FAMILY_SELECTION_JSON = ROOT / "tools" / "phase6_state" / "primary_directional_family_selection_v0.json"
 DEFAULT_OUT_JSON = ROOT / "tools" / "phase6_state" / "candidate_strategy_contract_v0.json"
 SCHEMA_VERSION = "candidate_strategy_contract_v0"
 STRATEGY_SPEC_VERSION = "candidate_strategy_spec_v0"
@@ -37,6 +38,8 @@ def utc_now_iso() -> str:
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Candidate -> strategy contract v0 translator")
     parser.add_argument("--candidate-review-tsv", default=str(DEFAULT_CANDIDATE_REVIEW_TSV))
+    parser.add_argument("--family-selection-json", default=str(DEFAULT_FAMILY_SELECTION_JSON))
+    parser.add_argument("--preferred-family-id", default="")
     parser.add_argument("--out-json", default=str(DEFAULT_OUT_JSON))
     return parser.parse_args(argv)
 
@@ -70,6 +73,21 @@ def load_json(path: Path, label: str) -> dict[str, Any]:
     return obj
 
 
+def resolve_preferred_family_id(path: Path, explicit_family_id: str) -> str:
+    explicit = str(explicit_family_id or "").strip()
+    if explicit:
+        return explicit
+    if not path.exists():
+        return ""
+    try:
+        obj = load_json(path, "family_selection_json")
+    except CandidateStrategyContractError:
+        return ""
+    if str(obj.get("schema_version") or "").strip() != "primary_directional_family_selection_v0":
+        return ""
+    return str(obj.get("selected_family_id") or "").strip()
+
+
 def as_int(value: str) -> int:
     try:
         return int(str(value or "").strip())
@@ -96,6 +114,18 @@ def selected_symbols_from_plan(plan: dict[str, Any]) -> list[str]:
     return [str(value or "").strip() for value in raw if str(value or "").strip()]
 
 
+def report_passes_family_contract(obj: dict[str, Any]) -> bool:
+    family_id = str(obj.get("family_id", "")).strip()
+    if family_id != "momentum_v1":
+        return True
+    result_obj = obj.get("result")
+    if not isinstance(result_obj, dict):
+        return False
+    if result_obj.get("pass_signal") is not True:
+        return False
+    return True
+
+
 def usable_supported_reports(report_dir: Path, selected_symbol: str) -> list[tuple[Path, dict[str, Any]]]:
     supported: list[tuple[Path, dict[str, Any]]] = []
     for path in sorted(report_dir.glob("family_*_report.json")):
@@ -116,11 +146,13 @@ def usable_supported_reports(report_dir: Path, selected_symbol: str) -> list[tup
             continue
         if not isinstance(selected_cell, dict):
             continue
+        if not report_passes_family_contract(obj):
+            continue
         supported.append((path, obj))
     return supported
 
 
-def translate_row(row: dict[str, str]) -> dict[str, Any]:
+def translate_row(row: dict[str, str], preferred_family_id: str = "") -> dict[str, Any]:
     item = build_base_item(row)
     pack_path_raw = item["pack_path"]
     if not item["pack_id"]:
@@ -167,9 +199,27 @@ def translate_row(row: dict[str, str]) -> dict[str, Any]:
         item["reject_reason"] = "NO_SUPPORTED_FAMILY_REPORT"
         return item
     if len(supported) > 1:
-        item["translation_status"] = NOT_TRANSLATABLE_YET
-        item["reject_reason"] = "MULTIPLE_SUPPORTED_FAMILY_REPORTS"
-        return item
+        preferred_family = str(preferred_family_id or "").strip()
+        if preferred_family:
+            matching_supported = [
+                (path, obj)
+                for path, obj in supported
+                if str(obj.get("family_id") or "").strip() == preferred_family
+            ]
+            if len(matching_supported) == 1:
+                supported = matching_supported
+            elif len(matching_supported) > 1:
+                item["translation_status"] = NOT_TRANSLATABLE_YET
+                item["reject_reason"] = "MULTIPLE_SELECTED_FAMILY_REPORTS"
+                return item
+            else:
+                item["translation_status"] = NOT_TRANSLATABLE_YET
+                item["reject_reason"] = "MULTIPLE_SUPPORTED_FAMILY_REPORTS"
+                return item
+        else:
+            item["translation_status"] = NOT_TRANSLATABLE_YET
+            item["reject_reason"] = "MULTIPLE_SUPPORTED_FAMILY_REPORTS"
+            return item
 
     report_path, report_obj = supported[0]
     family_id = str(report_obj.get("family_id", "")).strip()
@@ -213,7 +263,7 @@ def translate_row(row: dict[str, str]) -> dict[str, Any]:
     return item
 
 
-def build_payload(candidate_review_tsv: Path, items: list[dict[str, Any]]) -> dict[str, Any]:
+def build_payload(candidate_review_tsv: Path, preferred_family_id: str, items: list[dict[str, Any]]) -> dict[str, Any]:
     counts = {
         TRANSLATABLE: 0,
         NOT_TRANSLATABLE_YET: 0,
@@ -226,6 +276,7 @@ def build_payload(candidate_review_tsv: Path, items: list[dict[str, Any]]) -> di
         "schema_version": SCHEMA_VERSION,
         "generated_ts_utc": utc_now_iso(),
         "source_candidate_review_tsv": str(candidate_review_tsv),
+        "preferred_family_id": preferred_family_id,
         "source_row_count": len(items),
         "translatable_count": counts[TRANSLATABLE],
         "not_translatable_yet_count": counts[NOT_TRANSLATABLE_YET],
@@ -238,12 +289,15 @@ def build_payload(candidate_review_tsv: Path, items: list[dict[str, Any]]) -> di
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv or sys.argv[1:])
     candidate_review_tsv = Path(args.candidate_review_tsv).resolve()
+    family_selection_json = Path(args.family_selection_json).resolve()
     out_json = Path(args.out_json).resolve()
     rows = load_candidate_review_rows(candidate_review_tsv)
-    items = [translate_row(row) for row in rows]
-    payload = build_payload(candidate_review_tsv, items)
+    preferred_family_id = resolve_preferred_family_id(family_selection_json, args.preferred_family_id)
+    items = [translate_row(row, preferred_family_id=preferred_family_id) for row in rows]
+    payload = build_payload(candidate_review_tsv, preferred_family_id, items)
     write_json(out_json, payload)
     print(f"candidate_strategy_contract_json={out_json}")
+    print(f"preferred_family_id={payload['preferred_family_id']}")
     print(f"source_row_count={payload['source_row_count']}")
     print(f"translatable_count={payload['translatable_count']}")
     print(f"not_translatable_yet_count={payload['not_translatable_yet_count']}")

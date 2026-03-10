@@ -1,8 +1,8 @@
 {
   "schema_version": "shadow_operator_snapshot_v0",
-  "generated_ts_utc": "2026-03-08T15:35:08Z",
+  "generated_ts_utc": "2026-03-10T03:42:52Z",
   "source_watchlist": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_watchlist_v0.json",
-  "watchlist_generated_ts_utc": "2026-03-08T15:35:08Z",
+  "watchlist_generated_ts_utc": "2026-03-10T03:42:51Z",
   "selected_count": 3,
   "items": [
     {
@@ -18,7 +18,7 @@
       "observation_status": "OBSERVED_PASS",
       "next_action_hint": "ALREADY_OBSERVED_GOOD",
       "reobserve_status": "RECENTLY_OBSERVED",
-      "observation_last_outcome_short": "PASS(115)",
+      "observation_last_outcome_short": "PASS(114)",
       "pnl_interpretation": "FLAT_NO_FILLS",
       "pnl_attention_flag": "false",
       "latest_realized_sign": "FLAT",
@@ -27,7 +27,7 @@
       "latest_vs_recent_consistency": "CONSISTENT",
       "outcome_attention_flag": "false",
       "outcome_review_short": "latest and recent outcomes both lean flat",
-      "recent_observation_trail": "2026-03-08T15:35:07Z/PASS(115)/STREAM_END | 2026-03-08T15:33:27Z/PASS_NO_EVENTS/STREAM_END | 2026-03-08T14:02:35Z/PASS(193)/STREAM_END",
+      "recent_observation_trail": "2026-03-09T04:51:40Z/PASS(114)/STREAM_END | 2026-03-09T04:49:42Z/PASS(42)/STREAM_END | 2026-03-09T04:45:40Z/PASS(114)/STREAM_END",
       "combined_status_short": "OBSERVED_PASS/FLAT_NO_FILLS"
     },
     {

@@ -1,22 +1,51 @@
 {
-  "generated_ts_utc": "2026-03-08T15:35:07Z",
+  "generated_ts_utc": "2026-03-09T10:29:22Z",
   "latest_by_pack_id": {
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff": {
+      "last_execution_summary": {
+        "equity": 9991.003720000008,
+        "fills_count": 1,
+        "max_position_value": 67865.7,
+        "positions": {
+          "BTCUSDT": {
+            "avg_entry_price": 67865.7,
+            "current_price": 67883.85,
+            "realized_pnl": -27.14628,
+            "size": 1.0,
+            "symbol": "BTCUSDT",
+            "unrealized_pnl": 18.15000000000873
+          }
+        },
+        "positions_count": 1,
+        "snapshot_present": true,
+        "total_realized_pnl": -27.14628,
+        "total_unrealized_pnl": 18.15000000000873
+      },
+      "last_live_run_id": "94bd6025-ba45-4588-9fb6-30aba3424cfe",
+      "last_observed_at": "2026-03-09T10:29:22Z",
+      "last_processed_event_count": 8507,
+      "last_stop_reason": "STREAM_END",
+      "last_verify_soft_live_pass": true,
+      "observation_count": 35,
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff"
+    },
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590": {
       "last_execution_summary": {
         "equity": null,
         "fills_count": 0,
         "max_position_value": null,
+        "positions": {},
         "positions_count": 0,
         "snapshot_present": true,
         "total_realized_pnl": 0.0,
         "total_unrealized_pnl": 0.0
       },
-      "last_live_run_id": "b01b7bd7-5417-4382-bf83-b85f75fe19cd",
-      "last_observed_at": "2026-03-08T15:35:07Z",
-      "last_processed_event_count": 115,
+      "last_live_run_id": "3f43ed6b-e069-4fc9-947b-9ee60651b0df",
+      "last_observed_at": "2026-03-09T04:51:40Z",
+      "last_processed_event_count": 114,
       "last_stop_reason": "STREAM_END",
       "last_verify_soft_live_pass": true,
-      "observation_count": 10,
+      "observation_count": 13,
       "selected_pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590"
     }
   },
@@ -30,12 +59,51 @@
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|9b22d872-6dd1-4661-96d7-85a9224e67db",
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|42b3fd24-fcf1-4c6b-af7c-c884bb3bb8c6",
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|eab0e233-e2db-467d-8e31-5d498727cd4b",
-    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|b01b7bd7-5417-4382-bf83-b85f75fe19cd"
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|b01b7bd7-5417-4382-bf83-b85f75fe19cd",
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|a043fed5-214b-4cb5-b70a-8b091a295971",
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|1a75dfd6-a20c-4c0c-81d9-1b98aff925b6",
+    "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590|3f43ed6b-e069-4fc9-947b-9ee60651b0df",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|d5705661-ae3c-44e3-87d2-8f75f1ba52bf",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|e4820ca0-a8a4-43e9-9b69-bdc2ad982d16",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|c3b525cc-81f0-45e2-a1ec-00730af4f1c6",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|b293dc69-01b7-406d-9273-628d2eeecf16",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|1aea086e-650d-4b65-bca2-c962e78cf9ea",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|3210003c-fc09-4d3d-bb27-6cc16658c837",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|68a615f4-f253-48a4-b3f9-363b6ea71fb9",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|cb38f35a-58e5-400b-a085-7fab2fc2c830",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|1f85197e-a3fa-49c1-a639-c24cb11e13a0",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|ae3524b9-b8c5-49d4-a249-64855445d03e",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|86f86e6b-2d3c-4830-b195-b1ef6543259a",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|4618706e-d769-4f10-8474-084298b39906",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|8ccdeb61-7468-4499-8590-585a8fc27520",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|c5afd79f-5e63-4cce-9f34-700de363ef5f",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|45e61ddd-7357-46e4-b702-3ccfeedac684",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|e11bb14b-f4a5-448d-9a41-a4e0155a8f25",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|e60a987d-164f-4e0c-b5eb-aabeec5fee6a",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|0cd9e661-3213-425a-8f7d-0cb4cd74b061",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|a51defcb-bdb2-491e-b96d-4a631892572d",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|710b4861-1ee7-46aa-a6fd-cbeaa1f2a360",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|c711be19-b84c-4f71-aa5b-497ac53df069",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|ee10f6eb-1b2d-42dd-82be-f969f9be46d4",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|5a48eb6f-3447-46a0-9687-a8b02ee981af",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|80e3b962-3360-47de-adb1-433cba4be7ff",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|8709118f-0c79-4d60-ac6f-7834fa796012",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|8a7aded1-6ec7-4282-88a8-b7af865da54a",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|1c189689-7776-435e-9f83-5fabfaf47492",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|f55b6249-3c8b-4639-a5b5-543c22e0ecf4",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|be4b117f-0094-4508-a9ed-144a8846dfe7",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|1f7cbb43-b309-495d-884a-8c0e011a3ef1",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|2bda4481-faa5-4698-96ec-4ca79c83bf7f",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|d8f7db24-3a66-48c9-9a40-044eba936546",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|f66ebf2e-9bd4-41ce-a526-3ab06ba0ea75",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|af8550dd-4b03-4452-9e43-bf436070d12f",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|94bd6025-ba45-4588-9fb6-30aba3424cfe"
   ],
-  "pack_count": 1,
+  "pack_count": 2,
   "pack_ids": [
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff",
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590"
   ],
-  "record_count": 10,
+  "record_count": 48,
   "schema_version": "shadow_observation_index_v0"
 }

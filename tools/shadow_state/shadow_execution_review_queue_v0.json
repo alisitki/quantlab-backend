@@ -1,8 +1,8 @@
 {
   "schema_version": "shadow_execution_review_queue_v0",
-  "generated_ts_utc": "2026-03-08T15:35:08Z",
+  "generated_ts_utc": "2026-03-10T03:42:52Z",
   "source_operator_snapshot": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_operator_snapshot_v0.json",
-  "operator_snapshot_generated_ts_utc": "2026-03-08T15:35:08Z",
+  "operator_snapshot_generated_ts_utc": "2026-03-10T03:42:52Z",
   "selected_count": 3,
   "items": [
     {

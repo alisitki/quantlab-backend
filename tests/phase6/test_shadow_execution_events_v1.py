@@ -100,6 +100,8 @@ class ShadowExecutionEventsV1Tests(unittest.TestCase):
                                 "side": "SELL",
                                 "qty": 2,
                                 "fill_price": 2001.5,
+                                "fill_fee": 1.6012,
+                                "fill_value": 4003.0,
                                 "reason": "",
                             }
                         ],
@@ -144,6 +146,8 @@ class ShadowExecutionEventsV1Tests(unittest.TestCase):
             self.assertEqual(rows[1]["event_type"], "RISK_REJECT")
             self.assertEqual(rows[1]["reason"], "max_position_exceeded")
             self.assertEqual(rows[2]["fill_price"], 2001.5)
+            self.assertEqual(rows[2]["fill_fee"], 1.6012)
+            self.assertEqual(rows[2]["fill_value"], 4003.0)
             self.assertIn("event_count=3", res.stdout)
 
     def test_missing_execution_events_is_deterministic_empty(self):

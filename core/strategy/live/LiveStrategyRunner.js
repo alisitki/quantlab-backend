@@ -75,6 +75,10 @@ export class LiveStrategyRunner {
   #killSwitchManager;
   /** @type {string|null} */
   #killSwitchReason = null;
+  /** @type {Array<Object>} */
+  #fundingEvents = [];
+  /** @type {Array<Object>} */
+  #markPriceEvents = [];
 
   /**
    * @param {Object} options
@@ -196,6 +200,12 @@ export class LiveStrategyRunner {
   get liveRunId() { return this.#liveRunId; }
   get decisionCount() { return this.#runtime.decisions.length; }
   get decisionHash() { return this.#runtime.decisionHash; }
+  getFundingEvents() {
+    return this.#fundingEvents.map((event) => ({ ...event }));
+  }
+  getMarkPriceEvents() {
+    return this.#markPriceEvents.map((event) => ({ ...event }));
+  }
   getExecutionSummary() {
     if (!this.#runtime || typeof this.#runtime.getSnapshot !== 'function') return null;
     const snapshot = this.#runtime.getSnapshot();
@@ -213,14 +223,31 @@ export class LiveStrategyRunner {
       const n = Number(value);
       return Number.isFinite(n) ? n : null;
     };
+    const normalizedPositions = {};
+    for (const [symbol, rawPosition] of Object.entries(positions)) {
+      if (!rawPosition || typeof rawPosition !== 'object') continue;
+      const size = toFiniteNumber(rawPosition.size);
+      if (size === null || size === 0) continue;
+      const normalizedSymbol = String(symbol || '').trim().toUpperCase();
+      if (!normalizedSymbol) continue;
+      normalizedPositions[normalizedSymbol] = {
+        symbol: normalizedSymbol,
+        size,
+        avg_entry_price: toFiniteNumber(rawPosition.avgEntryPrice),
+        realized_pnl: toFiniteNumber(rawPosition.realizedPnl),
+        unrealized_pnl: toFiniteNumber(rawPosition.unrealizedPnl),
+        current_price: toFiniteNumber(rawPosition.currentPrice)
+      };
+    }
     return {
       snapshot_present: true,
-      positions_count: Object.keys(positions).length,
+      positions_count: Object.keys(normalizedPositions).length,
       fills_count: fillsCount,
       total_realized_pnl: toFiniteNumber(executionState.totalRealizedPnl),
       total_unrealized_pnl: toFiniteNumber(executionState.totalUnrealizedPnl),
       equity: toFiniteNumber(executionState.equity),
-      max_position_value: toFiniteNumber(executionState.maxPositionValue)
+      max_position_value: toFiniteNumber(executionState.maxPositionValue),
+      positions: normalizedPositions
     };
   }
 
@@ -425,6 +452,7 @@ export class LiveStrategyRunner {
       if (this.#executionEngine && typeof this.#executionEngine.onEvent === 'function') {
         this.#executionEngine.onEvent(event);
       }
+      this.#captureMarketContextEvent(event);
       this.#updateLag(event);
       this.#emittedEventCount++;
       observerRegistry.updateRun(this.#liveRunId, {
@@ -455,6 +483,65 @@ export class LiveStrategyRunner {
 
       yield event;
     }
+  }
+
+  #captureMarketContextEvent(event) {
+    if (!event || typeof event !== 'object') return;
+    const stream = String(event.stream || '').trim();
+    const symbol = String(event.symbol || '').trim().toUpperCase();
+    if (!stream || !symbol) return;
+    if (stream === 'funding') {
+      const fundingRate = Number(event.funding_rate);
+      const nextFundingTs = Number(event.next_funding_ts);
+      if (!Number.isFinite(fundingRate) || !Number.isFinite(nextFundingTs) || nextFundingTs <= 0) return;
+      const normalized = {
+        event_seq: this.#fundingEvents.length + 1,
+        ts_event: String(event.ts_event ?? ''),
+        exchange: String(event.exchange || '').trim(),
+        symbol,
+        funding_rate: fundingRate,
+        next_funding_ts: String(Math.trunc(nextFundingTs))
+      };
+      this.#fundingEvents.push(normalized);
+      emitAudit({
+        actor: 'system',
+        action: 'FUNDING',
+        target_type: 'market_context',
+        target_id: null,
+        reason: null,
+        metadata: {
+          live_run_id: this.#liveRunId,
+          strategy_id: this.#runtime?.config?.strategy?.id || null,
+          ...normalized
+        }
+      });
+      return;
+    }
+    if (stream !== 'mark_price') return;
+    const markPrice = Number(event.mark_price);
+    if (!Number.isFinite(markPrice) || markPrice <= 0) return;
+    const indexPrice = Number(event.index_price);
+    const normalized = {
+      event_seq: this.#markPriceEvents.length + 1,
+      ts_event: String(event.ts_event ?? ''),
+      exchange: String(event.exchange || '').trim(),
+      symbol,
+      mark_price: markPrice,
+      index_price: Number.isFinite(indexPrice) && indexPrice > 0 ? indexPrice : null
+    };
+    this.#markPriceEvents.push(normalized);
+    emitAudit({
+      actor: 'system',
+      action: 'MARK_PRICE',
+      target_type: 'market_context',
+      target_id: null,
+      reason: null,
+      metadata: {
+        live_run_id: this.#liveRunId,
+        strategy_id: this.#runtime?.config?.strategy?.id || null,
+        ...normalized
+      }
+    });
   }
 
   #updateLag(event) {

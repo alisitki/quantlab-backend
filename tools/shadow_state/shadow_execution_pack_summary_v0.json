@@ -1,12 +1,37 @@
 {
-  "generated_ts_utc": "2026-03-08T15:35:08Z",
+  "generated_ts_utc": "2026-03-10T03:42:52Z",
   "latest_by_pack_id": {
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff": {
+      "last_equity": 9991.003720000008,
+      "last_fills_count": 1,
+      "last_live_run_id": "94bd6025-ba45-4588-9fb6-30aba3424cfe",
+      "last_max_position_value": 67865.7,
+      "last_observed_at": "2026-03-09T10:29:22Z",
+      "last_pnl_state": "ACTIVE_POSITION",
+      "last_positions_count": 1,
+      "last_snapshot_present": true,
+      "last_stop_reason": "STREAM_END",
+      "last_total_realized_pnl": -27.14628,
+      "last_total_unrealized_pnl": 18.15000000000873,
+      "latest_realized_sign": "LOSS",
+      "latest_unrealized_sign": "GAIN",
+      "pnl_attention_flag": false,
+      "pnl_interpretation": "ACTIVE_GAINING",
+      "recent_attention_count": 0,
+      "recent_flat_count": 0,
+      "recent_gain_count": 3,
+      "recent_loss_count": 0,
+      "recent_pnl_bias": "GAIN_BIAS",
+      "recent_run_count": 3,
+      "run_count": 35,
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff"
+    },
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590": {
       "last_equity": null,
       "last_fills_count": 0,
-      "last_live_run_id": "b01b7bd7-5417-4382-bf83-b85f75fe19cd",
+      "last_live_run_id": "3f43ed6b-e069-4fc9-947b-9ee60651b0df",
       "last_max_position_value": null,
-      "last_observed_at": "2026-03-08T15:35:07Z",
+      "last_observed_at": "2026-03-09T04:51:40Z",
       "last_pnl_state": "FLAT_NO_FILLS",
       "last_positions_count": 0,
       "last_snapshot_present": true,
@@ -23,11 +48,11 @@
       "recent_loss_count": 0,
       "recent_pnl_bias": "FLAT_BIAS",
       "recent_run_count": 3,
-      "run_count": 10,
+      "run_count": 13,
       "selected_pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590"
     }
   },
-  "pack_count": 1,
-  "record_count": 10,
+  "pack_count": 2,
+  "record_count": 48,
   "schema_version": "shadow_execution_pack_summary_v0"
 }

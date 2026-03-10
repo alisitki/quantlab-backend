@@ -824,6 +824,8 @@ export class StrategyRuntime extends EventEmitter {
     const fillSide = typeof fill?.side === 'string' ? fill.side.trim().toUpperCase() : '';
     const fillQty = Number(fill?.qty);
     const fillPrice = Number(fill?.fillPrice);
+    const fillFee = Number(fill?.fee);
+    const fillValue = Number(fill?.fillValue);
     const fillTsEvent = fill?.ts_event == null ? normalizedTsEvent : String(fill.ts_event);
     if (
       hasIntentShape &&
@@ -848,7 +850,9 @@ export class StrategyRuntime extends EventEmitter {
           symbol: fillSymbol,
           side: fillSide,
           qty: fillQty,
-          fill_price: fillPrice
+          fill_price: fillPrice,
+          fill_fee: Number.isFinite(fillFee) && fillFee >= 0 ? fillFee : null,
+          fill_value: Number.isFinite(fillValue) && fillValue > 0 ? fillValue : null
         }
       });
     }

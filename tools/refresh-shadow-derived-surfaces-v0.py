@@ -17,6 +17,7 @@ DEFAULT_CANDIDATE_REVIEW_TOOL = ROOT / "tools" / "phase6_candidate_review_v0.py"
 DEFAULT_WATCHLIST_TOOL = ROOT / "tools" / "shadow_candidate_bridge_v0.py"
 DEFAULT_EXECUTION_LEDGER_TOOL = ROOT / "tools" / "shadow_execution_ledger_v0.py"
 DEFAULT_EXECUTION_EVENTS_TOOL = ROOT / "tools" / "shadow_execution_events_v1.py"
+DEFAULT_FUTURES_PAPER_LEDGER_TOOL = ROOT / "tools" / "shadow_futures_paper_ledger_v1.py"
 DEFAULT_TRADE_LEDGER_TOOL = ROOT / "tools" / "shadow_trade_ledger_v1.py"
 DEFAULT_EXECUTION_PACK_SUMMARY_TOOL = ROOT / "tools" / "shadow_execution_pack_summary_v0.py"
 DEFAULT_EXECUTION_ROLLUP_TOOL = ROOT / "tools" / "shadow_execution_rollup_snapshot_v0.py"
@@ -49,6 +50,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--watchlist-tool", default=str(DEFAULT_WATCHLIST_TOOL))
     parser.add_argument("--execution-ledger-tool", default=str(DEFAULT_EXECUTION_LEDGER_TOOL))
     parser.add_argument("--execution-events-tool", default=str(DEFAULT_EXECUTION_EVENTS_TOOL))
+    parser.add_argument("--futures-paper-ledger-tool", default=str(DEFAULT_FUTURES_PAPER_LEDGER_TOOL))
     parser.add_argument("--trade-ledger-tool", default=str(DEFAULT_TRADE_LEDGER_TOOL))
     parser.add_argument("--execution-pack-summary-tool", default=str(DEFAULT_EXECUTION_PACK_SUMMARY_TOOL))
     parser.add_argument("--execution-rollup-tool", default=str(DEFAULT_EXECUTION_ROLLUP_TOOL))
@@ -125,6 +127,7 @@ def main(argv: list[str] | None = None) -> int:
     watchlist_tool = Path(args.watchlist_tool).resolve()
     execution_ledger_tool = Path(args.execution_ledger_tool).resolve()
     execution_events_tool = Path(args.execution_events_tool).resolve()
+    futures_paper_ledger_tool = Path(args.futures_paper_ledger_tool).resolve()
     trade_ledger_tool = Path(args.trade_ledger_tool).resolve()
     execution_pack_summary_tool = Path(args.execution_pack_summary_tool).resolve()
     execution_rollup_tool = Path(args.execution_rollup_tool).resolve()
@@ -143,6 +146,7 @@ def main(argv: list[str] | None = None) -> int:
         else shadow_state_dir / "shadow_execution_ledger_v0.jsonl"
     )
     execution_events_jsonl = shadow_state_dir / "shadow_execution_events_v1.jsonl"
+    futures_paper_ledger_json = shadow_state_dir / "shadow_futures_paper_ledger_v1.json"
     trade_ledger_jsonl = shadow_state_dir / "shadow_trade_ledger_v1.jsonl"
     execution_pack_summary_json = (
         Path(args.execution_pack_summary_json).resolve()
@@ -202,6 +206,18 @@ def main(argv: list[str] | None = None) -> int:
         "--out-jsonl",
         str(execution_events_jsonl),
     ]
+    futures_paper_ledger_cmd = [
+        sys.executable,
+        str(futures_paper_ledger_tool),
+        "--history-jsonl",
+        str(observation_history),
+        "--execution-events-jsonl",
+        str(execution_events_jsonl),
+        "--binding-artifact",
+        str(state_dir / "candidate_strategy_runtime_binding_v0.json"),
+        "--out-json",
+        str(futures_paper_ledger_json),
+    ]
     trade_ledger_cmd = [
         sys.executable,
         str(trade_ledger_tool),
@@ -252,6 +268,7 @@ def main(argv: list[str] | None = None) -> int:
         ("watchlist", watchlist_cmd, watchlist_json),
         ("execution_ledger", execution_ledger_cmd, execution_ledger_jsonl),
         ("execution_events", execution_events_cmd, execution_events_jsonl),
+        ("futures_paper_ledger", futures_paper_ledger_cmd, futures_paper_ledger_json),
         ("trade_ledger", trade_ledger_cmd, trade_ledger_jsonl),
         ("execution_pack_summary", execution_pack_summary_cmd, execution_pack_summary_json),
         ("execution_rollup_snapshot", execution_rollup_cmd, execution_rollup_json),

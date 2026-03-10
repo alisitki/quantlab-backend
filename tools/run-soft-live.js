@@ -2,8 +2,10 @@
 import { LiveStrategyRunner } from '../core/strategy/live/LiveStrategyRunner.js';
 import { StrategyLoader } from '../core/strategy/interface/StrategyLoader.js';
 import { observerRegistry } from '../core/observer/ObserverRegistry.js';
+import { ExecutionEngine } from '../core/execution/engine.js';
 import { writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 
 const require = createRequire(new URL('../core/package.json', import.meta.url));
 const dotenv = require('dotenv');
@@ -55,10 +57,21 @@ function buildStrategyConfig() {
   return config;
 }
 
-function buildExecutionEngine() {
+function buildExecutionEngine(strategyConfig) {
   const mode = process.env.STRATEGY_MODE || 'OBSERVE_ONLY';
   const sizeMode = process.env.POSITION_SIZE_MODE || 'ZERO';
-  if (mode !== 'OBSERVE_ONLY' && sizeMode !== 'ZERO') return null;
+  if (mode !== 'OBSERVE_ONLY' && sizeMode !== 'ZERO') {
+    const executionConfig = strategyConfig && typeof strategyConfig.execution_config === 'object'
+      ? strategyConfig.execution_config
+      : {};
+    const initialCapital = numEnv(executionConfig.initialCapital, 10000);
+    const feeRateRaw = Number(executionConfig.feeRate);
+    return new ExecutionEngine({
+      initialCapital,
+      feeRate: Number.isFinite(feeRateRaw) ? feeRateRaw : undefined,
+      requiresBbo: false
+    });
+  }
 
   return {
     onOrder(intent) {
@@ -110,6 +123,18 @@ function buildGuardConfig() {
   };
 }
 
+function resolveSummaryPath() {
+  const configured = String(
+    process.env.SOFT_LIVE_SUMMARY_JSON ||
+    process.env.SHADOW_BATCH_SUMMARY_JSON ||
+    '/tmp/quantlab-soft-live.json'
+  ).trim();
+  if (!configured) {
+    return '/tmp/quantlab-soft-live.json';
+  }
+  return path.resolve(configured);
+}
+
 async function main() {
   const exchange = process.env.GO_LIVE_EXCHANGE;
   const symbols = process.env.GO_LIVE_SYMBOLS ? process.env.GO_LIVE_SYMBOLS.split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -126,9 +151,10 @@ async function main() {
   const lagWarnMs = numEnv(process.env.LAG_WARN_MS, 2000);
   const lagErrorMs = numEnv(process.env.LAG_ERROR_MS, 10000);
   const orderingMode = process.env.GO_LIVE_ORDERING_MODE || 'WARN';
+  const strategyConfig = buildStrategyConfig();
 
   const strategy = await StrategyLoader.loadFromFile(strategyPath, {
-    config: buildStrategyConfig(),
+    config: strategyConfig,
     autoAdapt: true
   });
 
@@ -137,9 +163,9 @@ async function main() {
     exchange,
     symbols,
     strategy,
-    strategyConfig: buildStrategyConfig(),
+    strategyConfig,
     orderingMode,
-    executionEngine: buildExecutionEngine(),
+    executionEngine: buildExecutionEngine(strategyConfig),
     maxLagMs: lagWarnMs,
     guardConfig: buildGuardConfig(),
     budgetConfig: buildBudgetConfig()
@@ -172,12 +198,15 @@ async function main() {
   try {
     const result = await runner.run({ handleSignals: false });
     const executionSummary = runner.getExecutionSummary();
+    const summaryPath = resolveSummaryPath();
     clearInterval(heartbeat);
     const output = {
       live_run_id: result.live_run_id,
       started_at: result.started_at,
       finished_at: result.finished_at,
       stop_reason: result.stop_reason,
+      funding_events: runner.getFundingEvents(),
+      mark_price_events: runner.getMarkPriceEvents(),
       execution_summary: executionSummary || {
         snapshot_present: false,
         positions_count: 0,
@@ -188,7 +217,7 @@ async function main() {
         max_position_value: null
       }
     };
-    await writeFile('/tmp/quantlab-soft-live.json', JSON.stringify(output));
+    await writeFile(summaryPath, JSON.stringify(output));
     console.log(JSON.stringify({ event: 'soft_live_done', ...output }));
   } catch (err) {
     clearInterval(heartbeat);

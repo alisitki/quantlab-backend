@@ -262,14 +262,26 @@ def item_commands(
 
 
 def build_wrapper_env(args: argparse.Namespace, audit_root: Path) -> dict[str, str]:
+    strategy_config = json.loads(str(args.strategy_config_json))
+    binding_mode = str(strategy_config.get("binding_mode") or "").strip()
+    order_qty = strategy_config.get("orderQty")
+    position_size_mode = "ZERO"
+    strategy_mode = "OBSERVE_ONLY"
+    try:
+        order_qty_value = float(order_qty)
+    except (TypeError, ValueError):
+        order_qty_value = 0.0
+    if binding_mode == "PAPER_DIRECTIONAL_V1" and order_qty_value > 0:
+        strategy_mode = binding_mode
+        position_size_mode = "FIXED"
     return {
         **os.environ,
         "AUDIT_ENABLED": "1",
         "AUDIT_SPOOL_DIR": str(audit_root),
         "RUN_ARCHIVE_ENABLED": "0",
         "CORE_LIVE_WS_ENABLED": "1",
-        "STRATEGY_MODE": "OBSERVE_ONLY",
-        "POSITION_SIZE_MODE": "ZERO",
+        "STRATEGY_MODE": strategy_mode,
+        "POSITION_SIZE_MODE": position_size_mode,
         "GO_LIVE_STRATEGY": str(args.strategy),
         "GO_LIVE_STRATEGY_CONFIG": str(args.strategy_config_json),
         "GO_LIVE_DATASET_PARQUET": "live",

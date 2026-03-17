@@ -1,0 +1,54 @@
+{
+  "schema_version": "candidate_review_objective_v2_spec",
+  "scoring_version": "candidate_review_v2",
+  "summary": "Tradeability-aware candidate review surface that preserves research signal but ranks by hard class before within-class score.",
+  "what_v2_rewards": [
+    "discovery-time research score preserved from decision tier, determinism ratio, resource sanity, and context cleanliness",
+    "deterministic within-class ranking using research score as the primary tie-break after class assignment",
+    "pack-level shadow evidence quality when present"
+  ],
+  "what_v2_newly_rewards": [
+    "bound directional runtime truth over research-only or observe-only families",
+    "fill-backed shadow evidence",
+    "profitability-interpretable shadow runs",
+    "closed-cycle realized evidence",
+    "stable positive shadow outcomes"
+  ],
+  "what_v2_hard_guards": [
+    "OBSERVE_ONLY can never outrank any runnable directional class",
+    "UNRUNNABLE can never outrank any runnable directional class",
+    "UNSEEN, NO_SIGNAL, INSUFFICIENT_EVIDENCE, and WEAK are distinct classes",
+    "negative evidence is never collapsed into no-evidence"
+  ],
+  "required_output_classes": [
+    "PROMISING",
+    "NEUTRAL",
+    "INSUFFICIENT_EVIDENCE",
+    "UNSEEN",
+    "NO_SIGNAL",
+    "WEAK",
+    "OBSERVE_ONLY",
+    "UNRUNNABLE"
+  ],
+  "class_priority_order": [
+    "PROMISING",
+    "NEUTRAL",
+    "INSUFFICIENT_EVIDENCE",
+    "UNSEEN",
+    "NO_SIGNAL",
+    "WEAK",
+    "OBSERVE_ONLY",
+    "UNRUNNABLE"
+  ],
+  "sufficient_sample_thresholds": {
+    "fill_backed_run_count_min": 3,
+    "profitability_interpretable_run_count_min": 3,
+    "closed_cycle_count_min": 2
+  },
+  "what_v2_explicitly_does_not_confuse": [
+    "observe-only support families with runnable directional candidates",
+    "unseen candidates with no-signal candidates",
+    "insufficient sample with negative realized evidence",
+    "translation present with runnable tradeability truth"
+  ]
+}

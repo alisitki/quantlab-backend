@@ -78,6 +78,8 @@ def write_candidate_review(path: Path, rows: list[dict]) -> None:
                 "decision_tier",
                 "pack_id",
                 "pack_path",
+                "review_class",
+                "class_priority",
                 "det_ratio",
                 "det_pass",
                 "det_supported",
@@ -122,9 +124,100 @@ def load_observation_log(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
+def write_binding_artifact(path: Path, items: list[dict]) -> None:
+    write_json(
+        path,
+        {
+            "schema_version": "candidate_strategy_runtime_binding_v0",
+            "generated_ts_utc": "2026-03-07T06:00:00Z",
+            "source_candidate_strategy_contract_json": "/tmp/candidate_strategy_contract_v0.json",
+            "source_binding_map_json": "/tmp/family_shadow_runtime_binding_map_v0.json",
+            "source_row_count": len(items),
+            "translated_spec_count": sum(1 for item in items if item.get("translation_status") == "TRANSLATABLE"),
+            "bound_shadow_runnable_count": sum(
+                1 for item in items if item.get("runtime_binding_status") == "BOUND_SHADOW_RUNNABLE"
+            ),
+            "bound_directional_count": sum(
+                1
+                for item in items
+                if item.get("runtime_binding_status") == "BOUND_SHADOW_RUNNABLE"
+                and item.get("shadow_tradeability_class") == "DIRECTIONAL"
+            ),
+            "bound_observe_only_count": sum(
+                1
+                for item in items
+                if item.get("runtime_binding_status") == "BOUND_SHADOW_RUNNABLE"
+                and item.get("shadow_tradeability_class") == "OBSERVE_ONLY"
+            ),
+            "unbound_no_runtime_impl_count": sum(
+                1 for item in items if item.get("runtime_binding_status") == "UNBOUND_NO_RUNTIME_IMPL"
+            ),
+            "unbound_config_gap_count": sum(
+                1 for item in items if item.get("runtime_binding_status") == "UNBOUND_CONFIG_GAP"
+            ),
+            "unbound_translation_rejected_count": sum(
+                1 for item in items if item.get("runtime_binding_status") == "UNBOUND_TRANSLATION_REJECTED"
+            ),
+            "items": items,
+        },
+    )
+
+
+def binding_item(
+    *,
+    pack_id: str,
+    strategy_id: str,
+    family_id: str,
+    exchange: str,
+    stream: str,
+    symbols: list[str],
+    runtime_binding_status: str,
+    binding_mode: str,
+    shadow_tradeability_class: str,
+    binding_reason: str = "",
+) -> dict:
+    runtime_strategy_config = None
+    if runtime_binding_status == "BOUND_SHADOW_RUNNABLE":
+        runtime_strategy_config = {
+            "binding_mode": binding_mode,
+            "source_pack_id": pack_id,
+            "exchange": exchange,
+            "stream": stream,
+            "symbols": symbols,
+        }
+    return {
+        "rank": 1,
+        "pack_id": pack_id,
+        "source_pack_id": pack_id,
+        "contract_row_id": f"candidate_contract::{pack_id}::{symbols[0]}",
+        "selected_symbol": symbols[0],
+        "translation_status": "TRANSLATABLE" if runtime_binding_status != "UNBOUND_TRANSLATION_REJECTED" else "NOT_TRANSLATABLE_YET",
+        "strategy_id": strategy_id,
+        "family_id": family_id,
+        "exchange": exchange,
+        "stream": stream,
+        "symbols": symbols,
+        "runtime_binding_status": runtime_binding_status,
+        "runtime_strategy_file": "core/strategy/test.js" if runtime_binding_status == "BOUND_SHADOW_RUNNABLE" else None,
+        "runtime_strategy_config": runtime_strategy_config,
+        "binding_mode": binding_mode or None,
+        "shadow_tradeability_class": shadow_tradeability_class,
+        "binding_reason": binding_reason,
+    }
+
+
 class ShadowCandidateBridgeV0Tests(unittest.TestCase):
-    def _write_state(self, state_dir: Path, review_rows: list[dict], candidate_records: list[dict], promotion_records: list[dict]) -> None:
+    def _write_state(
+        self,
+        state_dir: Path,
+        review_rows: list[dict],
+        candidate_records: list[dict],
+        promotion_records: list[dict],
+        *,
+        binding_items: list[dict] | None = None,
+    ) -> None:
         write_candidate_review(state_dir / "candidate_review.tsv", review_rows)
+        write_candidate_review(state_dir / "candidate_review_v2.tsv", review_rows)
         write_json(
             state_dir / "candidate_index.json",
             {
@@ -150,6 +243,8 @@ class ShadowCandidateBridgeV0Tests(unittest.TestCase):
                 "promote_strong_packs": [],
             },
         )
+        if binding_items is not None:
+            write_binding_artifact(state_dir / "candidate_strategy_runtime_binding_v0.json", binding_items)
 
     def _run_bridge(self, state_dir: Path, out_dir: Path, *extra_args: str):
         cmd = [
@@ -264,6 +359,9 @@ class ShadowCandidateBridgeV0Tests(unittest.TestCase):
             res = self._run_bridge(state_dir, out_dir)
             self.assertEqual(res.returncode, 0, msg=res.stderr)
             watchlist = load_watchlist(out_dir / "shadow_watchlist_v0.json")
+            self.assertEqual(watchlist["governance"]["surface_role"], "ACTIVE_SHADOW_SUBSET")
+            self.assertTrue(watchlist["source_candidate_index_json"].endswith("candidate_index.json"))
+            self.assertTrue(watchlist["source_promotion_index_json"].endswith("promotion_index.json"))
             items = watchlist["items"]
             self.assertEqual([item["pack_id"] for item in items], ["pack_bybit_bbo", "pack_binance_bbo", "pack_bybit_trade"])
             self.assertEqual([item["selection_slot"] for item in items], ["bybit/bbo", "binance/bbo", "*/trade"])
@@ -592,9 +690,18 @@ class ShadowCandidateBridgeV0Tests(unittest.TestCase):
                         "pack_path",
                         "decision_tier",
                         "score",
+                        "source_review_rank",
+                        "review_class",
+                        "class_priority",
                         "exchange",
                         "stream",
                         "symbols",
+                        "binding_priority_bucket",
+                        "binding_status",
+                        "binding_family_id",
+                        "binding_mode",
+                        "binding_strategy_id",
+                        "binding_reason",
                         "context_flags",
                         "watch_status",
                         "observed_before",
@@ -621,7 +728,12 @@ class ShadowCandidateBridgeV0Tests(unittest.TestCase):
                 ),
             )
             self.assertEqual(item["symbols"], ["btcusdt", "ethusdt"])
+            self.assertEqual(item["binding_priority_bucket"], "UNBOUND_CANDIDATE")
+            self.assertEqual(item["binding_reason"], "NO_BINDING_ROW_FOR_PACK")
             self.assertEqual(item["score"], "64.530507")
+            self.assertEqual(item["source_review_rank"], "1")
+            self.assertEqual(item["review_class"], "")
+            self.assertEqual(item["class_priority"], "")
             self.assertEqual(item["last_observation_age_hours"], "unknown")
             self.assertEqual(item["observation_recency_bucket"], "NEVER_OBSERVED")
             self.assertEqual(item["observation_last_outcome_short"], "NO_HISTORY")
@@ -635,6 +747,259 @@ class ShadowCandidateBridgeV0Tests(unittest.TestCase):
             self.assertEqual(item["pnl_attention_flag"], "false")
             self.assertEqual(item["latest_realized_sign"], "UNKNOWN")
             self.assertEqual(item["latest_unrealized_sign"], "UNKNOWN")
+
+    def test_binding_aware_priority_prefers_bound_directional_rows(self):
+        with tempfile.TemporaryDirectory(prefix="shadow_bridge_binding_priority_") as td:
+            root = Path(td)
+            state_dir = root / "state"
+            out_dir = root / "shadow"
+
+            directional_pack = make_pack(
+                root,
+                "multi-hypothesis-phase5-bighunt-binance-trade-20260101..20260101__FULLSCAN_MAJOR",
+                ["btcusdt"],
+            )
+            observe_pack = make_pack(
+                root,
+                "multi-hypothesis-phase5-bighunt-bybit-bbo-20260101..20260101__FULLSCAN_MAJOR",
+                ["ethusdt"],
+            )
+            unbound_pack = make_pack(
+                root,
+                "multi-hypothesis-phase5-bighunt-binance-bbo-20260101..20260101__FULLSCAN_MAJOR",
+                ["adausdt"],
+            )
+
+            candidate_records = [
+                candidate_record(pack_id="pack_directional", pack_path=directional_pack, decision_tier="PROMOTE_STRONG"),
+                candidate_record(pack_id="pack_observe", pack_path=observe_pack, decision_tier="PROMOTE_STRONG"),
+                candidate_record(pack_id="pack_unbound", pack_path=unbound_pack, decision_tier="PROMOTE_STRONG"),
+            ]
+            promotion_records = [
+                promotion_record(pack_id="pack_directional", pack_path=directional_pack, decision_tier="PROMOTE_STRONG"),
+                promotion_record(pack_id="pack_observe", pack_path=observe_pack, decision_tier="PROMOTE_STRONG"),
+                promotion_record(pack_id="pack_unbound", pack_path=unbound_pack, decision_tier="PROMOTE_STRONG"),
+            ]
+            review_rows = [
+                {
+                    "rank": "1",
+                    "score": "99.000000",
+                    "decision_tier": "PROMOTE_STRONG",
+                    "pack_id": "pack_unbound",
+                    "pack_path": str(unbound_pack),
+                    "det_ratio": "1.000000",
+                    "det_pass": "5",
+                    "det_supported": "5",
+                    "det_skipped": "1",
+                    "max_rss_kb": "100000.0",
+                    "max_elapsed_sec": "4.0",
+                    "context_flags": "MARK=PASS;FUNDING=PASS;OI=PASS",
+                    "candidate_status": "NEW",
+                },
+                {
+                    "rank": "2",
+                    "score": "70.000000",
+                    "decision_tier": "PROMOTE_STRONG",
+                    "pack_id": "pack_directional",
+                    "pack_path": str(directional_pack),
+                    "det_ratio": "1.000000",
+                    "det_pass": "5",
+                    "det_supported": "5",
+                    "det_skipped": "1",
+                    "max_rss_kb": "100000.0",
+                    "max_elapsed_sec": "5.0",
+                    "context_flags": "MARK=PASS;FUNDING=PASS;OI=PASS",
+                    "candidate_status": "NEW",
+                },
+                {
+                    "rank": "3",
+                    "score": "80.000000",
+                    "decision_tier": "PROMOTE_STRONG",
+                    "pack_id": "pack_observe",
+                    "pack_path": str(observe_pack),
+                    "det_ratio": "1.000000",
+                    "det_pass": "5",
+                    "det_supported": "5",
+                    "det_skipped": "1",
+                    "max_rss_kb": "100000.0",
+                    "max_elapsed_sec": "6.0",
+                    "context_flags": "MARK=PASS;FUNDING=PASS;OI=PASS",
+                    "candidate_status": "NEW",
+                },
+            ]
+            binding_items = [
+                binding_item(
+                    pack_id="pack_directional",
+                    strategy_id="candidate_strategy::momentum_v1::pack_directional::btcusdt",
+                    family_id="momentum_v1",
+                    exchange="binance",
+                    stream="trade",
+                    symbols=["btcusdt"],
+                    runtime_binding_status="BOUND_SHADOW_RUNNABLE",
+                    binding_mode="PAPER_DIRECTIONAL_V1",
+                    shadow_tradeability_class="DIRECTIONAL",
+                ),
+                binding_item(
+                    pack_id="pack_observe",
+                    strategy_id="candidate_strategy::spread_reversion_v1::pack_observe::ethusdt",
+                    family_id="spread_reversion_v1",
+                    exchange="bybit",
+                    stream="bbo",
+                    symbols=["ethusdt"],
+                    runtime_binding_status="BOUND_SHADOW_RUNNABLE",
+                    binding_mode="OBSERVE_ONLY",
+                    shadow_tradeability_class="OBSERVE_ONLY",
+                ),
+                binding_item(
+                    pack_id="pack_unbound",
+                    strategy_id="candidate_strategy::momentum_v1::pack_unbound::adausdt",
+                    family_id="momentum_v1",
+                    exchange="binance",
+                    stream="bbo",
+                    symbols=["adausdt"],
+                    runtime_binding_status="UNBOUND_TRANSLATION_REJECTED",
+                    binding_mode="",
+                    shadow_tradeability_class="UNBOUND",
+                    binding_reason="TRANSLATION_STATUS:NOT_TRANSLATABLE_YET:MULTIPLE_SUPPORTED_FAMILY_REPORTS",
+                ),
+            ]
+            self._write_state(
+                state_dir,
+                review_rows,
+                candidate_records,
+                promotion_records,
+                binding_items=binding_items,
+            )
+
+            res = self._run_bridge(state_dir, out_dir, "--top-n", "3")
+            self.assertEqual(res.returncode, 0, msg=res.stderr)
+            watchlist = load_watchlist(out_dir / "shadow_watchlist_v0.json")
+            self.assertEqual(
+                watchlist["selection_policy"]["binding_priority_order"],
+                [
+                    "BOUND_DIRECTIONAL_PRIORITY",
+                    "BOUND_OBSERVE_ONLY",
+                    "UNBOUND_CANDIDATE",
+                ],
+            )
+            items = watchlist["items"]
+            self.assertEqual(
+                [item["pack_id"] for item in items],
+                ["pack_directional", "pack_observe", "pack_unbound"],
+            )
+            self.assertEqual(
+                [item["binding_priority_bucket"] for item in items],
+                [
+                    "BOUND_DIRECTIONAL_PRIORITY",
+                    "BOUND_OBSERVE_ONLY",
+                    "UNBOUND_CANDIDATE",
+                ],
+            )
+            self.assertEqual(items[0]["binding_strategy_id"], "candidate_strategy::momentum_v1::pack_directional::btcusdt")
+            self.assertEqual(items[1]["binding_mode"], "OBSERVE_ONLY")
+            self.assertEqual(items[2]["binding_status"], "UNBOUND_TRANSLATION_REJECTED")
+
+    def test_class_priority_beats_score_within_runnable_directional(self):
+        with tempfile.TemporaryDirectory(prefix="shadow_bridge_class_priority_") as td:
+            root = Path(td)
+            state_dir = root / "state"
+            out_dir = root / "shadow"
+
+            unseen_pack = make_pack(
+                root,
+                "multi-hypothesis-phase5-bighunt-binance-trade-20260102..20260102__FULLSCAN_MAJOR",
+                ["btcusdt"],
+            )
+            weak_pack = make_pack(
+                root,
+                "multi-hypothesis-phase5-bighunt-bybit-trade-20260102..20260102__FULLSCAN_MAJOR",
+                ["ethusdt"],
+            )
+
+            candidate_records = [
+                candidate_record(pack_id="pack_unseen", pack_path=unseen_pack, decision_tier="PROMOTE_STRONG"),
+                candidate_record(pack_id="pack_weak", pack_path=weak_pack, decision_tier="PROMOTE_STRONG"),
+            ]
+            promotion_records = [
+                promotion_record(pack_id="pack_unseen", pack_path=unseen_pack, decision_tier="PROMOTE_STRONG"),
+                promotion_record(pack_id="pack_weak", pack_path=weak_pack, decision_tier="PROMOTE_STRONG"),
+            ]
+            review_rows = [
+                {
+                    "rank": "1",
+                    "score": "99.000000",
+                    "decision_tier": "PROMOTE_STRONG",
+                    "pack_id": "pack_weak",
+                    "pack_path": str(weak_pack),
+                    "review_class": "WEAK",
+                    "class_priority": "5",
+                    "det_ratio": "1.000000",
+                    "det_pass": "5",
+                    "det_supported": "5",
+                    "det_skipped": "1",
+                    "max_rss_kb": "100000.0",
+                    "max_elapsed_sec": "4.0",
+                    "context_flags": "MARK=PASS;FUNDING=PASS;OI=PASS",
+                    "candidate_status": "NEW",
+                },
+                {
+                    "rank": "2",
+                    "score": "50.000000",
+                    "decision_tier": "PROMOTE_STRONG",
+                    "pack_id": "pack_unseen",
+                    "pack_path": str(unseen_pack),
+                    "review_class": "UNSEEN",
+                    "class_priority": "3",
+                    "det_ratio": "1.000000",
+                    "det_pass": "5",
+                    "det_supported": "5",
+                    "det_skipped": "1",
+                    "max_rss_kb": "100000.0",
+                    "max_elapsed_sec": "5.0",
+                    "context_flags": "MARK=PASS;FUNDING=PASS;OI=PASS",
+                    "candidate_status": "NEW",
+                },
+            ]
+            binding_items = [
+                binding_item(
+                    pack_id="pack_unseen",
+                    strategy_id="candidate_strategy::momentum_v1::pack_unseen::btcusdt",
+                    family_id="momentum_v1",
+                    exchange="binance",
+                    stream="trade",
+                    symbols=["btcusdt"],
+                    runtime_binding_status="BOUND_SHADOW_RUNNABLE",
+                    binding_mode="PAPER_DIRECTIONAL_V1",
+                    shadow_tradeability_class="DIRECTIONAL",
+                ),
+                binding_item(
+                    pack_id="pack_weak",
+                    strategy_id="candidate_strategy::momentum_v1::pack_weak::ethusdt",
+                    family_id="momentum_v1",
+                    exchange="bybit",
+                    stream="trade",
+                    symbols=["ethusdt"],
+                    runtime_binding_status="BOUND_SHADOW_RUNNABLE",
+                    binding_mode="PAPER_DIRECTIONAL_V1",
+                    shadow_tradeability_class="DIRECTIONAL",
+                ),
+            ]
+            self._write_state(
+                state_dir,
+                review_rows,
+                candidate_records,
+                promotion_records,
+                binding_items=binding_items,
+            )
+
+            res = self._run_bridge(state_dir, out_dir, "--top-n", "2")
+            self.assertEqual(res.returncode, 0, msg=res.stderr)
+            watchlist = load_watchlist(out_dir / "shadow_watchlist_v0.json")
+            items = watchlist["items"]
+            self.assertEqual([item["pack_id"] for item in items], ["pack_unseen", "pack_weak"])
+            self.assertEqual([item["review_class"] for item in items], ["UNSEEN", "WEAK"])
+            self.assertEqual([item["class_priority"] for item in items], ["3", "5"])
+            self.assertEqual(watchlist["selection_policy"]["authoritative_review_fields"], ["review_class", "class_priority"])
 
     def test_mock_observer_reads_watchlist_and_writes_events(self):
         with tempfile.TemporaryDirectory(prefix="shadow_observer_") as td:

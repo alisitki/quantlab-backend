@@ -1252,9 +1252,10 @@ def build_child_callbacks(shared: dict[str, Any], *, lock: threading.Lock) -> tu
     def stdout_callback(line: str) -> None:
         if not line:
             return
-        if line.startswith("total_processed:"):
+        marker = "total_processed:"
+        if marker in line:
             try:
-                processed = int(line.split(":", 1)[1].strip())
+                processed = int(line.split(marker, 1)[1].strip())
             except (TypeError, ValueError):
                 return
             with lock:

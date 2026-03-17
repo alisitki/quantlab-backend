@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 SCHEMA_VERSION = "primary_directional_family_selection_v0"
+GOVERNANCE_REGISTRY_REF = "tools/system_state/canonical_truth_registry_v0.json"
 PRIMARY_DIRECTIONAL = "PRIMARY_DIRECTIONAL"
 TRANSLATABLE = "TRANSLATABLE"
 BOUND_SHADOW_RUNNABLE = "BOUND_SHADOW_RUNNABLE"
@@ -323,6 +324,30 @@ def build_payload(
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_ts_utc": utc_now(),
+        "governance": {
+            "surface_role": "DERIVED_SELECTION_SUMMARY",
+            "authoritative_scope": (
+                "Current default preferred family for candidate->strategy translation. "
+                "This file is not the runtime binding ledger."
+            ),
+            "authoritative_source_ref": GOVERNANCE_REGISTRY_REF,
+            "produced_by": ["tools/phase6_primary_directional_family_selection_v0.py"],
+            "consumed_by": ["tools/phase6_candidate_strategy_contract_v0.py"],
+            "stale_if_inputs_newer_than_generated_ts": [
+                str(role_classification_path),
+                str(candidate_review_tsv_path),
+                str(candidate_strategy_contract_path),
+                str(candidate_runtime_binding_path),
+            ],
+            "preferred_runtime_truth_refs": [
+                str(candidate_strategy_contract_path),
+                str(candidate_runtime_binding_path),
+            ],
+            "notes": [
+                "selected_family_id is the default translation preference.",
+                "Prefer candidate_strategy_runtime_binding_v0.json for live bindability state.",
+            ],
+        },
         "source_role_classification_json": str(role_classification_path),
         "source_candidate_review_tsv": str(candidate_review_tsv_path),
         "source_candidate_strategy_contract_json": str(candidate_strategy_contract_path),

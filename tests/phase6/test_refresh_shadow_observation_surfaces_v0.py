@@ -43,6 +43,10 @@ class RefreshShadowObservationSurfacesV0Tests(unittest.TestCase):
             self.assertEqual(payload["candidate_review_exit_code"], "not_run")
             self.assertEqual(payload["watchlist_exit_code"], "not_run")
             self.assertEqual(payload["sync_ok"], False)
+            self.assertTrue(payload["candidate_review_tsv"].endswith("candidate_review_v2.tsv"))
+            self.assertTrue(payload["candidate_review_json"].endswith("candidate_review_v2.json"))
+            self.assertNotIn("--observation-index", payload["candidate_review_command"])
+            self.assertNotIn("--observation-history", payload["candidate_review_command"])
 
     def test_success_runs_review_then_watchlist(self):
         with tempfile.TemporaryDirectory(prefix="refresh_surfaces_ok_") as td:
@@ -64,8 +68,8 @@ class RefreshShadowObservationSurfacesV0Tests(unittest.TestCase):
                 "trace = Path(sys.argv[sys.argv.index('--state-dir')+1]).parent / 'trace.log'\n"
                 "trace.write_text(trace.read_text() + 'review\\n' if trace.exists() else 'review\\n', encoding='utf-8')\n"
                 "state_dir = Path(sys.argv[sys.argv.index('--state-dir')+1])\n"
-                "(state_dir / 'candidate_review.tsv').write_text('x\\n', encoding='utf-8')\n"
-                "(state_dir / 'candidate_review.json').write_text('{}\\n', encoding='utf-8')\n",
+                "(state_dir / 'candidate_review_v2.tsv').write_text('x\\n', encoding='utf-8')\n"
+                "(state_dir / 'candidate_review_v2.json').write_text('{}\\n', encoding='utf-8')\n",
             )
             write_script(
                 watchlist_tool,
@@ -97,6 +101,9 @@ class RefreshShadowObservationSurfacesV0Tests(unittest.TestCase):
             self.assertEqual(payload["candidate_review_exit_code"], 0)
             self.assertEqual(payload["watchlist_exit_code"], 0)
             self.assertEqual(payload["sync_ok"], True)
+            self.assertTrue(payload["candidate_review_tsv"].endswith("candidate_review_v2.tsv"))
+            self.assertTrue(payload["candidate_review_json"].endswith("candidate_review_v2.json"))
+            self.assertNotIn("--observation-index", payload["candidate_review_command"])
             self.assertEqual(trace.read_text(encoding="utf-8").splitlines(), ["review", "watchlist"])
 
     def test_review_failure_stops_chain(self):

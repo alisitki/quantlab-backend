@@ -63,11 +63,11 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                 json.dumps({"record_count": 2, "by_tier": {"PROMOTE": 2, "PROMOTE_STRONG": 0}}, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
-            (root / "tools" / "phase6_state" / "candidate_review.json").write_text(
+            (root / "tools" / "phase6_state" / "candidate_review_v2.json").write_text(
                 json.dumps(
                     {
                         "record_count": 2,
-                        "top_candidates": [{"pack_id": "pack-1", "score": "55.000000"}],
+                        "top_candidates": [{"pack_id": "pack-1", "score": "55.000000", "review_class": "UNSEEN", "class_priority": "3"}],
                     },
                     indent=2,
                     sort_keys=True,
@@ -94,8 +94,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                     return {"exit_code": 0, "stdout": "jobs_processed=2\ndone_count=2\nfailed_count=0\npromote_new_count=1\nbatch_report_path=/tmp/batch.json\n", "stderr": "", "kv": {"jobs_processed": "2", "done_count": "2", "failed_count": "0", "promote_new_count": "1", "batch_report_path": "/tmp/batch.json"}}
                 if "phase6_candidate_export_v0.py" in text:
                     return {"exit_code": 0, "stdout": "candidate_count_total=2\nstrong_count=0\n", "stderr": "", "kv": {"candidate_count_total": "2", "strong_count": "0"}}
-                if "phase6_candidate_review_v0.py" in text:
-                    return {"exit_code": 0, "stdout": "review_count=2\ntop_pack_id=pack-1\ntop_score=55.000000\n", "stderr": "", "kv": {"review_count": "2", "top_pack_id": "pack-1", "top_score": "55.000000"}}
+                if "phase6_candidate_review_v2.py" in text:
+                    return {"exit_code": 0, "stdout": "review_count=2\ntop_pack_id=pack-1\ntop_class=UNSEEN\n", "stderr": "", "kv": {"review_count": "2", "top_pack_id": "pack-1", "top_class": "UNSEEN"}}
                 if "refresh-shadow-derived-surfaces-v0.py" in text:
                     return {"exit_code": 0, "stdout": "refresh_result_json=/tmp/shadow_refresh.json\nsync_ok=1\nfailed_step=\n", "stderr": "", "kv": {"refresh_result_json": "/tmp/shadow_refresh.json", "sync_ok": "1", "failed_step": ""}}
                 raise AssertionError(text)
@@ -107,6 +107,7 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             self.assertEqual(report["planner"]["added_count"], 3)
             self.assertEqual(report["scheduler"]["done_count"], 2)
             self.assertEqual(report["candidate"]["top_pack_id"], "pack-1")
+            self.assertEqual(report["candidate"]["top_review_class"], "UNSEEN")
             self.assertTrue(report["shadow_refresh"]["sync_ok"])
             self.assertTrue(report_path.exists())
             self.assertEqual(len(calls), 6)
@@ -120,8 +121,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                 json.dumps({"record_count": 1, "by_tier": {"PROMOTE": 1, "PROMOTE_STRONG": 0}}, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
-            (root / "tools" / "phase6_state" / "candidate_review.json").write_text(
-                json.dumps({"record_count": 1, "top_candidates": [{"pack_id": "pack-z", "score": "51.0"}]}, indent=2, sort_keys=True) + "\n",
+            (root / "tools" / "phase6_state" / "candidate_review_v2.json").write_text(
+                json.dumps({"record_count": 1, "top_candidates": [{"pack_id": "pack-z", "score": "51.0", "review_class": "UNSEEN", "class_priority": "3"}]}, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
             batch_report_path = state_dir / "bighunt_batch_report_20260307_120000.json"
@@ -165,8 +166,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                     return {"exit_code": 0, "stdout": "decision=PROMOTE_STRONG\nrecord_appended=true\n", "stderr": "", "kv": {"decision": "PROMOTE_STRONG", "record_appended": "true"}}
                 if "phase6_candidate_export_v0.py" in text:
                     return {"exit_code": 0, "stdout": "candidate_count_total=2\nstrong_count=1\n", "stderr": "", "kv": {"candidate_count_total": "2", "strong_count": "1"}}
-                if "phase6_candidate_review_v0.py" in text:
-                    return {"exit_code": 0, "stdout": "review_count=2\ntop_pack_id=pack-new\ntop_score=61.0\n", "stderr": "", "kv": {"review_count": "2", "top_pack_id": "pack-new", "top_score": "61.0"}}
+                if "phase6_candidate_review_v2.py" in text:
+                    return {"exit_code": 0, "stdout": "review_count=2\ntop_pack_id=pack-new\ntop_class=INSUFFICIENT_EVIDENCE\n", "stderr": "", "kv": {"review_count": "2", "top_pack_id": "pack-new", "top_class": "INSUFFICIENT_EVIDENCE"}}
                 if "refresh-shadow-derived-surfaces-v0.py" in text:
                     return {"exit_code": 0, "stdout": "refresh_result_json=/tmp/shadow_refresh.json\nsync_ok=1\nfailed_step=\n", "stderr": "", "kv": {"refresh_result_json": "/tmp/shadow_refresh.json", "sync_ok": "1", "failed_step": ""}}
                 raise AssertionError(text)
@@ -178,7 +179,7 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             self.assertEqual(report["phase6_v2"]["record_appended_count"], 1)
             call_text = [" ".join(cmd) for cmd in calls]
             self.assertLess(call_text.index(next(x for x in call_text if "phase6_promotion_guards_v2.py" in x)), call_text.index(next(x for x in call_text if "phase6_candidate_export_v0.py" in x)))
-            self.assertLess(call_text.index(next(x for x in call_text if "phase6_candidate_review_v0.py" in x)), call_text.index(next(x for x in call_text if "refresh-shadow-derived-surfaces-v0.py" in x)))
+            self.assertLess(call_text.index(next(x for x in call_text if "phase6_candidate_review_v2.py" in x)), call_text.index(next(x for x in call_text if "refresh-shadow-derived-surfaces-v0.py" in x)))
 
     def test_dry_run_skips_scheduler_but_refreshes_candidate(self):
         with tempfile.TemporaryDirectory(prefix="nightly_orch_dry_") as td:
@@ -189,8 +190,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                 json.dumps({"record_count": 1, "by_tier": {"PROMOTE": 1, "PROMOTE_STRONG": 0}}, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
-            (root / "tools" / "phase6_state" / "candidate_review.json").write_text(
-                json.dumps({"record_count": 1, "top_candidates": [{"pack_id": "pack-a", "score": "42.0"}]}, indent=2, sort_keys=True) + "\n",
+            (root / "tools" / "phase6_state" / "candidate_review_v2.json").write_text(
+                json.dumps({"record_count": 1, "top_candidates": [{"pack_id": "pack-a", "score": "42.0", "review_class": "UNSEEN", "class_priority": "3"}]}, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
 
@@ -210,8 +211,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                     return {"exit_code": 0, "stdout": "would_add_count=4\nwindows_total=4\n", "stderr": "", "kv": {"would_add_count": "4", "windows_total": "4"}}
                 if "phase6_candidate_export_v0.py" in text:
                     return {"exit_code": 0, "stdout": "candidate_count_total=1\nstrong_count=0\n", "stderr": "", "kv": {"candidate_count_total": "1", "strong_count": "0"}}
-                if "phase6_candidate_review_v0.py" in text:
-                    return {"exit_code": 0, "stdout": "review_count=1\ntop_pack_id=pack-a\ntop_score=42.0\n", "stderr": "", "kv": {"review_count": "1", "top_pack_id": "pack-a", "top_score": "42.0"}}
+                if "phase6_candidate_review_v2.py" in text:
+                    return {"exit_code": 0, "stdout": "review_count=1\ntop_pack_id=pack-a\ntop_class=UNSEEN\n", "stderr": "", "kv": {"review_count": "1", "top_pack_id": "pack-a", "top_class": "UNSEEN"}}
                 if "refresh-shadow-derived-surfaces-v0.py" in text:
                     return {"exit_code": 0, "stdout": "refresh_result_json=/tmp/shadow_refresh.json\nsync_ok=1\nfailed_step=\n", "stderr": "", "kv": {"refresh_result_json": "/tmp/shadow_refresh.json", "sync_ok": "1", "failed_step": ""}}
                 raise AssertionError(text)
@@ -278,7 +279,7 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
             state_dir = root / "phase5_state"
             (root / "tools" / "phase6_state").mkdir(parents=True, exist_ok=True)
             (root / "tools" / "phase6_state" / "candidate_index.json").write_text("{}\n", encoding="utf-8")
-            (root / "tools" / "phase6_state" / "candidate_review.json").write_text("{}\n", encoding="utf-8")
+            (root / "tools" / "phase6_state" / "candidate_review_v2.json").write_text("{}\n", encoding="utf-8")
 
             def runner(cmd, cwd):
                 text = " ".join(cmd)
@@ -295,8 +296,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                     return {"exit_code": 0, "stdout": "jobs_processed=0\ndone_count=0\nfailed_count=0\npromote_new_count=0\nbatch_report_path=\n", "stderr": "", "kv": {"jobs_processed": "0", "done_count": "0", "failed_count": "0", "promote_new_count": "0", "batch_report_path": ""}}
                 if "phase6_candidate_export_v0.py" in text:
                     return {"exit_code": 0, "stdout": "candidate_count_total=0\nstrong_count=0\n", "stderr": "", "kv": {"candidate_count_total": "0", "strong_count": "0"}}
-                if "phase6_candidate_review_v0.py" in text:
-                    return {"exit_code": 0, "stdout": "review_count=0\ntop_pack_id=\ntop_score=\n", "stderr": "", "kv": {"review_count": "0", "top_pack_id": "", "top_score": ""}}
+                if "phase6_candidate_review_v2.py" in text:
+                    return {"exit_code": 0, "stdout": "review_count=0\ntop_pack_id=\ntop_class=\n", "stderr": "", "kv": {"review_count": "0", "top_pack_id": "", "top_class": ""}}
                 if "refresh-shadow-derived-surfaces-v0.py" in text:
                     return {"exit_code": 0, "stdout": "refresh_result_json=/tmp/shadow_refresh.json\nsync_ok=1\nfailed_step=\n", "stderr": "", "kv": {"refresh_result_json": "/tmp/shadow_refresh.json", "sync_ok": "1", "failed_step": ""}}
                 raise AssertionError(text)
@@ -316,8 +317,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                 json.dumps({"record_count": 1, "by_tier": {"PROMOTE": 1, "PROMOTE_STRONG": 0}}, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
-            (root / "tools" / "phase6_state" / "candidate_review.json").write_text(
-                json.dumps({"record_count": 1, "top_candidates": [{"pack_id": "pack-a", "score": "42.0"}]}, indent=2, sort_keys=True) + "\n",
+            (root / "tools" / "phase6_state" / "candidate_review_v2.json").write_text(
+                json.dumps({"record_count": 1, "top_candidates": [{"pack_id": "pack-a", "score": "42.0", "review_class": "UNSEEN", "class_priority": "3"}]}, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
 
@@ -336,8 +337,8 @@ class NightlyOrchestratorV0Tests(unittest.TestCase):
                     return {"exit_code": 0, "stdout": "jobs_processed=0\ndone_count=0\nfailed_count=0\npromote_new_count=0\nbatch_report_path=\n", "stderr": "", "kv": {"jobs_processed": "0", "done_count": "0", "failed_count": "0", "promote_new_count": "0", "batch_report_path": ""}}
                 if "phase6_candidate_export_v0.py" in text:
                     return {"exit_code": 0, "stdout": "candidate_count_total=1\nstrong_count=0\n", "stderr": "", "kv": {"candidate_count_total": "1", "strong_count": "0"}}
-                if "phase6_candidate_review_v0.py" in text:
-                    return {"exit_code": 0, "stdout": "review_count=1\ntop_pack_id=pack-a\ntop_score=42.0\n", "stderr": "", "kv": {"review_count": "1", "top_pack_id": "pack-a", "top_score": "42.0"}}
+                if "phase6_candidate_review_v2.py" in text:
+                    return {"exit_code": 0, "stdout": "review_count=1\ntop_pack_id=pack-a\ntop_class=UNSEEN\n", "stderr": "", "kv": {"review_count": "1", "top_pack_id": "pack-a", "top_class": "UNSEEN"}}
                 if "refresh-shadow-derived-surfaces-v0.py" in text:
                     return {"exit_code": 2, "stdout": "refresh_result_json=/tmp/shadow_refresh.json\nsync_ok=0\nfailed_step=watchlist\n", "stderr": "refresh failed", "kv": {"refresh_result_json": "/tmp/shadow_refresh.json", "sync_ok": "0", "failed_step": "watchlist"}}
                 raise AssertionError(text)

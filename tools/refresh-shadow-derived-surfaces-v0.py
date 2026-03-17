@@ -13,7 +13,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_STATE_DIR = ROOT / "tools" / "phase6_state"
 DEFAULT_SHADOW_STATE_DIR = ROOT / "tools" / "shadow_state"
-DEFAULT_CANDIDATE_REVIEW_TOOL = ROOT / "tools" / "phase6_candidate_review_v0.py"
+DEFAULT_CANDIDATE_REVIEW_TOOL = ROOT / "tools" / "phase6_candidate_review_v2.py"
 DEFAULT_WATCHLIST_TOOL = ROOT / "tools" / "shadow_candidate_bridge_v0.py"
 DEFAULT_EXECUTION_LEDGER_TOOL = ROOT / "tools" / "shadow_execution_ledger_v0.py"
 DEFAULT_EXECUTION_EVENTS_TOOL = ROOT / "tools" / "shadow_execution_events_v1.py"
@@ -138,7 +138,7 @@ def main(argv: list[str] | None = None) -> int:
     observation_history = Path(args.observation_history).resolve()
     result_json = Path(args.result_json).resolve()
 
-    candidate_review_json = state_dir / "candidate_review.json"
+    candidate_review_json = state_dir / "candidate_review_v2.json"
     watchlist_json = shadow_state_dir / "shadow_watchlist_v0.json"
     execution_ledger_jsonl = (
         Path(args.execution_ledger_jsonl).resolve()
@@ -163,14 +163,6 @@ def main(argv: list[str] | None = None) -> int:
         str(candidate_review_tool),
         "--state-dir",
         str(state_dir),
-        "--observation-index",
-        str(observation_index),
-        "--observation-history",
-        str(observation_history),
-        "--execution-pack-summary",
-        str(execution_pack_summary_json),
-        "--recent-observation-hours",
-        str(float(args.recent_observation_hours)),
     ]
     watchlist_cmd = [
         sys.executable,
@@ -179,6 +171,8 @@ def main(argv: list[str] | None = None) -> int:
         str(state_dir),
         "--out-dir",
         str(shadow_state_dir),
+        "--selection-source",
+        "candidate_review_v2.tsv",
         "--top-n",
         str(int(args.top_n)),
     ]

@@ -20,6 +20,7 @@ BOUND_SHADOW_RUNNABLE = "BOUND_SHADOW_RUNNABLE"
 UNBOUND_NO_RUNTIME_IMPL = "UNBOUND_NO_RUNTIME_IMPL"
 UNBOUND_CONFIG_GAP = "UNBOUND_CONFIG_GAP"
 UNBOUND_TRANSLATION_REJECTED = "UNBOUND_TRANSLATION_REJECTED"
+OBSERVE_ONLY_BINDING_MODE = "OBSERVE_ONLY"
 
 
 class CandidateStrategyRuntimeBindingError(RuntimeError):
@@ -98,9 +99,19 @@ def normalize_str_list(raw: Any) -> list[str]:
 def base_item(source_item: dict[str, Any]) -> dict[str, Any]:
     spec = source_item.get("strategy_spec")
     spec_obj = spec if isinstance(spec, dict) else {}
+    selected_symbol = str(source_item.get("selected_symbol") or "").strip().lower()
+    spec_symbols = normalize_str_list(spec_obj.get("symbols"))
     return {
         "rank": source_item.get("rank"),
         "pack_id": str(source_item.get("pack_id") or "").strip(),
+        "source_pack_id": str(
+            source_item.get("source_pack_id")
+            or spec_obj.get("source_pack_id")
+            or source_item.get("pack_id")
+            or ""
+        ).strip(),
+        "contract_row_id": str(source_item.get("contract_row_id") or "").strip() or None,
+        "selected_symbol": selected_symbol or (spec_symbols[0].lower() if len(spec_symbols) == 1 else None),
         "translation_status": str(source_item.get("translation_status") or "").strip(),
         "strategy_id": str(spec_obj.get("strategy_id") or "").strip() or None,
         "family_id": str(spec_obj.get("family_id") or "").strip() or None,
@@ -110,6 +121,8 @@ def base_item(source_item: dict[str, Any]) -> dict[str, Any]:
         "runtime_binding_status": UNBOUND_TRANSLATION_REJECTED,
         "runtime_strategy_file": None,
         "runtime_strategy_config": None,
+        "binding_mode": None,
+        "shadow_tradeability_class": "UNBOUND",
         "binding_reason": "",
     }
 
@@ -193,6 +206,8 @@ def bind_item(source_item: dict[str, Any], bindings: dict[str, Any]) -> dict[str
         item["runtime_binding_status"] = UNBOUND_CONFIG_GAP
         item["binding_reason"] = "BINDING_STRATEGY_CONFIG_INVALID"
         return item
+    binding_mode = str(strategy_config.get("binding_mode") or "").strip() or None
+    item["binding_mode"] = binding_mode
     if supported_streams and str(spec.get("stream") or "").strip() not in supported_streams:
         item["runtime_binding_status"] = UNBOUND_CONFIG_GAP
         item["binding_reason"] = "SPEC_STREAM_UNSUPPORTED"
@@ -210,6 +225,9 @@ def bind_item(source_item: dict[str, Any], bindings: dict[str, Any]) -> dict[str
     item["runtime_binding_status"] = BOUND_SHADOW_RUNNABLE
     item["runtime_strategy_file"] = strategy_file
     item["runtime_strategy_config"] = build_runtime_strategy_config(spec, strategy_config)
+    item["shadow_tradeability_class"] = (
+        "OBSERVE_ONLY" if binding_mode == OBSERVE_ONLY_BINDING_MODE else "DIRECTIONAL"
+    )
     item["binding_reason"] = ""
     return item
 
@@ -228,6 +246,18 @@ def build_payload(
     }
     for item in items:
         counts[str(item.get("runtime_binding_status") or UNBOUND_CONFIG_GAP)] += 1
+    bound_directional_count = sum(
+        1
+        for item in items
+        if str(item.get("runtime_binding_status") or "").strip() == BOUND_SHADOW_RUNNABLE
+        and str(item.get("shadow_tradeability_class") or "").strip() == "DIRECTIONAL"
+    )
+    bound_observe_only_count = sum(
+        1
+        for item in items
+        if str(item.get("runtime_binding_status") or "").strip() == BOUND_SHADOW_RUNNABLE
+        and str(item.get("shadow_tradeability_class") or "").strip() == "OBSERVE_ONLY"
+    )
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_ts_utc": utc_now_iso(),
@@ -236,6 +266,8 @@ def build_payload(
         "source_row_count": len(items),
         "translated_spec_count": sum(1 for item in items if str(item.get("translation_status") or "") == "TRANSLATABLE"),
         "bound_shadow_runnable_count": counts[BOUND_SHADOW_RUNNABLE],
+        "bound_directional_count": bound_directional_count,
+        "bound_observe_only_count": bound_observe_only_count,
         "unbound_no_runtime_impl_count": counts[UNBOUND_NO_RUNTIME_IMPL],
         "unbound_config_gap_count": counts[UNBOUND_CONFIG_GAP],
         "unbound_translation_rejected_count": counts[UNBOUND_TRANSLATION_REJECTED],
@@ -261,6 +293,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"source_row_count={payload['source_row_count']}")
     print(f"translated_spec_count={payload['translated_spec_count']}")
     print(f"bound_shadow_runnable_count={payload['bound_shadow_runnable_count']}")
+    print(f"bound_directional_count={payload['bound_directional_count']}")
+    print(f"bound_observe_only_count={payload['bound_observe_only_count']}")
     print(f"unbound_no_runtime_impl_count={payload['unbound_no_runtime_impl_count']}")
     print(f"unbound_config_gap_count={payload['unbound_config_gap_count']}")
     print(f"unbound_translation_rejected_count={payload['unbound_translation_rejected_count']}")

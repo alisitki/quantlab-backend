@@ -1,0 +1,667 @@
+{
+  "class_counts": {
+    "INSUFFICIENT_EVIDENCE": 1,
+    "NO_SIGNAL": 2,
+    "OBSERVE_ONLY": 13,
+    "UNRUNNABLE": 42,
+    "UNSEEN": 56,
+    "WEAK": 3
+  },
+  "no_signal_rows": [
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260214..20260214-20260307_194028-8a3131f7-t1__FULLSCAN_MAJOR__4321db8bcf29cbd86ec527f7637e035a044bcc34acb9f9df1fc25466b724ff52",
+      "shadow_run_count": 1,
+      "v0_rank": 45,
+      "v2_rank": 58
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260312..20260312-20260313_035447-26a42e35-t1__FULLSCAN_MAJOR__6970c1af8b30624dcdcad1701abaccb079d90e551b8bc66f1d69ea75384e0395",
+      "shadow_run_count": 1,
+      "v0_rank": 46,
+      "v2_rank": 59
+    }
+  ],
+  "observe_only_demoted": [
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590",
+      "review_class": "OBSERVE_ONLY",
+      "selected_family_ids": "spread_reversion_v1",
+      "v0_rank": 1,
+      "v2_rank": 63
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR__255f98f931649cfa357b4d27bbec76d309b16b8baedabaa4d76c8f4539a54b2f",
+      "review_class": "OBSERVE_ONLY",
+      "selected_family_ids": "spread_reversion_v1",
+      "v0_rank": 2,
+      "v2_rank": 64
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260122..20260122-20260306_221422-3f8200a1-t1__FULLSCAN_MAJOR__d0c128d531f4d13acb95f5c1492ad541dd99f3364496cd6ce0c5801403dbfe96",
+      "review_class": "OBSERVE_ONLY",
+      "selected_family_ids": "spread_reversion_v1",
+      "v0_rank": 3,
+      "v2_rank": 65
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260115..20260115-20260306_203542-67a6cf84-t1__FULLSCAN_MAJOR__5d1c022d828df2bc3c95613148ef5ab02c68b515ee8569008de83dbbe586e8ad",
+      "review_class": "OBSERVE_ONLY",
+      "selected_family_ids": "spread_reversion_v1",
+      "v0_rank": 4,
+      "v2_rank": 66
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260124..20260124-20260306_225148-5980ca43-t1__FULLSCAN_MAJOR__6d279d08dd446e44ae4841d873e7cc8f848607d9d64794c63350a3e6c68fa550",
+      "review_class": "OBSERVE_ONLY",
+      "selected_family_ids": "spread_reversion_v1",
+      "v0_rank": 5,
+      "v2_rank": 67
+    }
+  ],
+  "record_count": 117,
+  "rows_that_moved_materially": [
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR__3ae0e007060d81a7180ef37ac6ce9b44a0baa407b2edb9c69a835ffb62783ad8",
+      "rank_delta": -70,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 6,
+      "v0_score": "84.219813",
+      "v2_rank": 76,
+      "v2_score": "84.219813"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260110..20260110-20260306_191204-345c74a2-t1__FULLSCAN_MAJOR__e61803be266b8630ee6e690644227b5e8457ebcbca1e6a47341edf2a65c71f8f",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 37,
+      "v0_score": "72.815500",
+      "v2_rank": 105,
+      "v2_score": "72.815500"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260124..20260124-20260306_224433-eb46ae1e-t1__FULLSCAN_MAJOR__f2f4dcb1050ed9860d1d6e050d4d3fe6f7892bd3fc527ee87cd76097d654a7d4",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 36,
+      "v0_score": "73.635160",
+      "v2_rank": 104,
+      "v2_score": "73.635160"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260302..20260302-20260307_234227-7f3371f6-t1__FULLSCAN_MAJOR__9fc1698eeec0681f0d5a08774bbf3018f5eefa7f36f3bd91b3b32abf58dc4974",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 35,
+      "v0_score": "73.659460",
+      "v2_rank": 103,
+      "v2_score": "73.659460"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260303..20260303-20260307_235954-59046c90-t1__FULLSCAN_MAJOR__1da49fd0bde8dbc0a4b4d4e2a2c35bbf8ed10e0e33c0ddc0c5bc5f69e8fe4b34",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 34,
+      "v0_score": "74.117073",
+      "v2_rank": 102,
+      "v2_score": "74.117073"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260211..20260211-20260307_181839-965021cb-t1__FULLSCAN_MAJOR__0d897cc04c751eedbff20bd6a3cb719d63f60bde55dc06dabcedd226853d44db",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 33,
+      "v0_score": "74.206753",
+      "v2_rank": 101,
+      "v2_score": "74.206753"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260304..20260304-20260308_001847-fbb6924f-t1__FULLSCAN_MAJOR__8239f055c163d51093dd09d27042301451fa1e79e067ed79f1458668ea768b6d",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 32,
+      "v0_score": "74.921613",
+      "v2_rank": 100,
+      "v2_score": "74.921613"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260225..20260225-20260307_223502-7c751e1e-t1__FULLSCAN_MAJOR__a30c6460047d46f07ab7f7ab96f3f7fb23d5e200e2e24d838766bf65ed66fa62",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 31,
+      "v0_score": "75.046753",
+      "v2_rank": 99,
+      "v2_score": "75.046753"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260224..20260224-20260307_221836-ac97948a-t1__FULLSCAN_MAJOR__70d25ce0a72e9e21119a04f2098d00aabfcc477aafc59584cfb274959db29507",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 30,
+      "v0_score": "75.261713",
+      "v2_rank": 98,
+      "v2_score": "75.261713"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260209..20260209-20260307_042520-a29fe303-t1__FULLSCAN_MAJOR__4904e17e9dc96306dfe258a26ad0654b6c63f71986578e10e7459aa0b197fa8c",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 29,
+      "v0_score": "75.410433",
+      "v2_rank": 97,
+      "v2_score": "75.410433"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260305..20260305-20260308_170759-2209dce6-t1__FULLSCAN_MAJOR__03b61cb964a963bcb0f04a530b2ec56d6e1765a1630f8bdf3e20b29f1898b1dc",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 28,
+      "v0_score": "75.560007",
+      "v2_rank": 96,
+      "v2_score": "75.560007"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260226..20260226-20260307_225235-5c7ebec0-t1__FULLSCAN_MAJOR__8139dffe988202b46a221d10ea947a56804044afdbedc991a12b1d5e23637015",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 27,
+      "v0_score": "75.621347",
+      "v2_rank": 95,
+      "v2_score": "75.621347"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260213..20260213-20260307_192118-cda6bc51-t1__FULLSCAN_MAJOR__871e721b5c167914c653696adcfbc0bdd85557bf9f260049d2f7917cfa08315a",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 26,
+      "v0_score": "75.627753",
+      "v2_rank": 94,
+      "v2_score": "75.627753"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260228..20260228-20260307_232612-5a6e300c-t1__FULLSCAN_MAJOR__ab964bd8ee5762f07add0cf6683330cb5115dadd0433c1afb0aa7898211fb2b1",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 25,
+      "v0_score": "75.677153",
+      "v2_rank": 93,
+      "v2_score": "75.677153"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260223..20260223-20260307_220253-d31f1609-t1__FULLSCAN_MAJOR__fdef8a7ae467f8c95ffc58dc8f273394d653a784b56f869896bb26f5b966fe93",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 24,
+      "v0_score": "75.717640",
+      "v2_rank": 92,
+      "v2_score": "75.717640"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260309..20260309-20260310_030547-cdca1cc9-t1__FULLSCAN_MAJOR__976c0a03010ab9d80334cdc2290f9c1695f66cbd24e1011342b14abfe182b1b1",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 23,
+      "v0_score": "75.972900",
+      "v2_rank": 91,
+      "v2_score": "75.972900"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260212..20260212-20260307_190431-4985ed81-t1__FULLSCAN_MAJOR__a55a36bafb1ad2595c3c7a75d92480fec60bcd200d8039d67c217df7a5ee74b7",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 22,
+      "v0_score": "76.293333",
+      "v2_rank": 90,
+      "v2_score": "76.293333"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260227..20260227-20260307_230949-251cd9d2-t1__FULLSCAN_MAJOR__d492ccfe409b2806f2662e5bf7033149215e39fbdffd6f0055c7f7c551fc2b33",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 21,
+      "v0_score": "76.817787",
+      "v2_rank": 89,
+      "v2_score": "76.817787"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260217..20260217-20260307_202313-762018c2-t1__FULLSCAN_MAJOR__d67035e0d3dbaf8133a210e477206694d1840283ecec40a20fe06a259c7d308b",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 20,
+      "v0_score": "77.356433",
+      "v2_rank": 88,
+      "v2_score": "77.356433"
+    },
+    {
+      "closed_cycle_count": "0",
+      "fill_backed_run_count": "0",
+      "outcome_class": "NONE",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260208..20260208-20260307_034832-0180ff20-t1__FULLSCAN_MAJOR__65f7f57b37b7eb88e3d6d3ce0a5cfd5ca153cf3c5254ea651fe2b8c30ef9d88f",
+      "rank_delta": -68,
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNRUNNABLE",
+      "selected_family_ids": "spread_reversion_v1",
+      "trade_surface_bucket": "UNRUNNABLE",
+      "v0_rank": 19,
+      "v0_score": "77.456613",
+      "v2_rank": 87,
+      "v2_score": "77.456613"
+    }
+  ],
+  "runnable_directional_promoted": [
+    {
+      "closed_cycle_count": 1,
+      "fill_backed_run_count": 2,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "INSUFFICIENT_EVIDENCE",
+      "v0_rank": 8,
+      "v2_rank": 1
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260311..20260311-20260312_031855-3d7d91e3-t1__FULLSCAN_MAJOR__0fe810c645a6a50eb85b94740698acd0af4478f1c442ed3fd0c0c083b18169b3",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 47,
+      "v2_rank": 2
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260220..20260220-20260307_211155-2b6661b0-t1__FULLSCAN_MAJOR__30395e47ca66656c9145a313820cb279cdf0c67eaf8ea62e4299d6178647a296",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 48,
+      "v2_rank": 3
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260212..20260212-20260307_190811-305e36d6-t1__FULLSCAN_MAJOR__38c9532cf07240734c43483156461431f2e36ddaf49ce3a1b35eab0e1976745f",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 49,
+      "v2_rank": 4
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260216..20260216-20260307_201204-1f153e95-t1__FULLSCAN_MAJOR__6d4b6f0376dabaceab37c854d41dfb3738dacb226d737895cef5d02e36364e29",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 50,
+      "v2_rank": 5
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260306..20260306-20260308_172751-ade7613d-t1__FULLSCAN_MAJOR__4fee93795b639fab7cdab65f096d823474761b06b902f20f32102a3bcfe92749",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 51,
+      "v2_rank": 6
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260226-20260307_225643-cd573a6d-t1__FULLSCAN_MAJOR__4883ede73a477b82a880fee75595629f405790e7309dd022b34a1ab79dc01bc7",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 52,
+      "v2_rank": 7
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260227..20260227-20260307_231316-b910dca5-t1__FULLSCAN_MAJOR__4bfdd04262256e50f7ecfac710413af5076af34144e241bb00a49ceb8badbdae",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 53,
+      "v2_rank": 8
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260310..20260310-20260311_034102-98e3aac7-t1__FULLSCAN_MAJOR__bf4becf653558036caf8a79e468295aeb8d3a1aa47a27fa053b3ce63ef25f9dd",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 54,
+      "v2_rank": 9
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260224..20260224-20260307_222217-0788837f-t1__FULLSCAN_MAJOR__16e446b1fe4b6eba575af36d8e55beb367eb345643e4c3b01f695ebad644515e",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 55,
+      "v2_rank": 10
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260309..20260309-20260310_033547-ddaf6513-t1__FULLSCAN_MAJOR__8583aea8ba258fdb42fa9252780faf84407d83a8c645d61d7ec6e4e7ce45bc7c",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 57,
+      "v2_rank": 11
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260305..20260305-20260308_171224-e80ab529-t1__FULLSCAN_MAJOR__b3819e896c3ea4530fe76b96b61b8c6d7355629b314dd7d2bc300dea17e82025",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 58,
+      "v2_rank": 12
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260213..20260213-20260307_192450-53422719-t1__FULLSCAN_MAJOR__995c8ea3ef2c1772c0b95cc3a745ab8d3052d0fe0677cb33d8e26ccdffbae0f8",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 60,
+      "v2_rank": 13
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260303..20260303-20260308_000514-e3a11c5a-t1__FULLSCAN_MAJOR__deb9f9a03c5cdc63fc0260d0831f4ff7d2ac01630561291eee1683dfff09ad8d",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 61,
+      "v2_rank": 14
+    },
+    {
+      "closed_cycle_count": 0,
+      "fill_backed_run_count": 0,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260223..20260223-20260307_220628-17c80b3e-t1__FULLSCAN_MAJOR__2d486b31a872d4f372bab60038a269ffcfc08d2ab0d678960fa63e52bbd61fa2",
+      "realized_pnl_sum": "0.000000",
+      "review_class": "UNSEEN",
+      "v0_rank": 62,
+      "v2_rank": 15
+    }
+  ],
+  "schema_version": "candidate_review_v2_validation_v0_diff",
+  "shadow_weak_demoted": [
+    {
+      "closed_cycle_count": 1,
+      "fill_backed_run_count": 37,
+      "outcome_class": "STABLE_FLAT",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff",
+      "realized_pnl_sum": "-229.148960",
+      "v0_rank": 7,
+      "v2_rank": 60
+    },
+    {
+      "closed_cycle_count": 3,
+      "fill_backed_run_count": 7,
+      "outcome_class": "STABLE_FLAT",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa",
+      "realized_pnl_sum": "-0.555564",
+      "v0_rank": 43,
+      "v2_rank": 61
+    },
+    {
+      "closed_cycle_count": 2,
+      "fill_backed_run_count": 3,
+      "outcome_class": "MIXED_RECENT",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab",
+      "realized_pnl_sum": "-0.002579",
+      "v0_rank": 44,
+      "v2_rank": 62
+    }
+  ],
+  "source_v0_tsv": "tools/phase6_state/candidate_review.tsv",
+  "source_v2_tsv": "tools/phase6_state/candidate_review_v2.tsv",
+  "top10_v2": [
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584",
+      "rank": 1,
+      "review_class": "INSUFFICIENT_EVIDENCE",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "RUNNABLE_DIRECTIONAL",
+      "v0_rank": 8
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260311..20260311-20260312_031855-3d7d91e3-t1__FULLSCAN_MAJOR__0fe810c645a6a50eb85b94740698acd0af4478f1c442ed3fd0c0c083b18169b3",
+      "rank": 2,
+      "review_class": "UNSEEN",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "RUNNABLE_DIRECTIONAL",
+      "v0_rank": 47
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260220..20260220-20260307_211155-2b6661b0-t1__FULLSCAN_MAJOR__30395e47ca66656c9145a313820cb279cdf0c67eaf8ea62e4299d6178647a296",
+      "rank": 3,
+      "review_class": "UNSEEN",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "RUNNABLE_DIRECTIONAL",
+      "v0_rank": 48
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260212..20260212-20260307_190811-305e36d6-t1__FULLSCAN_MAJOR__38c9532cf07240734c43483156461431f2e36ddaf49ce3a1b35eab0e1976745f",
+      "rank": 4,
+      "review_class": "UNSEEN",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "RUNNABLE_DIRECTIONAL",
+      "v0_rank": 49
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260216..20260216-20260307_201204-1f153e95-t1__FULLSCAN_MAJOR__6d4b6f0376dabaceab37c854d41dfb3738dacb226d737895cef5d02e36364e29",
+      "rank": 5,
+      "review_class": "UNSEEN",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "RUNNABLE_DIRECTIONAL",
+      "v0_rank": 50
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260306..20260306-20260308_172751-ade7613d-t1__FULLSCAN_MAJOR__4fee93795b639fab7cdab65f096d823474761b06b902f20f32102a3bcfe92749",
+      "rank": 6,
+      "review_class": "UNSEEN",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "RUNNABLE_DIRECTIONAL",
+      "v0_rank": 51
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260226-20260307_225643-cd573a6d-t1__FULLSCAN_MAJOR__4883ede73a477b82a880fee75595629f405790e7309dd022b34a1ab79dc01bc7",
+      "rank": 7,
+      "review_class": "UNSEEN",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "RUNNABLE_DIRECTIONAL",
+      "v0_rank": 52
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260227..20260227-20260307_231316-b910dca5-t1__FULLSCAN_MAJOR__4bfdd04262256e50f7ecfac710413af5076af34144e241bb00a49ceb8badbdae",
+      "rank": 8,
+      "review_class": "UNSEEN",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "RUNNABLE_DIRECTIONAL",
+      "v0_rank": 53
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260310..20260310-20260311_034102-98e3aac7-t1__FULLSCAN_MAJOR__bf4becf653558036caf8a79e468295aeb8d3a1aa47a27fa053b3ce63ef25f9dd",
+      "rank": 9,
+      "review_class": "UNSEEN",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "RUNNABLE_DIRECTIONAL",
+      "v0_rank": 54
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260224..20260224-20260307_222217-0788837f-t1__FULLSCAN_MAJOR__16e446b1fe4b6eba575af36d8e55beb367eb345643e4c3b01f695ebad644515e",
+      "rank": 10,
+      "review_class": "UNSEEN",
+      "selected_family_ids": "momentum_v1",
+      "trade_surface_bucket": "RUNNABLE_DIRECTIONAL",
+      "v0_rank": 55
+    }
+  ],
+  "unseen_rows_top": [
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260311..20260311-20260312_031855-3d7d91e3-t1__FULLSCAN_MAJOR__0fe810c645a6a50eb85b94740698acd0af4478f1c442ed3fd0c0c083b18169b3",
+      "v0_rank": 47,
+      "v2_rank": 2
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260220..20260220-20260307_211155-2b6661b0-t1__FULLSCAN_MAJOR__30395e47ca66656c9145a313820cb279cdf0c67eaf8ea62e4299d6178647a296",
+      "v0_rank": 48,
+      "v2_rank": 3
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260212..20260212-20260307_190811-305e36d6-t1__FULLSCAN_MAJOR__38c9532cf07240734c43483156461431f2e36ddaf49ce3a1b35eab0e1976745f",
+      "v0_rank": 49,
+      "v2_rank": 4
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260216..20260216-20260307_201204-1f153e95-t1__FULLSCAN_MAJOR__6d4b6f0376dabaceab37c854d41dfb3738dacb226d737895cef5d02e36364e29",
+      "v0_rank": 50,
+      "v2_rank": 5
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260306..20260306-20260308_172751-ade7613d-t1__FULLSCAN_MAJOR__4fee93795b639fab7cdab65f096d823474761b06b902f20f32102a3bcfe92749",
+      "v0_rank": 51,
+      "v2_rank": 6
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260226-20260307_225643-cd573a6d-t1__FULLSCAN_MAJOR__4883ede73a477b82a880fee75595629f405790e7309dd022b34a1ab79dc01bc7",
+      "v0_rank": 52,
+      "v2_rank": 7
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260227..20260227-20260307_231316-b910dca5-t1__FULLSCAN_MAJOR__4bfdd04262256e50f7ecfac710413af5076af34144e241bb00a49ceb8badbdae",
+      "v0_rank": 53,
+      "v2_rank": 8
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260310..20260310-20260311_034102-98e3aac7-t1__FULLSCAN_MAJOR__bf4becf653558036caf8a79e468295aeb8d3a1aa47a27fa053b3ce63ef25f9dd",
+      "v0_rank": 54,
+      "v2_rank": 9
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260224..20260224-20260307_222217-0788837f-t1__FULLSCAN_MAJOR__16e446b1fe4b6eba575af36d8e55beb367eb345643e4c3b01f695ebad644515e",
+      "v0_rank": 55,
+      "v2_rank": 10
+    },
+    {
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260309..20260309-20260310_033547-ddaf6513-t1__FULLSCAN_MAJOR__8583aea8ba258fdb42fa9252780faf84407d83a8c645d61d7ec6e4e7ce45bc7c",
+      "v0_rank": 57,
+      "v2_rank": 11
+    }
+  ]
+}

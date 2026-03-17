@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from tools import phase6_candidate_strategy_contract_v0 as contract_module
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "tools" / "phase6_candidate_strategy_contract_v0.py"
@@ -94,6 +95,9 @@ def unsupported_report(*, family_id: str, exchange: str, stream: str, symbol: st
 
 
 class CandidateStrategyContractV0Tests(unittest.TestCase):
+    def test_default_review_path_uses_v2_surface(self):
+        self.assertTrue(str(contract_module.DEFAULT_CANDIDATE_REVIEW_TSV).endswith("candidate_review_v2.tsv"))
+
     def _run(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
             ["python3", str(SCRIPT), *args],
@@ -113,6 +117,7 @@ class CandidateStrategyContractV0Tests(unittest.TestCase):
 
             self.assertEqual(res.returncode, 0, msg=res.stderr)
             payload = json.loads(out_json.read_text(encoding="utf-8"))
+            self.assertEqual(payload["source_candidate_review_row_count"], 0)
             self.assertEqual(payload["source_row_count"], 0)
             self.assertEqual(payload["items"], [])
             self.assertEqual(payload["translatable_count"], 0)
@@ -143,10 +148,15 @@ class CandidateStrategyContractV0Tests(unittest.TestCase):
 
             self.assertEqual(res.returncode, 0, msg=res.stderr)
             payload = json.loads(out_json.read_text(encoding="utf-8"))
+            self.assertEqual(payload["source_candidate_review_row_count"], 1)
+            self.assertEqual(payload["source_row_count"], 1)
             self.assertEqual(payload["translatable_count"], 1)
             item = payload["items"][0]
             self.assertEqual(item["translation_status"], "TRANSLATABLE")
             self.assertEqual(item["reject_reason"], "")
+            self.assertEqual(item["contract_row_id"], "candidate_contract::pack_a::bnbusdt")
+            self.assertEqual(item["selected_symbol"], "bnbusdt")
+            self.assertEqual(item["selected_family_id"], "spread_reversion_v1")
             spec = item["strategy_spec"]
             self.assertEqual(spec["family_id"], "spread_reversion_v1")
             self.assertEqual(spec["exchange"], "bybit")
@@ -154,12 +164,36 @@ class CandidateStrategyContractV0Tests(unittest.TestCase):
             self.assertEqual(spec["symbols"], ["bnbusdt"])
             self.assertEqual(spec["activation_mode"], "SPEC_ONLY")
             self.assertEqual(spec["runtime_binding_status"], "UNBOUND")
+            self.assertEqual(spec["source_contract_row_id"], "candidate_contract::pack_a::bnbusdt")
+            self.assertEqual(spec["source_selected_symbol"], "bnbusdt")
 
-    def test_multi_symbol_pack_is_not_translatable_yet(self):
+    def test_multi_symbol_pack_splits_into_symbol_rows(self):
         with tempfile.TemporaryDirectory(prefix="candidate_strategy_multi_symbol_") as td:
             root = Path(td)
             pack = root / "pack_multi"
-            make_pack(pack, symbols=["bnbusdt", "ethusdt"], reports_by_symbol={})
+            make_pack(
+                pack,
+                symbols=["bnbusdt", "ethusdt"],
+                reports_by_symbol={
+                    "bnbusdt": [
+                        supported_report(
+                            family_id="spread_reversion_v1",
+                            exchange="bybit",
+                            stream="bbo",
+                            symbol="bnbusdt",
+                        )
+                    ],
+                    "ethusdt": [
+                        supported_report(
+                            family_id="momentum_v1",
+                            exchange="binance",
+                            stream="trade",
+                            symbol="ethusdt",
+                            pass_signal=True,
+                        )
+                    ],
+                },
+            )
             candidate_review_tsv = root / "candidate_review.tsv"
             out_json = root / "candidate_strategy_contract.json"
             write_candidate_review_tsv(candidate_review_tsv, [make_row(1, "pack_multi", pack)])
@@ -168,10 +202,35 @@ class CandidateStrategyContractV0Tests(unittest.TestCase):
 
             self.assertEqual(res.returncode, 0, msg=res.stderr)
             payload = json.loads(out_json.read_text(encoding="utf-8"))
-            item = payload["items"][0]
-            self.assertEqual(item["translation_status"], "NOT_TRANSLATABLE_YET")
-            self.assertEqual(item["reject_reason"], "MULTI_SYMBOL_PACK_UNSUPPORTED")
-            self.assertIsNone(item["strategy_spec"])
+            self.assertEqual(payload["source_candidate_review_row_count"], 1)
+            self.assertEqual(payload["source_row_count"], 2)
+            self.assertEqual(payload["translatable_count"], 2)
+            self.assertEqual(
+                [item["contract_row_id"] for item in payload["items"]],
+                [
+                    "candidate_contract::pack_multi::bnbusdt",
+                    "candidate_contract::pack_multi::ethusdt",
+                ],
+            )
+            self.assertEqual(
+                [item["selected_symbol"] for item in payload["items"]],
+                ["bnbusdt", "ethusdt"],
+            )
+            self.assertEqual(
+                [item["translation_status"] for item in payload["items"]],
+                ["TRANSLATABLE", "TRANSLATABLE"],
+            )
+            self.assertEqual(
+                [item["selected_family_id"] for item in payload["items"]],
+                ["spread_reversion_v1", "momentum_v1"],
+            )
+            self.assertEqual(
+                [item["strategy_spec"]["source_contract_row_id"] for item in payload["items"]],
+                [
+                    "candidate_contract::pack_multi::bnbusdt",
+                    "candidate_contract::pack_multi::ethusdt",
+                ],
+            )
 
     def test_no_supported_family_is_rejected_as_unsupported(self):
         with tempfile.TemporaryDirectory(prefix="candidate_strategy_unsupported_") as td:

@@ -1,3 +1,11 @@
+import { DEFAULT_FEE_RATE } from '../../execution/fill.js';
+
+const CONFIDENCE_BUCKET_MULTIPLIERS = Object.freeze({
+  LOW: 1.0,
+  MEDIUM: 0.75,
+  HIGH: 0.5,
+});
+
 function normalizeSymbol(value) {
   return String(value || '').trim().toUpperCase();
 }
@@ -28,6 +36,16 @@ function toBigIntOrNull(value) {
 
 function cloneJson(value) {
   return JSON.parse(JSON.stringify(value));
+}
+
+function deriveConfidenceRatio(tStat, eventCount) {
+  return Math.min(tStat / 2.0, eventCount / 200.0);
+}
+
+function deriveConfidenceBucket(confidenceRatio) {
+  if (confidenceRatio >= 20) return 'HIGH';
+  if (confidenceRatio >= 5) return 'MEDIUM';
+  return 'LOW';
 }
 
 function validateConfig(rawConfig) {
@@ -62,6 +80,12 @@ function validateConfig(rawConfig) {
   if (orderQty === null) {
     throw new Error('MOMENTUM_V1_CONFIG_ERROR: positive orderQty required');
   }
+  const executionConfig = config.execution_config && typeof config.execution_config === 'object'
+    ? config.execution_config
+    : null;
+  const feeRate = toPositiveNumber(executionConfig?.feeRate) ?? DEFAULT_FEE_RATE;
+  const minEdgeCostMultiple = toPositiveNumber(config.min_edge_cost_multiple) ?? 1.25;
+  const explicitMinAbsPastReturnBps = toPositiveNumber(config.min_abs_past_return_bps);
 
   const params = config.params && typeof config.params === 'object' ? config.params : null;
   const selectedCell = config.selected_cell && typeof config.selected_cell === 'object' ? config.selected_cell : null;
@@ -98,6 +122,10 @@ function validateConfig(rawConfig) {
   if (!(meanProduct > 0) || !(tStat >= 2)) {
     throw new Error('MOMENTUM_V1_CONFIG_ERROR: selected_cell must satisfy directional momentum pass bar');
   }
+  const confidenceRatio = deriveConfidenceRatio(tStat, eventCount);
+  const confidenceBucket = deriveConfidenceBucket(confidenceRatio);
+  const confidenceBucketMultiplier = CONFIDENCE_BUCKET_MULTIPLIERS[confidenceBucket];
+  const feeFloorBps = feeRate * 10_000 * 2 * minEdgeCostMultiple;
 
   const toleranceMs = Number.isInteger(Number(params.tolerance_ms))
     ? Math.max(0, Number(params.tolerance_ms))
@@ -127,6 +155,13 @@ function validateConfig(rawConfig) {
     eventCount,
     meanProduct,
     tStat,
+    feeRate,
+    feeFloorBps,
+    minEdgeCostMultiple,
+    confidenceRatio,
+    confidenceBucket,
+    confidenceBucketMultiplier,
+    minAbsPastReturnBps: explicitMinAbsPastReturnBps ?? (feeFloorBps * confidenceBucketMultiplier),
   };
 }
 
@@ -184,11 +219,12 @@ function signalFromPastReturn(pastReturnBps) {
   return 'FLAT';
 }
 
-function buildOrderIntent(symbol, side, qty) {
+function buildOrderIntent(symbol, side, qty, metadata = {}) {
   return {
     symbol,
     side,
     qty,
+    ...metadata,
   };
 }
 
@@ -205,6 +241,11 @@ export class MomentumV1Strategy {
       signal_event_count: 0,
       order_event_count: 0,
       ignored_event_count: 0,
+      confidence_bucket: this.config.confidenceBucket,
+      confidence_ratio: this.config.confidenceRatio,
+      confidence_bucket_multiplier: this.config.confidenceBucketMultiplier,
+      fee_floor_bps: this.config.feeFloorBps,
+      required_abs_past_return_bps: this.config.minAbsPastReturnBps,
       last_price: null,
       last_signal: null,
       last_action: null,
@@ -214,7 +255,7 @@ export class MomentumV1Strategy {
 
   async onInit(ctx) {
     ctx.logger.info(
-      `[MomentumV1Strategy] init symbol=${this.config.symbol} delta_ms=${this.config.selectedCell.delta_ms} h_ms=${this.config.selectedCell.h_ms} orderQty=${this.config.orderQty}`
+      `[MomentumV1Strategy] init symbol=${this.config.symbol} delta_ms=${this.config.selectedCell.delta_ms} h_ms=${this.config.selectedCell.h_ms} orderQty=${this.config.orderQty} confidenceBucket=${this.config.confidenceBucket} confidenceRatio=${this.config.confidenceRatio} feeFloorBps=${this.config.feeFloorBps} requiredAbsPastReturnBps=${this.config.minAbsPastReturnBps}`
     );
   }
 
@@ -247,12 +288,22 @@ export class MomentumV1Strategy {
     }
 
     const pastReturnBps = 10000 * (sample.price - anchor.price) / anchor.price;
+    const absPastReturnBps = Math.abs(pastReturnBps);
     const signalDirection = signalFromPastReturn(pastReturnBps);
+    const minEdgePassed = signalDirection === 'FLAT' || absPastReturnBps >= this.config.minAbsPastReturnBps;
     this.state.signal_event_count += 1;
     this.state.last_signal = {
       ts_event: sample.tsEventNs.toString(),
       signal_direction: signalDirection,
       past_return_bps: pastReturnBps,
+      abs_past_return_bps: absPastReturnBps,
+      confidence_bucket: this.config.confidenceBucket,
+      confidence_ratio: this.config.confidenceRatio,
+      confidence_bucket_multiplier: this.config.confidenceBucketMultiplier,
+      fee_floor_bps: this.config.feeFloorBps,
+      min_abs_past_return_bps: this.config.minAbsPastReturnBps,
+      required_abs_past_return_bps: this.config.minAbsPastReturnBps,
+      min_edge_passed: minEdgePassed,
       price: sample.price,
       delta_ms: this.config.selectedCell.delta_ms,
       h_ms: this.config.selectedCell.h_ms,
@@ -276,31 +327,71 @@ export class MomentumV1Strategy {
       action = currentSize > 0 ? 'HOLD_LONG' : 'HOLD_SHORT';
     } else if (signalDirection === 'LONG') {
       if (currentSize < 0) {
-        action = 'SHORT_TO_LONG_REVERSAL';
-        orderIntent = buildOrderIntent(this.config.symbol, 'BUY', Math.abs(currentSize) + this.config.orderQty);
+        if (minEdgePassed) {
+          action = 'SHORT_TO_LONG_REVERSAL';
+          orderIntent = buildOrderIntent(this.config.symbol, 'BUY', Math.abs(currentSize) + this.config.orderQty, {
+            action: 'EXIT_SHORT',
+            position_effect: 'REVERSE',
+            signal_action: action,
+          });
+        } else {
+          action = 'HOLD_SHORT';
+        }
       } else if (currentSize === 0) {
-        action = 'LONG_OPEN';
-        orderIntent = buildOrderIntent(this.config.symbol, 'BUY', this.config.orderQty);
+        if (minEdgePassed) {
+          action = 'LONG_OPEN';
+          orderIntent = buildOrderIntent(this.config.symbol, 'BUY', this.config.orderQty, {
+            action: 'LONG',
+            position_effect: 'OPEN',
+            signal_action: action,
+          });
+        } else {
+          action = 'STAY_FLAT';
+        }
       } else {
         action = 'HOLD_LONG';
       }
     } else if (signalDirection === 'SHORT') {
       if (currentSize > 0) {
-        action = 'LONG_TO_SHORT_REVERSAL';
-        orderIntent = buildOrderIntent(this.config.symbol, 'SELL', Math.abs(currentSize) + this.config.orderQty);
+        if (minEdgePassed) {
+          action = 'LONG_TO_SHORT_REVERSAL';
+          orderIntent = buildOrderIntent(this.config.symbol, 'SELL', Math.abs(currentSize) + this.config.orderQty, {
+            action: 'EXIT_LONG',
+            position_effect: 'REVERSE',
+            signal_action: action,
+          });
+        } else {
+          action = 'HOLD_LONG';
+        }
       } else if (currentSize === 0) {
-        action = 'SHORT_OPEN';
-        orderIntent = buildOrderIntent(this.config.symbol, 'SELL', this.config.orderQty);
+        if (minEdgePassed) {
+          action = 'SHORT_OPEN';
+          orderIntent = buildOrderIntent(this.config.symbol, 'SELL', this.config.orderQty, {
+            action: 'SHORT',
+            position_effect: 'OPEN',
+            signal_action: action,
+          });
+        } else {
+          action = 'STAY_FLAT';
+        }
       } else {
         action = 'HOLD_SHORT';
       }
     } else if (this.config.closeOnZeroSignal) {
       if (currentSize > 0) {
         action = 'LONG_CLOSE';
-        orderIntent = buildOrderIntent(this.config.symbol, 'SELL', Math.abs(currentSize));
+        orderIntent = buildOrderIntent(this.config.symbol, 'SELL', Math.abs(currentSize), {
+          action: 'EXIT_LONG',
+          position_effect: 'CLOSE',
+          signal_action: action,
+        });
       } else if (currentSize < 0) {
         action = 'SHORT_CLOSE';
-        orderIntent = buildOrderIntent(this.config.symbol, 'BUY', Math.abs(currentSize));
+        orderIntent = buildOrderIntent(this.config.symbol, 'BUY', Math.abs(currentSize), {
+          action: 'EXIT_SHORT',
+          position_effect: 'CLOSE',
+          signal_action: action,
+        });
       } else {
         action = 'STAY_FLAT';
       }
@@ -312,6 +403,9 @@ export class MomentumV1Strategy {
         action,
         signal_direction: signalDirection,
         current_size: currentSize,
+        confidence_bucket: this.config.confidenceBucket,
+        required_abs_past_return_bps: this.config.minAbsPastReturnBps,
+        min_edge_passed: minEdgePassed,
         commit_until_ts_event: this.state.commit_until_ts_event,
         commit_active: commitActive,
       };
@@ -330,6 +424,9 @@ export class MomentumV1Strategy {
       action,
       signal_direction: signalDirection,
       current_size: currentSize,
+      confidence_bucket: this.config.confidenceBucket,
+      required_abs_past_return_bps: this.config.minAbsPastReturnBps,
+      min_edge_passed: minEdgePassed,
       order_side: orderIntent.side,
       order_qty: orderIntent.qty,
       commit_until_ts_event: this.state.commit_until_ts_event,

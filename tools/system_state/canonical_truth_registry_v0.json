@@ -1,0 +1,407 @@
+{
+  "schema_version": "canonical_truth_registry_v0",
+  "generated_ts_utc": "2026-03-16T13:29:19Z",
+  "reader_guide": [
+    "Start here before reading summary artifacts.",
+    "Code and generated state beat docs when they disagree.",
+    "Tool path is the current operational critical path; service lanes exist in parallel."
+  ],
+  "active_paths": {
+    "current_critical_path": [
+      "s3://quantlab-compact/compacted/_state.json",
+      "tools/phase5_big_hunt_scheduler_v1.py",
+      "pack/state_selection/object_keys_selected.tsv",
+      "tools/phase5_big_hunt_v0.py or tools/run-multi-hypothesis.js",
+      "tools/phase6_state/promotion_index.json",
+      "tools/phase6_candidate_export_v0.py -> tools/phase6_state/candidate_index.json",
+      "tools/phase6_candidate_review_v2.py -> tools/phase6_state/candidate_review_v2.tsv",
+      "tools/shadow_candidate_bridge_v0.py -> tools/shadow_state/shadow_watchlist_v0.json",
+      "tools/run-shadow-observation-batch-v0.py -> tools/shadow_state/shadow_observation_history_v0.jsonl",
+      "tools/refresh-shadow-derived-surfaces-v0.py -> tools/shadow_state/shadow_execution_pack_summary_v0.json",
+      "tools/run-shadow-watchlist-v0.js",
+      "tools/run-soft-live.js",
+      "core/strategy/live/LiveStrategyRunner.js"
+    ],
+    "active_tool_path": {
+      "entrypoint": "tools/phase5_nightly_orchestrator_v0.py",
+      "note": "Current default operator-facing path for phase5 -> phase6 -> shadow refresh."
+    },
+    "active_service_path": {
+      "entrypoints": [
+        "services/replayd/routes/stream.js",
+        "services/strategyd/routes/live.routes.js",
+        "core/scheduler/run_daily_prod.js"
+      ],
+      "status": "PRESENT_BUT_NOT_DEFAULT_CRITICAL_PATH",
+      "note": "Service and ML lanes remain in-repo but are not the default hypothesis->shadow execution path."
+    },
+    "not_in_current_critical_path": [
+      {
+        "path": "tools/run-bound-shadow-launch-v0.py",
+        "reason": "One-shot bound launch helper, not the global shadow subset path."
+      },
+      {
+        "path": "tools/run-momentum-continuous-shadow-session-v1.py",
+        "reason": "Family-specific continuous session lane."
+      },
+      {
+        "path": "services/strategyd/scripts/runTwin.js",
+        "reason": "Replay parity/validation helper."
+      },
+      {
+        "path": "services/strategyd/scripts/runTriad.js",
+        "reason": "Replay parity/validation helper."
+      },
+      {
+        "path": "core/scheduler/run_daily_prod.js",
+        "reason": "Parallel ML production scheduler lane."
+      }
+    ]
+  },
+  "concepts": [
+    {
+      "concept": "family_role_classification",
+      "authoritative_now": [
+        {
+          "path": "tools/phase6_state/hypothesis_family_role_classification_v0.json",
+          "exists": true,
+          "schema_version": "hypothesis_family_role_classification_v0",
+          "generated_ts_utc": "2026-03-15T12:53:11Z"
+        }
+      ],
+      "produced_by": [
+        "tools/phase6_hypothesis_family_role_classification_v0.py"
+      ],
+      "consumed_by": [
+        "tools/phase6_primary_directional_family_selection_v0.py"
+      ],
+      "stale_or_auxiliary_surfaces": [
+        {
+          "path": "tools/hypotheses/README.md",
+          "exists": true
+        }
+      ],
+      "notes": [
+        "Derived summary for selection and audit only.",
+        "Use candidate_strategy_contract_v0.json and candidate_strategy_runtime_binding_v0.json for current translation/runtime truth."
+      ]
+    },
+    {
+      "concept": "primary_directional_selection",
+      "authoritative_now": [
+        {
+          "path": "tools/phase6_state/primary_directional_family_selection_v0.json",
+          "exists": true,
+          "schema_version": "primary_directional_family_selection_v0",
+          "generated_ts_utc": "2026-03-15T12:53:20Z",
+          "selected_family_id": "momentum_v1"
+        }
+      ],
+      "produced_by": [
+        "tools/phase6_primary_directional_family_selection_v0.py"
+      ],
+      "consumed_by": [
+        "tools/phase6_candidate_strategy_contract_v0.py"
+      ],
+      "stale_or_auxiliary_surfaces": [
+        {
+          "path": "tools/phase6_state/hypothesis_family_role_classification_v0.json",
+          "exists": true,
+          "schema_version": "hypothesis_family_role_classification_v0",
+          "generated_ts_utc": "2026-03-15T12:53:11Z"
+        }
+      ],
+      "notes": [
+        "selected_family_id is the default translation preference.",
+        "This summary is not the runtime binding ledger."
+      ]
+    },
+    {
+      "concept": "candidate_review",
+      "authoritative_now": [
+        {
+          "path": "tools/phase6_state/candidate_review_v2.json",
+          "exists": true,
+          "schema_version": "candidate_review_v2",
+          "generated_ts_utc": "2026-03-16T13:00:02Z",
+          "record_count": 117
+        },
+        {
+          "path": "tools/phase6_state/candidate_review_v2.tsv",
+          "exists": true
+        }
+      ],
+      "produced_by": [
+        "tools/phase6_candidate_review_v2.py"
+      ],
+      "consumed_by": [
+        "tools/phase5_nightly_orchestrator_v0.py",
+        "tools/phase6_candidate_strategy_contract_v0.py",
+        "tools/shadow_candidate_bridge_v0.py"
+      ],
+      "stale_or_auxiliary_surfaces": [
+        {
+          "path": "tools/phase6_state/candidate_review.json",
+          "exists": true,
+          "generated_ts_utc": "2026-03-16T08:59:15Z",
+          "record_count": 117
+        },
+        {
+          "path": "tools/phase6_state/candidate_review.tsv",
+          "exists": true
+        },
+        {
+          "path": "tools/phase6_state/candidate_queue.jsonl",
+          "exists": true
+        },
+        {
+          "path": "tools/phase6_state/candidate_index.json",
+          "exists": true,
+          "latest_export_ts_utc": "2026-03-16T03:43:49Z",
+          "record_count": 117
+        }
+      ],
+      "notes": [
+        "Ranking and observation-selection truth for candidate packs.",
+        "review_class/class_priority are authoritative; scalar score is secondary within class."
+      ]
+    },
+    {
+      "concept": "candidate_strategy_contract",
+      "authoritative_now": [
+        {
+          "path": "tools/phase6_state/candidate_strategy_contract_v0.json",
+          "exists": true,
+          "schema_version": "candidate_strategy_contract_v0",
+          "generated_ts_utc": "2026-03-16T12:58:40Z"
+        }
+      ],
+      "produced_by": [
+        "tools/phase6_candidate_strategy_contract_v0.py"
+      ],
+      "consumed_by": [
+        "tools/phase6_strategy_runtime_binding_v0.py",
+        "tools/phase6_hypothesis_family_role_classification_v0.py"
+      ],
+      "stale_or_auxiliary_surfaces": [
+        {
+          "path": "tools/phase6_state/primary_directional_family_selection_v0.json",
+          "exists": true,
+          "schema_version": "primary_directional_family_selection_v0",
+          "generated_ts_utc": "2026-03-15T12:53:20Z",
+          "selected_family_id": "momentum_v1"
+        }
+      ],
+      "notes": [
+        "Translation truth for candidate->strategy mapping."
+      ]
+    },
+    {
+      "concept": "runtime_binding",
+      "authoritative_now": [
+        {
+          "path": "tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
+          "exists": true,
+          "schema_version": "candidate_strategy_runtime_binding_v0",
+          "generated_ts_utc": "2026-03-16T12:58:47Z"
+        }
+      ],
+      "produced_by": [
+        "tools/phase6_strategy_runtime_binding_v0.py"
+      ],
+      "consumed_by": [
+        "tools/run-bound-shadow-launch-v0.py",
+        "tools/run-momentum-continuous-shadow-session-v1.py",
+        "tools/shadow_futures_paper_ledger_v1.py"
+      ],
+      "stale_or_auxiliary_surfaces": [
+        {
+          "path": "tools/phase6_state/family_shadow_runtime_binding_map_v0.json",
+          "exists": true,
+          "schema_version": "family_shadow_runtime_binding_map_v0",
+          "generated_ts_utc": "2026-03-08T00:00:00Z"
+        },
+        {
+          "path": "tools/shadow_state/shadow_bound_launch_watchlist_v0.json",
+          "exists": true,
+          "schema_version": "shadow_bound_launch_watchlist_v0",
+          "generated_ts_utc": "2026-03-09T04:50:36Z",
+          "selected_count": 1
+        }
+      ],
+      "notes": [
+        "Runtime bindability truth."
+      ]
+    },
+    {
+      "concept": "active_shadow_subset",
+      "authoritative_now": [
+        {
+          "path": "tools/shadow_state/shadow_watchlist_v0.json",
+          "exists": true,
+          "schema_version": "shadow_watchlist_v0",
+          "generated_ts_utc": "2026-03-16T13:00:02Z"
+        }
+      ],
+      "produced_by": [
+        "tools/shadow_candidate_bridge_v0.py"
+      ],
+      "consumed_by": [
+        "tools/run-shadow-observation-batch-v0.py",
+        "tools/run-shadow-watchlist-v0.js",
+        "tools/shadow_operator_snapshot_v0.py"
+      ],
+      "stale_or_auxiliary_surfaces": [
+        {
+          "path": "tools/shadow_state/shadow_bound_launch_watchlist_v0.json",
+          "exists": true,
+          "schema_version": "shadow_bound_launch_watchlist_v0",
+          "generated_ts_utc": "2026-03-09T04:50:36Z",
+          "selected_count": 1
+        },
+        {
+          "path": "tools/shadow_state/shadow_operator_snapshot_v0.json",
+          "exists": true,
+          "schema_version": "shadow_operator_snapshot_v0",
+          "generated_ts_utc": "2026-03-16T13:00:02Z",
+          "selected_count": 3
+        }
+      ],
+      "notes": [
+        "Global observation/live-paper subset truth.",
+        "Separate from runtime binding and continuous session state."
+      ]
+    },
+    {
+      "concept": "continuous_session_state",
+      "authoritative_now": [
+        {
+          "path": "tools/shadow_state/momentum_continuous_shadow_session_v1.json",
+          "exists": true,
+          "schema_version": "momentum_continuous_shadow_session_v1",
+          "generated_ts_utc": "2026-03-09T11:19:13Z",
+          "selected_family_id": "momentum_v1",
+          "session_status": "STOPPED_BY_USER"
+        }
+      ],
+      "produced_by": [
+        "tools/run-momentum-continuous-shadow-session-v1.py"
+      ],
+      "consumed_by": [
+        "tools/run-momentum-continuous-shadow-session-v1.py"
+      ],
+      "stale_or_auxiliary_surfaces": [
+        {
+          "path": "tools/shadow_state/momentum_continuous_shadow_session_artifacts_v1",
+          "exists": true
+        }
+      ],
+      "notes": [
+        "Family-specific continuous session state."
+      ]
+    },
+    {
+      "concept": "replay_truth",
+      "authoritative_now": [
+        {
+          "path": "core/replay/ReplayEngine.js",
+          "exists": true
+        }
+      ],
+      "produced_by": [
+        "core/replay/ReplayEngine.js"
+      ],
+      "consumed_by": [
+        "services/replayd/routes/stream.js",
+        "services/strategyd/scripts/runTwin.js",
+        "services/strategyd/scripts/runTriad.js"
+      ],
+      "stale_or_auxiliary_surfaces": [
+        {
+          "path": "docs/replay.md",
+          "exists": true
+        }
+      ],
+      "notes": [
+        "Replay semantics live in code, not in a generated state file."
+      ]
+    },
+    {
+      "concept": "strategyd_truth",
+      "authoritative_now": [
+        {
+          "path": "services/strategyd/routes/live.routes.js",
+          "exists": true
+        },
+        {
+          "path": "tools/run-soft-live.js",
+          "exists": true
+        }
+      ],
+      "produced_by": [
+        "services/strategyd/routes/live.routes.js",
+        "tools/run-soft-live.js"
+      ],
+      "consumed_by": [
+        "services/strategyd/server.js",
+        "tools/run-shadow-watchlist-v0.js"
+      ],
+      "stale_or_auxiliary_surfaces": [
+        {
+          "path": "services/strategyd/routes/state.js",
+          "exists": true
+        }
+      ],
+      "notes": [
+        "Service lane and tool lane both exist; tool lane is the current critical path."
+      ]
+    },
+    {
+      "concept": "scheduler_truth",
+      "authoritative_now": [
+        {
+          "path": "tools/phase5_nightly_orchestrator_v0.py",
+          "exists": true
+        },
+        {
+          "path": "core/scheduler/run_daily_prod.js",
+          "exists": true
+        }
+      ],
+      "produced_by": [
+        "tools/phase5_nightly_orchestrator_v0.py",
+        "core/scheduler/run_daily_prod.js"
+      ],
+      "consumed_by": [
+        "tools/phase5_state/nightly_orchestrator_report_20260315_013640.json",
+        "core/scheduler/run_daily_ml.js"
+      ],
+      "stale_or_auxiliary_surfaces": [
+        {
+          "path": "docs/architecture.md",
+          "exists": true
+        }
+      ],
+      "notes": [
+        "Two schedulers exist for different lanes; only the phase5 nightly orchestrator sits on the current hypothesis->shadow path."
+      ]
+    }
+  ],
+  "stale_surfaces": [
+    {
+      "path": "tools/phase6_state/hypothesis_family_role_classification_v0.json",
+      "status": "DERIVED_SUMMARY_ONLY",
+      "see_concept": "family_role_classification"
+    },
+    {
+      "path": "tools/phase6_state/primary_directional_family_selection_v0.json",
+      "status": "DERIVED_SELECTION_SUMMARY",
+      "see_concept": "primary_directional_selection"
+    },
+    {
+      "path": "tools/shadow_state/shadow_bound_launch_watchlist_v0.json",
+      "status": "ONE_SHOT_SELECTION_ONLY",
+      "see_concept": "active_shadow_subset"
+    }
+  ]
+}

@@ -286,7 +286,7 @@ class RunMomentumContinuousShadowSessionV1Tests(unittest.TestCase):
                         },
                     },
                     "done_payload": {"event": "soft_live_done", "live_run_id": "live_momentum_demo"},
-                    "total_processed_line": "total_processed: 321",
+                    "total_processed_line": "[run_demo] [INFO] total_processed: 321",
                 },
             )
             write_fake_child_tool(child_tool, child_config)

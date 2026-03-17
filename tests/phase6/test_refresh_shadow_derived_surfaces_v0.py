@@ -40,7 +40,8 @@ def write_candidate_review_script(path: Path, *, trace: Path) -> None:
             "args = sys.argv[1:]\n"
             "state_dir = Path(args[args.index('--state-dir') + 1])\n"
             "state_dir.mkdir(parents=True, exist_ok=True)\n"
-            "(state_dir / 'candidate_review.json').write_text('{}\\n', encoding='utf-8')\n"
+            "(state_dir / 'candidate_review_v2.tsv').write_text('x\\n', encoding='utf-8')\n"
+            "(state_dir / 'candidate_review_v2.json').write_text('{}\\n', encoding='utf-8')\n"
         ),
     )
 
@@ -120,6 +121,9 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
             self.assertEqual(payload["failed_step"], "")
             self.assertEqual(payload["steps"][0]["status"], "NOT_RUN")
             self.assertEqual(payload["steps"][-1]["status"], "NOT_RUN")
+            self.assertTrue(payload["steps"][0]["output_path"].endswith("candidate_review_v2.json"))
+            self.assertNotIn("--observation-index", payload["steps"][0]["command"])
+            self.assertNotIn("--execution-pack-summary", payload["steps"][0]["command"])
 
     def test_success_runs_full_chain(self):
         with tempfile.TemporaryDirectory(prefix="refresh_shadow_derived_ok_") as td:
@@ -245,7 +249,7 @@ class RefreshShadowDerivedSurfacesV0Tests(unittest.TestCase):
             shadow_dir = root / "shadow"
             state_dir.mkdir(parents=True, exist_ok=True)
             shadow_dir.mkdir(parents=True, exist_ok=True)
-            (state_dir / "candidate_review.json").write_text("{}\n", encoding="utf-8")
+            (state_dir / "candidate_review_v2.json").write_text("{}\n", encoding="utf-8")
 
             candidate_review_tool = root / "candidate_review_should_not_run.py"
             watchlist_tool = root / "watchlist.py"

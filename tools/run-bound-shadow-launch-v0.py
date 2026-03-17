@@ -32,6 +32,7 @@ DEFAULT_HEARTBEAT_MS = 5000
 SCHEMA_VERSION = "shadow_bound_launch_v0"
 BINDING_SCHEMA_VERSION = "candidate_strategy_runtime_binding_v0"
 BOUND_SHADOW_RUNNABLE = "BOUND_SHADOW_RUNNABLE"
+GOVERNANCE_REGISTRY_REF = "tools/system_state/canonical_truth_registry_v0.json"
 
 
 class BoundShadowLaunchError(RuntimeError):
@@ -163,7 +164,7 @@ def select_bound_item(items: list[dict[str, Any]], args: argparse.Namespace) -> 
     return selected
 
 
-def build_watchlist_payload(item: dict[str, Any]) -> dict[str, Any]:
+def build_watchlist_payload(item: dict[str, Any], *, binding_artifact_path: Path) -> dict[str, Any]:
     exchange = str(item.get("exchange") or "").strip()
     stream = str(item.get("stream") or "").strip()
     symbols = [str(value or "").strip().upper() for value in list(item.get("symbols") or []) if str(value or "").strip()]
@@ -172,6 +173,22 @@ def build_watchlist_payload(item: dict[str, Any]) -> dict[str, Any]:
     return {
         "schema_version": "shadow_bound_launch_watchlist_v0",
         "generated_ts_utc": utc_now_iso(),
+        "source_candidate_strategy_runtime_binding_json": str(binding_artifact_path),
+        "governance": {
+            "surface_role": "ONE_SHOT_BOUND_LAUNCH_SELECTION",
+            "authoritative_scope": "Single selected bound launch snapshot only.",
+            "authoritative_source_ref": GOVERNANCE_REGISTRY_REF,
+            "produced_by": ["tools/run-bound-shadow-launch-v0.py"],
+            "consumed_by": ["tools/run-long-shadow-launch-v0.py"],
+            "not_authoritative_for": [
+                "global shadow watchlist",
+                "continuous session state",
+            ],
+            "notes": [
+                "This file is a one-shot launch artifact.",
+                "Prefer shadow_watchlist_v0.json for the global observation subset.",
+            ],
+        },
         "selected_count": 1,
         "items": [
             {
@@ -301,10 +318,11 @@ def main(argv: list[str] | None = None) -> int:
     child_launch_result: dict[str, Any] | None = None
     invalid_reason = ""
     try:
-        binding_artifact = load_binding_artifact(Path(args.binding_artifact).resolve())
+        binding_artifact_path = Path(args.binding_artifact).resolve()
+        binding_artifact = load_binding_artifact(binding_artifact_path)
         items = list(binding_artifact.get("items") or [])
         selected = select_bound_item(items, args)
-        watchlist_payload = build_watchlist_payload(selected)
+        watchlist_payload = build_watchlist_payload(selected, binding_artifact_path=binding_artifact_path)
         write_json(Path(args.generated_watchlist_json).resolve(), watchlist_payload)
         launch_command = build_launch_command(args, selected)
         launch_exit_code = run_command(launch_command, cwd=ROOT)

@@ -1,5 +1,25 @@
 {
   "generated_ts_utc": "2026-03-09T04:50:36Z",
+  "source_candidate_strategy_runtime_binding_json": "tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
+  "governance": {
+    "surface_role": "ONE_SHOT_BOUND_LAUNCH_SELECTION",
+    "authoritative_scope": "Single selected bound launch snapshot only.",
+    "authoritative_source_ref": "tools/system_state/canonical_truth_registry_v0.json",
+    "produced_by": [
+      "tools/run-bound-shadow-launch-v0.py"
+    ],
+    "consumed_by": [
+      "tools/run-long-shadow-launch-v0.py"
+    ],
+    "not_authoritative_for": [
+      "global shadow watchlist",
+      "continuous session state"
+    ],
+    "notes": [
+      "This file is a one-shot launch artifact.",
+      "Prefer shadow_watchlist_v0.json for the global observation subset."
+    ]
+  },
   "items": [
     {
       "decision_tier": "PROMOTE_STRONG",

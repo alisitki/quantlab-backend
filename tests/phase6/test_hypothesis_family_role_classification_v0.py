@@ -155,6 +155,8 @@ class HypothesisFamilyRoleClassificationV0Test(unittest.TestCase):
             )
 
             self.assertEqual(payload["current_multi_hypothesis_family_count"], 4)
+            self.assertEqual(payload["governance"]["surface_role"], "DERIVED_SUMMARY")
+            self.assertIn("candidate_strategy_runtime_binding_v0.json", payload["governance"]["preferred_runtime_truth_refs"][1])
             self.assertEqual(payload["repo_extra_hypothesis_ids"], ["latency_leadlag_v1"])
             items = {item["family_id"]: item for item in payload["items"]}
             self.assertEqual(items["family_a_patternscanner"]["role"], "DISCOVERY_RESEARCH")

@@ -1,24 +1,24 @@
 {
   "schema_version": "shadow_execution_review_queue_v0",
-  "generated_ts_utc": "2026-03-10T03:42:52Z",
+  "generated_ts_utc": "2026-03-17T03:43:48Z",
   "source_operator_snapshot": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_operator_snapshot_v0.json",
-  "operator_snapshot_generated_ts_utc": "2026-03-10T03:42:52Z",
+  "operator_snapshot_generated_ts_utc": "2026-03-17T03:43:48Z",
   "selected_count": 3,
   "items": [
     {
       "review_rank": 1,
       "source_rank": 1,
-      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584",
       "trend_class": "STABLE",
-      "trend_direction": "FLAT",
+      "trend_direction": "UNKNOWN",
       "trend_attention_flag": "false",
       "review_priority_bucket": "LOW",
-      "review_reason_short": "stable flat execution trend"
+      "review_reason_short": "stable execution trend"
     },
     {
       "review_rank": 2,
       "source_rank": 2,
-      "pack_id": "multi-hypothesis-phase5-bighunt-binance-bbo-20260214..20260214-20260307_193745-90a25ab8-t1__FULLSCAN_MAJOR__d25d0eb32d0b9a3b47bc55e50d0e730f7bd126e4bd24699b209822f620c4f0b5",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f",
       "trend_class": "NO_HISTORY",
       "trend_direction": "UNKNOWN",
       "trend_attention_flag": "false",
@@ -28,7 +28,7 @@
     {
       "review_rank": 3,
       "source_rank": 3,
-      "pack_id": "multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR__3ae0e007060d81a7180ef37ac6ce9b44a0baa407b2edb9c69a835ffb62783ad8",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260311..20260311-20260312_031855-3d7d91e3-t1__FULLSCAN_MAJOR__0fe810c645a6a50eb85b94740698acd0af4478f1c442ed3fd0c0c083b18169b3",
       "trend_class": "NO_HISTORY",
       "trend_direction": "UNKNOWN",
       "trend_attention_flag": "false",

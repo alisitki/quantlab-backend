@@ -185,6 +185,12 @@ class RunBoundShadowLaunchV0Tests(unittest.TestCase):
             self.assertEqual(payload["selected_strategy_id"], "strategy_a")
             self.assertEqual(payload["runtime_strategy_file"], "core/strategy/strategies/SpreadReversionV1Strategy.js")
             self.assertEqual(payload["launch_status"], "VALID_NO_EXECUTION_ACTIVITY")
+            generated_watchlist = json.loads(generated_watchlist_json.read_text(encoding="utf-8"))
+            self.assertEqual(generated_watchlist["governance"]["surface_role"], "ONE_SHOT_BOUND_LAUNCH_SELECTION")
+            self.assertEqual(
+                generated_watchlist["source_candidate_strategy_runtime_binding_json"],
+                str(binding_json),
+            )
             child_payload = json.loads(child_launch_result_json.read_text(encoding="utf-8"))
             self.assertEqual(child_payload["received_strategy"], "core/strategy/strategies/SpreadReversionV1Strategy.js")
             self.assertEqual(child_payload["received_strategy_config"]["source_pack_id"], "pack_bound_a")

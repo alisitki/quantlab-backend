@@ -38,6 +38,22 @@ function makeConfig() {
   };
 }
 
+function makeConfigWithOverrides(overrides = {}) {
+  const base = makeConfig();
+  return {
+    ...base,
+    ...overrides,
+    params: {
+      ...base.params,
+      ...(overrides.params || {}),
+    },
+    selected_cell: {
+      ...base.selected_cell,
+      ...(overrides.selected_cell || {}),
+    },
+  };
+}
+
 
 function makeContext({ currentSize = 0 } = {}) {
   const orders = [];
@@ -113,6 +129,9 @@ test('MomentumV1Strategy loads and opens LONG on positive continuation signal', 
     symbol: 'BTCUSDT',
     side: 'BUY',
     qty: 1,
+    action: 'LONG',
+    position_effect: 'OPEN',
+    signal_action: 'LONG_OPEN',
   });
   const state = strategy.getState();
   assert.equal(state.last_signal.signal_direction, 'LONG');
@@ -149,6 +168,128 @@ test('MomentumV1Strategy holds same-side position without pyramiding', async () 
   assert.equal(state.last_action.action, 'HOLD_LONG');
 });
 
+test('MomentumV1Strategy derives deterministic confidence buckets and thresholds from selected_cell inputs', async () => {
+  const cases = [
+    {
+      name: 'LOW',
+      config: makeConfigWithOverrides({
+        selected_cell: {
+          event_count: 300,
+          t_stat: 3.0,
+        },
+      }),
+      expectedRatio: 1.5,
+      expectedThreshold: 10,
+    },
+    {
+      name: 'MEDIUM',
+      config: makeConfigWithOverrides({
+        selected_cell: {
+          event_count: 2000,
+          t_stat: 12.0,
+        },
+      }),
+      expectedRatio: 6,
+      expectedThreshold: 7.5,
+    },
+    {
+      name: 'HIGH',
+      config: makeConfigWithOverrides({
+        selected_cell: {
+          event_count: 5000,
+          t_stat: 40.0,
+        },
+      }),
+      expectedRatio: 20,
+      expectedThreshold: 5,
+    },
+  ];
+
+  for (const entry of cases) {
+    const strategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
+      config: entry.config,
+      autoAdapt: true,
+    });
+    const state = strategy.getState();
+    assert.equal(state.confidence_bucket, entry.name);
+    assert.equal(state.confidence_ratio, entry.expectedRatio);
+    assert.equal(state.required_abs_past_return_bps, entry.expectedThreshold);
+  }
+});
+
+test('MomentumV1Strategy does not open on weak LOW-confidence signal below threshold', async () => {
+  const strategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
+    config: makeConfigWithOverrides({
+      selected_cell: {
+        event_count: 300,
+        t_stat: 3.0,
+      },
+    }),
+    autoAdapt: true,
+  });
+  const ctx = makeContext();
+  await strategy.onInit?.(ctx);
+
+  await strategy.onEvent({
+    ts_event: 1_700_000_000_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 100,
+  }, ctx);
+  await strategy.onEvent({
+    ts_event: 1_700_000_005_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 100.05,
+  }, ctx);
+
+  assert.equal(ctx.orders.length, 0);
+  const state = strategy.getState();
+  assert.equal(state.confidence_bucket, 'LOW');
+  assert.equal(state.required_abs_past_return_bps, 10);
+  assert.equal(state.last_signal.signal_direction, 'LONG');
+  assert.equal(state.last_signal.required_abs_past_return_bps, 10);
+  assert.equal(state.last_signal.min_edge_passed, false);
+  assert.equal(state.last_action.action, 'STAY_FLAT');
+  assert.equal(state.last_action.min_edge_passed, false);
+});
+
+test('MomentumV1Strategy opens on strong HIGH-confidence signal above reduced threshold', async () => {
+  const strategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
+    config: makeConfigWithOverrides({
+      selected_cell: {
+        event_count: 5000,
+        t_stat: 40.0,
+      },
+    }),
+    autoAdapt: true,
+  });
+  const ctx = makeContext();
+  await strategy.onInit?.(ctx);
+
+  await strategy.onEvent({
+    ts_event: 1_700_000_000_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 100,
+  }, ctx);
+  await strategy.onEvent({
+    ts_event: 1_700_000_005_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 100.06,
+  }, ctx);
+
+  assert.equal(ctx.orders.length, 1);
+  assert.equal(ctx.orders[0].signal_action, 'LONG_OPEN');
+  const state = strategy.getState();
+  assert.equal(state.confidence_bucket, 'HIGH');
+  assert.equal(state.required_abs_past_return_bps, 5);
+  assert.equal(state.last_signal.required_abs_past_return_bps, 5);
+  assert.equal(state.last_signal.min_edge_passed, true);
+  assert.equal(state.last_action.action, 'LONG_OPEN');
+});
+
 
 test('MomentumV1Strategy closes long on neutral signal without active commit horizon', async () => {
   const strategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
@@ -176,10 +317,49 @@ test('MomentumV1Strategy closes long on neutral signal without active commit hor
     symbol: 'BTCUSDT',
     side: 'SELL',
     qty: 1,
+    action: 'EXIT_LONG',
+    position_effect: 'CLOSE',
+    signal_action: 'LONG_CLOSE',
   });
   const state = strategy.getState();
   assert.equal(state.last_signal.signal_direction, 'FLAT');
   assert.equal(state.last_action.action, 'LONG_CLOSE');
+});
+
+test('MomentumV1Strategy blocks weak opposite reversal signals below confidence-adjusted threshold', async () => {
+  const strategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
+    config: makeConfigWithOverrides({
+      selected_cell: {
+        event_count: 2000,
+        t_stat: 12.0,
+      },
+    }),
+    autoAdapt: true,
+  });
+  const ctx = makeContext({ currentSize: 1 });
+  await strategy.onInit?.(ctx);
+
+  await strategy.onEvent({
+    ts_event: 1_700_000_000_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 100,
+  }, ctx);
+  await strategy.onEvent({
+    ts_event: 1_700_000_005_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 99.94,
+  }, ctx);
+
+  assert.equal(ctx.orders.length, 0);
+  const state = strategy.getState();
+  assert.equal(state.confidence_bucket, 'MEDIUM');
+  assert.equal(state.required_abs_past_return_bps, 7.5);
+  assert.equal(state.last_signal.signal_direction, 'SHORT');
+  assert.equal(state.last_signal.required_abs_past_return_bps, 7.5);
+  assert.equal(state.last_signal.min_edge_passed, false);
+  assert.equal(state.last_action.action, 'HOLD_LONG');
 });
 
 
@@ -215,6 +395,9 @@ test('MomentumV1Strategy holds LONG before horizon maturity on flat signal', asy
     symbol: 'BTCUSDT',
     side: 'BUY',
     qty: 1,
+    action: 'LONG',
+    position_effect: 'OPEN',
+    signal_action: 'LONG_OPEN',
   });
   const state = strategy.getState();
   assert.equal(state.last_signal.signal_direction, 'FLAT');
@@ -290,6 +473,9 @@ test('MomentumV1Strategy closes LONG after horizon maturity on flat signal', asy
     symbol: 'BTCUSDT',
     side: 'SELL',
     qty: 1,
+    action: 'EXIT_LONG',
+    position_effect: 'CLOSE',
+    signal_action: 'LONG_CLOSE',
   });
   const state = strategy.getState();
   assert.equal(state.last_signal.signal_direction, 'FLAT');
@@ -336,6 +522,9 @@ test('MomentumV1Strategy reverses after horizon maturity and resets commit horiz
     symbol: 'BTCUSDT',
     side: 'SELL',
     qty: 2,
+    action: 'EXIT_LONG',
+    position_effect: 'REVERSE',
+    signal_action: 'LONG_TO_SHORT_REVERSAL',
   });
   const state = strategy.getState();
   assert.equal(state.last_action.action, 'HOLD_SHORT');
@@ -379,6 +568,9 @@ test('MomentumV1Strategy clears stale commit horizon after external flatten', as
     symbol: 'BTCUSDT',
     side: 'SELL',
     qty: 1,
+    action: 'SHORT',
+    position_effect: 'OPEN',
+    signal_action: 'SHORT_OPEN',
   });
   const state = strategy.getState();
   assert.equal(state.last_action.action, 'SHORT_OPEN');

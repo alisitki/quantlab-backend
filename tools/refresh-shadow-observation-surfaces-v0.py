@@ -13,7 +13,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_STATE_DIR = ROOT / "tools" / "phase6_state"
 DEFAULT_SHADOW_STATE_DIR = ROOT / "tools" / "shadow_state"
-DEFAULT_CANDIDATE_REVIEW_TOOL = ROOT / "tools" / "phase6_candidate_review_v0.py"
+DEFAULT_CANDIDATE_REVIEW_TOOL = ROOT / "tools" / "phase6_candidate_review_v2.py"
 DEFAULT_WATCHLIST_TOOL = ROOT / "tools" / "shadow_candidate_bridge_v0.py"
 DEFAULT_OBSERVATION_INDEX = DEFAULT_SHADOW_STATE_DIR / "shadow_observation_index_v0.json"
 DEFAULT_OBSERVATION_HISTORY = DEFAULT_SHADOW_STATE_DIR / "shadow_observation_history_v0.jsonl"
@@ -86,12 +86,6 @@ def main(argv: list[str] | None = None) -> int:
         str(candidate_review_tool),
         "--state-dir",
         str(state_dir),
-        "--observation-index",
-        str(observation_index),
-        "--observation-history",
-        str(observation_history),
-        "--recent-observation-hours",
-        str(float(args.recent_observation_hours)),
     ]
     watchlist_cmd = [
         sys.executable,
@@ -100,6 +94,8 @@ def main(argv: list[str] | None = None) -> int:
         str(state_dir),
         "--out-dir",
         str(shadow_state_dir),
+        "--selection-source",
+        "candidate_review_v2.tsv",
         "--top-n",
         str(int(args.top_n)),
     ]
@@ -115,8 +111,8 @@ def main(argv: list[str] | None = None) -> int:
         "candidate_review_exit_code": "not_run",
         "watchlist_exit_code": "not_run",
         "sync_ok": False,
-        "candidate_review_tsv": str(state_dir / "candidate_review.tsv"),
-        "candidate_review_json": str(state_dir / "candidate_review.json"),
+        "candidate_review_tsv": str(state_dir / "candidate_review_v2.tsv"),
+        "candidate_review_json": str(state_dir / "candidate_review_v2.json"),
         "watchlist_json": str(shadow_state_dir / "shadow_watchlist_v0.json"),
         "watchlist_tsv": str(shadow_state_dir / "shadow_watchlist_v0.tsv"),
     }

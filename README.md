@@ -1,20 +1,22 @@
 # QuantLab
 
-High-performance trading infrastructure.
+QuantLab is the futures research and shadow-trading repo for Binance, Bybit, and OKX.
 
-## Multi-Server Deployment
+## Start Here
 
-### 1. API (16GB VPS)
-- **Components**: Compact, Replay, Strategy
-- **Path**: `api/`
-- **Usage**: Handles data processing and strategy execution.
+- Canonical truth and state-governance registry: `tools/system_state/canonical_truth_registry_v0.json`
+- Current critical path: `s3 compact state -> phase5 pack -> multi-hypothesis -> promotion/candidate review -> shadow watchlist/observation -> run-shadow-watchlist-v0.js -> run-soft-live.js -> LiveStrategyRunner(live/paper)`
+- Current default operator path: `tools/phase5_nightly_orchestrator_v0.py`
+- Current default active shadow subset: `tools/shadow_state/shadow_watchlist_v0.json`
+- Current runtime bindability truth: `tools/phase6_state/candidate_strategy_runtime_binding_v0.json`
 
-### 2. Collector (8GB VPS)
-- **Components**: Raw Data Ingestion
-- **Path**: `collector/`
-- **Usage**: Collects and stores raw events.
+## State Governance
 
-## Development Workflow
-- **Development**: Both modules are in this same repository (Monorepo).
-- **Commits**: Use prefixes like `api:` or `collector:`.
-- **Deployment**: Each VPS pulls the entire repo but only runs its respective module.
+- Read the canonical registry before trusting summary artifacts.
+- `shadow_bound_launch_watchlist_v0.json` is a one-shot launch snapshot, not the global shadow subset.
+- Docs are secondary to code and generated state. If docs and code/state conflict, trust code/state.
+
+## Parallel Lanes
+
+- `replayd` and `strategyd` service routes exist in parallel, but they are not the default hypothesis->shadow critical path.
+- The ML scheduler lane under `core/scheduler/` also remains in-repo and is intentionally not removed by this governance cleanup.

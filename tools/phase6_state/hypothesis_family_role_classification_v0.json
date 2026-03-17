@@ -1,11 +1,36 @@
 {
   "schema_version": "hypothesis_family_role_classification_v0",
-  "generated_ts_utc": "2026-03-09T06:07:41Z",
+  "generated_ts_utc": "2026-03-15T12:53:11Z",
+  "governance": {
+    "surface_role": "DERIVED_SUMMARY",
+    "authoritative_scope": "Family role summary for phase6 selection and audit. Do not use this file as the runtime bindability truth.",
+    "authoritative_source_ref": "tools/system_state/canonical_truth_registry_v0.json",
+    "produced_by": [
+      "tools/phase6_hypothesis_family_role_classification_v0.py"
+    ],
+    "consumed_by": [
+      "tools/phase6_primary_directional_family_selection_v0.py"
+    ],
+    "stale_if_inputs_newer_than_generated_ts": [
+      "tools/phase6_state/candidate_review.tsv",
+      "tools/phase6_state/candidate_strategy_contract_v0.json",
+      "tools/phase6_state/candidate_strategy_runtime_binding_v0.json"
+    ],
+    "preferred_runtime_truth_refs": [
+      "tools/phase6_state/candidate_strategy_contract_v0.json",
+      "tools/phase6_state/candidate_strategy_runtime_binding_v0.json"
+    ],
+    "notes": [
+      "Derived summary surface.",
+      "Prefer candidate_strategy_contract_v0.json for translation truth.",
+      "Prefer candidate_strategy_runtime_binding_v0.json for runtime bindability truth."
+    ]
+  },
   "source_hypotheses_readme": "tools/hypotheses/README.md",
   "source_candidate_review_tsv": "tools/phase6_state/candidate_review.tsv",
   "source_candidate_strategy_contract_json": "tools/phase6_state/candidate_strategy_contract_v0.json",
   "source_candidate_strategy_runtime_binding_json": "tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
-  "source_candidate_row_count": 98,
+  "source_candidate_row_count": 115,
   "current_multi_hypothesis_family_count": 8,
   "current_multi_hypothesis_family_ids": [
     "family_a_patternscanner",
@@ -48,8 +73,8 @@
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_A_report.json",
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_A_report.json"
       ],
-      "candidate_report_count": 481,
-      "candidate_pack_count": 98,
+      "candidate_report_count": 565,
+      "candidate_pack_count": 115,
       "translated_spec_count": 0,
       "bound_shadow_runnable_count": 0,
       "strategy_translatable_now": false,
@@ -80,8 +105,8 @@
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR/runs/avaxusdt/artifacts/multi_hypothesis/family_B_report.json",
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-trade-20260124..20260124-20260306_225229-2fedebed-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_B_report.json"
       ],
-      "candidate_report_count": 353,
-      "candidate_pack_count": 62,
+      "candidate_report_count": 397,
+      "candidate_pack_count": 68,
       "translated_spec_count": 0,
       "bound_shadow_runnable_count": 0,
       "strategy_translatable_now": false,
@@ -110,8 +135,8 @@
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_return_reversal_report.json",
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_return_reversal_report.json"
       ],
-      "candidate_report_count": 481,
-      "candidate_pack_count": 98,
+      "candidate_report_count": 565,
+      "candidate_pack_count": 115,
       "translated_spec_count": 0,
       "bound_shadow_runnable_count": 0,
       "strategy_translatable_now": false,
@@ -140,8 +165,8 @@
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volatility_clustering_report.json",
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volatility_clustering_report.json"
       ],
-      "candidate_report_count": 481,
-      "candidate_pack_count": 98,
+      "candidate_report_count": 565,
+      "candidate_pack_count": 115,
       "translated_spec_count": 0,
       "bound_shadow_runnable_count": 0,
       "strategy_translatable_now": false,
@@ -170,8 +195,8 @@
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_spread_reversion_report.json",
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_spread_reversion_report.json"
       ],
-      "candidate_report_count": 481,
-      "candidate_pack_count": 98,
+      "candidate_report_count": 565,
+      "candidate_pack_count": 115,
       "translated_spec_count": 4,
       "bound_shadow_runnable_count": 4,
       "strategy_translatable_now": true,
@@ -200,12 +225,12 @@
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_momentum_report.json",
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_momentum_report.json"
       ],
-      "candidate_report_count": 481,
-      "candidate_pack_count": 98,
-      "translated_spec_count": 0,
-      "bound_shadow_runnable_count": 0,
-      "strategy_translatable_now": false,
-      "runtime_bindable_now": false,
+      "candidate_report_count": 565,
+      "candidate_pack_count": 115,
+      "translated_spec_count": 7,
+      "bound_shadow_runnable_count": 7,
+      "strategy_translatable_now": true,
+      "runtime_bindable_now": true,
       "paper_execution_ready_now": false,
       "support_only_now": false,
       "not_ready_now": true,
@@ -230,8 +255,8 @@
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volume_vol_link_report.json",
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_volume_vol_link_report.json"
       ],
-      "candidate_report_count": 481,
-      "candidate_pack_count": 98,
+      "candidate_report_count": 565,
+      "candidate_pack_count": 115,
       "translated_spec_count": 0,
       "bound_shadow_runnable_count": 0,
       "strategy_translatable_now": false,
@@ -260,8 +285,8 @@
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_jump_reversion_report.json",
         "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-bybit-bbo-20260108..20260108-20260306_184546-9de45c6d-t1__FULLSCAN_MAJOR/runs/bnbusdt/artifacts/multi_hypothesis/family_jump_reversion_report.json"
       ],
-      "candidate_report_count": 481,
-      "candidate_pack_count": 98,
+      "candidate_report_count": 565,
+      "candidate_pack_count": 115,
       "translated_spec_count": 0,
       "bound_shadow_runnable_count": 0,
       "strategy_translatable_now": false,

@@ -1,17 +1,57 @@
 {
   "schema_version": "shadow_execution_outcome_review_v0",
-  "generated_ts_utc": "2026-03-10T03:42:52Z",
+  "generated_ts_utc": "2026-03-17T03:43:48Z",
   "source_rollup_snapshot": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_execution_rollup_snapshot_v0.json",
-  "rollup_snapshot_generated_ts_utc": "2026-03-10T03:42:52Z",
-  "selected_count": 2,
+  "rollup_snapshot_generated_ts_utc": "2026-03-17T03:43:48Z",
+  "selected_count": 7,
   "items": [
     {
       "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff",
-      "last_observed_at": "2026-03-09T10:29:22Z",
-      "outcome_class": "STABLE_GAINING",
+      "last_observed_at": "2026-03-16T06:29:12Z",
+      "outcome_class": "STABLE_FLAT",
+      "latest_vs_recent_consistency": "CONSISTENT",
+      "outcome_attention_flag": "true",
+      "outcome_review_short": "latest and recent outcomes both lean flat, but attention remains active"
+    },
+    {
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584",
+      "last_observed_at": "2026-03-16T06:29:59Z",
+      "outcome_class": "STABLE_FLAT",
       "latest_vs_recent_consistency": "CONSISTENT",
       "outcome_attention_flag": "false",
-      "outcome_review_short": "latest and recent outcomes both lean gaining"
+      "outcome_review_short": "latest and recent outcomes both lean flat"
+    },
+    {
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260214..20260214-20260307_194028-8a3131f7-t1__FULLSCAN_MAJOR__4321db8bcf29cbd86ec527f7637e035a044bcc34acb9f9df1fc25466b724ff52",
+      "last_observed_at": "2026-03-16T07:26:06Z",
+      "outcome_class": "STABLE_FLAT",
+      "latest_vs_recent_consistency": "CONSISTENT",
+      "outcome_attention_flag": "false",
+      "outcome_review_short": "latest and recent outcomes both lean flat"
+    },
+    {
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab",
+      "last_observed_at": "2026-03-16T07:21:03Z",
+      "outcome_class": "MIXED_RECENT",
+      "latest_vs_recent_consistency": "DIVERGENT",
+      "outcome_attention_flag": "true",
+      "outcome_review_short": "latest outcome diverges from recent bias, but attention remains active"
+    },
+    {
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa",
+      "last_observed_at": "2026-03-16T07:00:53Z",
+      "outcome_class": "STABLE_FLAT",
+      "latest_vs_recent_consistency": "CONSISTENT",
+      "outcome_attention_flag": "true",
+      "outcome_review_short": "latest and recent outcomes both lean flat, but attention remains active"
+    },
+    {
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260312..20260312-20260313_035447-26a42e35-t1__FULLSCAN_MAJOR__6970c1af8b30624dcdcad1701abaccb079d90e551b8bc66f1d69ea75384e0395",
+      "last_observed_at": "2026-03-16T07:31:10Z",
+      "outcome_class": "STABLE_FLAT",
+      "latest_vs_recent_consistency": "CONSISTENT",
+      "outcome_attention_flag": "false",
+      "outcome_review_short": "latest and recent outcomes both lean flat"
     },
     {
       "selected_pack_id": "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590",

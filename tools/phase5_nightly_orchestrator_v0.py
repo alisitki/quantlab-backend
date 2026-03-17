@@ -106,16 +106,21 @@ def run_command(cmd: List[str], cwd: Path) -> Dict[str, Any]:
 
 def candidate_snapshot(repo: Path) -> Dict[str, Any]:
     candidate_index = repo / "tools" / "phase6_state" / "candidate_index.json"
-    candidate_review = repo / "tools" / "phase6_state" / "candidate_review.json"
+    candidate_review = repo / "tools" / "phase6_state" / "candidate_review_v2.json"
+    legacy_candidate_review = repo / "tools" / "phase6_state" / "candidate_review.json"
     count_total = 0
     strong_count = 0
     review_count = 0
     top_pack_id = ""
     top_score = ""
+    top_review_class = ""
+    top_class_priority = ""
     if candidate_index.exists():
         obj = json.loads(candidate_index.read_text(encoding="utf-8"))
         count_total = int(obj.get("record_count", 0) or 0)
         strong_count = int((obj.get("by_tier") or {}).get("PROMOTE_STRONG", 0) or 0)
+    if not candidate_review.exists() and legacy_candidate_review.exists():
+        candidate_review = legacy_candidate_review
     if candidate_review.exists():
         obj = json.loads(candidate_review.read_text(encoding="utf-8"))
         review_count = int(obj.get("record_count", 0) or 0)
@@ -123,12 +128,16 @@ def candidate_snapshot(repo: Path) -> Dict[str, Any]:
         if isinstance(top, dict):
             top_pack_id = str(top.get("pack_id", "")).strip()
             top_score = str(top.get("score", "")).strip()
+            top_review_class = str(top.get("review_class", "")).strip()
+            top_class_priority = str(top.get("class_priority", "")).strip()
     return {
         "candidate_count_total": count_total,
         "strong_count": strong_count,
         "review_count": review_count,
         "top_pack_id": top_pack_id,
         "top_score": top_score,
+        "top_review_class": top_review_class,
+        "top_class_priority": top_class_priority,
     }
 
 
@@ -251,7 +260,7 @@ def export_command() -> List[str]:
 
 
 def review_command() -> List[str]:
-    return ["python3", "tools/phase6_candidate_review_v0.py"]
+    return ["python3", "tools/phase6_candidate_review_v2.py"]
 
 
 def shadow_derived_refresh_command(args: argparse.Namespace) -> List[str]:
@@ -372,6 +381,8 @@ def candidate_summary(export_result: Dict[str, Any], review_result: Dict[str, An
         "review_count": int(review_kv.get("review_count", snapshot["review_count"]) or snapshot["review_count"]),
         "top_pack_id": str(review_kv.get("top_pack_id", snapshot["top_pack_id"])).strip(),
         "top_score": str(review_kv.get("top_score", snapshot["top_score"])).strip(),
+        "top_review_class": str(review_kv.get("top_class", snapshot["top_review_class"])).strip(),
+        "top_class_priority": str(snapshot["top_class_priority"]).strip(),
     }
 
 
@@ -428,6 +439,8 @@ def run_orchestrator(
             "review_count": 0,
             "top_pack_id": "",
             "top_score": "",
+            "top_review_class": "",
+            "top_class_priority": "",
         },
         "shadow_refresh": {
             "result_json": str(args.shadow_derived_refresh_result_json),
@@ -582,6 +595,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"review_count={report['candidate']['review_count']}")
     print(f"top_pack_id={report['candidate']['top_pack_id']}")
     print(f"top_score={report['candidate']['top_score']}")
+    print(f"top_review_class={report['candidate']['top_review_class']}")
     print(f"shadow_refresh_exit_code={report['shadow_refresh']['exit_code']}")
     print(f"shadow_refresh_sync_ok={'1' if report['shadow_refresh']['sync_ok'] else '0'}")
     print(f"shadow_refresh_result_json={report['shadow_refresh']['result_json']}")

@@ -1,33 +1,119 @@
 {
-  "generated_ts_utc": "2026-03-09T10:29:22Z",
+  "generated_ts_utc": "2026-03-16T07:31:10Z",
   "latest_by_pack_id": {
     "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff": {
       "last_execution_summary": {
-        "equity": 9991.003720000008,
-        "fills_count": 1,
-        "max_position_value": 67865.7,
-        "positions": {
-          "BTCUSDT": {
-            "avg_entry_price": 67865.7,
-            "current_price": 67883.85,
-            "realized_pnl": -27.14628,
-            "size": 1.0,
-            "symbol": "BTCUSDT",
-            "unrealized_pnl": 18.15000000000873
-          }
-        },
-        "positions_count": 1,
+        "equity": 10000.0,
+        "fills_count": 0,
+        "max_position_value": 0.0,
+        "positions": {},
+        "positions_count": 0,
         "snapshot_present": true,
-        "total_realized_pnl": -27.14628,
-        "total_unrealized_pnl": 18.15000000000873
+        "total_realized_pnl": 0.0,
+        "total_unrealized_pnl": 0.0
       },
-      "last_live_run_id": "94bd6025-ba45-4588-9fb6-30aba3424cfe",
-      "last_observed_at": "2026-03-09T10:29:22Z",
-      "last_processed_event_count": 8507,
+      "last_live_run_id": "ba563d0c-91aa-4012-968b-3ecbdf59be53",
+      "last_observed_at": "2026-03-16T06:29:12Z",
+      "last_processed_event_count": 4167,
       "last_stop_reason": "STREAM_END",
       "last_verify_soft_live_pass": true,
-      "observation_count": 35,
+      "observation_count": 39,
       "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584": {
+      "last_execution_summary": {
+        "equity": 10000.0,
+        "fills_count": 0,
+        "max_position_value": 0.0,
+        "positions": {},
+        "positions_count": 0,
+        "snapshot_present": true,
+        "total_realized_pnl": 0.0,
+        "total_unrealized_pnl": 0.0
+      },
+      "last_live_run_id": "7db2f06d-f23e-4261-8b0d-19927cd35391",
+      "last_observed_at": "2026-03-16T06:29:59Z",
+      "last_processed_event_count": 4074,
+      "last_stop_reason": "STREAM_END",
+      "last_verify_soft_live_pass": true,
+      "observation_count": 4,
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260214..20260214-20260307_194028-8a3131f7-t1__FULLSCAN_MAJOR__4321db8bcf29cbd86ec527f7637e035a044bcc34acb9f9df1fc25466b724ff52": {
+      "last_execution_summary": {
+        "equity": 10000.0,
+        "fills_count": 0,
+        "max_position_value": 0.0,
+        "positions": {},
+        "positions_count": 0,
+        "snapshot_present": true,
+        "total_realized_pnl": 0.0,
+        "total_unrealized_pnl": 0.0
+      },
+      "last_live_run_id": "73a8a67d-15bc-464d-990f-8bb34c947f7d",
+      "last_observed_at": "2026-03-16T07:26:06Z",
+      "last_processed_event_count": 5573,
+      "last_stop_reason": "STREAM_END",
+      "last_verify_soft_live_pass": true,
+      "observation_count": 1,
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260214..20260214-20260307_194028-8a3131f7-t1__FULLSCAN_MAJOR__4321db8bcf29cbd86ec527f7637e035a044bcc34acb9f9df1fc25466b724ff52"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab": {
+      "last_execution_summary": {
+        "equity": 9999.99742144,
+        "fills_count": 4,
+        "max_position_value": 1.4874,
+        "positions": {},
+        "positions_count": 0,
+        "snapshot_present": true,
+        "total_realized_pnl": -0.002578559999999978,
+        "total_unrealized_pnl": 0.0
+      },
+      "last_live_run_id": "1640a4e7-fa91-4144-a43d-b356d95c41ba",
+      "last_observed_at": "2026-03-16T07:21:03Z",
+      "last_processed_event_count": 10691,
+      "last_stop_reason": "STREAM_END",
+      "last_verify_soft_live_pass": true,
+      "observation_count": 8,
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa": {
+      "last_execution_summary": {
+        "equity": 10000.0,
+        "fills_count": 0,
+        "max_position_value": 0.0,
+        "positions": {},
+        "positions_count": 0,
+        "snapshot_present": true,
+        "total_realized_pnl": 0.0,
+        "total_unrealized_pnl": 0.0
+      },
+      "last_live_run_id": "89dd2dfc-313d-4f6b-b5e5-d2dc9d89b762",
+      "last_observed_at": "2026-03-16T07:00:53Z",
+      "last_processed_event_count": 9615,
+      "last_stop_reason": "STREAM_END",
+      "last_verify_soft_live_pass": true,
+      "observation_count": 13,
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa"
+    },
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260312..20260312-20260313_035447-26a42e35-t1__FULLSCAN_MAJOR__6970c1af8b30624dcdcad1701abaccb079d90e551b8bc66f1d69ea75384e0395": {
+      "last_execution_summary": {
+        "equity": 10000.0,
+        "fills_count": 0,
+        "max_position_value": 0.0,
+        "positions": {},
+        "positions_count": 0,
+        "snapshot_present": true,
+        "total_realized_pnl": 0.0,
+        "total_unrealized_pnl": 0.0
+      },
+      "last_live_run_id": "15a0a8e9-992b-47e4-a2e2-6d6c9e0c2c82",
+      "last_observed_at": "2026-03-16T07:31:10Z",
+      "last_processed_event_count": 11324,
+      "last_stop_reason": "STREAM_END",
+      "last_verify_soft_live_pass": true,
+      "observation_count": 1,
+      "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260312..20260312-20260313_035447-26a42e35-t1__FULLSCAN_MAJOR__6970c1af8b30624dcdcad1701abaccb079d90e551b8bc66f1d69ea75384e0395"
     },
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590": {
       "last_execution_summary": {
@@ -97,13 +183,49 @@
     "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|d8f7db24-3a66-48c9-9a40-044eba936546",
     "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|f66ebf2e-9bd4-41ce-a526-3ab06ba0ea75",
     "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|af8550dd-4b03-4452-9e43-bf436070d12f",
-    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|94bd6025-ba45-4588-9fb6-30aba3424cfe"
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|94bd6025-ba45-4588-9fb6-30aba3424cfe",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|666263ec-783f-480e-aa30-892a4b80a461",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584|c670b0f0-914c-4989-9029-211cc729c1a6",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|3e321f8d-9a92-4658-a65a-a5fb58a88929",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|bd58f255-dc4f-477d-b94e-89bb49a39bd4",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|52ca1e54-9d94-4ca9-8531-35f76bbdb263",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab|85c90765-ca8a-4a0d-b8e1-bc60cb3f146c",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|f252de1d-4368-422a-bd42-85727910dad6",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584|d3f9e1fa-1358-4887-9c61-3327c01fedf8",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|6506f2b6-8c36-4b5a-a9e3-a31d13ae17fa",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|c066a1e0-1360-4ff4-9737-ef1dbd254a91",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|0ae85478-cec9-476c-88be-80dac72c3bf9",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab|6e98f0ee-f668-4fa9-8f23-1a21d38a85a4",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|316a6899-c783-4125-a5d5-ceef4a9d0183",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584|8141ed64-3a13-4bcd-b784-fa294f543da8",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|8e47c179-e943-4299-84e8-791794d73f47",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|f48c99c2-884a-4ae3-a05d-96c5f2b1329f",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|cda9a105-5ed4-45c2-b832-e9f1abece27d",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab|5e70abe2-3443-4a23-993d-7ec297f09b2f",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff|ba563d0c-91aa-4012-968b-3ecbdf59be53",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584|7db2f06d-f23e-4261-8b0d-19927cd35391",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|6b0e51fc-7a4f-40ee-ae4c-e1e2f979de19",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|b7b691ae-ef20-4c67-9d49-dc30854328fa",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|86f9d7e2-29f0-4bf4-bf73-b40321bd28d8",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab|9b0ea5ad-c8dd-4b5f-84cf-13628cdfdb3c",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa|89dd2dfc-313d-4f6b-b5e5-d2dc9d89b762",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab|634cf0c6-7523-43e1-8b26-37d1ccc1fd03",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab|f8b5b4c7-df5c-4042-b43c-8147987a9024",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab|d1e13a7e-94ae-451f-b831-5dfe66346fe5",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab|1640a4e7-fa91-4144-a43d-b356d95c41ba",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260214..20260214-20260307_194028-8a3131f7-t1__FULLSCAN_MAJOR__4321db8bcf29cbd86ec527f7637e035a044bcc34acb9f9df1fc25466b724ff52|73a8a67d-15bc-464d-990f-8bb34c947f7d",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260312..20260312-20260313_035447-26a42e35-t1__FULLSCAN_MAJOR__6970c1af8b30624dcdcad1701abaccb079d90e551b8bc66f1d69ea75384e0395|15a0a8e9-992b-47e4-a2e2-6d6c9e0c2c82"
   ],
-  "pack_count": 2,
+  "pack_count": 7,
   "pack_ids": [
     "multi-hypothesis-phase5-bighunt-binance-trade-20260107..20260107-20260306_182339-085459e1-t1__FULLSCAN_MAJOR__adadb3fb6a50be0cb204257bc83e1a485d66b86f76e4c61cd7b72de8affe21ff",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260214..20260214-20260307_194028-8a3131f7-t1__FULLSCAN_MAJOR__4321db8bcf29cbd86ec527f7637e035a044bcc34acb9f9df1fc25466b724ff52",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260217..20260217-20260307_202639-d50308f1-t1__FULLSCAN_MAJOR__0ed2163a25825fb69199b5b3c917e0412d8555b71f57d3507335e51aae0125ab",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260219..20260219-20260307_205704-1693779d-t1__FULLSCAN_MAJOR__17450945191bc84476ad00ca57ea1144aa94b841302c6a30666e9d055b191cfa",
+    "multi-hypothesis-phase5-bighunt-binance-trade-20260312..20260312-20260313_035447-26a42e35-t1__FULLSCAN_MAJOR__6970c1af8b30624dcdcad1701abaccb079d90e551b8bc66f1d69ea75384e0395",
     "multi-hypothesis-phase5-bighunt-bybit-bbo-20260123..20260123-20260306_223808-e82ed9c0-t1__FULLSCAN_MAJOR__5979d5ea67bd3cb9eb515f0a91210ecc2486345d42cf93e9504bc1bec2078590"
   ],
-  "record_count": 48,
+  "record_count": 79,
   "schema_version": "shadow_observation_index_v0"
 }

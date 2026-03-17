@@ -96,6 +96,7 @@ class PrimaryDirectionalFamilySelectionV0Test(unittest.TestCase):
                 ],
             }
             payload = self.run_tool(tmp, role_items, rows, reports, contract_items=[], binding_items=[])
+            self.assertEqual(payload["governance"]["surface_role"], "DERIVED_SELECTION_SUMMARY")
             self.assertEqual(payload["selected_family_id"], "return_reversal_v1")
             order = [item["family_id"] for item in payload["scorecard"]]
             self.assertEqual(order, ["return_reversal_v1", "momentum_v1"])

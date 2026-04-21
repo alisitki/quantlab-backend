@@ -1,0 +1,28 @@
+{
+  "family_id": "microstructure_imbalance_v1",
+  "result": {
+    "label_counts": {
+      "ANTI_EDGE": 425,
+      "DIRECTIONAL": 1246,
+      "NO_EDGE": 1299
+    },
+    "pass_signal": true,
+    "rows_produced": 2970,
+    "selected_cell": {
+      "date": "20260328",
+      "delta_ms": "100",
+      "event_count": "95918",
+      "exchange": "bybit",
+      "feature": "signed_trade_volume_imbalance",
+      "h_ms": "500",
+      "label": "DIRECTIONAL",
+      "mean_abs_pressure": "0.972855768660446",
+      "mean_signed_fwd_return_bps": "1.050521208427813",
+      "pressure_threshold": "0.200000",
+      "stream": "trade",
+      "symbol": "linkusdt",
+      "t_stat": "77.142718878792152"
+    }
+  },
+  "status": "ok"
+}

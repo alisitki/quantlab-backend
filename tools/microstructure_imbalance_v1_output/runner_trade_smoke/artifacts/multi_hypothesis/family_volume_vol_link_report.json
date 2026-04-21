@@ -1,0 +1,40 @@
+{
+  "family_id": "volume_vol_link_v1",
+  "status": "ok",
+  "exchange": "binance",
+  "symbol": "adausdt",
+  "stream": "trade",
+  "window": "20260127..20260127",
+  "params": {
+    "delta_ms_list": [
+      100
+    ],
+    "h_ms_list": [
+      100
+    ]
+  },
+  "inputs": {
+    "parquet_relpaths": [
+      "data/curated/exchange=binance/stream=trade/symbol=adausdt/date=20260127/data.parquet"
+    ],
+    "optional_size_column": "qty"
+  },
+  "result": {
+    "rows_produced": 1,
+    "selected_cell": {
+      "exchange": "binance",
+      "symbol": "adausdt",
+      "date": "20260127",
+      "stream": "trade",
+      "delta_ms": 100,
+      "h_ms": 100,
+      "sample_count": 12682,
+      "mean_activity": 2.225201072386059,
+      "mean_rv_fwd": 3.235554920396225,
+      "corr": 0.388261305382553,
+      "t_stat": 47.442236231982754,
+      "mean_activity_size_past": 85076.32392367134
+    },
+    "pass_signal": true
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "family_id": "volatility_clustering_v1",
+  "status": "ok",
+  "exchange": "binance",
+  "symbol": "adausdt",
+  "stream": "trade",
+  "window": "20260127..20260127",
+  "params": {
+    "delta_ms_list": [
+      100
+    ],
+    "h_ms_list": [
+      100
+    ]
+  },
+  "inputs": {
+    "parquet_relpaths": [
+      "data/curated/exchange=binance/stream=trade/symbol=adausdt/date=20260127/data.parquet"
+    ]
+  },
+  "result": {
+    "rows_produced": 1,
+    "selected_cell": {
+      "exchange": "binance",
+      "symbol": "adausdt",
+      "date": "20260127",
+      "stream": "trade",
+      "delta_ms": 100,
+      "h_ms": 100,
+      "sample_count": 12682,
+      "mean_rv_past": 2.825097871946478,
+      "mean_rv_fwd": 3.235554920396225,
+      "corr": 0.468185184717287,
+      "t_stat": 59.66321596309341
+    },
+    "pass_signal": true
+  }
+}

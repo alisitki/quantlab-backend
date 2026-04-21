@@ -1,0 +1,72 @@
+{
+  "after": {
+    "close_count": 13,
+    "cost_accounting_status": "NET_FEE_BACKED_MARK_TO_MARKET_FUNDING_AWARE",
+    "decision_count": 1519,
+    "fee_per_fill": 0.00695149624753128,
+    "fill_count": 1519,
+    "funding_cost": 0.0,
+    "gross_pnl": 1.0620000000000935,
+    "gross_pnl_per_1k_events": 0.02576169221812763,
+    "gross_pnl_per_fill": 0.0006991441737986133,
+    "net_pnl": -9.497322799999921,
+    "open_count": 14,
+    "processed_event_count": 41224,
+    "profitability_status": "NET_MARK_TO_MARKET_AFTER_FEES_FUNDING_AND_EXIT_ESTIMATE",
+    "reversal_count": 1492,
+    "reversal_per_1k_events": 36.1925092179313,
+    "run_duration_sec": 21600.6,
+    "stop_reason": "STREAM_END",
+    "total_fee": 10.559322800000015,
+    "turnover": 26398.307000000066,
+    "verify_soft_live_pass": true
+  },
+  "baseline": {
+    "close_count": 21,
+    "decision_count": 3207,
+    "fee_per_fill": 0.007210566884939199,
+    "fill_count": 3207,
+    "gross_pnl": 4.054000000000025,
+    "gross_pnl_per_1k_events": 0.050306504851959706,
+    "gross_pnl_per_fill": 0.001264109759900226,
+    "net_pnl": -19.070287999999984,
+    "open_count": 22,
+    "processed_event_count": 80586,
+    "reversal_count": 3164,
+    "reversal_per_1k_events": 39.26240289876654,
+    "total_fee": 23.12428800000001
+  },
+  "comparison": {
+    "fee_reduction_ratio": 0.5433665763028029,
+    "fill_reduction_ratio": 0.5263486124103524,
+    "gross_per_fill_change_ratio": -0.4469276355766801,
+    "gross_preserved_ratio": 0.26196349284659276,
+    "net_improvement_quote": 9.572965200000063
+  },
+  "exchange": "bybit",
+  "family_id": "microstructure_imbalance_v1",
+  "generated_ts_utc": "2026-04-09T11:12:41Z",
+  "lever": {
+    "entry_threshold": 0.2,
+    "exit_threshold": 0.1,
+    "expected_edge_scale": 0.006095348835,
+    "fee_rate": 0.0004,
+    "fee_reference": "dynamic price * orderQty * fee_rate",
+    "implementation": "keep hysteresis, gate flat entries and reversals when abs(pressure) * scale <= estimated entry fee",
+    "selected": "FEE_AWARE_ENTRY_GATING",
+    "signal_math_changed": false
+  },
+  "run_mode": "full",
+  "schema_version": "phase7_microstructure_feeaware_v0",
+  "source_paths": {
+    "baseline_hysteresis_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_hysteresis_v0.json",
+    "batch_result_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_feeaware_output/full_linkusdt/shadow_observation_batch_result_v0.json",
+    "full_run_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_feeaware_output/full_linkusdt",
+    "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_feeaware_output/full_linkusdt/shadow_state/shadow_futures_paper_ledger_v1.json",
+    "summary_runtime_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_feeaware_output/full_linkusdt/summary_runtime.json"
+  },
+  "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__xt010__fa",
+  "symbol": "linkusdt",
+  "verdict": "NO_IMPROVEMENT",
+  "verdict_reason": "critical fee-aware trade-quality target not met"
+}

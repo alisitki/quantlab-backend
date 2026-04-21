@@ -1,0 +1,314 @@
+{
+  "comparison": {
+    "both_survive": false,
+    "fee_burden_comparison": {
+      "avaxusdt_fee_per_fill": 0.003779115254,
+      "avaxusdt_total_fee_quote": 0.4459356,
+      "interpretation": "fees dominate net loss for both, but fees are not the sole issue because gross pnl is already negative",
+      "linkusdt_fee_per_fill": 0.003549404878,
+      "linkusdt_total_fee_quote": 0.1455256
+    },
+    "final_decision": "NEITHER_CONTINUE",
+    "final_decision_reason": "NEITHER_CONTINUE because both candidates have negative gross pnl before fees; no real edge",
+    "funding_comparison": {
+      "avaxusdt_funding_cost_quote": 0.0,
+      "interpretation": "funding impact is zero in the current artifact surface for both candidates",
+      "linkusdt_funding_cost_quote": 0.0
+    },
+    "gross_edge_comparison": {
+      "avaxusdt_total_gross_pnl_quote": -0.013,
+      "gross_edge_winner": "avaxusdt",
+      "interpretation": "both gross pnl totals are negative; no real edge for either candidate",
+      "linkusdt_total_gross_pnl_quote": -0.018
+    },
+    "net_comparison": {
+      "avaxusdt_realized_net_pnl_quote": -0.4589356,
+      "linkusdt_realized_net_pnl_quote": -0.1635256,
+      "net_winner": "linkusdt"
+    },
+    "only_one_survives": false,
+    "stability_comparison": {
+      "avaxusdt_bounded_churn": true,
+      "interpretation": "both candidates retained bounded churn and verified runs; profitability, not infrastructure, is the blocker",
+      "linkusdt_bounded_churn": true
+    },
+    "stronger_candidate": "avaxusdt",
+    "stronger_candidate_reason": "avaxusdt has the less negative gross pnl per fill and higher fill-backed activity, but both gross pnl totals are negative before fees",
+    "trade_efficiency_comparison": {
+      "avaxusdt_gross_pnl_per_fill": -0.000110169492,
+      "avaxusdt_net_pnl_per_1k_events": -0.002681513076,
+      "interpretation": "avaxusdt is more active and has a less negative gross pnl per fill; linkusdt has smaller absolute net loss",
+      "linkusdt_gross_pnl_per_fill": -0.00043902439,
+      "linkusdt_net_pnl_per_1k_events": -0.000938421633
+    },
+    "weaker_candidate": "linkusdt"
+  },
+  "final_decision": "NEITHER_CONTINUE",
+  "final_decision_reason": "NEITHER_CONTINUE because both candidates have negative gross pnl before fees; no real edge",
+  "generated_ts_utc": "2026-04-06T06:32:29Z",
+  "governance": {
+    "no_global_watchlist_mutation": true,
+    "no_new_runs": true,
+    "no_promotion_change": true,
+    "no_ranking_change": true,
+    "no_strategy_modification": true,
+    "scope": "read_only_profitability_decomposition_for_phase7_continuation_candidates",
+    "target_symbols": [
+      "linkusdt",
+      "avaxusdt"
+    ]
+  },
+  "inputs": {
+    "canonical_truth_registry_json": "/home/deploy/quantlab-backend/tools/system_state/canonical_truth_registry_v0.json",
+    "phase7_continuation_validation_result_v1_json": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_result_v1.json"
+  },
+  "per_strategy": [
+    {
+      "artifact_identity": {
+        "ledger_family_id": "momentum_v1",
+        "ledger_strategy_id": "candidate_strategy::momentum_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536::xrpusdt",
+        "ledger_symbol": "LINKUSDT",
+        "live_run_id": null,
+        "metadata_warnings": [
+          "ledger_strategy_id_differs_from_continuation_result; using continuation result identity and ledger metrics",
+          "ledger_family_id_differs_from_continuation_result; using continuation result family and ledger metrics"
+        ],
+        "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536"
+      },
+      "artifact_paths": {
+        "execution_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/full_run_v1/runs/01_linkusdt/shadow_state/shadow_execution_ledger_v0.jsonl",
+        "execution_pack_summary_json": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/full_run_v1/runs/01_linkusdt/shadow_state/shadow_execution_pack_summary_v0.json",
+        "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/full_run_v1/runs/01_linkusdt/shadow_state/shadow_futures_paper_ledger_v1.json",
+        "trade_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/full_run_v1/runs/01_linkusdt/shadow_state/shadow_trade_ledger_v1.jsonl"
+      },
+      "edge_strength": {
+        "edge_statement": "no real edge",
+        "gross_already_weak_or_negative": true,
+        "gross_edge_positive": false,
+        "net_negative_only_because_of_fees": false
+      },
+      "efficiency_metrics": {
+        "bounded_churn": true,
+        "closing_turnover_quote": 181.903,
+        "fee_bps_on_turnover": 4.0,
+        "gross_bps_on_turnover": -0.494758310565,
+        "gross_pnl_per_1k_events": -0.0001032963,
+        "gross_pnl_per_closed_episode": -0.000857142857,
+        "gross_pnl_per_fill": -0.00043902439,
+        "net_bps_on_turnover": -4.494758310565,
+        "net_pnl_per_1k_events": -0.000938421633,
+        "net_pnl_per_closed_episode": -0.007786933333,
+        "net_pnl_per_fill": -0.003988429268,
+        "opening_turnover_quote": 181.911,
+        "processed_event_count": 174256,
+        "run_duration_sec": 86401.309,
+        "stop_reason": "STREAM_END",
+        "trade_transitions_per_1k_events": 0.005739,
+        "turnover_quote": 363.814,
+        "verify_soft_live_pass": true
+      },
+      "exchange": "binance",
+      "family_id": "return_reversal_v1",
+      "fee_burden": {
+        "effective_fee_rate": 0.0004,
+        "fee_as_pct_of_abs_gross_pnl_magnitude": 808.475555555525,
+        "fee_as_pct_of_gross_edge": null,
+        "fee_explanation": "fees deepen the loss, but they are not the only problem because gross pnl is not positive",
+        "fee_per_closed_episode": 0.006929790476,
+        "fee_per_fill": 0.003549404878,
+        "fee_support_status": "FILL_FEE_BACKED",
+        "total_fee_quote": 0.1455256
+      },
+      "funding_impact": {
+        "funding_applied_count": 0,
+        "funding_contribution_to_net_loss": 0.0,
+        "funding_cost_quote": 0.0,
+        "funding_rate_source": "LIVE_STREAM_FUNDING",
+        "funding_support_status": "NO_FUNDING_WINDOW_CROSSED",
+        "funding_vs_fee_ratio": 0.0,
+        "funding_windows_crossed_count": 0
+      },
+      "gross_performance": {
+        "gross_edge_positive": false,
+        "mark_to_market_pnl_quote_gross": -0.018,
+        "source": "futures_paper_ledger.replayed_realized_pnl_quote_gross",
+        "total_gross_pnl_quote": -0.018
+      },
+      "net_performance": {
+        "cost_accounting_status": "NET_FEE_BACKED_CLOSED_FUNDING_AWARE",
+        "paper_run_status": "FILL_BACKED_FLAT",
+        "profitability_status": "NET_AFTER_FEES_AND_FUNDING",
+        "realized_pnl_quote_net": -0.1635256,
+        "source": "futures_paper_ledger.replayed_realized_pnl_quote_net",
+        "summary_realized_pnl_quote": -0.1635256
+      },
+      "source_continuation_verdict": "KEEP_ADVANCING",
+      "source_run_status": "OK",
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536::linkusdt",
+      "symbol": "linkusdt",
+      "trade_quality": {
+        "avg_fee_per_episode": 0.006929790476,
+        "avg_gross_pnl_per_episode": -0.000857142857,
+        "avg_net_pnl_per_episode": -0.007786933333,
+        "closed_episode_count": 21,
+        "decision_count": 41,
+        "decisions_vs_fills_ratio": 1.0,
+        "episode_count": 21,
+        "execution_ledger_row_count": 1,
+        "exit_count": 1,
+        "fill_count": 41,
+        "fills_per_decision_ratio": 1.0,
+        "gross_flat_episode_count": 7,
+        "gross_negative_episode_count": 9,
+        "gross_pnl_distribution": {
+          "max": 0.002,
+          "median": 0.0,
+          "min": -0.012,
+          "p25": -0.001,
+          "p75": 0.0
+        },
+        "gross_positive_episode_count": 5,
+        "gross_win_rate": 0.238095238095,
+        "net_pnl_distribution": {
+          "max": -0.0051136,
+          "median": -0.0071248,
+          "min": -0.0188184
+        },
+        "open_count": 0,
+        "reversal_count": null,
+        "risk_reject_count": 0,
+        "signal_consistency": "gross episode distribution is not positive overall",
+        "trade_ledger_row_count": 1
+      },
+      "verdict": "DROP",
+      "verdict_reason": "gross edge is not positive before costs"
+    },
+    {
+      "artifact_identity": {
+        "ledger_family_id": "momentum_v1",
+        "ledger_strategy_id": "candidate_strategy::momentum_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4::xrpusdt",
+        "ledger_symbol": "AVAXUSDT",
+        "live_run_id": null,
+        "metadata_warnings": [
+          "ledger_strategy_id_differs_from_continuation_result; using continuation result identity and ledger metrics",
+          "ledger_family_id_differs_from_continuation_result; using continuation result family and ledger metrics"
+        ],
+        "selected_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4"
+      },
+      "artifact_paths": {
+        "execution_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/full_run_v1/runs/02_avaxusdt/shadow_state/shadow_execution_ledger_v0.jsonl",
+        "execution_pack_summary_json": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/full_run_v1/runs/02_avaxusdt/shadow_state/shadow_execution_pack_summary_v0.json",
+        "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/full_run_v1/runs/02_avaxusdt/shadow_state/shadow_futures_paper_ledger_v1.json",
+        "trade_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/full_run_v1/runs/02_avaxusdt/shadow_state/shadow_trade_ledger_v1.jsonl"
+      },
+      "edge_strength": {
+        "edge_statement": "no real edge",
+        "gross_already_weak_or_negative": true,
+        "gross_edge_positive": false,
+        "net_negative_only_because_of_fees": false
+      },
+      "efficiency_metrics": {
+        "bounded_churn": true,
+        "closing_turnover_quote": 557.388,
+        "fee_bps_on_turnover": 4.0,
+        "gross_bps_on_turnover": -0.116608765929,
+        "gross_pnl_per_1k_events": -7.5957651e-05,
+        "gross_pnl_per_closed_episode": -0.000209677419,
+        "gross_pnl_per_fill": -0.000110169492,
+        "net_bps_on_turnover": -4.116608765929,
+        "net_pnl_per_1k_events": -0.002681513076,
+        "net_pnl_per_closed_episode": -0.007402187097,
+        "net_pnl_per_fill": -0.003889284746,
+        "opening_turnover_quote": 557.451,
+        "processed_event_count": 171148,
+        "run_duration_sec": 86401.875,
+        "stop_reason": "STREAM_END",
+        "trade_transitions_per_1k_events": 0.005843,
+        "turnover_quote": 1114.839,
+        "verify_soft_live_pass": true
+      },
+      "exchange": "binance",
+      "family_id": "return_reversal_v1",
+      "fee_burden": {
+        "effective_fee_rate": 0.0004,
+        "fee_as_pct_of_abs_gross_pnl_magnitude": 3430.27384615387,
+        "fee_as_pct_of_gross_edge": null,
+        "fee_explanation": "fees deepen the loss, but they are not the only problem because gross pnl is not positive",
+        "fee_per_closed_episode": 0.007192509677,
+        "fee_per_fill": 0.003779115254,
+        "fee_support_status": "FILL_FEE_BACKED",
+        "total_fee_quote": 0.4459356
+      },
+      "funding_impact": {
+        "funding_applied_count": 0,
+        "funding_contribution_to_net_loss": 0.0,
+        "funding_cost_quote": 0.0,
+        "funding_rate_source": "LIVE_STREAM_FUNDING",
+        "funding_support_status": "NO_FUNDING_WINDOW_CROSSED",
+        "funding_vs_fee_ratio": 0.0,
+        "funding_windows_crossed_count": 0
+      },
+      "gross_performance": {
+        "gross_edge_positive": false,
+        "mark_to_market_pnl_quote_gross": -0.013,
+        "source": "futures_paper_ledger.replayed_realized_pnl_quote_gross",
+        "total_gross_pnl_quote": -0.013
+      },
+      "net_performance": {
+        "cost_accounting_status": "NET_FEE_BACKED_CLOSED_FUNDING_AWARE",
+        "paper_run_status": "FILL_BACKED_FLAT",
+        "profitability_status": "NET_AFTER_FEES_AND_FUNDING",
+        "realized_pnl_quote_net": -0.4589356,
+        "source": "futures_paper_ledger.replayed_realized_pnl_quote_net",
+        "summary_realized_pnl_quote": -0.4589356
+      },
+      "source_continuation_verdict": "KEEP_ADVANCING",
+      "source_run_status": "OK",
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4::avaxusdt",
+      "symbol": "avaxusdt",
+      "trade_quality": {
+        "avg_fee_per_episode": 0.007192509677,
+        "avg_gross_pnl_per_episode": -0.000209677419,
+        "avg_net_pnl_per_episode": -0.007402187097,
+        "closed_episode_count": 62,
+        "decision_count": 118,
+        "decisions_vs_fills_ratio": 1.0,
+        "episode_count": 62,
+        "execution_ledger_row_count": 1,
+        "exit_count": 1,
+        "fill_count": 118,
+        "fills_per_decision_ratio": 1.0,
+        "gross_flat_episode_count": 20,
+        "gross_negative_episode_count": 23,
+        "gross_pnl_distribution": {
+          "max": 0.01,
+          "median": 0.0,
+          "min": -0.015,
+          "p25": -0.001,
+          "p75": 0.001
+        },
+        "gross_positive_episode_count": 19,
+        "gross_win_rate": 0.306451612903,
+        "net_pnl_distribution": {
+          "max": 0.002316,
+          "median": -0.0071012,
+          "min": -0.022674
+        },
+        "open_count": 0,
+        "reversal_count": null,
+        "risk_reject_count": 0,
+        "signal_consistency": "gross episode distribution is not positive overall",
+        "trade_ledger_row_count": 1
+      },
+      "verdict": "DROP",
+      "verdict_reason": "gross edge is not positive before costs"
+    }
+  ],
+  "schema_version": "phase7_profitability_analysis_v0",
+  "source_continuation_summary": {
+    "final_recommendation": "BOTH_ADVANCE",
+    "generated_ts_utc": "2026-04-06T05:43:07Z",
+    "lane_result": "POSITIVE_LANE",
+    "schema_version": "phase7_continuation_validation_result_v1"
+  }
+}

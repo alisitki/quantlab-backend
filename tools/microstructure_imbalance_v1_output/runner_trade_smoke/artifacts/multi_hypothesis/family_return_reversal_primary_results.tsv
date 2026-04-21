@@ -1,0 +1,2 @@
+exchange	symbol	date	stream	delta_ms	h_ms	event_count	mean_product	t_stat
+binance	adausdt	20260127	trade	100	100	110217	-1.602281090101911	-41.317981883500003

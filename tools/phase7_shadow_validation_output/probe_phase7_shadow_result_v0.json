@@ -1,0 +1,153 @@
+{
+  "continuation_candidates": [],
+  "generated_ts_utc": "2026-04-04T10:43:06Z",
+  "governance": {
+    "authoritative_inputs": [
+      {
+        "concept": "runtime_binding",
+        "path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
+        "registry_entry": {
+          "authoritative_now": [
+            {
+              "exists": true,
+              "generated_ts_utc": "2026-03-16T12:58:47Z",
+              "path": "tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
+              "schema_version": "candidate_strategy_runtime_binding_v0"
+            }
+          ],
+          "concept": "runtime_binding",
+          "consumed_by": [
+            "tools/run-bound-shadow-launch-v0.py",
+            "tools/run-momentum-continuous-shadow-session-v1.py",
+            "tools/shadow_futures_paper_ledger_v1.py"
+          ],
+          "notes": [
+            "Runtime bindability truth."
+          ],
+          "produced_by": [
+            "tools/phase6_strategy_runtime_binding_v0.py"
+          ],
+          "stale_or_auxiliary_surfaces": [
+            {
+              "exists": true,
+              "generated_ts_utc": "2026-03-08T00:00:00Z",
+              "path": "tools/phase6_state/family_shadow_runtime_binding_map_v0.json",
+              "schema_version": "family_shadow_runtime_binding_map_v0"
+            },
+            {
+              "exists": true,
+              "generated_ts_utc": "2026-03-09T04:50:36Z",
+              "path": "tools/shadow_state/shadow_bound_launch_watchlist_v0.json",
+              "schema_version": "shadow_bound_launch_watchlist_v0",
+              "selected_count": 1
+            }
+          ]
+        }
+      }
+    ],
+    "execution_mode": "isolated_one_item_shadow_observation_batches",
+    "notes": [
+      "Runs use isolated per-strategy shadow_state directories under tools/phase7_shadow_validation_output.",
+      "Canonical global shadow watchlist/ranking is not modified by this validation runner."
+    ],
+    "task_local_inputs": [
+      {
+        "concept": "shadow_shortlist",
+        "path": "/home/deploy/quantlab-backend/tools/phase6_state/shadow_shortlist_v0.json",
+        "role": "shortlist-only advisory input from Phase6 tradability triage"
+      }
+    ]
+  },
+  "hypothesis_result": "FAIL",
+  "results": [
+    {
+      "artifacts": {
+        "audit_base_dir": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/audit",
+        "batch_out_dir": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/batch_out",
+        "batch_result_json_path": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_observation_batch_result_v0.json",
+        "command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/run-shadow-observation-batch-v0.py --watchlist /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/input_watchlist.json --max-items 1 --strategy core/strategy/strategies/ReturnReversalV1Strategy.js --strategy-config-json {\"binding_mode\": \"PAPER_DIRECTIONAL_V1\", \"exchange\": \"binance\", \"family_id\": \"return_reversal_v1\", \"orderQty\": 1, \"params\": {\"delta_ms_list\": [100, 250, 500], \"h_ms_list\": [100, 250, 500]}, \"selected_cell\": {\"date\": \"20260315\", \"delta_ms\": 500, \"event_count\": 96950, \"exchange\": \"binance\", \"h_ms\": 500, \"mean_product\": -2.704279127377875, \"stream\": \"trade\", \"symbol\": \"adausdt\", \"t_stat\": -32.93114329093621}, \"source_decision_tier\": \"PROMOTE\", \"source_family_report_path\": \"/home/deploy/quantlab-evidence-archive/20260316_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR/runs/adausdt/artifacts/multi_hypothesis/family_return_reversal_report.json\", \"source_pack_id\": \"multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f\", \"source_pack_path\": null, \"source_review_class\": null, \"source_review_class_priority\": null, \"source_review_rank\": null, \"source_review_score\": null, \"stream\": \"trade\", \"symbols\": [\"adausdt\"], \"window\": \"20260315..20260315\"} --summary-json-path /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/summary_runtime.json --history-jsonl /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_observation_history_v0.jsonl --index-json /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_observation_index_v0.json --phase6-state-dir /home/deploy/quantlab-backend/tools/phase6_state --shadow-state-dir /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state --refresh-result-json /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_derived_surface_refresh_v0.json --execution-ledger-jsonl /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_execution_ledger_v0.jsonl --execution-pack-summary-json /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_execution_pack_summary_v0.json --audit-base-dir /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/audit --out-dir /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/batch_out --result-json /home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_observation_batch_result_v0.json --per-run-timeout-sec 30 --run-max-duration-sec 8 --heartbeat-ms 2000",
+        "execution_events_jsonl": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_execution_events_v1.jsonl",
+        "execution_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_execution_ledger_v0.jsonl",
+        "execution_pack_summary_json": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_execution_pack_summary_v0.json",
+        "exit_code": 0,
+        "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_futures_paper_ledger_v1.json",
+        "refresh_result_json_path": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_derived_surface_refresh_v0.json",
+        "shadow_state_dir": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state",
+        "summary_json_path": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/batch_out/rank02_multi_hypothesis_phase5_bighunt_binance_trade_20260315_20260315_20260316_033947_/summary.json",
+        "timed_out": false,
+        "top_stderr_log": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/batch_command_stderr.log",
+        "top_stdout_log": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/batch_command_stdout.log",
+        "trade_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/shadow_state/shadow_trade_ledger_v1.jsonl",
+        "watchlist_path": "/home/deploy/quantlab-backend/tools/phase7_shadow_validation_output/runs/01_adausdt/input_watchlist.json"
+      },
+      "continue_candidate": false,
+      "continue_reason": "No synthetic fill activity in bounded run.",
+      "exchange": "binance",
+      "family_id": "return_reversal_v1",
+      "metrics": {
+        "cost_accounting_status": "NO_FILL_ACTIVITY",
+        "decision_event_count": 0,
+        "equity": 10000.0,
+        "execution_artifacts_synced": true,
+        "extreme_churn": false,
+        "extreme_churn_reason": "",
+        "fill_event_count": 0,
+        "fills_count": 0,
+        "heartbeat_count": 4,
+        "heartbeat_seen": true,
+        "paper_run_status": "NO_FILL_ACTIVITY",
+        "pnl_interpretation": "FLAT_NO_FILLS",
+        "positions_count": 0,
+        "processed_event_count": 106,
+        "profitability_status": "NO_FILL_ACTIVITY",
+        "recent_pnl_bias": "FLAT_BIAS",
+        "refresh_sync_ok": true,
+        "risk_reject_event_count": 0,
+        "run_duration_sec": 8.099,
+        "snapshot_present": true,
+        "stop_reason": "STREAM_END",
+        "total_realized_pnl": 0.0,
+        "total_unrealized_pnl": 0.0,
+        "trade_closed_count": 0,
+        "trade_open_count": 0,
+        "trade_transitions": 0,
+        "trade_transitions_per_1k_events": 0.0,
+        "verify_soft_live_pass": true
+      },
+      "rank": 2,
+      "selected_symbol": "adausdt",
+      "status": "OK",
+      "stop_reason": "",
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f::adausdt"
+    }
+  ],
+  "run_policy": {
+    "extreme_churn_thresholds": {
+      "max_fill_events": 40,
+      "max_trade_transitions": 20,
+      "max_trade_transitions_per_1k_events": 2.5
+    },
+    "heartbeat_ms": 2000,
+    "max_strategies": 1,
+    "per_run_timeout_sec": 30,
+    "run_max_duration_sec": 8,
+    "stop_rules": {
+      "extreme_churn": "MARK_STRATEGY_FAIL",
+      "processed_event_count_zero": "STOP_ENTIRE_RUN",
+      "verify_soft_live_fail": "STOP_ENTIRE_RUN"
+    },
+    "subprocess_timeout_sec": 180
+  },
+  "schema_version": "phase7_shortlist_shadow_validation_v0",
+  "status": "OK",
+  "stop_after_strategy_id": "",
+  "stopped_reason": "",
+  "summary": {
+    "attempted_count": 1,
+    "completed_ok_count": 1,
+    "continuation_candidate_count": 0,
+    "extreme_churn_fail_count": 0,
+    "processed_event_zero_fail_count": 0,
+    "verify_fail_count": 0
+  }
+}

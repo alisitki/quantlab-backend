@@ -1,0 +1,49 @@
+{
+  "attempted_count": 1,
+  "completed_count": 1,
+  "dry_run": false,
+  "execution_artifacts_synced": true,
+  "execution_ledger_path": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_ledger_v0.jsonl",
+  "execution_ledger_rebuild_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/shadow_execution_ledger_v0.py --history-jsonl /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_observation_history_v0.jsonl --out-jsonl /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_ledger_v0.jsonl",
+  "execution_ledger_rebuild_executed": true,
+  "execution_ledger_rebuild_exit_code": 0,
+  "execution_pack_summary_path": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_pack_summary_v0.json",
+  "execution_pack_summary_rebuild_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/shadow_execution_pack_summary_v0.py --ledger-jsonl /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_ledger_v0.jsonl --out-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_pack_summary_v0.json",
+  "execution_pack_summary_rebuild_executed": true,
+  "execution_pack_summary_rebuild_exit_code": 0,
+  "execution_rebuild_note": "",
+  "generated_ts_utc": "2026-04-10T07:22:49Z",
+  "max_items": 1,
+  "refresh_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/refresh-shadow-derived-surfaces-v0.py --state-dir /home/deploy/quantlab-backend/tools/phase6_state --shadow-state-dir /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state --observation-index /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_observation_index_v0.json --observation-history /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_observation_history_v0.jsonl --execution-ledger-tool /home/deploy/quantlab-backend/tools/shadow_execution_ledger_v0.py --execution-pack-summary-tool /home/deploy/quantlab-backend/tools/shadow_execution_pack_summary_v0.py --execution-ledger-jsonl /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_ledger_v0.jsonl --execution-pack-summary-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_pack_summary_v0.json --result-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_derived_surface_refresh_v0.json",
+  "refresh_executed": true,
+  "refresh_exit_code": 0,
+  "refresh_note": "",
+  "refresh_result_json_path": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_derived_surface_refresh_v0.json",
+  "results": [
+    {
+      "audit_spool_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/audit/rank01_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020_v2",
+      "exchange": "bybit",
+      "history_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/shadow_observation_history_v0.py --summary-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_out/rank01_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020_v2/summary.json --history-jsonl /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_observation_history_v0.jsonl --index-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_observation_index_v0.json",
+      "history_updated": true,
+      "note": "",
+      "pack_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2",
+      "rank": 1,
+      "run_executed": true,
+      "run_exit_code": 0,
+      "stderr_log_path": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_out/rank01_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020_v2/stderr.log",
+      "stdout_log_path": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_out/rank01_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020_v2/stdout.log",
+      "summary_command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/shadow_observation_summary_v0.py --watchlist /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/input_watchlist.json --pack-id microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2 --summary-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/summary_runtime.json --audit-spool-dir /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/audit/rank01_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020_v2 --stdout-log /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_out/rank01_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020_v2/stdout.log --out-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_out/rank01_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020_v2/summary.json",
+      "summary_generated": true,
+      "summary_json_path": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_out/rank01_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020_v2/summary.json",
+      "symbols": [
+        "linkusdt"
+      ],
+      "verify_command": "node /home/deploy/quantlab-backend/tools/verify-soft-live.js",
+      "verify_soft_live_pass": true,
+      "wrapper_command": "node /home/deploy/quantlab-backend/tools/run-shadow-watchlist-v0.js --watchlist /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/input_watchlist.json --pack-id microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2"
+    }
+  ],
+  "schema_version": "shadow_observation_batch_result_v0",
+  "surfaces_synced": true,
+  "watchlist_path": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/input_watchlist.json"
+}

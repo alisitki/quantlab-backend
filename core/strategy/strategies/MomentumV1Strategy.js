@@ -25,6 +25,11 @@ function toPositiveNumber(value) {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
+function toNonNegativeInt(value) {
+  const n = Number(value);
+  return Number.isInteger(n) && n >= 0 ? n : null;
+}
+
 function toBigIntOrNull(value) {
   if (value === undefined || value === null || value === '') return null;
   try {
@@ -77,14 +82,29 @@ function validateConfig(rawConfig) {
   }
 
   const orderQty = toPositiveNumber(config.orderQty);
-  if (orderQty === null) {
-    throw new Error('MOMENTUM_V1_CONFIG_ERROR: positive orderQty required');
+  const targetQuoteNotional = (
+    toPositiveNumber(config.target_quote_notional)
+    ?? toPositiveNumber(config.targetQuoteNotional)
+  );
+  if (orderQty === null && targetQuoteNotional === null) {
+    throw new Error('MOMENTUM_V1_CONFIG_ERROR: positive orderQty or target_quote_notional required');
   }
+  const qtyRoundDecimals = (
+    toNonNegativeInt(config.qty_round_decimals)
+    ?? toNonNegativeInt(config.qtyRoundDecimals)
+    ?? 8
+  );
+  const minOrderQty = (
+    toPositiveNumber(config.min_order_qty)
+    ?? toPositiveNumber(config.minOrderQty)
+    ?? 1e-8
+  );
   const executionConfig = config.execution_config && typeof config.execution_config === 'object'
     ? config.execution_config
     : null;
   const feeRate = toPositiveNumber(executionConfig?.feeRate) ?? DEFAULT_FEE_RATE;
   const minEdgeCostMultiple = toPositiveNumber(config.min_edge_cost_multiple) ?? 1.25;
+  const minEntryFeeFloorMultiple = toPositiveNumber(config.min_entry_fee_floor_multiple) ?? 1.5;
   const explicitMinAbsPastReturnBps = toPositiveNumber(config.min_abs_past_return_bps);
 
   const params = config.params && typeof config.params === 'object' ? config.params : null;
@@ -142,7 +162,11 @@ function validateConfig(rawConfig) {
     stream,
     symbol: symbols[0],
     symbols,
-    orderQty,
+    orderQty: orderQty ?? minOrderQty,
+    sizingMode: targetQuoteNotional !== null ? 'TARGET_QUOTE_NOTIONAL' : 'FIXED_QTY',
+    targetQuoteNotional,
+    qtyRoundDecimals,
+    minOrderQty,
     allowReversal: true,
     closeOnZeroSignal: true,
     window: String(config.window || '').trim() || null,
@@ -158,10 +182,14 @@ function validateConfig(rawConfig) {
     feeRate,
     feeFloorBps,
     minEdgeCostMultiple,
+    minEntryFeeFloorMultiple,
     confidenceRatio,
     confidenceBucket,
     confidenceBucketMultiplier,
-    minAbsPastReturnBps: explicitMinAbsPastReturnBps ?? (feeFloorBps * confidenceBucketMultiplier),
+    minAbsPastReturnBps: explicitMinAbsPastReturnBps ?? Math.max(
+      feeFloorBps * minEntryFeeFloorMultiple,
+      feeFloorBps * confidenceBucketMultiplier,
+    ),
   };
 }
 
@@ -219,6 +247,20 @@ function signalFromPastReturn(pastReturnBps) {
   return 'FLAT';
 }
 
+function roundDownToDecimals(value, decimals) {
+  const factor = 10 ** decimals;
+  return Math.floor(value * factor) / factor;
+}
+
+function deriveEntryQty(config, price) {
+  if (config.sizingMode !== 'TARGET_QUOTE_NOTIONAL') {
+    return config.orderQty;
+  }
+  const rawQty = config.targetQuoteNotional / price;
+  const roundedQty = roundDownToDecimals(rawQty, config.qtyRoundDecimals);
+  return Math.max(config.minOrderQty, roundedQty);
+}
+
 function buildOrderIntent(symbol, side, qty, metadata = {}) {
   return {
     symbol,
@@ -245,7 +287,12 @@ export class MomentumV1Strategy {
       confidence_ratio: this.config.confidenceRatio,
       confidence_bucket_multiplier: this.config.confidenceBucketMultiplier,
       fee_floor_bps: this.config.feeFloorBps,
+      min_entry_fee_floor_multiple: this.config.minEntryFeeFloorMultiple,
       required_abs_past_return_bps: this.config.minAbsPastReturnBps,
+      sizing_mode: this.config.sizingMode,
+      target_quote_notional: this.config.targetQuoteNotional,
+      qty_round_decimals: this.config.qtyRoundDecimals,
+      min_order_qty: this.config.minOrderQty,
       last_price: null,
       last_signal: null,
       last_action: null,
@@ -255,7 +302,7 @@ export class MomentumV1Strategy {
 
   async onInit(ctx) {
     ctx.logger.info(
-      `[MomentumV1Strategy] init symbol=${this.config.symbol} delta_ms=${this.config.selectedCell.delta_ms} h_ms=${this.config.selectedCell.h_ms} orderQty=${this.config.orderQty} confidenceBucket=${this.config.confidenceBucket} confidenceRatio=${this.config.confidenceRatio} feeFloorBps=${this.config.feeFloorBps} requiredAbsPastReturnBps=${this.config.minAbsPastReturnBps}`
+      `[MomentumV1Strategy] init symbol=${this.config.symbol} delta_ms=${this.config.selectedCell.delta_ms} h_ms=${this.config.selectedCell.h_ms} sizingMode=${this.config.sizingMode} orderQty=${this.config.orderQty} targetQuoteNotional=${this.config.targetQuoteNotional} confidenceBucket=${this.config.confidenceBucket} confidenceRatio=${this.config.confidenceRatio} feeFloorBps=${this.config.feeFloorBps} requiredAbsPastReturnBps=${this.config.minAbsPastReturnBps}`
     );
   }
 
@@ -313,6 +360,7 @@ export class MomentumV1Strategy {
     };
 
     const currentSize = getPositionSize(ctx, this.config.symbol);
+    const entryQty = deriveEntryQty(this.config, sample.price);
     if (currentSize === 0 && this.state.commit_until_ts_event !== null) {
       this.state.commit_until_ts_event = null;
     }
@@ -329,7 +377,7 @@ export class MomentumV1Strategy {
       if (currentSize < 0) {
         if (minEdgePassed) {
           action = 'SHORT_TO_LONG_REVERSAL';
-          orderIntent = buildOrderIntent(this.config.symbol, 'BUY', Math.abs(currentSize) + this.config.orderQty, {
+          orderIntent = buildOrderIntent(this.config.symbol, 'BUY', Math.abs(currentSize) + entryQty, {
             action: 'EXIT_SHORT',
             position_effect: 'REVERSE',
             signal_action: action,
@@ -340,7 +388,7 @@ export class MomentumV1Strategy {
       } else if (currentSize === 0) {
         if (minEdgePassed) {
           action = 'LONG_OPEN';
-          orderIntent = buildOrderIntent(this.config.symbol, 'BUY', this.config.orderQty, {
+          orderIntent = buildOrderIntent(this.config.symbol, 'BUY', entryQty, {
             action: 'LONG',
             position_effect: 'OPEN',
             signal_action: action,
@@ -355,7 +403,7 @@ export class MomentumV1Strategy {
       if (currentSize > 0) {
         if (minEdgePassed) {
           action = 'LONG_TO_SHORT_REVERSAL';
-          orderIntent = buildOrderIntent(this.config.symbol, 'SELL', Math.abs(currentSize) + this.config.orderQty, {
+          orderIntent = buildOrderIntent(this.config.symbol, 'SELL', Math.abs(currentSize) + entryQty, {
             action: 'EXIT_LONG',
             position_effect: 'REVERSE',
             signal_action: action,
@@ -366,7 +414,7 @@ export class MomentumV1Strategy {
       } else if (currentSize === 0) {
         if (minEdgePassed) {
           action = 'SHORT_OPEN';
-          orderIntent = buildOrderIntent(this.config.symbol, 'SELL', this.config.orderQty, {
+          orderIntent = buildOrderIntent(this.config.symbol, 'SELL', entryQty, {
             action: 'SHORT',
             position_effect: 'OPEN',
             signal_action: action,

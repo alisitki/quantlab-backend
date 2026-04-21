@@ -1,0 +1,15 @@
+{
+  "family_id": "microstructure_imbalance_v1",
+  "status": "ok",
+  "label_counts": {
+    "ANTI_EDGE": 1
+  },
+  "pass_signal": false,
+  "criteria": {
+    "DIRECTIONAL": "event_count >= min_support and mean_signed_fwd_return_bps >= min_edge_bps and t_stat >= min_t_stat",
+    "ANTI_EDGE": "event_count >= min_support and mean_signed_fwd_return_bps <= -min_edge_bps and t_stat <= -min_t_stat",
+    "NO_EDGE": "event_count >= min_support but no directional or anti-edge pass",
+    "INSUFFICIENT_SUPPORT": "event_count < min_support"
+  },
+  "selected_label": "ANTI_EDGE"
+}

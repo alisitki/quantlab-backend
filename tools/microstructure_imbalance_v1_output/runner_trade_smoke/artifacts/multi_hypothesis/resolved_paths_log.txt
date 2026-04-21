@@ -1,0 +1,2 @@
+date	resolved_parquet_path	source	exists	file_size_bytes	bucket	s3_key
+20260127	/home/deploy/quantlab-backend/data/curated/exchange=binance/stream=trade/symbol=adausdt/date=20260127/data.parquet	curated	true	2645554		

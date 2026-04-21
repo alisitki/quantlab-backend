@@ -1,0 +1,262 @@
+{
+  "families": [
+    {
+      "classification": {
+        "nightly_mode": "REDUCED_NIGHTLY",
+        "role": "TRADING",
+        "status": "WEAK"
+      },
+      "discovery_output": {
+        "candidate_review_pack_count": 75,
+        "decision_tier_counts": {
+          "PROMOTE": 71,
+          "PROMOTE_STRONG": 4
+        },
+        "family_role_counts": {
+          "PRIMARY_DIRECTIONAL": 75
+        },
+        "promoted_candidate_pack_count": 75,
+        "promotion_index_promoted_pack_count": 75,
+        "promotion_index_strong_pack_count": 4,
+        "review_class_counts": {
+          "INSUFFICIENT_EVIDENCE": 1,
+          "NO_SIGNAL": 4,
+          "UNRUNNABLE": 4,
+          "UNSEEN": 63,
+          "WEAK": 3
+        },
+        "strong_promotions_count": 4
+      },
+      "execution_success": {
+        "binding_status_counts": {
+          "BOUND_SHADOW_RUNNABLE": 289,
+          "UNBOUND_CONFIG_GAP": 16
+        },
+        "bound_shadow_runnable_count": 289,
+        "directional_binding_count": 289,
+        "observe_only_binding_count": 0,
+        "phase7_extended_keep_count": 0,
+        "phase7_extended_validation_count": 0,
+        "phase7_medium_continue_count": 0,
+        "phase7_medium_shadow_count": 0,
+        "runtime_binding_row_count": 305,
+        "shadow_tradeability_class_counts": {
+          "DIRECTIONAL": 289,
+          "UNBOUND": 16
+        },
+        "unbound_config_gap_count": 16,
+        "unbound_translation_rejected_count": 0
+      },
+      "family_id": "momentum_v1",
+      "profitability_outcome": {
+        "DROP": 0,
+        "FAILED_PROFITABILITY": 0,
+        "KEEP_ADVANCING": 0,
+        "WEAK_CONTINUE": 0,
+        "final_profitability_decisions": [],
+        "gross_non_positive_count": 0,
+        "gross_positive_count": 0,
+        "profitability_tested_count": 0
+      },
+      "reason": "No current profitability PASS in Phase7 artifacts; prior tightening/OOS weakness requires controlled nightly instead of full-volume generation."
+    },
+    {
+      "classification": {
+        "nightly_mode": "REDUCED_NIGHTLY",
+        "role": "TRADING",
+        "status": "FAILED"
+      },
+      "discovery_output": {
+        "candidate_review_pack_count": 59,
+        "decision_tier_counts": {
+          "PROMOTE": 58,
+          "PROMOTE_STRONG": 1
+        },
+        "family_role_counts": {
+          "PRIMARY_DIRECTIONAL": 59
+        },
+        "promoted_candidate_pack_count": 59,
+        "promotion_index_promoted_pack_count": 59,
+        "promotion_index_strong_pack_count": 1,
+        "review_class_counts": {
+          "NO_SIGNAL": 4,
+          "UNRUNNABLE": 2,
+          "UNSEEN": 51,
+          "WEAK": 2
+        },
+        "strong_promotions_count": 1
+      },
+      "execution_success": {
+        "binding_status_counts": {
+          "BOUND_SHADOW_RUNNABLE": 135,
+          "UNBOUND_CONFIG_GAP": 5
+        },
+        "bound_shadow_runnable_count": 135,
+        "directional_binding_count": 135,
+        "observe_only_binding_count": 0,
+        "phase7_extended_keep_count": 2,
+        "phase7_extended_validation_count": 2,
+        "phase7_medium_continue_count": 4,
+        "phase7_medium_shadow_count": 4,
+        "runtime_binding_row_count": 140,
+        "shadow_tradeability_class_counts": {
+          "DIRECTIONAL": 135,
+          "UNBOUND": 5
+        },
+        "unbound_config_gap_count": 5,
+        "unbound_translation_rejected_count": 0
+      },
+      "family_id": "return_reversal_v1",
+      "profitability_outcome": {
+        "DROP": 2,
+        "FAILED_PROFITABILITY": 2,
+        "KEEP_ADVANCING": 0,
+        "WEAK_CONTINUE": 0,
+        "final_profitability_decisions": [
+          {
+            "edge_statement": "no real edge",
+            "gross_pnl_quote": -0.018,
+            "net_pnl_quote": -0.1635256,
+            "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536::linkusdt",
+            "symbol": "linkusdt",
+            "verdict": "DROP"
+          },
+          {
+            "edge_statement": "no real edge",
+            "gross_pnl_quote": -0.013,
+            "net_pnl_quote": -0.4589356,
+            "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4::avaxusdt",
+            "symbol": "avaxusdt",
+            "verdict": "DROP"
+          }
+        ],
+        "gross_non_positive_count": 2,
+        "gross_positive_count": 0,
+        "profitability_tested_count": 2
+      },
+      "reason": "Profitability-tested subset failed economic edge: gross pnl was non-positive before fees."
+    },
+    {
+      "classification": {
+        "nightly_mode": "REDUCED_NIGHTLY",
+        "role": "CONTEXT",
+        "status": "ACTIVE"
+      },
+      "discovery_output": {
+        "candidate_review_pack_count": 65,
+        "decision_tier_counts": {
+          "PROMOTE": 28,
+          "PROMOTE_STRONG": 37
+        },
+        "family_role_counts": {
+          "CONTEXT_GUARD": 65
+        },
+        "promoted_candidate_pack_count": 65,
+        "promotion_index_promoted_pack_count": 65,
+        "promotion_index_strong_pack_count": 37,
+        "review_class_counts": {
+          "OBSERVE_ONLY": 20,
+          "UNRUNNABLE": 45
+        },
+        "strong_promotions_count": 37
+      },
+      "execution_success": {
+        "binding_status_counts": {
+          "BOUND_SHADOW_RUNNABLE": 94,
+          "UNBOUND_CONFIG_GAP": 163
+        },
+        "bound_shadow_runnable_count": 94,
+        "directional_binding_count": 0,
+        "observe_only_binding_count": 94,
+        "phase7_extended_keep_count": 0,
+        "phase7_extended_validation_count": 0,
+        "phase7_medium_continue_count": 0,
+        "phase7_medium_shadow_count": 0,
+        "runtime_binding_row_count": 257,
+        "shadow_tradeability_class_counts": {
+          "OBSERVE_ONLY": 94,
+          "UNBOUND": 163
+        },
+        "unbound_config_gap_count": 163,
+        "unbound_translation_rejected_count": 0
+      },
+      "family_id": "spread_reversion_v1",
+      "profitability_outcome": {
+        "DROP": 0,
+        "FAILED_PROFITABILITY": 0,
+        "KEEP_ADVANCING": 0,
+        "WEAK_CONTINUE": 0,
+        "final_profitability_decisions": [],
+        "gross_non_positive_count": 0,
+        "gross_positive_count": 0,
+        "profitability_tested_count": 0
+      },
+      "reason": "Context/guard behavior is useful but should not produce directional candidate spam."
+    }
+  ],
+  "family_count": 3,
+  "family_identification": {
+    "candidate_review_family_field": "rows[].selected_family_ids",
+    "promotion_index_family_field": null,
+    "promotion_index_family_resolution": "promotion_index stores pack ids/paths; family attribution is resolved by joining promotion_index promote_pack_ids/promote_strong_pack_ids to candidate_review_v2 rows by pack_id",
+    "runtime_binding_family_field": "items[].family_id"
+  },
+  "generated_ts_utc": "2026-04-06T06:52:48Z",
+  "governance": {
+    "no_compacted_data_pipeline_change": true,
+    "no_family_deletion": true,
+    "no_new_runs": true,
+    "no_ranking_or_promotion_mutation": true,
+    "no_strategy_logic_change": true,
+    "scope": "classification_and_nightly_policy_definition_only"
+  },
+  "inputs": {
+    "candidate_review_json": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review_v2.json",
+    "canonical_truth_registry_json": "/home/deploy/quantlab-backend/tools/system_state/canonical_truth_registry_v0.json",
+    "continuation_result_json": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_result_v1.json",
+    "medium_shadow_result_json": "/home/deploy/quantlab-backend/tools/phase7_medium_shadow_result_v0.json",
+    "profitability_result_json": "/home/deploy/quantlab-backend/tools/phase7_profitability_analysis_v0.json",
+    "promotion_index_json": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_index.json",
+    "runtime_binding_json": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_runtime_binding_v0.json"
+  },
+  "pipeline_impact_summary": {
+    "candidate_family_attribution_reduction_share_if_reduced_modes_are_capped": 1.0,
+    "candidate_family_attributions_by_nightly_mode": {
+      "REDUCED_NIGHTLY": 199
+    },
+    "candidate_family_attributions_eligible_for_reduction": 199,
+    "candidate_family_attributions_total": 199,
+    "candidate_pack_rows_affected_by_non_full_policy": 142,
+    "candidate_pack_rows_all_selected_families_non_full": 142,
+    "candidate_pack_rows_mixed_full_and_reduced": 0,
+    "candidate_review_pack_rows_with_family": 142,
+    "interpretation": "This is a policy impact estimate, not a deletion count. Non-full modes mean capped handling, not family removal."
+  },
+  "safety_check": {
+    "active_full_nightly_trading_families": [],
+    "active_full_nightly_trading_family_count": 0,
+    "controlled_trading_discovery_families": [
+      "momentum_v1"
+    ],
+    "controlled_trading_discovery_family_count": 1,
+    "deleted_families": [],
+    "diagnostic_or_context_capability_preserved": true,
+    "no_family_deleted": true,
+    "passes_controlled_discovery_guard": true
+  },
+  "schema_version": "hypothesis_family_audit_v0",
+  "truth_and_freshness": {
+    "candidate_review_generated_ts_utc": "2026-04-06T05:43:06Z",
+    "canonical_registry_generated_ts_utc": "2026-03-16T13:29:19Z",
+    "note": "Registry is a first-entry truth map; current generated Phase6/7 artifacts are newer and used for metrics.",
+    "phase7_continuation_generated_ts_utc": "2026-04-06T05:43:07Z",
+    "phase7_medium_generated_ts_utc": "2026-04-04T23:52:34Z",
+    "phase7_profitability_generated_ts_utc": "2026-04-06T06:32:29Z",
+    "runtime_binding_generated_ts_utc": "2026-04-04T09:11:03Z"
+  },
+  "unclassified_records": {
+    "candidate_review_rows_without_selected_family": 5,
+    "runtime_binding_rows_without_family_id": 8,
+    "runtime_binding_status:UNBOUND_TRANSLATION_REJECTED": 8
+  }
+}

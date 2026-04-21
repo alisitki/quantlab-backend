@@ -1,0 +1,397 @@
+{
+  "clear_statement": {
+    "avaxusdt": "real edge exists but requires execution optimization",
+    "linkusdt": "real edge exists but requires execution optimization",
+    "xrpusdt": "no real edge"
+  },
+  "comparison": {
+    "fee_burden_rank_desc": [
+      {
+        "fee_to_positive_gross_ratio": 5.854857993133,
+        "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+        "symbol": "linkusdt"
+      },
+      {
+        "fee_to_positive_gross_ratio": 6.525012918435,
+        "strategy_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d100__h500__pt020",
+        "symbol": "avaxusdt"
+      },
+      {
+        "fee_to_positive_gross_ratio": null,
+        "strategy_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d100__h250__pt020",
+        "symbol": "xrpusdt"
+      }
+    ],
+    "final_decision": "BEST_ONE_ONLY",
+    "final_decision_reason": "linkusdt is the only candidate to carry forward: it has the strongest gross edge, best gross efficiency, and lowest fee/gross burden; avaxusdt is gross-positive but weaker, while xrpusdt has no positive gross edge.",
+    "gross_edge_rank_desc": [
+      {
+        "gross_pnl_per_fill": 0.001219069767,
+        "gross_realized_pnl_quote": 2.621,
+        "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+        "symbol": "linkusdt"
+      },
+      {
+        "gross_pnl_per_fill": 0.001121035941,
+        "gross_realized_pnl_quote": 2.121,
+        "strategy_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d100__h500__pt020",
+        "symbol": "avaxusdt"
+      },
+      {
+        "gross_pnl_per_fill": -6.300813e-06,
+        "gross_realized_pnl_quote": -0.0217,
+        "strategy_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d100__h250__pt020",
+        "symbol": "xrpusdt"
+      }
+    ],
+    "highest_gross_edge_quote": 2.621,
+    "highest_gross_edge_strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+    "most_efficient_strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+    "strongest_strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+    "strongest_symbol": "linkusdt"
+  },
+  "final_decision": "BEST_ONE_ONLY",
+  "generated_ts_utc": "2026-04-07T11:11:47Z",
+  "governance": {
+    "no_new_runs": true,
+    "no_ranking_or_promotion_mutation": true,
+    "no_strategy_modification": true,
+    "profitability_inputs_only": true,
+    "scope": "read-only profitability decomposition for bybit-only microstructure survivors"
+  },
+  "per_strategy": [
+    {
+      "edge_statement": "real edge exists but requires execution optimization",
+      "efficiency_metrics": {
+        "gross_pnl_per_1k_events": 0.04926969566,
+        "gross_pnl_per_closed_episode": 0.00123573786,
+        "gross_pnl_per_fill": 0.001219069767,
+        "gross_pnl_per_turnover": 6.8319334e-05,
+        "net_pnl_per_1k_events": -0.239197375792,
+        "net_pnl_per_closed_episode": -0.005999331825,
+        "net_pnl_per_fill": -0.005918410605,
+        "net_pnl_per_turnover": -0.000331680666,
+        "processed_event_count": 53197,
+        "trade_transitions_per_1k_events": 0.018798,
+        "turnover_quote": 38363.95700000002
+      },
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "fee_burden": {
+        "effective_fee_rate": 0.0004,
+        "fee_per_closed_episode": 0.007235069684,
+        "fee_per_fill": 0.007137480372,
+        "fee_problem": "fees are the main net-PnL problem",
+        "fee_support_status": "FILL_FEE_BACKED",
+        "fee_to_positive_gross_ratio": 5.854857993133,
+        "gross_to_fee_ratio": 0.170798335531,
+        "total_fee_quote": 15.3455828
+      },
+      "funding_impact": {
+        "funding_applied_count": 0,
+        "funding_cost_quote": 0.0,
+        "funding_support_status": "NO_FUNDING_WINDOW_CROSSED",
+        "funding_to_fee_ratio": 0.0,
+        "funding_windows_crossed_count": 0
+      },
+      "gross_performance": {
+        "gross_mark_to_market_pnl_quote": 2.622,
+        "gross_mark_to_market_source": "shadow_futures_paper_ledger_v1.mark_to_market_pnl_quote_gross",
+        "gross_pnl_source": "shadow_futures_paper_ledger_v1.replayed_realized_pnl_quote_gross",
+        "gross_realized_pnl_quote": 2.621
+      },
+      "net_performance": {
+        "cost_accounting_status": "NET_FEE_BACKED_MARK_TO_MARKET_FUNDING_AWARE",
+        "net_mark_to_market_after_fees_funding_exit_estimate_quote": -12.7272088,
+        "net_realized_pnl_quote": -12.7245828,
+        "paper_run_status": "FILL_BACKED_POSITION_OPEN",
+        "pnl_reconciliation_status": "MATCHED_TO_SUMMARY",
+        "profitability_status": "NET_MARK_TO_MARKET_AFTER_FEES_FUNDING_AND_EXIT_ESTIMATE",
+        "summary_realized_pnl_quote": -12.7245828
+      },
+      "sanity_checks": {
+        "execution_ledger_rows": 1,
+        "execution_pack_summary_present": true,
+        "summary_runtime_stop_reason": "STREAM_END",
+        "trade_ledger_rows": 1
+      },
+      "source_paths": {
+        "execution_pack_summary_v0_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/01_linkusdt_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020/shadow_state/shadow_execution_pack_summary_v0.json",
+        "run_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/01_linkusdt_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020",
+        "shadow_execution_ledger_v0_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/01_linkusdt_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020/shadow_state/shadow_execution_ledger_v0.jsonl",
+        "shadow_futures_paper_ledger_v1_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/01_linkusdt_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020/shadow_state/shadow_futures_paper_ledger_v1.json",
+        "shadow_trade_ledger_v1_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/01_linkusdt_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020/shadow_state/shadow_trade_ledger_v1.jsonl",
+        "summary_runtime_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/01_linkusdt_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020/summary_runtime.json"
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+      "symbol": "linkusdt",
+      "trade_quality": {
+        "closed_episode_count": 2121,
+        "decision_count": 2150,
+        "episode_stats": {
+          "avg_fee_per_closed_episode": 0.007233360302,
+          "avg_gross_pnl_per_closed_episode": 0.00123573786,
+          "avg_net_pnl_per_closed_episode": -0.005997622442,
+          "closed_episode_count": 2121,
+          "episode_count": 2122,
+          "fee_distribution": {
+            "max": 0.0072772,
+            "median": 0.0072296,
+            "min": 0.0071992,
+            "p25": 0.0072156,
+            "p75": 0.0072476
+          },
+          "gross_flat_episode_count": 529,
+          "gross_negative_episode_count": 460,
+          "gross_pnl_distribution": {
+            "max": 0.017,
+            "median": 0.001,
+            "min": -0.01,
+            "p25": 0.0,
+            "p75": 0.002
+          },
+          "gross_positive_episode_count": 1132,
+          "gross_win_rate": 0.533710513909,
+          "net_pnl_distribution": {
+            "max": 0.0097532,
+            "median": -0.0062612,
+            "min": -0.0172432,
+            "p25": -0.0072656,
+            "p75": -0.0052176
+          }
+        },
+        "fill_count": 2150,
+        "fill_to_decision_ratio": 1.0,
+        "final_position_direction": "LONG",
+        "open_position_count": 1,
+        "risk_reject_count": 863,
+        "risk_reject_to_decision_ratio": 0.401395348837
+      },
+      "verdict": "WEAK_CONTINUE",
+      "verdict_reason": "gross edge is positive but fees are more than 5x gross edge"
+    },
+    {
+      "edge_statement": "real edge exists but requires execution optimization",
+      "efficiency_metrics": {
+        "gross_pnl_per_1k_events": 0.039821264292,
+        "gross_pnl_per_closed_episode": 0.001144012945,
+        "gross_pnl_per_fill": 0.001121035941,
+        "gross_pnl_per_turnover": 6.1302561e-05,
+        "net_pnl_per_1k_events": -0.220012999643,
+        "net_pnl_per_closed_episode": -0.0063206863,
+        "net_pnl_per_fill": -0.006193738055,
+        "net_pnl_per_turnover": -0.000338697439,
+        "processed_event_count": 53263,
+        "trade_transitions_per_1k_events": 0.018775,
+        "turnover_quote": 34598.88100000002
+      },
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "fee_burden": {
+        "effective_fee_rate": 0.0004,
+        "fee_per_closed_episode": 0.007464699245,
+        "fee_per_fill": 0.007314773996,
+        "fee_problem": "fees are the main net-PnL problem",
+        "fee_support_status": "FILL_FEE_BACKED",
+        "fee_to_positive_gross_ratio": 6.525012918435,
+        "gross_to_fee_ratio": 0.153256401558,
+        "total_fee_quote": 13.8395524
+      },
+      "funding_impact": {
+        "funding_applied_count": 0,
+        "funding_cost_quote": 0.0,
+        "funding_support_status": "NO_FUNDING_WINDOW_CROSSED",
+        "funding_to_fee_ratio": 0.0,
+        "funding_windows_crossed_count": 0
+      },
+      "gross_performance": {
+        "gross_mark_to_market_pnl_quote": 2.136,
+        "gross_mark_to_market_source": "shadow_futures_paper_ledger_v1.mark_to_market_pnl_quote_gross",
+        "gross_pnl_source": "shadow_futures_paper_ledger_v1.replayed_realized_pnl_quote_gross",
+        "gross_realized_pnl_quote": 2.121
+      },
+      "net_performance": {
+        "cost_accounting_status": "NET_FEE_BACKED_MARK_TO_MARKET_FUNDING_AWARE",
+        "net_mark_to_market_after_fees_funding_exit_estimate_quote": -11.7072616,
+        "net_realized_pnl_quote": -11.7185524,
+        "paper_run_status": "FILL_BACKED_POSITION_OPEN",
+        "pnl_reconciliation_status": "MATCHED_TO_SUMMARY",
+        "profitability_status": "NET_MARK_TO_MARKET_AFTER_FEES_FUNDING_AND_EXIT_ESTIMATE",
+        "summary_realized_pnl_quote": -11.7185524
+      },
+      "sanity_checks": {
+        "execution_ledger_rows": 1,
+        "execution_pack_summary_present": true,
+        "summary_runtime_stop_reason": "STREAM_END",
+        "trade_ledger_rows": 1
+      },
+      "source_paths": {
+        "execution_pack_summary_v0_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/05_avaxusdt_microstructure_imbalance_v1_bybit_avaxusdt_trade_d100_h500_pt020/shadow_state/shadow_execution_pack_summary_v0.json",
+        "run_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/05_avaxusdt_microstructure_imbalance_v1_bybit_avaxusdt_trade_d100_h500_pt020",
+        "shadow_execution_ledger_v0_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/05_avaxusdt_microstructure_imbalance_v1_bybit_avaxusdt_trade_d100_h500_pt020/shadow_state/shadow_execution_ledger_v0.jsonl",
+        "shadow_futures_paper_ledger_v1_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/05_avaxusdt_microstructure_imbalance_v1_bybit_avaxusdt_trade_d100_h500_pt020/shadow_state/shadow_futures_paper_ledger_v1.json",
+        "shadow_trade_ledger_v1_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/05_avaxusdt_microstructure_imbalance_v1_bybit_avaxusdt_trade_d100_h500_pt020/shadow_state/shadow_trade_ledger_v1.jsonl",
+        "summary_runtime_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/05_avaxusdt_microstructure_imbalance_v1_bybit_avaxusdt_trade_d100_h500_pt020/summary_runtime.json"
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d100__h500__pt020",
+      "symbol": "avaxusdt",
+      "trade_quality": {
+        "closed_episode_count": 1854,
+        "decision_count": 1892,
+        "episode_stats": {
+          "avg_fee_per_closed_episode": 0.007462695361,
+          "avg_gross_pnl_per_closed_episode": 0.001144012945,
+          "avg_net_pnl_per_closed_episode": -0.006318682416,
+          "closed_episode_count": 1854,
+          "episode_count": 1855,
+          "fee_distribution": {
+            "max": 0.0075124,
+            "median": 0.0074616,
+            "min": 0.0074184,
+            "p25": 0.007446,
+            "p75": 0.0074796
+          },
+          "gross_flat_episode_count": 437,
+          "gross_negative_episode_count": 473,
+          "gross_pnl_distribution": {
+            "max": 0.02,
+            "median": 0.001,
+            "min": -0.007,
+            "p25": -0.001,
+            "p75": 0.002
+          },
+          "gross_positive_episode_count": 944,
+          "gross_win_rate": 0.509169363538,
+          "net_pnl_distribution": {
+            "max": 0.0125376,
+            "median": -0.0065012,
+            "min": -0.01445,
+            "p25": -0.0084244,
+            "p75": -0.005453
+          }
+        },
+        "fill_count": 1892,
+        "fill_to_decision_ratio": 1.0,
+        "final_position_direction": "SHORT",
+        "open_position_count": 1,
+        "risk_reject_count": 986,
+        "risk_reject_to_decision_ratio": 0.521141649049
+      },
+      "verdict": "WEAK_CONTINUE",
+      "verdict_reason": "gross edge is positive but fees are more than 5x gross edge"
+    },
+    {
+      "edge_statement": "no real edge",
+      "efficiency_metrics": {
+        "gross_pnl_per_1k_events": -0.000311884675,
+        "gross_pnl_per_closed_episode": -6.37111e-06,
+        "gross_pnl_per_fill": -6.300813e-06,
+        "gross_pnl_per_turnover": -2.372974e-06,
+        "net_pnl_per_1k_events": -0.052884675683,
+        "net_pnl_per_closed_episode": -0.00108031623,
+        "net_pnl_per_fill": -0.001068396365,
+        "net_pnl_per_turnover": -0.000402372974,
+        "processed_event_count": 69577,
+        "trade_transitions_per_1k_events": 0.014373,
+        "turnover_quote": 9144.642700000004
+      },
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "fee_burden": {
+        "effective_fee_rate": 0.0004,
+        "fee_per_closed_episode": 0.00107394512,
+        "fee_per_fill": 0.001062095552,
+        "fee_problem": "fees deepen a non-positive gross edge",
+        "fee_support_status": "FILL_FEE_BACKED",
+        "fee_to_positive_gross_ratio": null,
+        "gross_to_fee_ratio": -0.005932435173,
+        "total_fee_quote": 3.65785708
+      },
+      "funding_impact": {
+        "funding_applied_count": 0,
+        "funding_cost_quote": 0.0,
+        "funding_support_status": "NO_FUNDING_WINDOW_CROSSED",
+        "funding_to_fee_ratio": 0.0,
+        "funding_windows_crossed_count": 0
+      },
+      "gross_performance": {
+        "gross_mark_to_market_pnl_quote": -0.02175,
+        "gross_mark_to_market_source": "shadow_futures_paper_ledger_v1.mark_to_market_pnl_quote_gross",
+        "gross_pnl_source": "shadow_futures_paper_ledger_v1.replayed_realized_pnl_quote_gross",
+        "gross_realized_pnl_quote": -0.0217
+      },
+      "net_performance": {
+        "cost_accounting_status": "NET_FEE_BACKED_MARK_TO_MARKET_FUNDING_AWARE",
+        "net_mark_to_market_after_fees_funding_exit_estimate_quote": -3.6801435,
+        "net_realized_pnl_quote": -3.67955708,
+        "paper_run_status": "FILL_BACKED_POSITION_OPEN",
+        "pnl_reconciliation_status": "MATCHED_TO_SUMMARY",
+        "profitability_status": "NET_MARK_TO_MARKET_AFTER_FEES_FUNDING_AND_EXIT_ESTIMATE",
+        "summary_realized_pnl_quote": -3.67955708
+      },
+      "sanity_checks": {
+        "execution_ledger_rows": 1,
+        "execution_pack_summary_present": true,
+        "summary_runtime_stop_reason": "STREAM_END",
+        "trade_ledger_rows": 1
+      },
+      "source_paths": {
+        "execution_pack_summary_v0_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/06_xrpusdt_microstructure_imbalance_v1_bybit_xrpusdt_trade_d100_h250_pt020/shadow_state/shadow_execution_pack_summary_v0.json",
+        "run_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/06_xrpusdt_microstructure_imbalance_v1_bybit_xrpusdt_trade_d100_h250_pt020",
+        "shadow_execution_ledger_v0_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/06_xrpusdt_microstructure_imbalance_v1_bybit_xrpusdt_trade_d100_h250_pt020/shadow_state/shadow_execution_ledger_v0.jsonl",
+        "shadow_futures_paper_ledger_v1_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/06_xrpusdt_microstructure_imbalance_v1_bybit_xrpusdt_trade_d100_h250_pt020/shadow_state/shadow_futures_paper_ledger_v1.json",
+        "shadow_trade_ledger_v1_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/06_xrpusdt_microstructure_imbalance_v1_bybit_xrpusdt_trade_d100_h250_pt020/shadow_state/shadow_trade_ledger_v1.jsonl",
+        "summary_runtime_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/06_xrpusdt_microstructure_imbalance_v1_bybit_xrpusdt_trade_d100_h250_pt020/summary_runtime.json"
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d100__h250__pt020",
+      "symbol": "xrpusdt",
+      "trade_quality": {
+        "closed_episode_count": 3406,
+        "decision_count": 3444,
+        "episode_stats": {
+          "avg_fee_per_closed_episode": 0.001073787634,
+          "avg_gross_pnl_per_closed_episode": -6.37111e-06,
+          "avg_net_pnl_per_closed_episode": -0.001080158743,
+          "closed_episode_count": 3406,
+          "episode_count": 3407,
+          "fee_distribution": {
+            "max": 0.00108224,
+            "median": 0.00107228,
+            "min": 0.00106736,
+            "p25": 0.00107036,
+            "p75": 0.00107876
+          },
+          "gross_flat_episode_count": 610,
+          "gross_negative_episode_count": 1978,
+          "gross_pnl_distribution": {
+            "max": 0.0015,
+            "median": -0.0001,
+            "min": -0.0007,
+            "p25": -0.0001,
+            "p75": 0.0
+          },
+          "gross_positive_episode_count": 818,
+          "gross_win_rate": 0.240164415737,
+          "net_pnl_distribution": {
+            "max": 0.00042908,
+            "median": -0.00116972,
+            "min": -0.00177148,
+            "p25": -0.00117276,
+            "p75": -0.00106842
+          }
+        },
+        "fill_count": 3444,
+        "fill_to_decision_ratio": 1.0,
+        "final_position_direction": "SHORT",
+        "open_position_count": 1,
+        "risk_reject_count": 1113,
+        "risk_reject_to_decision_ratio": 0.323170731707
+      },
+      "verdict": "DROP",
+      "verdict_reason": "gross edge is not positive before fees"
+    }
+  ],
+  "schema_version": "phase7_microstructure_profitability_v0",
+  "source_run_root": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs",
+  "source_shadow_result_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_result_v1.json"
+}

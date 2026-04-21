@@ -1,0 +1,477 @@
+{
+  "exclusions": {
+    "excluded_exchange_rows": {
+      "binance": 945,
+      "okx": 1080
+    },
+    "excluded_symbols": [
+      {
+        "exchange": "bybit",
+        "reason": "below_event_count_threshold",
+        "symbol": "bnbusdt"
+      },
+      {
+        "exchange": "bybit",
+        "reason": "below_event_count_threshold",
+        "symbol": "ltcusdt"
+      }
+    ]
+  },
+  "filter_debug": {
+    "delta_ms_100_rule": "delta_ms=100 allowed only for the top-scoring cell per symbol",
+    "filter_counts": {
+      "PASS": 256,
+      "below_event_count_threshold": 351,
+      "below_t_stat_threshold": 3,
+      "excluded_exchange": 2025,
+      "excluded_h_ms": 130,
+      "excluded_label": 12,
+      "excluded_pressure_threshold": 193
+    },
+    "selected_per_symbol": {
+      "adausdt": 2,
+      "avaxusdt": 2,
+      "linkusdt": 2,
+      "solusdt": 2,
+      "xrpusdt": 2
+    },
+    "strict_group_count": 60,
+    "strict_symbol_count": 5
+  },
+  "final_note": "This shortlist is exchange-specific (bybit) and must be validated in Phase7 before any promotion decision.",
+  "generated_ts_utc": "2026-04-06T08:20:44Z",
+  "governance": {
+    "family_id": "microstructure_imbalance_v1",
+    "phase7_shadow": false,
+    "promotion_mutation": false,
+    "ranking_mutation": false,
+    "runtime_binding_mutation": false,
+    "scope": "selection_only"
+  },
+  "inputs": {
+    "exchange_rollup_tsv": "/home/deploy/quantlab-backend/tools/microstructure_imbalance_fullscan_output/fullscan_trade/artifacts/microstructure_imbalance/exchange_rollup.tsv",
+    "primary_results_tsv": "/home/deploy/quantlab-backend/tools/microstructure_imbalance_fullscan_output/fullscan_trade/artifacts/microstructure_imbalance/family_microstructure_imbalance_primary_results.tsv",
+    "primary_summary_tsv": "/home/deploy/quantlab-backend/tools/microstructure_imbalance_fullscan_output/fullscan_trade/artifacts/microstructure_imbalance/family_microstructure_imbalance_primary_summary.tsv",
+    "symbol_rollup_tsv": "/home/deploy/quantlab-backend/tools/microstructure_imbalance_fullscan_output/fullscan_trade/artifacts/microstructure_imbalance/symbol_rollup.tsv"
+  },
+  "sanity_checks": {
+    "all_pass": true,
+    "checks": {
+      "bybit_only": true,
+      "directional_only": true,
+      "h_ms_preferred_only": true,
+      "no_low_support_rows": true,
+      "no_pressure_threshold_005": true,
+      "no_symbol_spam": true,
+      "shortlist_size_max_10": true,
+      "shortlist_size_min_4": true
+    }
+  },
+  "schema_version": "microstructure_phase6_shortlist_v0",
+  "selection_policy": {
+    "allowed_h_ms": [
+      250,
+      500
+    ],
+    "allowed_pressure_thresholds": [
+      0.1,
+      0.2
+    ],
+    "exchange": "bybit",
+    "label": "DIRECTIONAL",
+    "max_per_symbol": 2,
+    "max_shortlist": 10,
+    "mean_signed_fwd_return_bps": "> 0",
+    "min_event_count_per_source_row": 100000,
+    "min_t_stat": 20.0,
+    "preferred_delta_ms": [
+      250,
+      500
+    ],
+    "relaxed_thresholds_used": false,
+    "score": "median_t_stat * event_weighted_mean_signed_fwd_return_bps"
+  },
+  "shortlist": [
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "label": "DIRECTIONAL",
+      "score": 105.33728575907789,
+      "selected_cell": {
+        "delta_ms": 100,
+        "event_count": 638846,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.8139515752445161,
+        "pressure_threshold": 0.2,
+        "t_stat": 129.41468382493628
+      },
+      "selection_evidence": {
+        "aggregation_method": "strict-filtered daily cells grouped by exchange/symbol/stream/delta_ms/h_ms/pressure_threshold; event_count=sum, mean_signed_fwd_return_bps=event-weighted mean, t_stat=median",
+        "max_event_count": 187282,
+        "max_t_stat": 150.7269135294634,
+        "min_event_count": 144818,
+        "min_t_stat": 108.52562612586168,
+        "preferred_delta_ms": false,
+        "source_dates": [
+          "20260324",
+          "20260325",
+          "20260326",
+          "20260327"
+        ],
+        "source_row_count": 4,
+        "supporting_days": 4
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+      "stream": "trade",
+      "symbol": "linkusdt"
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "label": "DIRECTIONAL",
+      "score": 102.30976743103493,
+      "selected_cell": {
+        "delta_ms": 250,
+        "event_count": 635818,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.805815361788354,
+        "pressure_threshold": 0.2,
+        "t_stat": 126.96428025891421
+      },
+      "selection_evidence": {
+        "aggregation_method": "strict-filtered daily cells grouped by exchange/symbol/stream/delta_ms/h_ms/pressure_threshold; event_count=sum, mean_signed_fwd_return_bps=event-weighted mean, t_stat=median",
+        "max_event_count": 186667,
+        "max_t_stat": 147.73975388531574,
+        "min_event_count": 144182,
+        "min_t_stat": 110.73391986618148,
+        "preferred_delta_ms": true,
+        "source_dates": [
+          "20260324",
+          "20260325",
+          "20260326",
+          "20260327"
+        ],
+        "source_row_count": 4,
+        "supporting_days": 4
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d250__h500__pt020",
+      "stream": "trade",
+      "symbol": "linkusdt"
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "label": "DIRECTIONAL",
+      "score": 60.883945338105406,
+      "selected_cell": {
+        "delta_ms": 100,
+        "event_count": 2880004,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.5182218696989184,
+        "pressure_threshold": 0.2,
+        "t_stat": 117.48625231404911
+      },
+      "selection_evidence": {
+        "aggregation_method": "strict-filtered daily cells grouped by exchange/symbol/stream/delta_ms/h_ms/pressure_threshold; event_count=sum, mean_signed_fwd_return_bps=event-weighted mean, t_stat=median",
+        "max_event_count": 692378,
+        "max_t_stat": 146.2454241739221,
+        "min_event_count": 346451,
+        "min_t_stat": 95.60010143145,
+        "preferred_delta_ms": false,
+        "source_dates": [
+          "20260324",
+          "20260325",
+          "20260326",
+          "20260327",
+          "20260328"
+        ],
+        "source_row_count": 5,
+        "supporting_days": 5
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__solusdt__trade__d100__h500__pt020",
+      "stream": "trade",
+      "symbol": "solusdt"
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "label": "DIRECTIONAL",
+      "score": 59.888966309865886,
+      "selected_cell": {
+        "delta_ms": 250,
+        "event_count": 2857423,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.5088614448389591,
+        "pressure_threshold": 0.2,
+        "t_stat": 117.69208871546384
+      },
+      "selection_evidence": {
+        "aggregation_method": "strict-filtered daily cells grouped by exchange/symbol/stream/delta_ms/h_ms/pressure_threshold; event_count=sum, mean_signed_fwd_return_bps=event-weighted mean, t_stat=median",
+        "max_event_count": 687562,
+        "max_t_stat": 139.700700588654,
+        "min_event_count": 344758,
+        "min_t_stat": 93.98087962890077,
+        "preferred_delta_ms": true,
+        "source_dates": [
+          "20260324",
+          "20260325",
+          "20260326",
+          "20260327",
+          "20260328"
+        ],
+        "source_row_count": 5,
+        "supporting_days": 5
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__solusdt__trade__d250__h500__pt020",
+      "stream": "trade",
+      "symbol": "solusdt"
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "label": "DIRECTIONAL",
+      "score": 55.45705713877571,
+      "selected_cell": {
+        "delta_ms": 100,
+        "event_count": 598663,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.5767903742637637,
+        "pressure_threshold": 0.2,
+        "t_stat": 96.14768139909256
+      },
+      "selection_evidence": {
+        "aggregation_method": "strict-filtered daily cells grouped by exchange/symbol/stream/delta_ms/h_ms/pressure_threshold; event_count=sum, mean_signed_fwd_return_bps=event-weighted mean, t_stat=median",
+        "max_event_count": 176577,
+        "max_t_stat": 111.00924389774418,
+        "min_event_count": 126579,
+        "min_t_stat": 66.24863341091691,
+        "preferred_delta_ms": false,
+        "source_dates": [
+          "20260324",
+          "20260325",
+          "20260326",
+          "20260327"
+        ],
+        "source_row_count": 4,
+        "supporting_days": 4
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d100__h500__pt020",
+      "stream": "trade",
+      "symbol": "avaxusdt"
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "label": "DIRECTIONAL",
+      "score": 53.01130206498395,
+      "selected_cell": {
+        "delta_ms": 100,
+        "event_count": 1866554,
+        "h_ms": 250,
+        "mean_signed_fwd_return_bps": 0.4232347884557247,
+        "pressure_threshold": 0.2,
+        "t_stat": 125.25270490738393
+      },
+      "selection_evidence": {
+        "aggregation_method": "strict-filtered daily cells grouped by exchange/symbol/stream/delta_ms/h_ms/pressure_threshold; event_count=sum, mean_signed_fwd_return_bps=event-weighted mean, t_stat=median",
+        "max_event_count": 459186,
+        "max_t_stat": 162.8957316870742,
+        "min_event_count": 210258,
+        "min_t_stat": 98.21012317730879,
+        "preferred_delta_ms": false,
+        "source_dates": [
+          "20260324",
+          "20260325",
+          "20260326",
+          "20260327",
+          "20260328"
+        ],
+        "source_row_count": 5,
+        "supporting_days": 5
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d100__h250__pt020",
+      "stream": "trade",
+      "symbol": "xrpusdt"
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "label": "DIRECTIONAL",
+      "score": 52.52733916156311,
+      "selected_cell": {
+        "delta_ms": 250,
+        "event_count": 594565,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.5603652283119662,
+        "pressure_threshold": 0.2,
+        "t_stat": 93.73768483065142
+      },
+      "selection_evidence": {
+        "aggregation_method": "strict-filtered daily cells grouped by exchange/symbol/stream/delta_ms/h_ms/pressure_threshold; event_count=sum, mean_signed_fwd_return_bps=event-weighted mean, t_stat=median",
+        "max_event_count": 175862,
+        "max_t_stat": 109.36872573701136,
+        "min_event_count": 125841,
+        "min_t_stat": 63.814468147794344,
+        "preferred_delta_ms": true,
+        "source_dates": [
+          "20260324",
+          "20260325",
+          "20260326",
+          "20260327"
+        ],
+        "source_row_count": 4,
+        "supporting_days": 4
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d250__h500__pt020",
+      "stream": "trade",
+      "symbol": "avaxusdt"
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "label": "DIRECTIONAL",
+      "score": 51.388525079438395,
+      "selected_cell": {
+        "delta_ms": 250,
+        "event_count": 1855874,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.45210671053594426,
+        "pressure_threshold": 0.2,
+        "t_stat": 113.66459263239095
+      },
+      "selection_evidence": {
+        "aggregation_method": "strict-filtered daily cells grouped by exchange/symbol/stream/delta_ms/h_ms/pressure_threshold; event_count=sum, mean_signed_fwd_return_bps=event-weighted mean, t_stat=median",
+        "max_event_count": 456845,
+        "max_t_stat": 148.43317031851464,
+        "min_event_count": 209236,
+        "min_t_stat": 97.61308458117502,
+        "preferred_delta_ms": true,
+        "source_dates": [
+          "20260324",
+          "20260325",
+          "20260326",
+          "20260327",
+          "20260328"
+        ],
+        "source_row_count": 5,
+        "supporting_days": 5
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d250__h500__pt020",
+      "stream": "trade",
+      "symbol": "xrpusdt"
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "label": "DIRECTIONAL",
+      "score": 18.98136098670537,
+      "selected_cell": {
+        "delta_ms": 250,
+        "event_count": 412903,
+        "h_ms": 250,
+        "mean_signed_fwd_return_bps": 0.40335953665591323,
+        "pressure_threshold": 0.2,
+        "t_stat": 47.058168362825796
+      },
+      "selection_evidence": {
+        "aggregation_method": "strict-filtered daily cells grouped by exchange/symbol/stream/delta_ms/h_ms/pressure_threshold; event_count=sum, mean_signed_fwd_return_bps=event-weighted mean, t_stat=median",
+        "max_event_count": 143664,
+        "max_t_stat": 54.10145503579288,
+        "min_event_count": 127180,
+        "min_t_stat": 33.17684786010277,
+        "preferred_delta_ms": true,
+        "source_dates": [
+          "20260324",
+          "20260325",
+          "20260326"
+        ],
+        "source_row_count": 3,
+        "supporting_days": 3
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__adausdt__trade__d250__h250__pt020",
+      "stream": "trade",
+      "symbol": "adausdt"
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "label": "DIRECTIONAL",
+      "score": 18.832465179015248,
+      "selected_cell": {
+        "delta_ms": 500,
+        "event_count": 411092,
+        "h_ms": 250,
+        "mean_signed_fwd_return_bps": 0.3992083437218413,
+        "pressure_threshold": 0.2,
+        "t_stat": 47.17452797564085
+      },
+      "selection_evidence": {
+        "aggregation_method": "strict-filtered daily cells grouped by exchange/symbol/stream/delta_ms/h_ms/pressure_threshold; event_count=sum, mean_signed_fwd_return_bps=event-weighted mean, t_stat=median",
+        "max_event_count": 143018,
+        "max_t_stat": 53.495342602958296,
+        "min_event_count": 126574,
+        "min_t_stat": 31.857330131598296,
+        "preferred_delta_ms": true,
+        "source_dates": [
+          "20260324",
+          "20260325",
+          "20260326"
+        ],
+        "source_row_count": 3,
+        "supporting_days": 3
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__adausdt__trade__d500__h250__pt020",
+      "stream": "trade",
+      "symbol": "adausdt"
+    }
+  ],
+  "source_exchange_rollup": [
+    {
+      "anti_edge_cells": "282",
+      "directional_cells": "112",
+      "exchange": "binance",
+      "insufficient_support_cells": "0",
+      "no_edge_cells": "551",
+      "symbols": "7",
+      "symbols_with_anti_edge": "3",
+      "symbols_with_directional": "3"
+    },
+    {
+      "anti_edge_cells": "0",
+      "directional_cells": "933",
+      "exchange": "bybit",
+      "insufficient_support_cells": "0",
+      "no_edge_cells": "12",
+      "symbols": "7",
+      "symbols_with_anti_edge": "0",
+      "symbols_with_directional": "7"
+    },
+    {
+      "anti_edge_cells": "143",
+      "directional_cells": "201",
+      "exchange": "okx",
+      "insufficient_support_cells": "0",
+      "no_edge_cells": "736",
+      "symbols": "8",
+      "symbols_with_anti_edge": "2",
+      "symbols_with_directional": "3"
+    }
+  ],
+  "summary": {
+    "best_score": 105.33728575907789,
+    "best_strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+    "bybit_only_selection_applied": true,
+    "relaxed_thresholds_used": false,
+    "shortlist_size": 10,
+    "strict_group_count": 60,
+    "strict_symbol_count": 5,
+    "symbols_selected": [
+      "adausdt",
+      "avaxusdt",
+      "linkusdt",
+      "solusdt",
+      "xrpusdt"
+    ],
+    "total_input_rows": 2970
+  }
+}

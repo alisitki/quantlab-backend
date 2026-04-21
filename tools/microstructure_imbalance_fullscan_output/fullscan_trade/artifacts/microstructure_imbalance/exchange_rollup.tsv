@@ -1,0 +1,4 @@
+exchange	symbols	directional_cells	anti_edge_cells	no_edge_cells	insufficient_support_cells	symbols_with_directional	symbols_with_anti_edge
+binance	7	112	282	551	0	3	3
+bybit	7	933	0	12	0	7	0
+okx	8	201	143	736	0	3	2

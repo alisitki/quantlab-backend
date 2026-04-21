@@ -1,0 +1,247 @@
+{
+  "exchange": "binance",
+  "stream": "trade",
+  "symbol": "adausdt",
+  "window": "20260127..20260127",
+  "families": [
+    {
+      "familyId": "family_a_patternscanner",
+      "exitCode": 0,
+      "reportRelpath": "artifacts/multi_hypothesis/family_A_report.json",
+      "patternsScanned": 0,
+      "edgeCandidatesGenerated": 0,
+      "edgesSaved": false,
+      "meanForwardReturn": "",
+      "tStat": "",
+      "signalSupport": ""
+    },
+    {
+      "familyId": "family_b_simple_momentum",
+      "exitCode": 0,
+      "reportRelpath": "artifacts/multi_hypothesis/family_B_report.json",
+      "patternsScanned": 109363,
+      "edgeCandidatesGenerated": 0,
+      "edgesSaved": true,
+      "meanForwardReturn": 0.0001098718650505821,
+      "tStat": 4.277509179525212,
+      "signalSupport": 10947
+    },
+    {
+      "familyId": "return_reversal_v1",
+      "exitCode": 0,
+      "reportRelpath": "artifacts/multi_hypothesis/family_return_reversal_report.json",
+      "patternsScanned": 1,
+      "edgeCandidatesGenerated": 0,
+      "edgesSaved": true,
+      "meanForwardReturn": "-1.602281090101911",
+      "tStat": "-41.317981883500003",
+      "signalSupport": 110217,
+      "files": {
+        "family_return_reversal_primary_results_relpath": "artifacts/multi_hypothesis/family_return_reversal_primary_results.tsv",
+        "family_return_reversal_primary_summary_relpath": "artifacts/multi_hypothesis/family_return_reversal_primary_summary.tsv",
+        "family_return_reversal_report_relpath": "artifacts/multi_hypothesis/family_return_reversal_report.json"
+      },
+      "evidenceEntry": {
+        "familyId": "return_reversal_v1",
+        "primaryHash": "8ad93cf455fac17d6f73ef24ee673d301cb12bb9200a5cd1f94d5d1a8b84aa1a",
+        "replayHash": "8ad93cf455fac17d6f73ef24ee673d301cb12bb9200a5cd1f94d5d1a8b84aa1a",
+        "determinismStatus": "PASS",
+        "compareBasis": "exchange,symbol,date,stream,delta_ms,h_ms,event_count,mean_product,t_stat"
+      },
+      "evidenceDecision": "family=return_reversal_v1,date=20260127,delta_ms=100,h_ms=100,event_count=110217,mean_product=-1.602281090101911,t_stat=-41.317981883500003",
+      "determinismStatus": "PASS",
+      "compareBasis": "exchange,symbol,date,stream,delta_ms,h_ms,event_count,mean_product,t_stat"
+    },
+    {
+      "familyId": "momentum_v1",
+      "exitCode": 0,
+      "reportRelpath": "artifacts/multi_hypothesis/family_momentum_report.json",
+      "patternsScanned": 1,
+      "edgeCandidatesGenerated": 0,
+      "edgesSaved": false,
+      "meanForwardReturn": "-1.602281090101911",
+      "tStat": "-41.317981883500003",
+      "signalSupport": 110217,
+      "files": {
+        "family_momentum_primary_results_relpath": "artifacts/multi_hypothesis/family_momentum_primary_results.tsv",
+        "family_momentum_primary_summary_relpath": "artifacts/multi_hypothesis/family_momentum_primary_summary.tsv",
+        "family_momentum_report_relpath": "artifacts/multi_hypothesis/family_momentum_report.json"
+      },
+      "evidenceEntry": {
+        "familyId": "momentum_v1",
+        "primaryHash": "8ad93cf455fac17d6f73ef24ee673d301cb12bb9200a5cd1f94d5d1a8b84aa1a",
+        "replayHash": "8ad93cf455fac17d6f73ef24ee673d301cb12bb9200a5cd1f94d5d1a8b84aa1a",
+        "determinismStatus": "PASS",
+        "compareBasis": "exchange,symbol,date,stream,delta_ms,h_ms,event_count,mean_product,t_stat"
+      },
+      "evidenceDecision": "family=momentum_v1,date=20260127,delta_ms=100,h_ms=100,event_count=110217,mean_product=-1.602281090101911,t_stat=-41.317981883500003",
+      "determinismStatus": "PASS",
+      "compareBasis": "exchange,symbol,date,stream,delta_ms,h_ms,event_count,mean_product,t_stat"
+    },
+    {
+      "familyId": "microstructure_imbalance_v1",
+      "exitCode": 0,
+      "reportRelpath": "artifacts/multi_hypothesis/family_microstructure_imbalance_report.json",
+      "patternsScanned": 1,
+      "edgeCandidatesGenerated": 0,
+      "edgesSaved": false,
+      "meanForwardReturn": "-0.789122058320454",
+      "tStat": "-144.022881232779355",
+      "signalSupport": 109670,
+      "files": {
+        "family_microstructure_imbalance_primary_results_relpath": "artifacts/multi_hypothesis/family_microstructure_imbalance_primary_results.tsv",
+        "family_microstructure_imbalance_primary_summary_relpath": "artifacts/multi_hypothesis/family_microstructure_imbalance_primary_summary.tsv",
+        "family_microstructure_imbalance_report_relpath": "artifacts/multi_hypothesis/family_microstructure_imbalance_report.json",
+        "family_microstructure_imbalance_label_report_relpath": "artifacts/multi_hypothesis/family_microstructure_imbalance_label_report.json"
+      },
+      "evidenceEntry": {
+        "familyId": "microstructure_imbalance_v1",
+        "primaryHash": "e7d5f6c7c9551cc19eaa66437efc16289a1306a4c666127dbd2c854b4ad70e90",
+        "replayHash": "e7d5f6c7c9551cc19eaa66437efc16289a1306a4c666127dbd2c854b4ad70e90",
+        "determinismStatus": "PASS",
+        "compareBasis": "exchange,symbol,date,stream,feature,delta_ms,h_ms,pressure_threshold,event_count,mean_abs_pressure,mean_signed_fwd_return_bps,t_stat,label"
+      },
+      "evidenceDecision": "family=microstructure_imbalance_v1,date=20260127,feature=signed_trade_volume_imbalance,delta_ms=100,h_ms=100,pressure_threshold=0.100000,event_count=109670,mean_signed_fwd_return_bps=-0.789122058320454,t_stat=-144.022881232779355,label=ANTI_EDGE",
+      "determinismStatus": "PASS",
+      "compareBasis": "exchange,symbol,date,stream,feature,delta_ms,h_ms,pressure_threshold,event_count,mean_abs_pressure,mean_signed_fwd_return_bps,t_stat,label"
+    },
+    {
+      "familyId": "volatility_clustering_v1",
+      "exitCode": 0,
+      "reportRelpath": "artifacts/multi_hypothesis/family_volatility_clustering_report.json",
+      "patternsScanned": 1,
+      "edgeCandidatesGenerated": 0,
+      "edgesSaved": true,
+      "meanForwardReturn": "0.468185184717287",
+      "tStat": "59.663215963093407",
+      "signalSupport": 12682,
+      "files": {
+        "family_volatility_clustering_primary_results_relpath": "artifacts/multi_hypothesis/family_volatility_clustering_primary_results.tsv",
+        "family_volatility_clustering_primary_summary_relpath": "artifacts/multi_hypothesis/family_volatility_clustering_primary_summary.tsv",
+        "family_volatility_clustering_report_relpath": "artifacts/multi_hypothesis/family_volatility_clustering_report.json"
+      },
+      "evidenceEntry": {
+        "familyId": "volatility_clustering_v1",
+        "primaryHash": "24eb19fd839956c3c8e32f4eb2b8f52bdc1a65d2932172bf8ac600c1301e9727",
+        "replayHash": "24eb19fd839956c3c8e32f4eb2b8f52bdc1a65d2932172bf8ac600c1301e9727",
+        "determinismStatus": "PASS",
+        "compareBasis": "exchange,symbol,date,stream,delta_ms,h_ms,sample_count,mean_rv_past,mean_rv_fwd,corr,t_stat"
+      },
+      "evidenceDecision": "family=volatility_clustering_v1,date=20260127,delta_ms=100,h_ms=100,sample_count=12682,corr=0.468185184717287,t_stat=59.663215963093407",
+      "determinismStatus": "PASS",
+      "compareBasis": "exchange,symbol,date,stream,delta_ms,h_ms,sample_count,mean_rv_past,mean_rv_fwd,corr,t_stat"
+    },
+    {
+      "familyId": "spread_reversion_v1",
+      "exitCode": 0,
+      "reportRelpath": "artifacts/multi_hypothesis/family_spread_reversion_report.json",
+      "patternsScanned": 0,
+      "edgeCandidatesGenerated": 0,
+      "edgesSaved": false,
+      "meanForwardReturn": "0.000000000000000",
+      "tStat": "0.000000000000000",
+      "signalSupport": 0,
+      "files": {
+        "family_spread_reversion_primary_results_relpath": "artifacts/multi_hypothesis/family_spread_reversion_primary_results.tsv",
+        "family_spread_reversion_primary_summary_relpath": "artifacts/multi_hypothesis/family_spread_reversion_primary_summary.tsv",
+        "family_spread_reversion_report_relpath": "artifacts/multi_hypothesis/family_spread_reversion_report.json"
+      },
+      "evidenceEntry": {
+        "familyId": "spread_reversion_v1",
+        "primaryHash": "-",
+        "replayHash": "-",
+        "determinismStatus": "SKIPPED_UNSUPPORTED_STREAM",
+        "compareBasis": "exchange,symbol,date,stream,delta_ms,h_ms,event_count,mean_product,t_stat"
+      },
+      "evidenceDecision": "family=spread_reversion_v1,selected_cell=NONE",
+      "determinismStatus": "SKIPPED_UNSUPPORTED_STREAM",
+      "compareBasis": "exchange,symbol,date,stream,delta_ms,h_ms,event_count,mean_product,t_stat"
+    },
+    {
+      "familyId": "volume_vol_link_v1",
+      "exitCode": 0,
+      "reportRelpath": "artifacts/multi_hypothesis/family_volume_vol_link_report.json",
+      "patternsScanned": 1,
+      "edgeCandidatesGenerated": 0,
+      "edgesSaved": true,
+      "meanForwardReturn": "0.388261305382553",
+      "tStat": "47.442236231982754",
+      "signalSupport": 12682,
+      "files": {
+        "family_volume_vol_link_primary_results_relpath": "artifacts/multi_hypothesis/family_volume_vol_link_primary_results.tsv",
+        "family_volume_vol_link_primary_summary_relpath": "artifacts/multi_hypothesis/family_volume_vol_link_primary_summary.tsv",
+        "family_volume_vol_link_report_relpath": "artifacts/multi_hypothesis/family_volume_vol_link_report.json"
+      },
+      "evidenceEntry": {
+        "familyId": "volume_vol_link_v1",
+        "primaryHash": "854a8e630a719f6ea3d1200fd2574e08dbf1879ae4fdcbef572ea569a799d3ce",
+        "replayHash": "854a8e630a719f6ea3d1200fd2574e08dbf1879ae4fdcbef572ea569a799d3ce",
+        "determinismStatus": "PASS",
+        "compareBasis": "exchange,symbol,date,stream,delta_ms,h_ms,sample_count,mean_activity,mean_rv_fwd,corr,t_stat"
+      },
+      "evidenceDecision": "family=volume_vol_link_v1,date=20260127,delta_ms=100,h_ms=100,sample_count=12682,corr=0.388261305382553,t_stat=47.442236231982754",
+      "determinismStatus": "PASS",
+      "compareBasis": "exchange,symbol,date,stream,delta_ms,h_ms,sample_count,mean_activity,mean_rv_fwd,corr,t_stat"
+    },
+    {
+      "familyId": "jump_reversion_v1",
+      "exitCode": 0,
+      "reportRelpath": "artifacts/multi_hypothesis/family_jump_reversion_report.json",
+      "patternsScanned": 1,
+      "edgeCandidatesGenerated": 0,
+      "edgesSaved": false,
+      "meanForwardReturn": "2.912331401325258",
+      "tStat": "7.159864709327961",
+      "signalSupport": 143,
+      "files": {
+        "family_jump_reversion_primary_results_relpath": "artifacts/multi_hypothesis/family_jump_reversion_primary_results.tsv",
+        "family_jump_reversion_primary_summary_relpath": "artifacts/multi_hypothesis/family_jump_reversion_primary_summary.tsv",
+        "family_jump_reversion_report_relpath": "artifacts/multi_hypothesis/family_jump_reversion_report.json"
+      },
+      "evidenceEntry": {
+        "familyId": "jump_reversion_v1",
+        "primaryHash": "d6795470394e876d26bd276e53b474eea48eaff524ddd7344ed45a08a4115fde",
+        "replayHash": "d6795470394e876d26bd276e53b474eea48eaff524ddd7344ed45a08a4115fde",
+        "determinismStatus": "PASS",
+        "compareBasis": "exchange,symbol,date,stream,jump_thresh_bps,h_ms,jump_count,mean_signed_reversal,t_stat"
+      },
+      "evidenceDecision": "family=jump_reversion_v1,date=20260127,jump_thresh_bps=5,h_ms=100,jump_count=143,mean_signed_reversal=2.912331401325258,t_stat=7.159864709327961",
+      "determinismStatus": "PASS",
+      "compareBasis": "exchange,symbol,date,stream,jump_thresh_bps,h_ms,jump_count,mean_signed_reversal,t_stat"
+    }
+  ],
+  "resolved_paths_relpath": "artifacts/multi_hypothesis/resolved_paths_log.txt",
+  "files": {
+    "rollup_relpath": "artifacts/multi_hypothesis/rollup.tsv",
+    "family_a_relpath": "artifacts/multi_hypothesis/family_A_report.json",
+    "family_b_relpath": "artifacts/multi_hypothesis/family_B_report.json",
+    "scanner_config_relpath": "artifacts/multi_hypothesis/scanner_config_excerpt_family_A.txt",
+    "resolved_paths_relpath": "artifacts/multi_hypothesis/resolved_paths_log.txt",
+    "family_return_reversal_primary_results_relpath": "artifacts/multi_hypothesis/family_return_reversal_primary_results.tsv",
+    "family_return_reversal_primary_summary_relpath": "artifacts/multi_hypothesis/family_return_reversal_primary_summary.tsv",
+    "family_return_reversal_report_relpath": "artifacts/multi_hypothesis/family_return_reversal_report.json",
+    "family_momentum_primary_results_relpath": "artifacts/multi_hypothesis/family_momentum_primary_results.tsv",
+    "family_momentum_primary_summary_relpath": "artifacts/multi_hypothesis/family_momentum_primary_summary.tsv",
+    "family_momentum_report_relpath": "artifacts/multi_hypothesis/family_momentum_report.json",
+    "family_microstructure_imbalance_primary_results_relpath": "artifacts/multi_hypothesis/family_microstructure_imbalance_primary_results.tsv",
+    "family_microstructure_imbalance_primary_summary_relpath": "artifacts/multi_hypothesis/family_microstructure_imbalance_primary_summary.tsv",
+    "family_microstructure_imbalance_report_relpath": "artifacts/multi_hypothesis/family_microstructure_imbalance_report.json",
+    "family_microstructure_imbalance_label_report_relpath": "artifacts/multi_hypothesis/family_microstructure_imbalance_label_report.json",
+    "family_volatility_clustering_primary_results_relpath": "artifacts/multi_hypothesis/family_volatility_clustering_primary_results.tsv",
+    "family_volatility_clustering_primary_summary_relpath": "artifacts/multi_hypothesis/family_volatility_clustering_primary_summary.tsv",
+    "family_volatility_clustering_report_relpath": "artifacts/multi_hypothesis/family_volatility_clustering_report.json",
+    "family_spread_reversion_primary_results_relpath": "artifacts/multi_hypothesis/family_spread_reversion_primary_results.tsv",
+    "family_spread_reversion_primary_summary_relpath": "artifacts/multi_hypothesis/family_spread_reversion_primary_summary.tsv",
+    "family_spread_reversion_report_relpath": "artifacts/multi_hypothesis/family_spread_reversion_report.json",
+    "family_volume_vol_link_primary_results_relpath": "artifacts/multi_hypothesis/family_volume_vol_link_primary_results.tsv",
+    "family_volume_vol_link_primary_summary_relpath": "artifacts/multi_hypothesis/family_volume_vol_link_primary_summary.tsv",
+    "family_volume_vol_link_report_relpath": "artifacts/multi_hypothesis/family_volume_vol_link_report.json",
+    "family_jump_reversion_primary_results_relpath": "artifacts/multi_hypothesis/family_jump_reversion_primary_results.tsv",
+    "family_jump_reversion_primary_summary_relpath": "artifacts/multi_hypothesis/family_jump_reversion_primary_summary.tsv",
+    "family_jump_reversion_report_relpath": "artifacts/multi_hypothesis/family_jump_reversion_report.json",
+    "determinism_compare_relpath": "artifacts/multi_hypothesis/determinism_compare.tsv",
+    "artifact_manifest_relpath": "artifacts/multi_hypothesis/artifact_manifest.tsv",
+    "label_report_relpath": "artifacts/multi_hypothesis/label_report.txt",
+    "integrity_check_relpath": "artifacts/multi_hypothesis/integrity_check.txt"
+  }
+}

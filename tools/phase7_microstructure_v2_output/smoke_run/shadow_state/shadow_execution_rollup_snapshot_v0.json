@@ -1,0 +1,21 @@
+{
+  "schema_version": "shadow_execution_rollup_snapshot_v0",
+  "generated_ts_utc": "2026-04-10T07:22:49Z",
+  "source_pack_summary": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_pack_summary_v0.json",
+  "pack_summary_generated_ts_utc": "2026-04-10T07:22:49Z",
+  "selected_count": 1,
+  "items": [
+    {
+      "selected_pack_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2",
+      "last_observed_at": "2026-04-10T07:22:49Z",
+      "last_pnl_state": "FLAT_NO_FILLS",
+      "pnl_interpretation": "FLAT_NO_FILLS",
+      "recent_pnl_bias": "FLAT_BIAS",
+      "recent_run_count": 1,
+      "recent_attention_count": 0,
+      "combined_pnl_status_short": "FLAT_NO_FILLS/FLAT_BIAS",
+      "recent_rollup_short": "r1:g0/l0/f1/a0",
+      "pnl_rollup_attention": "false"
+    }
+  ]
+}

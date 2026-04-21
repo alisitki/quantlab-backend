@@ -1,0 +1,267 @@
+{
+  "schema_version": "shadow_shortlist_v0",
+  "generated_ts_utc": "2026-04-04T10:28:55Z",
+  "status": "OK",
+  "source_tradability_report_json": "tools/phase6_state/tradability_triage_report_v0.json",
+  "shortlist_policy": {
+    "focus": "newly_bound_non_momentum_only",
+    "include_only_classification": "TRADABLE_DIRECTIONAL",
+    "max_items": 10,
+    "ordering": "rank asc, family_id asc, exchange asc, stream asc, selected_symbol asc, strategy_id asc",
+    "dedupe_key": [
+      "family_id",
+      "exchange",
+      "stream",
+      "selected_symbol"
+    ],
+    "ranking_logic_note": "Separate advisory shortlist only; does not modify active shadow subset ranking."
+  },
+  "summary": {
+    "newly_bound_non_momentum_count": 189,
+    "tradable_directional_count": 111,
+    "context_guard_count": 54,
+    "research_only_count": 24
+  },
+  "strategies": [
+    {
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f::adausdt",
+      "contract_row_id": "candidate_contract::multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f::adausdt",
+      "family_id": "return_reversal_v1",
+      "selected_symbol": "adausdt",
+      "exchange": "binance",
+      "stream": "trade",
+      "rank": 2,
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "shadow_tradeability_class": "DIRECTIONAL",
+      "selected_cell": {
+        "date": "20260315",
+        "delta_ms": 500,
+        "event_count": 96950,
+        "exchange": "binance",
+        "h_ms": 500,
+        "mean_product": -2.704279127377875,
+        "stream": "trade",
+        "symbol": "adausdt",
+        "t_stat": -32.93114329093621
+      },
+      "reasoning": {
+        "reason_code": "DIRECTIONAL_RUNTIME_AND_STRONG_REVERSAL_CELL",
+        "details": [
+          "Return-reversal scores `past_return_bps * fwd_return_bps` and passes only when `mean_product < 0` with negative `t_stat`, which is a signed price-reversion contract.",
+          "Single-symbol trade-stream return-reversal row is directional, shadow runnable, and passes conservative cell thresholds."
+        ]
+      },
+      "shortlist_reason": "Best-ranked newly bound directional instance for return_reversal_v1::adausdt after per-symbol dedupe."
+    },
+    {
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f::ltcusdt",
+      "contract_row_id": "candidate_contract::multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f::ltcusdt",
+      "family_id": "return_reversal_v1",
+      "selected_symbol": "ltcusdt",
+      "exchange": "binance",
+      "stream": "trade",
+      "rank": 2,
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "shadow_tradeability_class": "DIRECTIONAL",
+      "selected_cell": {
+        "date": "20260315",
+        "delta_ms": 100,
+        "event_count": 41772,
+        "exchange": "binance",
+        "h_ms": 100,
+        "mean_product": -0.294557776590672,
+        "stream": "trade",
+        "symbol": "ltcusdt",
+        "t_stat": -22.16250459543229
+      },
+      "reasoning": {
+        "reason_code": "DIRECTIONAL_RUNTIME_AND_STRONG_REVERSAL_CELL",
+        "details": [
+          "Return-reversal scores `past_return_bps * fwd_return_bps` and passes only when `mean_product < 0` with negative `t_stat`, which is a signed price-reversion contract.",
+          "Single-symbol trade-stream return-reversal row is directional, shadow runnable, and passes conservative cell thresholds."
+        ]
+      },
+      "shortlist_reason": "Best-ranked newly bound directional instance for return_reversal_v1::ltcusdt after per-symbol dedupe."
+    },
+    {
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260216..20260216-20260307_201204-1f153e95-t1__FULLSCAN_MAJOR__6d4b6f0376dabaceab37c854d41dfb3738dacb226d737895cef5d02e36364e29::solusdt",
+      "contract_row_id": "candidate_contract::multi-hypothesis-phase5-bighunt-binance-trade-20260216..20260216-20260307_201204-1f153e95-t1__FULLSCAN_MAJOR__6d4b6f0376dabaceab37c854d41dfb3738dacb226d737895cef5d02e36364e29::solusdt",
+      "family_id": "return_reversal_v1",
+      "selected_symbol": "solusdt",
+      "exchange": "binance",
+      "stream": "trade",
+      "rank": 4,
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "shadow_tradeability_class": "DIRECTIONAL",
+      "selected_cell": {
+        "date": "20260216",
+        "delta_ms": 500,
+        "event_count": 330279,
+        "exchange": "binance",
+        "h_ms": 500,
+        "mean_product": -0.789203658769772,
+        "stream": "trade",
+        "symbol": "solusdt",
+        "t_stat": -31.702631242745518
+      },
+      "reasoning": {
+        "reason_code": "DIRECTIONAL_RUNTIME_AND_STRONG_REVERSAL_CELL",
+        "details": [
+          "Return-reversal scores `past_return_bps * fwd_return_bps` and passes only when `mean_product < 0` with negative `t_stat`, which is a signed price-reversion contract.",
+          "Single-symbol trade-stream return-reversal row is directional, shadow runnable, and passes conservative cell thresholds."
+        ]
+      },
+      "shortlist_reason": "Best-ranked newly bound directional instance for return_reversal_v1::solusdt after per-symbol dedupe."
+    },
+    {
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260226-20260307_225643-cd573a6d-t1__FULLSCAN_MAJOR__4883ede73a477b82a880fee75595629f405790e7309dd022b34a1ab79dc01bc7::xrpusdt",
+      "contract_row_id": "candidate_contract::multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260226-20260307_225643-cd573a6d-t1__FULLSCAN_MAJOR__4883ede73a477b82a880fee75595629f405790e7309dd022b34a1ab79dc01bc7::xrpusdt",
+      "family_id": "return_reversal_v1",
+      "selected_symbol": "xrpusdt",
+      "exchange": "binance",
+      "stream": "trade",
+      "rank": 6,
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "shadow_tradeability_class": "DIRECTIONAL",
+      "selected_cell": {
+        "date": "20260226",
+        "delta_ms": 250,
+        "event_count": 364930,
+        "exchange": "binance",
+        "h_ms": 500,
+        "mean_product": -0.901623407071137,
+        "stream": "trade",
+        "symbol": "xrpusdt",
+        "t_stat": -20.678268134867675
+      },
+      "reasoning": {
+        "reason_code": "DIRECTIONAL_RUNTIME_AND_STRONG_REVERSAL_CELL",
+        "details": [
+          "Return-reversal scores `past_return_bps * fwd_return_bps` and passes only when `mean_product < 0` with negative `t_stat`, which is a signed price-reversion contract.",
+          "Single-symbol trade-stream return-reversal row is directional, shadow runnable, and passes conservative cell thresholds."
+        ]
+      },
+      "shortlist_reason": "Best-ranked newly bound directional instance for return_reversal_v1::xrpusdt after per-symbol dedupe."
+    },
+    {
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260213..20260213-20260307_192450-53422719-t1__FULLSCAN_MAJOR__995c8ea3ef2c1772c0b95cc3a745ab8d3052d0fe0677cb33d8e26ccdffbae0f8::bnbusdt",
+      "contract_row_id": "candidate_contract::multi-hypothesis-phase5-bighunt-binance-trade-20260213..20260213-20260307_192450-53422719-t1__FULLSCAN_MAJOR__995c8ea3ef2c1772c0b95cc3a745ab8d3052d0fe0677cb33d8e26ccdffbae0f8::bnbusdt",
+      "family_id": "return_reversal_v1",
+      "selected_symbol": "bnbusdt",
+      "exchange": "binance",
+      "stream": "trade",
+      "rank": 12,
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "shadow_tradeability_class": "DIRECTIONAL",
+      "selected_cell": {
+        "date": "20260213",
+        "delta_ms": 500,
+        "event_count": 439125,
+        "exchange": "binance",
+        "h_ms": 500,
+        "mean_product": -0.4647274681184,
+        "stream": "trade",
+        "symbol": "bnbusdt",
+        "t_stat": -11.960939388538744
+      },
+      "reasoning": {
+        "reason_code": "DIRECTIONAL_RUNTIME_AND_STRONG_REVERSAL_CELL",
+        "details": [
+          "Return-reversal scores `past_return_bps * fwd_return_bps` and passes only when `mean_product < 0` with negative `t_stat`, which is a signed price-reversion contract.",
+          "Single-symbol trade-stream return-reversal row is directional, shadow runnable, and passes conservative cell thresholds."
+        ]
+      },
+      "shortlist_reason": "Best-ranked newly bound directional instance for return_reversal_v1::bnbusdt after per-symbol dedupe."
+    },
+    {
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536::linkusdt",
+      "contract_row_id": "candidate_contract::multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536::linkusdt",
+      "family_id": "return_reversal_v1",
+      "selected_symbol": "linkusdt",
+      "exchange": "binance",
+      "stream": "trade",
+      "rank": 16,
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "shadow_tradeability_class": "DIRECTIONAL",
+      "selected_cell": {
+        "date": "20260228",
+        "delta_ms": 100,
+        "event_count": 130349,
+        "exchange": "binance",
+        "h_ms": 100,
+        "mean_product": -7.577657784823822,
+        "stream": "trade",
+        "symbol": "linkusdt",
+        "t_stat": -31.95845913240708
+      },
+      "reasoning": {
+        "reason_code": "DIRECTIONAL_RUNTIME_AND_STRONG_REVERSAL_CELL",
+        "details": [
+          "Return-reversal scores `past_return_bps * fwd_return_bps` and passes only when `mean_product < 0` with negative `t_stat`, which is a signed price-reversion contract.",
+          "Single-symbol trade-stream return-reversal row is directional, shadow runnable, and passes conservative cell thresholds."
+        ]
+      },
+      "shortlist_reason": "Best-ranked newly bound directional instance for return_reversal_v1::linkusdt after per-symbol dedupe."
+    },
+    {
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260222..20260222-20260307_214855-2259d678-t1__FULLSCAN_MAJOR__f6f77334020eed5b4805edea864954eb2db900003b09fe7e815c828f34c772cd::ethusdt",
+      "contract_row_id": "candidate_contract::multi-hypothesis-phase5-bighunt-binance-trade-20260222..20260222-20260307_214855-2259d678-t1__FULLSCAN_MAJOR__f6f77334020eed5b4805edea864954eb2db900003b09fe7e815c828f34c772cd::ethusdt",
+      "family_id": "return_reversal_v1",
+      "selected_symbol": "ethusdt",
+      "exchange": "binance",
+      "stream": "trade",
+      "rank": 20,
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "shadow_tradeability_class": "DIRECTIONAL",
+      "selected_cell": {
+        "date": "20260222",
+        "delta_ms": 500,
+        "event_count": 630047,
+        "exchange": "binance",
+        "h_ms": 250,
+        "mean_product": -0.177426157509368,
+        "stream": "trade",
+        "symbol": "ethusdt",
+        "t_stat": -12.67692800989139
+      },
+      "reasoning": {
+        "reason_code": "DIRECTIONAL_RUNTIME_AND_STRONG_REVERSAL_CELL",
+        "details": [
+          "Return-reversal scores `past_return_bps * fwd_return_bps` and passes only when `mean_product < 0` with negative `t_stat`, which is a signed price-reversion contract.",
+          "Single-symbol trade-stream return-reversal row is directional, shadow runnable, and passes conservative cell thresholds."
+        ]
+      },
+      "shortlist_reason": "Best-ranked newly bound directional instance for return_reversal_v1::ethusdt after per-symbol dedupe."
+    },
+    {
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4::avaxusdt",
+      "contract_row_id": "candidate_contract::multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4::avaxusdt",
+      "family_id": "return_reversal_v1",
+      "selected_symbol": "avaxusdt",
+      "exchange": "binance",
+      "stream": "trade",
+      "rank": 24,
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "shadow_tradeability_class": "DIRECTIONAL",
+      "selected_cell": {
+        "date": "20260307",
+        "delta_ms": 500,
+        "event_count": 136925,
+        "exchange": "binance",
+        "h_ms": 500,
+        "mean_product": -0.518791505610956,
+        "stream": "trade",
+        "symbol": "avaxusdt",
+        "t_stat": -44.585720747546375
+      },
+      "reasoning": {
+        "reason_code": "DIRECTIONAL_RUNTIME_AND_STRONG_REVERSAL_CELL",
+        "details": [
+          "Return-reversal scores `past_return_bps * fwd_return_bps` and passes only when `mean_product < 0` with negative `t_stat`, which is a signed price-reversion contract.",
+          "Single-symbol trade-stream return-reversal row is directional, shadow runnable, and passes conservative cell thresholds."
+        ]
+      },
+      "shortlist_reason": "Best-ranked newly bound directional instance for return_reversal_v1::avaxusdt after per-symbol dedupe."
+    }
+  ]
+}

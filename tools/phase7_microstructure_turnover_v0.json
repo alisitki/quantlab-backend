@@ -1,0 +1,54 @@
+{
+  "after": {
+    "cost_accounting_status": "NET_FEE_BACKED_MARK_TO_MARKET_FUNDING_AWARE",
+    "decision_count": 1521,
+    "fee_per_fill": 0.006830564891518738,
+    "fill_count": 1521,
+    "funding_cost": 0.0,
+    "gross_pnl": 1.7000000000000703,
+    "gross_pnl_per_1k_events": null,
+    "gross_pnl_per_fill": 0.0011176857330703947,
+    "net_pnl": -8.68928919999993,
+    "processed_event_count": null,
+    "profitability_status": "NET_MARK_TO_MARKET_AFTER_FEES_FUNDING_AND_EXIT_ESTIMATE",
+    "stop_reason": "STREAM_END",
+    "total_fee": 10.3892892,
+    "turnover": 25973.222999999947,
+    "verify_soft_live_pass": true
+  },
+  "baseline": {
+    "fee_per_fill": 0.007137480372,
+    "fill_count": 2150,
+    "gross_pnl": 2.621,
+    "gross_pnl_per_1k_events": 0.04926969566,
+    "gross_pnl_per_fill": 0.001219069767,
+    "net_pnl": -12.7245828,
+    "processed_event_count": 53197,
+    "total_fee": 15.3455828
+  },
+  "comparison": {
+    "fee_reduction_ratio": 0.3229785186131869,
+    "fill_reduction_ratio": 0.29255813953488374,
+    "gross_per_fill_change_ratio": -0.0831650793695757,
+    "gross_preserved_ratio": 0.6486074017550821
+  },
+  "exchange": "bybit",
+  "family_id": "microstructure_imbalance_v1",
+  "generated_ts_utc": "2026-04-07T17:55:38Z",
+  "lever": {
+    "implementation": "runtime effective hold floor: max(selected_cell.h_ms, 5000ms)",
+    "selected": "MINIMUM_HOLD_ENFORCEMENT",
+    "signal_math_changed": false
+  },
+  "schema_version": "phase7_microstructure_turnover_v0",
+  "source_paths": {
+    "baseline_profitability_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_profitability_v0.json",
+    "batch_result_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_turnover_output/full_linkusdt/shadow_observation_batch_result_v0.json",
+    "full_run_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_turnover_output/full_linkusdt",
+    "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_turnover_output/full_linkusdt/shadow_state/shadow_futures_paper_ledger_v1.json"
+  },
+  "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+  "symbol": "linkusdt",
+  "verdict": "NO_IMPROVEMENT",
+  "verdict_reason": "turnover/gross-per-fill target not met"
+}

@@ -11,7 +11,7 @@ function usage() {
       "usage: node tools/run-multi-hypothesis.js ",
       "--exchange <exchange> --stream <stream> --symbol <symbol> --start <YYYYMMDD> --end <YYYYMMDD>",
       "[--outDir <dir>] [--heapMB <n>] [--progressEvery <n>] [--objectKeysTsv <path>] [--downloadsDir <path>]",
-      "[--evidenceOn <true|false>] [--rrDeltaMsList <csv>] [--rrHMsList <csv>] [--vcDeltaMsList <csv>] [--vcHMsList <csv>] [--srDeltaMsList <csv>] [--srHMsList <csv>] [--momDeltaMsList <csv>] [--momHMsList <csv>] [--vvlDeltaMsList <csv>] [--vvlHMsList <csv>] [--jrJumpThreshBpsList <csv>] [--jrHMsList <csv>] [--jrCooldownMs <int>]",
+      "[--evidenceOn <true|false>] [--rrDeltaMsList <csv>] [--rrHMsList <csv>] [--vcDeltaMsList <csv>] [--vcHMsList <csv>] [--srDeltaMsList <csv>] [--srHMsList <csv>] [--momDeltaMsList <csv>] [--momHMsList <csv>] [--miDeltaMsList <csv>] [--miHMsList <csv>] [--miPressureThresholdList <csv>] [--vvlDeltaMsList <csv>] [--vvlHMsList <csv>] [--jrJumpThreshBpsList <csv>] [--jrHMsList <csv>] [--jrCooldownMs <int>]",
     ].join("\n"),
   );
 }
@@ -37,6 +37,12 @@ function parseArgs(argv) {
     srHMsList: "1000,5000",
     momDeltaMsList: "1000,5000",
     momHMsList: "1000,5000",
+    miDeltaMsList: "100,250,500",
+    miHMsList: "100,250,500",
+    miPressureThresholdList: "0.1,0.2",
+    miMinSupport: "200",
+    miMinEdgeBps: "0.2",
+    miMinTStat: "2.0",
     vvlDeltaMsList: "1000,5000",
     vvlHMsList: "1000,5000",
     jrJumpThreshBpsList: "5,10,20",
@@ -67,6 +73,12 @@ function parseArgs(argv) {
       case "--srHMsList": out.srHMsList = b; i += 1; break;
       case "--momDeltaMsList": out.momDeltaMsList = b; i += 1; break;
       case "--momHMsList": out.momHMsList = b; i += 1; break;
+      case "--miDeltaMsList": out.miDeltaMsList = b; i += 1; break;
+      case "--miHMsList": out.miHMsList = b; i += 1; break;
+      case "--miPressureThresholdList": out.miPressureThresholdList = b; i += 1; break;
+      case "--miMinSupport": out.miMinSupport = b; i += 1; break;
+      case "--miMinEdgeBps": out.miMinEdgeBps = b; i += 1; break;
+      case "--miMinTStat": out.miMinTStat = b; i += 1; break;
       case "--vvlDeltaMsList": out.vvlDeltaMsList = b; i += 1; break;
       case "--vvlHMsList": out.vvlHMsList = b; i += 1; break;
       case "--jrJumpThreshBpsList": out.jrJumpThreshBpsList = b; i += 1; break;
@@ -443,6 +455,82 @@ function pickMomentumSelected(rows) {
     || a.date.localeCompare(b.date)
     || (a.delta_ms - b.delta_ms)
     || (a.h_ms - b.h_ms)
+  ));
+  return sorted[0];
+}
+
+const MI_HEADER = [
+  "exchange",
+  "symbol",
+  "date",
+  "stream",
+  "feature",
+  "delta_ms",
+  "h_ms",
+  "pressure_threshold",
+  "event_count",
+  "mean_abs_pressure",
+  "mean_signed_fwd_return_bps",
+  "t_stat",
+  "label",
+];
+
+function normalizeMicrostructureImbalanceRows(rows) {
+  return rows
+    .map((r) => ({
+      exchange: String(r.exchange || ""),
+      symbol: String(r.symbol || ""),
+      date: String(r.date || ""),
+      stream: String(r.stream || ""),
+      feature: String(r.feature || ""),
+      delta_ms: toInt(r.delta_ms, 0),
+      h_ms: toInt(r.h_ms, 0),
+      pressure_threshold: toFinite(r.pressure_threshold, 0).toFixed(6),
+      event_count: toInt(r.event_count, 0),
+      mean_abs_pressure: fixed15(r.mean_abs_pressure),
+      mean_signed_fwd_return_bps: fixed15(r.mean_signed_fwd_return_bps),
+      t_stat: fixed15(r.t_stat),
+      label: String(r.label || ""),
+    }))
+    .sort((a, b) => (
+      a.exchange.localeCompare(b.exchange)
+      || a.symbol.localeCompare(b.symbol)
+      || a.date.localeCompare(b.date)
+      || a.stream.localeCompare(b.stream)
+      || a.feature.localeCompare(b.feature)
+      || (a.delta_ms - b.delta_ms)
+      || (a.h_ms - b.h_ms)
+      || (Number(a.pressure_threshold) - Number(b.pressure_threshold))
+    ));
+}
+
+function parseMicrostructureImbalanceResults(tsvText) {
+  const parsed = parseTsvRows(tsvText, MI_HEADER);
+  return normalizeMicrostructureImbalanceRows(parsed);
+}
+
+function pickMicrostructureImbalanceSelected(rows) {
+  const valid = rows.filter((r) => r.event_count > 0);
+  if (!valid.length) return null;
+  const labelRank = { DIRECTIONAL: 0, ANTI_EDGE: 1, NO_EDGE: 2, INSUFFICIENT_SUPPORT: 3 };
+  const metricKey = (r) => {
+    const mean = Number(r.mean_signed_fwd_return_bps);
+    const tStat = Number(r.t_stat);
+    if (r.label === "DIRECTIONAL") return [-mean, -tStat];
+    if (r.label === "ANTI_EDGE") return [mean, tStat];
+    if (r.label === "NO_EDGE") return [-Math.abs(mean), -Math.abs(tStat)];
+    return [0, 0];
+  };
+  const sorted = valid.slice().sort((a, b) => (
+    ((labelRank[a.label] == null ? 9 : labelRank[a.label]) - (labelRank[b.label] == null ? 9 : labelRank[b.label]))
+    || (metricKey(a)[0] - metricKey(b)[0])
+    || (metricKey(a)[1] - metricKey(b)[1])
+    || (b.event_count - a.event_count)
+    || a.date.localeCompare(b.date)
+    || a.feature.localeCompare(b.feature)
+    || (a.delta_ms - b.delta_ms)
+    || (a.h_ms - b.h_ms)
+    || (Number(a.pressure_threshold) - Number(b.pressure_threshold))
   ));
   return sorted[0];
 }
@@ -1340,6 +1428,185 @@ async function parseFamilyMomentum({ args, outRoot }) {
   return out;
 }
 
+function buildUnsupportedMicrostructureImbalanceReport(args) {
+  return {
+    family_id: "microstructure_imbalance_v1",
+    status: "unsupported_stream",
+    exchange: args.exchange,
+    symbol: args.symbol,
+    stream: args.stream,
+    window: `${args.start}..${args.end}`,
+    result: {
+      rows_produced: 0,
+      selected_cell: null,
+      label_counts: {},
+      pass_signal: false,
+    },
+  };
+}
+
+function buildUnsupportedMicrostructureImbalanceLabelReport(args) {
+  return {
+    family_id: "microstructure_imbalance_v1",
+    status: "unsupported_stream",
+    stream: args.stream,
+    label_counts: {},
+    pass_signal: false,
+    selected_label: null,
+  };
+}
+
+async function runMicrostructureImbalanceOnce({
+  args,
+  outRoot,
+  runDirName,
+  resultsPath,
+  summaryPath,
+  reportPath,
+  labelReportPath,
+}) {
+  const cmd = [
+    "python3 tools/hypotheses/microstructure_imbalance_v1.py",
+    `--exchange ${quoteBash(args.exchange)}`,
+    `--stream ${quoteBash(args.stream)}`,
+    `--symbol ${quoteBash(args.symbol)}`,
+    `--start ${quoteBash(args.start)}`,
+    `--end ${quoteBash(args.end)}`,
+    `--miDeltaMsList ${quoteBash(args.miDeltaMsList)}`,
+    `--miHMsList ${quoteBash(args.miHMsList)}`,
+    `--miPressureThresholdList ${quoteBash(args.miPressureThresholdList)}`,
+    `--miMinSupport ${quoteBash(args.miMinSupport)}`,
+    `--miMinEdgeBps ${quoteBash(args.miMinEdgeBps)}`,
+    `--miMinTStat ${quoteBash(args.miMinTStat)}`,
+    `--results-out ${quoteBash(resultsPath)}`,
+    `--summary-out ${quoteBash(summaryPath)}`,
+    `--report-out ${quoteBash(reportPath)}`,
+    `--label-report-out ${quoteBash(labelReportPath)}`,
+    `--downloads-dir ${quoteBash(args.downloadsDir || "")}`,
+    `--object-keys-tsv ${quoteBash(args.objectKeysTsv || "")}`,
+    `--exchange-order ${quoteBash(args.exchange || "")}`,
+  ].join(" ");
+  const run = await runTimedStep({
+    cwd: process.cwd(),
+    runDir: path.join(outRoot, "runs", runDirName),
+    commandBody: cmd,
+  });
+  return run;
+}
+
+async function parseFamilyMicrostructureImbalance({ args, outRoot }) {
+  const baseAbs = path.join(outRoot, "artifacts", "multi_hypothesis");
+  const primaryResultsPath = path.join(baseAbs, "family_microstructure_imbalance_primary_results.tsv");
+  const primarySummaryPath = path.join(baseAbs, "family_microstructure_imbalance_primary_summary.tsv");
+  const reportPath = path.join(baseAbs, "family_microstructure_imbalance_report.json");
+  const labelReportPath = path.join(baseAbs, "family_microstructure_imbalance_label_report.json");
+
+  const streamNorm = String(args.stream || "").trim().toLowerCase();
+  const supported = streamNorm === "trade" || streamNorm === "bbo";
+  const compareBasis = compareBasisFromHeader(MI_HEADER);
+
+  let primaryExitCode = 0;
+  let primaryRows = [];
+  if (!supported) {
+    await writeText(primaryResultsPath, `${MI_HEADER.join("\t")}\n`);
+    await writeText(primarySummaryPath, `${MI_HEADER.join("\t")}\n`);
+    await writeText(reportPath, `${JSON.stringify(buildUnsupportedMicrostructureImbalanceReport(args), null, 2)}\n`);
+    await writeText(labelReportPath, `${JSON.stringify(buildUnsupportedMicrostructureImbalanceLabelReport(args), null, 2)}\n`);
+  } else {
+    const primaryRun = await runMicrostructureImbalanceOnce({
+      args,
+      outRoot,
+      runDirName: "family_microstructure_imbalance_primary",
+      resultsPath: primaryResultsPath,
+      summaryPath: primarySummaryPath,
+      reportPath,
+      labelReportPath,
+    });
+    primaryExitCode = primaryRun.exitCode;
+    if (await fileExists(primaryResultsPath)) {
+      const primaryText = await fs.readFile(primaryResultsPath, "utf8");
+      primaryRows = parseMicrostructureImbalanceResults(primaryText);
+    }
+  }
+
+  const selected = pickMicrostructureImbalanceSelected(primaryRows);
+  const selectedMean = selected ? Number(selected.mean_signed_fwd_return_bps) : 0;
+  const selectedT = selected ? Number(selected.t_stat) : 0;
+  const selectedSupport = selected ? Number(selected.event_count) : 0;
+  const passSignal = supported
+    && selected != null
+    && selected.label === "DIRECTIONAL"
+    && selectedMean > 0;
+
+  const out = {
+    familyId: "microstructure_imbalance_v1",
+    exitCode: primaryExitCode,
+    reportRelpath: "artifacts/multi_hypothesis/family_microstructure_imbalance_report.json",
+    patternsScanned: primaryRows.length,
+    edgeCandidatesGenerated: primaryRows.filter((r) => r.label === "DIRECTIONAL").length,
+    edgesSaved: passSignal,
+    meanForwardReturn: fixed15(selectedMean),
+    tStat: fixed15(selectedT),
+    signalSupport: selectedSupport,
+    files: {
+      family_microstructure_imbalance_primary_results_relpath: "artifacts/multi_hypothesis/family_microstructure_imbalance_primary_results.tsv",
+      family_microstructure_imbalance_primary_summary_relpath: "artifacts/multi_hypothesis/family_microstructure_imbalance_primary_summary.tsv",
+      family_microstructure_imbalance_report_relpath: "artifacts/multi_hypothesis/family_microstructure_imbalance_report.json",
+      family_microstructure_imbalance_label_report_relpath: "artifacts/multi_hypothesis/family_microstructure_imbalance_label_report.json",
+    },
+    evidenceEntry: null,
+    evidenceDecision: selected
+      ? `family=microstructure_imbalance_v1,date=${selected.date},feature=${selected.feature},delta_ms=${selected.delta_ms},h_ms=${selected.h_ms},pressure_threshold=${selected.pressure_threshold},event_count=${selected.event_count},mean_signed_fwd_return_bps=${selected.mean_signed_fwd_return_bps},t_stat=${selected.t_stat},label=${selected.label}`
+      : "family=microstructure_imbalance_v1,selected_cell=NONE",
+  };
+
+  if (!args.evidenceOn) {
+    return out;
+  }
+
+  let replayRows = [];
+  let primaryHash = SKIPPED_HASH_PLACEHOLDER;
+  let replayHash = SKIPPED_HASH_PLACEHOLDER;
+  let determinismStatus = supported ? "FAIL" : "SKIPPED_UNSUPPORTED_STREAM";
+
+  if (supported) {
+    const replayResultsPath = path.join(outRoot, "runs", "family_microstructure_imbalance_replay_on", "results.tsv");
+    const replaySummaryPath = path.join(outRoot, "runs", "family_microstructure_imbalance_replay_on", "summary.tsv");
+    const replayReportPath = path.join(outRoot, "runs", "family_microstructure_imbalance_replay_on", "report.json");
+    const replayLabelReportPath = path.join(outRoot, "runs", "family_microstructure_imbalance_replay_on", "label_report.json");
+    await runMicrostructureImbalanceOnce({
+      args,
+      outRoot,
+      runDirName: "family_microstructure_imbalance_replay_on",
+      resultsPath: replayResultsPath,
+      summaryPath: replaySummaryPath,
+      reportPath: replayReportPath,
+      labelReportPath: replayLabelReportPath,
+    });
+
+    const primaryCanonical = primaryRows;
+    if (await fileExists(replayResultsPath)) {
+      const replayText = await fs.readFile(replayResultsPath, "utf8");
+      replayRows = parseMicrostructureImbalanceResults(replayText);
+    }
+
+    primaryHash = hashCanonicalRows(primaryCanonical);
+    replayHash = hashCanonicalRows(replayRows);
+    determinismStatus = primaryHash === replayHash ? "PASS" : "FAIL";
+  }
+
+  out.evidenceEntry = {
+    familyId: "microstructure_imbalance_v1",
+    primaryHash,
+    replayHash,
+    determinismStatus,
+    compareBasis,
+  };
+  out.determinismStatus = determinismStatus;
+  out.compareBasis = compareBasis;
+  return out;
+}
+
 function buildUnsupportedVolumeVolLinkReport(args) {
   return {
     family_id: "volume_vol_link_v1",
@@ -2007,6 +2274,16 @@ const FAMILY_TABLE = Object.freeze([
     evidenceEligible: true,
   },
   {
+    familyId: "microstructure_imbalance_v1",
+    kind: "hypothesis",
+    supportedStreams: ["trade", "bbo"],
+    headerConst: MI_HEADER,
+    compareBasis: compareBasisFromHeader(MI_HEADER),
+    parseFn: parseFamilyMicrostructureImbalance,
+    selectionFn: pickMicrostructureImbalanceSelected,
+    evidenceEligible: true,
+  },
+  {
     familyId: "volatility_clustering_v1",
     kind: "hypothesis",
     supportedStreams: ["trade", "mark_price"],
@@ -2061,6 +2338,7 @@ async function main() {
   let vcRow = null;
   let srRow = null;
   let momRow = null;
+  let miRow = null;
   let vvlRow = null;
   let jrRow = null;
   let evidenceFiles = null;
@@ -2075,6 +2353,7 @@ async function main() {
 
     rrRow = familyRowsById.get("return_reversal_v1") || null;
     momRow = familyRowsById.get("momentum_v1") || null;
+    miRow = familyRowsById.get("microstructure_imbalance_v1") || null;
     vcRow = familyRowsById.get("volatility_clustering_v1") || null;
     srRow = familyRowsById.get("spread_reversion_v1") || null;
     vvlRow = familyRowsById.get("volume_vol_link_v1") || null;
@@ -2138,6 +2417,10 @@ async function main() {
       family_momentum_primary_results_relpath: momRow && momRow.files ? momRow.files.family_momentum_primary_results_relpath : "",
       family_momentum_primary_summary_relpath: momRow && momRow.files ? momRow.files.family_momentum_primary_summary_relpath : "",
       family_momentum_report_relpath: momRow && momRow.files ? momRow.files.family_momentum_report_relpath : "",
+      family_microstructure_imbalance_primary_results_relpath: miRow && miRow.files ? miRow.files.family_microstructure_imbalance_primary_results_relpath : "",
+      family_microstructure_imbalance_primary_summary_relpath: miRow && miRow.files ? miRow.files.family_microstructure_imbalance_primary_summary_relpath : "",
+      family_microstructure_imbalance_report_relpath: miRow && miRow.files ? miRow.files.family_microstructure_imbalance_report_relpath : "",
+      family_microstructure_imbalance_label_report_relpath: miRow && miRow.files ? miRow.files.family_microstructure_imbalance_label_report_relpath : "",
       family_volatility_clustering_primary_results_relpath: vcRow && vcRow.files ? vcRow.files.family_volatility_clustering_primary_results_relpath : "",
       family_volatility_clustering_primary_summary_relpath: vcRow && vcRow.files ? vcRow.files.family_volatility_clustering_primary_summary_relpath : "",
       family_volatility_clustering_report_relpath: vcRow && vcRow.files ? vcRow.files.family_volatility_clustering_report_relpath : "",

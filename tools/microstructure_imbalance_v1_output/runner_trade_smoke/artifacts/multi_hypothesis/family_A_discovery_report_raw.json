@@ -1,0 +1,58 @@
+{
+  "step": "multi_day_discovery",
+  "timestamp": "2026-04-06T07:17:11.933Z",
+  "mode": "acceptance",
+  "exchange": "binance",
+  "stream": "trade",
+  "symbol": "ADA/USDT",
+  "symbolSlug": "adausdt",
+  "dateRange": {
+    "start": "20260127",
+    "end": "20260127",
+    "days": 1
+  },
+  "permutationTest": {
+    "enabled": true,
+    "source": "DEFAULT"
+  },
+  "heap": {
+    "requestedMB": 6144,
+    "heapLimitMB": 6192
+  },
+  "progressEvery": 1,
+  "diagnosticNotes": [
+    "artifact_created_for_diag: data/test/adausdt_20260204.parquet + data/test/adausdt_20260204_meta.json (pre-existing)",
+    "no_patterns: patterns_scanned=0 (scanner.minSupport=30 scanner.returnThreshold=0.0005)",
+    "note: threshold/config may be restrictive"
+  ],
+  "files": [
+    {
+      "date": "20260127",
+      "parquetPath": "/home/deploy/quantlab-cache/curated/exchange=binance/stream=trade/symbol=adausdt/date=20260127/data.parquet",
+      "metaPath": "/home/deploy/quantlab-cache/curated/exchange=binance/stream=trade/symbol=adausdt/date=20260127/meta.json",
+      "meta": {
+        "rows": 110219,
+        "schema_version": 1,
+        "stream_type": "trade",
+        "day_quality": "GOOD",
+        "sha256": "16c975f8a4a4a7745bddb05d71db08b8144e19fda2d1820d51bbdc8f5f7a3f1f"
+      }
+    }
+  ],
+  "metaRowsTotal": 110219,
+  "result": {
+    "patternsScanned": 0,
+    "patternsTestedSignificant": 0,
+    "edgeCandidatesGenerated": 0,
+    "edgeCandidatesRegistered": 0,
+    "edges": [],
+    "rejectedPatterns": [],
+    "metadata": {
+      "duration": 54750,
+      "dataRowCount": 0,
+      "regimesUsed": 4,
+      "filesLoaded": 1
+    }
+  },
+  "durationMs": 54751
+}

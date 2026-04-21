@@ -1,0 +1,5 @@
+exchange	symbol	date	stream	feature	delta_ms	h_ms	pressure_threshold	event_count	mean_abs_pressure	mean_signed_fwd_return_bps	t_stat	label
+binance	adausdt	20260127	trade	signed_trade_volume_imbalance	100	100	0.100000	109670	0.977684364892258	-0.789122058320454	-144.022881232779355	ANTI_EDGE
+binance	adausdt	20260127	trade	signed_trade_volume_imbalance	100	250	0.100000	109670	0.977684364892258	-0.809991105203051	-138.341035016012711	ANTI_EDGE
+binance	adausdt	20260127	trade	signed_trade_volume_imbalance	250	100	0.100000	109123	0.954496219052169	-0.677726040114017	-120.390730467216642	ANTI_EDGE
+binance	adausdt	20260127	trade	signed_trade_volume_imbalance	250	250	0.100000	109123	0.954496219052169	-0.700074317817996	-116.682946854823030	ANTI_EDGE

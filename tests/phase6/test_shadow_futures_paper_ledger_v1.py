@@ -881,6 +881,204 @@ class ShadowFuturesPaperLedgerV1Tests(unittest.TestCase):
             self.assertEqual(item["funding_windows"][0]["position_direction"], "SHORT")
             self.assertAlmostEqual(item["mark_to_market_pnl_quote_net_after_funding"], 2.058)
 
+    def test_microstructure_trade_context_flows_into_episode_summary_and_reversal(self):
+        with tempfile.TemporaryDirectory(prefix="shadow_futures_paper_trade_context_") as td:
+            root = Path(td)
+            history = root / "history.jsonl"
+            events = root / "events.jsonl"
+            bindings = root / "bindings.json"
+            out_json = root / "futures.json"
+            write_jsonl(
+                history,
+                [
+                    make_history_entry(
+                        observation_key="pack_ctx|run_1",
+                        observed_at="2026-03-09T00:06:00Z",
+                        pack_id="pack_ctx",
+                        live_run_id="run_1",
+                        symbols=["LINKUSDT"],
+                        execution_summary={
+                            "snapshot_present": True,
+                            "positions_count": 1,
+                            "fills_count": 2,
+                            "total_realized_pnl": 0.15,
+                            "total_unrealized_pnl": 0.0,
+                            "equity": 10000.15,
+                            "max_position_value": 25.0,
+                            "positions": {
+                                "LINKUSDT": {
+                                    "symbol": "LINKUSDT",
+                                    "size": -1.0,
+                                    "avg_entry_price": 25.2,
+                                    "realized_pnl": 0.15,
+                                    "unrealized_pnl": 0.0,
+                                    "current_price": 25.2,
+                                }
+                            },
+                        },
+                        execution_events=[],
+                    )
+                ],
+            )
+            write_jsonl(
+                events,
+                [
+                    {
+                        "schema_version": "shadow_execution_events_v1",
+                        "event_id": "pack_ctx|run_1|event|1",
+                        "observation_key": "pack_ctx|run_1",
+                        "observed_at": "2026-03-09T00:06:00Z",
+                        "selected_pack_id": "pack_ctx",
+                        "live_run_id": "run_1",
+                        "event_seq": 1,
+                        "event_type": "FILL",
+                        "ts_event": "1700000010000000000",
+                        "symbol": "LINKUSDT",
+                        "side": "BUY",
+                        "qty": 1.0,
+                        "fill_price": 25.0,
+                        "fill_fee": 0.01,
+                        "fill_value": 25.0,
+                        "reason": "",
+                        "trade_context": {
+                            "schema_version": "microstructure_trade_context_v0",
+                            "opening_trade": {
+                                "schema_version": "microstructure_trade_context_v0",
+                                "trade_sequence_id": 1,
+                                "entry_timestamp": "1700000010000000000",
+                                "entry_pressure": 0.28,
+                                "entry_abs_pressure": 0.28,
+                                "entry_threshold": 0.2,
+                                "exit_threshold": 0.1,
+                                "entry_side": "LONG",
+                                "entry_signal_reason": "LONG_ENTRY",
+                                "entry_selected_cell": {
+                                    "delta_ms": 100,
+                                    "h_ms": 500,
+                                    "pressure_threshold": 0.2,
+                                    "symbol": "LINKUSDT",
+                                    "exchange": "bybit",
+                                },
+                                "prior_position_side": "FLAT",
+                                "was_reversal_trade": False,
+                                "max_abs_pressure_seen_during_trade": 0.28,
+                                "min_abs_pressure_seen_during_trade": 0.28,
+                                "observation_count_during_trade": 1,
+                            },
+                        },
+                    },
+                    {
+                        "schema_version": "shadow_execution_events_v1",
+                        "event_id": "pack_ctx|run_1|event|2",
+                        "observation_key": "pack_ctx|run_1",
+                        "observed_at": "2026-03-09T00:06:00Z",
+                        "selected_pack_id": "pack_ctx",
+                        "live_run_id": "run_1",
+                        "event_seq": 2,
+                        "event_type": "FILL",
+                        "ts_event": "1700000016000000000",
+                        "symbol": "LINKUSDT",
+                        "side": "SELL",
+                        "qty": 2.0,
+                        "fill_price": 25.2,
+                        "fill_fee": 0.02,
+                        "fill_value": 50.4,
+                        "reason": "",
+                        "trade_context": {
+                            "schema_version": "microstructure_trade_context_v0",
+                            "closing_trade": {
+                                "schema_version": "microstructure_trade_context_v0",
+                                "trade_sequence_id": 1,
+                                "entry_timestamp": "1700000010000000000",
+                                "entry_pressure": 0.28,
+                                "entry_abs_pressure": 0.28,
+                                "entry_threshold": 0.2,
+                                "exit_threshold": 0.1,
+                                "entry_side": "LONG",
+                                "entry_signal_reason": "LONG_ENTRY",
+                                "entry_selected_cell": {
+                                    "delta_ms": 100,
+                                    "h_ms": 500,
+                                    "pressure_threshold": 0.2,
+                                    "symbol": "LINKUSDT",
+                                    "exchange": "bybit",
+                                },
+                                "prior_position_side": "LONG",
+                                "was_reversal_trade": False,
+                                "exit_timestamp": "1700000016000000000",
+                                "exit_pressure": -0.31,
+                                "exit_abs_pressure": 0.31,
+                                "exit_reason": "REVERSAL_EXIT",
+                                "hold_duration_ms": 6000,
+                                "max_abs_pressure_seen_during_trade": 0.33,
+                                "min_abs_pressure_seen_during_trade": 0.12,
+                                "pressure_decay_at_exit": -0.03,
+                                "observation_count_during_trade": 6,
+                            },
+                            "opening_trade": {
+                                "schema_version": "microstructure_trade_context_v0",
+                                "trade_sequence_id": 2,
+                                "entry_timestamp": "1700000016000000000",
+                                "entry_pressure": -0.31,
+                                "entry_abs_pressure": 0.31,
+                                "entry_threshold": 0.2,
+                                "exit_threshold": 0.1,
+                                "entry_side": "SHORT",
+                                "entry_signal_reason": "REVERSAL_ENTRY",
+                                "entry_selected_cell": {
+                                    "delta_ms": 100,
+                                    "h_ms": 500,
+                                    "pressure_threshold": 0.2,
+                                    "symbol": "LINKUSDT",
+                                    "exchange": "bybit",
+                                },
+                                "prior_position_side": "LONG",
+                                "was_reversal_trade": True,
+                                "max_abs_pressure_seen_during_trade": 0.31,
+                                "min_abs_pressure_seen_during_trade": 0.31,
+                                "observation_count_during_trade": 1,
+                            },
+                        },
+                    },
+                ],
+            )
+            write_json(
+                bindings,
+                {
+                    "schema_version": "candidate_strategy_runtime_binding_v0",
+                    "items": [make_binding_item(pack_id="pack_ctx", family_id="microstructure_imbalance_v1", binding_mode="PAPER_DIRECTIONAL_V1")],
+                },
+            )
+
+            res = self._run(
+                "--history-jsonl",
+                str(history),
+                "--execution-events-jsonl",
+                str(events),
+                "--binding-artifact",
+                str(bindings),
+                "--out-json",
+                str(out_json),
+            )
+            self.assertEqual(res.returncode, 0, msg=res.stderr)
+            item = json.loads(out_json.read_text(encoding="utf-8"))["items"][0]
+            self.assertEqual(len(item["episodes"]), 2)
+            first = item["episodes"][0]
+            second = item["episodes"][1]
+            self.assertEqual(first["trade_sequence_id"], 1)
+            self.assertEqual(first["entry_pressure"], 0.28)
+            self.assertEqual(first["exit_pressure"], -0.31)
+            self.assertEqual(first["exit_reason"], "REVERSAL_EXIT")
+            self.assertEqual(first["hold_duration_ms"], 6000)
+            self.assertEqual(first["entry_selected_cell"]["symbol"], "LINKUSDT")
+            self.assertAlmostEqual(first["gross_pnl"], 0.2)
+            self.assertAlmostEqual(first["fee_paid"], 0.02)
+            self.assertAlmostEqual(first["net_pnl"], 0.18)
+            self.assertEqual(second["trade_sequence_id"], 2)
+            self.assertEqual(second["entry_signal_reason"], "REVERSAL_ENTRY")
+            self.assertTrue(second["was_reversal_trade"])
+            self.assertEqual(second["entry_side"], "SHORT")
+
 
 if __name__ == "__main__":
     unittest.main()

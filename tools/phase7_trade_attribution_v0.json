@@ -1,0 +1,310 @@
+{
+  "authoritative_sources": {
+    "canonical_truth_registry_json": "/home/deploy/quantlab-backend/tools/system_state/canonical_truth_registry_v0.json",
+    "execution_events_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/01_linkusdt_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020/shadow_state/shadow_execution_events_v1.jsonl",
+    "execution_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/01_linkusdt_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020/shadow_state/shadow_execution_ledger_v0.jsonl",
+    "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/01_linkusdt_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020/shadow_state/shadow_futures_paper_ledger_v1.json",
+    "phase7_microstructure_shadow_result_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_result_v1.json",
+    "trade_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_v1_output/full_run/runs/01_linkusdt_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020/shadow_state/shadow_trade_ledger_v1.jsonl"
+  },
+  "data_availability": {
+    "entry_pressure_available": false,
+    "exit_pressure_available": false,
+    "pressure_bucket_analysis_available": false,
+    "reason": "entry/exit pressure is not persisted in the current Phase7 artifact surface"
+  },
+  "exchange": "bybit",
+  "family_id": "microstructure_imbalance_v1",
+  "final_verdict": {
+    "kill_vs_reshape": "RESHAPE",
+    "reason": "small subset carries majority of gross pnl and is near net neutral, but not directly actionable from current artifacts",
+    "verdict": "NARROW_SUBSET_SALVAGEABLE"
+  },
+  "generated_ts_utc": "2026-04-09T11:26:04Z",
+  "patterns": {
+    "best_duration_bucket_by_avg_gross_pnl": ">20s",
+    "high_pressure_reason": "NOT_AVAILABLE_IN_CURRENT_ARTIFACT_SURFACE",
+    "high_pressure_trades_consistently_better": null,
+    "short_duration_trades_mostly_negative_net": true,
+    "worst_duration_bucket_by_avg_net_pnl": "<1s"
+  },
+  "profit_concentration": {
+    "majority_gross_subset_fee_total": 1.3522208000000002,
+    "majority_gross_subset_gross_pnl_total": 1.3139999999999894,
+    "majority_gross_subset_net_pnl_total": -0.03822080000001067,
+    "majority_gross_subset_trade_count": 187,
+    "majority_gross_subset_trade_ratio": 0.08816595945308817,
+    "top_10pct_gross_pnl_share": 0.5429225486455704,
+    "top_10pct_net_pnl_total": -0.11735559999998764,
+    "top_10pct_trade_count": 213,
+    "top_20pct_gross_pnl_share": 0.8115223197253137,
+    "top_20pct_net_pnl_total": -0.9460939999999936,
+    "top_20pct_trade_count": 425,
+    "worst_50pct_gross_pnl_total": -0.45700000000005225,
+    "worst_50pct_net_pnl_total": -8.12808680000005,
+    "worst_50pct_trade_count": 1060
+  },
+  "salvage_test": {
+    "majority_gross_subset_net_pnl_total": -0.03822080000001067,
+    "majority_gross_subset_trade_ratio": 0.08816595945308817,
+    "rule": "subset carrying majority gross pnl must be <=30% of trades and net positive or near-neutral",
+    "salvageable": true
+  },
+  "schema_version": "phase7_trade_attribution_v0",
+  "segment_analysis": {
+    "duration_bucket": {
+      "1-5s": {
+        "avg_fee": 0.007231082696629206,
+        "avg_fee_ratio": 5.401419844327382,
+        "avg_gross_pnl": 0.0008550561797752501,
+        "avg_net_pnl": -0.006376026516853953,
+        "avg_pnl_per_ms": 3.437858037844952e-07,
+        "gross_pnl_share": 0.290347195726817,
+        "gross_pnl_total": 0.7609999999999726,
+        "net_pnl_total": -5.674663600000018,
+        "positive_gross_trade_rate": 0.45617977528089887,
+        "positive_net_trade_rate": 0.01348314606741573,
+        "trade_count": 890
+      },
+      "5-20s": {
+        "avg_fee": 0.007234872164948451,
+        "avg_fee_ratio": 4.811211220900664,
+        "avg_gross_pnl": 0.00156443298969072,
+        "avg_net_pnl": -0.005670439175257732,
+        "avg_pnl_per_ms": 1.7577654950832912e-07,
+        "gross_pnl_share": 0.46318199160626566,
+        "gross_pnl_total": 1.2139999999999986,
+        "net_pnl_total": -4.4002608,
+        "positive_gross_trade_rate": 0.6056701030927835,
+        "positive_net_trade_rate": 0.03608247422680412,
+        "trade_count": 776
+      },
+      "<1s": {
+        "avg_fee": 0.007232954687500005,
+        "avg_fee_ratio": 5.723280389131143,
+        "avg_gross_pnl": 0.0003867187499999522,
+        "avg_net_pnl": -0.006846235937500051,
+        "avg_pnl_per_ms": 5.868678650587067e-07,
+        "gross_pnl_share": 0.037771842808084585,
+        "gross_pnl_total": 0.09899999999998776,
+        "net_pnl_total": -1.752636400000013,
+        "positive_gross_trade_rate": 0.390625,
+        "positive_net_trade_rate": 0.01171875,
+        "trade_count": 256
+      },
+      ">20s": {
+        "avg_fee": 0.007238172864321609,
+        "avg_fee_ratio": 3.437069320782766,
+        "avg_gross_pnl": 0.0027487437185929144,
+        "avg_net_pnl": -0.004489429145728692,
+        "avg_pnl_per_ms": 9.077706308157467e-08,
+        "gross_pnl_share": 0.20869896985883274,
+        "gross_pnl_total": 0.5469999999999899,
+        "net_pnl_total": -0.8933964000000097,
+        "positive_gross_trade_rate": 0.7839195979899497,
+        "positive_net_trade_rate": 0.05527638190954774,
+        "trade_count": 199
+      }
+    },
+    "is_reversal": {
+      "false": {
+        "avg_fee": 0.007235242857142855,
+        "avg_gross_pnl": 0.003964285714285801,
+        "avg_net_pnl": -0.0032709571428570566,
+        "fee_total": 0.20258679999999996,
+        "gross_pnl_share": 0.04235024799694948,
+        "gross_pnl_total": 0.11100000000000243,
+        "net_pnl_total": -0.09158679999999758,
+        "trade_count": 28
+      },
+      "true": {
+        "avg_fee": 0.007233335117056858,
+        "avg_gross_pnl": 0.0011992355470616084,
+        "avg_net_pnl": -0.006034099569995255,
+        "fee_total": 15.139370400000002,
+        "gross_pnl_share": 0.9576497520030505,
+        "gross_pnl_total": 2.5099999999999465,
+        "net_pnl_total": -12.629370400000068,
+        "trade_count": 2093
+      }
+    },
+    "pressure_bucket": {
+      "status": "NOT_AVAILABLE_IN_CURRENT_ARTIFACT_SURFACE"
+    }
+  },
+  "source_phase7_metrics": {
+    "basic_pnl_proxy": {
+      "available": true,
+      "equity": 9987.2764172,
+      "pnl_interpretation": "ACTIVE_GAINING",
+      "total_realized_pnl": -12.724582800000078,
+      "total_unrealized_pnl": 0.0009999999999994458
+    },
+    "bounded_churn": true,
+    "cost_proxy": {
+      "available": true,
+      "cost_accounting_status": "NET_FEE_BACKED_MARK_TO_MARKET_FUNDING_AWARE",
+      "effective_fee_rate": 0.0004000000000000006,
+      "funding_cost_quote": 0.0,
+      "mark_to_market_pnl_quote_net_paid_fees": -12.723582800000083,
+      "note": "",
+      "paper_run_status": "FILL_BACKED_POSITION_OPEN",
+      "profitability_status": "NET_MARK_TO_MARKET_AFTER_FEES_FUNDING_AND_EXIT_ESTIMATE",
+      "total_fee_quote": 15.345582800000031
+    },
+    "decision_count": 2150,
+    "exit_count": 0,
+    "fill_count": 2150,
+    "fills_count_snapshot": 2150,
+    "heartbeat_count": 4028,
+    "heartbeat_seen": true,
+    "open_count": 1,
+    "positions_count": 1,
+    "processed_event_count": 53197,
+    "refresh_sync_ok": true,
+    "reversal_count": null,
+    "risk_reject_count": 863,
+    "run_duration_sec": 21600.483,
+    "stop_reason": "STREAM_END",
+    "trade_transitions": 1,
+    "trade_transitions_per_1k_events": 0.018798,
+    "verify_soft_live_pass": true
+  },
+  "source_shadow_paper_summary": {
+    "cost_accounting_status": "NET_FEE_BACKED_MARK_TO_MARKET_FUNDING_AWARE",
+    "funding_cost_quote": 0.0,
+    "profitability_status": "NET_MARK_TO_MARKET_AFTER_FEES_FUNDING_AND_EXIT_ESTIMATE",
+    "replayed_realized_pnl_quote_gross": 2.620999999999949,
+    "replayed_realized_pnl_quote_net": -12.724582800000082,
+    "total_fee_quote": 15.345582800000031
+  },
+  "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+  "symbol": "linkusdt",
+  "top_trade_samples": [
+    {
+      "duration_bucket": "<1s",
+      "duration_ms": 508.0,
+      "episode_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020|50cb9e7b-41e2-4935-9f8c-76a16abec92d|episode|454",
+      "fees": 0.007246800000000001,
+      "gross_pnl": 0.01699999999999946,
+      "is_reversal": false,
+      "net_pnl": 0.009753199999999459,
+      "side": "SHORT"
+    },
+    {
+      "duration_bucket": "1-5s",
+      "duration_ms": 3130.0,
+      "episode_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020|50cb9e7b-41e2-4935-9f8c-76a16abec92d|episode|127",
+      "fees": 0.0072584,
+      "gross_pnl": 0.016000000000000014,
+      "is_reversal": true,
+      "net_pnl": 0.008741600000000014,
+      "side": "SHORT"
+    },
+    {
+      "duration_bucket": ">20s",
+      "duration_ms": 29011.0,
+      "episode_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020|50cb9e7b-41e2-4935-9f8c-76a16abec92d|episode|404",
+      "fees": 0.00727,
+      "gross_pnl": 0.015000000000000568,
+      "is_reversal": true,
+      "net_pnl": 0.007730000000000568,
+      "side": "LONG"
+    },
+    {
+      "duration_bucket": "1-5s",
+      "duration_ms": 4746.0,
+      "episode_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020|50cb9e7b-41e2-4935-9f8c-76a16abec92d|episode|1756",
+      "fees": 0.0072332,
+      "gross_pnl": 0.014999999999998792,
+      "is_reversal": true,
+      "net_pnl": 0.007766799999998792,
+      "side": "LONG"
+    },
+    {
+      "duration_bucket": "5-20s",
+      "duration_ms": 8303.0,
+      "episode_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020|50cb9e7b-41e2-4935-9f8c-76a16abec92d|episode|1669",
+      "fees": 0.0072272000000000005,
+      "gross_pnl": 0.014000000000001123,
+      "is_reversal": true,
+      "net_pnl": 0.006772800000001122,
+      "side": "LONG"
+    }
+  ],
+  "trade_level_summary": {
+    "avg_duration_ms": 7850.2267798208395,
+    "avg_fee_per_trade": 0.007233360301744462,
+    "avg_gross_pnl_per_trade": 0.0012357378595002117,
+    "avg_net_pnl_per_trade": -0.005997622442244255,
+    "duration_ms_p90": 19316.0,
+    "fee_total": 15.341957200000005,
+    "gross_pnl_per_1k_events": 0.04926969565952871,
+    "gross_pnl_total": 2.620999999999949,
+    "median_duration_ms": 4421.0,
+    "median_fee_ratio": 7.207600000003994,
+    "median_gross_pnl_per_trade": 0.0009999999999994458,
+    "median_net_pnl_per_trade": -0.006261200000000555,
+    "negative_gross_trade_count": 460,
+    "negative_net_trade_count": 2067,
+    "net_pnl_per_1k_events": -0.23912922157264627,
+    "net_pnl_total": -12.720957200000065,
+    "positive_gross_trade_count": 1132,
+    "positive_net_trade_count": 54,
+    "trade_count": 2121,
+    "zero_gross_trade_count": 529,
+    "zero_net_trade_count": 0
+  },
+  "worst_trade_samples": [
+    {
+      "duration_bucket": "<1s",
+      "duration_ms": 592.0,
+      "episode_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020|50cb9e7b-41e2-4935-9f8c-76a16abec92d|episode|1757",
+      "fees": 0.0072432,
+      "gross_pnl": -0.009999999999999787,
+      "is_reversal": true,
+      "net_pnl": -0.017243199999999785,
+      "side": "SHORT"
+    },
+    {
+      "duration_bucket": "<1s",
+      "duration_ms": 501.0,
+      "episode_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020|50cb9e7b-41e2-4935-9f8c-76a16abec92d|episode|2080",
+      "fees": 0.0072332,
+      "gross_pnl": -0.006999999999999673,
+      "is_reversal": true,
+      "net_pnl": -0.014233199999999674,
+      "side": "SHORT"
+    },
+    {
+      "duration_bucket": "<1s",
+      "duration_ms": 763.0,
+      "episode_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020|50cb9e7b-41e2-4935-9f8c-76a16abec92d|episode|1808",
+      "fees": 0.0072207999999999994,
+      "gross_pnl": -0.004000000000001336,
+      "is_reversal": true,
+      "net_pnl": -0.011220800000001335,
+      "side": "SHORT"
+    },
+    {
+      "duration_bucket": "<1s",
+      "duration_ms": 509.0,
+      "episode_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020|50cb9e7b-41e2-4935-9f8c-76a16abec92d|episode|43",
+      "fees": 0.007272800000000001,
+      "gross_pnl": -0.0039999999999995595,
+      "is_reversal": true,
+      "net_pnl": -0.01127279999999956,
+      "side": "SHORT"
+    },
+    {
+      "duration_bucket": "<1s",
+      "duration_ms": 557.0,
+      "episode_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020|50cb9e7b-41e2-4935-9f8c-76a16abec92d|episode|410",
+      "fees": 0.007269600000000001,
+      "gross_pnl": -0.0039999999999995595,
+      "is_reversal": true,
+      "net_pnl": -0.01126959999999956,
+      "side": "LONG"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+  File "/usr/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: 'tools/phase7_medium_shadow_validation_output/dry_run_result_v0.json'
+Command exited with non-zero status 1
+	Command being timed: "python3 -"
+	User time (seconds): 0.07
+	System time (seconds): 0.02
+	Percent of CPU this job got: 85%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.11
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 26004
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 8
+	Minor (reclaiming a frame) page faults: 3493
+	Voluntary context switches: 8
+	Involuntary context switches: 17
+	Swaps: 0
+	File system inputs: 296
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1

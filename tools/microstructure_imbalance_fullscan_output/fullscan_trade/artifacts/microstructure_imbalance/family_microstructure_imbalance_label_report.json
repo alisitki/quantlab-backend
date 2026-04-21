@@ -1,0 +1,14 @@
+{
+  "criteria": {
+    "ANTI_EDGE": "event_count >= 200 and mean_signed_fwd_return_bps <= -0.2 and t_stat <= -2.0",
+    "DIRECTIONAL": "event_count >= 200 and mean_signed_fwd_return_bps >= 0.2 and t_stat >= 2.0",
+    "INSUFFICIENT_SUPPORT": "event_count < 200",
+    "NO_EDGE": "event_count >= 200 but no directional or anti-edge pass"
+  },
+  "family_id": "microstructure_imbalance_v1",
+  "label_counts": {
+    "ANTI_EDGE": 425,
+    "DIRECTIONAL": 1246,
+    "NO_EDGE": 1299
+  }
+}

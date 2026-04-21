@@ -728,6 +728,9 @@ export class StrategyRuntime extends EventEmitter {
     const normalizedSymbol = typeof intent?.symbol === 'string' ? intent.symbol.trim().toUpperCase() : '';
     const normalizedSide = typeof intent?.side === 'string' ? intent.side.trim().toUpperCase() : '';
     const normalizedQty = Number(intent?.qty);
+    const normalizedTradeContext = intent?.trade_context && typeof intent.trade_context === 'object'
+      ? JSON.parse(JSON.stringify(intent.trade_context))
+      : null;
     const hasIntentShape = Boolean(
       normalizedTsEvent &&
       normalizedSymbol &&
@@ -804,7 +807,8 @@ export class StrategyRuntime extends EventEmitter {
         side: normalizedSide || null,
         qty: Number.isFinite(normalizedQty) ? normalizedQty : null,
         risk_forced: Boolean(intent?._riskForced),
-        risk_reason: intent?._riskReason || null
+        risk_reason: intent?._riskReason || null,
+        ...(normalizedTradeContext ? { trade_context: normalizedTradeContext } : {})
       }
     });
     
@@ -852,7 +856,8 @@ export class StrategyRuntime extends EventEmitter {
           qty: fillQty,
           fill_price: fillPrice,
           fill_fee: Number.isFinite(fillFee) && fillFee >= 0 ? fillFee : null,
-          fill_value: Number.isFinite(fillValue) && fillValue > 0 ? fillValue : null
+          fill_value: Number.isFinite(fillValue) && fillValue > 0 ? fillValue : null,
+          ...(normalizedTradeContext ? { trade_context: normalizedTradeContext } : {})
         }
       });
     }

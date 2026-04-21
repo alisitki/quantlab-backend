@@ -1,0 +1,780 @@
+{
+  "classification_summary": {
+    "ARCHIVE": {
+      "bytes": 14406673992,
+      "count": 34,
+      "gib": 13.417
+    },
+    "DELETE": {
+      "bytes": 11825467521,
+      "count": 80,
+      "gib": 11.013
+    },
+    "KEEP": {
+      "bytes": 63187030292,
+      "count": 3255,
+      "gib": 58.848
+    },
+    "UNKNOWN": {
+      "bytes": 240,
+      "count": 1,
+      "gib": 0.0
+    }
+  },
+  "generated_at": "2026-04-04T08:58:42.311701Z",
+  "inventory_summary": {
+    "archive_root": {
+      "count": 28,
+      "total_bytes": 48825574112,
+      "total_gib": 45.472
+    },
+    "audit_outputs": {
+      "count": 7,
+      "total_bytes": 4304040,
+      "total_gib": 0.004
+    },
+    "repo_evidence": {
+      "count": 3314,
+      "total_bytes": 40334804091,
+      "total_gib": 37.565
+    },
+    "shadow_campaigns": {
+      "count": 21,
+      "total_bytes": 254489802,
+      "total_gib": 0.237
+    }
+  },
+  "latest_reports": {
+    "bighunt_batch": {
+      "age_hours": 5.196,
+      "decision_counts": {
+        "PROMOTE": 3
+      },
+      "final_status_counts": {
+        "DONE": 3
+      },
+      "finished_ts_utc": "2026-04-04T03:46:55Z",
+      "path": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_batch_report_20260404_034655.json",
+      "processed_count": 3,
+      "sample_processed": [
+        {
+          "archive_dir": "/home/deploy/quantlab-evidence-archive/20260404_slim/multi-hypothesis-phase5-bighunt-bybit-trade-20260403..20260403-20260404_034046-499dd1b0-t1__FULLSCAN_MAJOR",
+          "decision": "PROMOTE",
+          "elapsed_min": 1.7137,
+          "estimated_wall_min": 120.0,
+          "final_status": "DONE",
+          "lane_policy_applied": "DEFAULT",
+          "lane_policy_key": "bybit/trade",
+          "last_error": "",
+          "max_symbols_used": 20,
+          "max_wall_min_used": 120,
+          "per_run_timeout_min_used": 12,
+          "plan_id": "499dd1b0bb89615a80612f35d76965718b9820b187753e3ebb2b7c461f581d51",
+          "record_appended": "true",
+          "run_id": "multi-hypothesis-phase5-bighunt-bybit-trade-20260403..20260403-20260404_034046-499dd1b0-t1__FULLSCAN_MAJOR",
+          "selection_reason": "PENDING"
+        },
+        {
+          "archive_dir": "/home/deploy/quantlab-evidence-archive/20260404_slim/multi-hypothesis-phase5-bighunt-okx-bbo-20260403..20260403-20260404_034256-b6b316d7-t1__FULLSCAN_MAJOR",
+          "decision": "PROMOTE",
+          "elapsed_min": 1.555423,
+          "estimated_wall_min": 120.0,
+          "final_status": "DONE",
+          "lane_policy_applied": "DEFAULT",
+          "lane_policy_key": "okx/bbo",
+          "last_error": "",
+          "max_symbols_used": 20,
+          "max_wall_min_used": 120,
+          "per_run_timeout_min_used": 12,
+          "plan_id": "b6b316d7fba20c34df27a274c773294540beaf67be31ec46105e1f6097d8cdae",
+          "record_appended": "true",
+          "run_id": "multi-hypothesis-phase5-bighunt-okx-bbo-20260403..20260403-20260404_034256-b6b316d7-t1__FULLSCAN_MAJOR",
+          "selection_reason": "PENDING"
+        },
+        {
+          "archive_dir": "/home/deploy/quantlab-evidence-archive/20260404_slim/multi-hypothesis-phase5-bighunt-okx-trade-20260403..20260403-20260404_034452-9aa0122f-t1__FULLSCAN_MAJOR",
+          "decision": "PROMOTE",
+          "elapsed_min": 2.037811,
+          "estimated_wall_min": 120.0,
+          "final_status": "DONE",
+          "lane_policy_applied": "DEFAULT",
+          "lane_policy_key": "okx/trade",
+          "last_error": "",
+          "max_symbols_used": 20,
+          "max_wall_min_used": 120,
+          "per_run_timeout_min_used": 12,
+          "plan_id": "9aa0122fea39c9ba53e41d7dc918432812f1e655a641db23de97a9207da544c9",
+          "record_appended": "true",
+          "run_id": "multi-hypothesis-phase5-bighunt-okx-trade-20260403..20260403-20260404_034452-9aa0122f-t1__FULLSCAN_MAJOR",
+          "selection_reason": "PENDING"
+        }
+      ],
+      "started_ts_utc": "2026-04-04T03:40:46Z"
+    },
+    "nightly_orchestrator": {
+      "age_hours": 0.285,
+      "candidate": {
+        "candidate_count_total": 143,
+        "review_count": 143,
+        "strong_count": 41,
+        "top_class_priority": "2",
+        "top_pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584",
+        "top_review_class": "INSUFFICIENT_EVIDENCE",
+        "top_score": "83.268980"
+      },
+      "finished_ts_utc": "2026-04-04T08:41:36Z",
+      "inventory_refresh": {
+        "bytes": 0,
+        "exit_code": 0,
+        "state_path": "/tmp/compacted__state.json"
+      },
+      "path": "/home/deploy/quantlab-backend/tools/phase5_state/nightly_orchestrator_report_20260404_084136.json",
+      "planner": {
+        "added_count": 0,
+        "skipped_done_count": 0,
+        "skipped_existing_count": 0,
+        "windows_total": 0
+      },
+      "scheduler": {
+        "batch_report_path": "",
+        "done_count": 0,
+        "failed_count": 0,
+        "jobs_processed": 0,
+        "promote_new_count": 0
+      },
+      "shadow_refresh": {
+        "exit_code": "not_run",
+        "failed_step": "",
+        "result_json": "tools/shadow_state/shadow_derived_surface_refresh_v0.json",
+        "sync_ok": false
+      },
+      "started_ts_utc": "2026-04-04T08:41:36Z",
+      "status": "NOOP_OUTSIDE_ACTIVE_WINDOW"
+    }
+  },
+  "pipeline_health": {
+    "bighunt_scheduler": {
+      "age_hours": 5.196,
+      "final_status_counts": {
+        "DONE": 3
+      },
+      "finished_ts_utc": "2026-04-04T03:46:55Z",
+      "healthy": true,
+      "path": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_batch_report_20260404_034655.json",
+      "processed_count": 3
+    },
+    "candidate_contract": {
+      "age_hours": 451.488,
+      "generated_ts_utc": "2026-03-16T13:29:26Z",
+      "healthy": false,
+      "path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_contract_v0.json",
+      "source_row_count": 566
+    },
+    "candidate_review": {
+      "age_hours": 5.196,
+      "generated_ts_utc": "2026-04-04T03:46:55Z",
+      "healthy": true,
+      "path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review_v2.json",
+      "record_count": 143
+    },
+    "compacted_state": {
+      "expected_yesterday": "20260403",
+      "healthy": true,
+      "last_compacted_date": "20260403",
+      "path": "/home/deploy/quantlab-backend/tools/system_audit_output/compacted_state_snapshot.json",
+      "updated_at": "2026-04-04T03:36:04.401365Z"
+    },
+    "phase5_orchestrator": {
+      "age_hours": 0.285,
+      "finished_ts_utc": "2026-04-04T08:41:36Z",
+      "healthy": true,
+      "path": "/home/deploy/quantlab-backend/tools/phase5_state/nightly_orchestrator_report_20260404_084136.json",
+      "status": "NOOP_OUTSIDE_ACTIVE_WINDOW"
+    },
+    "runtime_binding": {
+      "age_hours": 451.487,
+      "generated_ts_utc": "2026-03-16T13:29:29Z",
+      "healthy": false,
+      "path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
+      "source_row_count": 566
+    },
+    "shadow_refresh": {
+      "age_hours": 5.196,
+      "generated_ts_utc": "2026-04-04T03:46:55Z",
+      "healthy": true,
+      "path": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_derived_surface_refresh_v0.json",
+      "sync_ok": true
+    },
+    "shadow_watchlist": {
+      "age_hours": 5.196,
+      "generated_ts_utc": "2026-04-04T03:46:55Z",
+      "healthy": true,
+      "items_count": 3,
+      "path": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_watchlist_v0.json"
+    }
+  },
+  "retention_dry_run": {
+    "keep_last": {
+      "delete_candidate_count": 452,
+      "exit_code": 0,
+      "sample_delete_prefixes": [
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-bybit-trade-20260319..20260319-20260320_170718-2ab3429c-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-bybit-bbo-20260319..20260319-20260320_033426-c5d22ce5-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260319..20260319-20260320_030426-3d38af39-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260319..20260319-20260320_023425-54134ae0-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-okx-trade-20260318..20260318-20260319_035908-9a5fbea5-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-okx-bbo-20260318..20260318-20260319_033240-903529d4-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-bybit-trade-20260318..20260318-20260319_032906-bd74a3ff-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-bybit-bbo-20260318..20260318-20260319_030449-d65f84fc-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260318..20260318-20260319_030216-3283093c-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260318..20260318-20260319_025905-93cdfb67-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-okx-trade-20260317..20260317-20260318_173242-f7b9fd9e-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-okx-bbo-20260317..20260317-20260318_172936-df61aab3-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-bybit-trade-20260317..20260317-20260318_172546-6e207aa9-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-bybit-bbo-20260317..20260317-20260318_035507-50da5c15-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260317..20260317-20260318_035107-6ebd1ae6-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260317..20260317-20260318_025106-5010f845-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-okx-trade-20260316..20260316-20260317_172654-66a3d524-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-okx-bbo-20260316..20260316-20260317_172441-66fd79dd-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-bybit-trade-20260316..20260316-20260317_172131-da345a0f-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-bybit-bbo-20260316..20260316-20260317_172019-dab01ee1-t1__FULLSCAN_MAJOR"
+      ],
+      "stderr_path": "/home/deploy/quantlab-backend/tools/system_audit_output/prune_keep_last_dry_run.err",
+      "stdout_path": "/home/deploy/quantlab-backend/tools/system_audit_output/prune_keep_last_dry_run.txt",
+      "summary": {
+        "skipped_incomplete": 0,
+        "slim_triples_deleted": 452,
+        "slim_triples_kept": 50
+      }
+    },
+    "unpacked": {
+      "delete_candidate_count": 0,
+      "exit_code": 2,
+      "orphan_count": 12,
+      "sample_delete_dirs": [],
+      "sample_orphan_dirs": [
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_115119-4bc2f481-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260104..20260105-20260305_082717__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_082727__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_102112-a1512783-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_135701-a1512783-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_135717-a1512783-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260227-20260305_150914-51538807-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260227-20260306_061149-e2e1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260302-20260305_200000-0263d91f-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260302-20260305_200000-0263d91f-t2__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094239-d5dbd181-t1__FULLSCAN_MAJOR",
+        "/home/deploy/quantlab-backend/evidence/state-selection-proof-20260305_071230__FULLSCAN_MAJOR"
+      ],
+      "stderr_path": "/home/deploy/quantlab-backend/tools/system_audit_output/prune_unpacked_dry_run.err",
+      "stdout_path": "/home/deploy/quantlab-backend/tools/system_audit_output/prune_unpacked_dry_run.txt",
+      "summary": {
+        "deleted_dirs": 0,
+        "orphan_dirs": 12
+      }
+    }
+  },
+  "state_reference_scan": {
+    "referenced_unit_count": 450,
+    "sample_referenced_units": [
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260104..20260104-20260306_113828-2df022fc-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260104..20260104-20260306_113828-2df022fc-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260104..20260104-20260306_113828-2df022fc-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 3,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_115119-4bc2f481-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_115119-4bc2f481-t1__FULLSCAN_MAJOR/campaign_report.json;stderr_tail=",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_115119-4bc2f481-t1__FULLSCAN_MAJOR/campaign_report.json;stderr_tail=",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_batch_report_20260306_121420.json"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_115119-4bc2f481-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_171526-4bc2f481-t2__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_171526-4bc2f481-t2__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_171526-4bc2f481-t2__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260106..20260106-20260306_174654-d209a712-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260106..20260106-20260306_174654-d209a712-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260106..20260106-20260306_174654-d209a712-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260107..20260107-20260306_181424-1efae99f-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260107..20260107-20260306_181424-1efae99f-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260107..20260107-20260306_181424-1efae99f-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260108..20260108-20260306_183318-6046ce37-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260108..20260108-20260306_183318-6046ce37-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260108..20260108-20260306_183318-6046ce37-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260109..20260109-20260306_185806-440f07cc-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260109..20260109-20260306_185806-440f07cc-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260109..20260109-20260306_185806-440f07cc-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260110..20260110-20260306_191204-345c74a2-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260110..20260110-20260306_191204-345c74a2-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260110..20260110-20260306_191204-345c74a2-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260111..20260111-20260306_192002-8035def9-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260111..20260111-20260306_192002-8035def9-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260111..20260111-20260306_192002-8035def9-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260112..20260112-20260306_192758-ee447b35-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260112..20260112-20260306_192758-ee447b35-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260112..20260112-20260306_192758-ee447b35-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260114..20260114-20260306_194928-1c711d60-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260114..20260114-20260306_194928-1c711d60-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260114..20260114-20260306_194928-1c711d60-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260115..20260115-20260306_202051-c8c778dc-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260115..20260115-20260306_202051-c8c778dc-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260115..20260115-20260306_202051-c8c778dc-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260116..20260116-20260306_204749-f6cecc7d-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260116..20260116-20260306_204749-f6cecc7d-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260116..20260116-20260306_204749-f6cecc7d-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260117..20260117-20260306_205929-f0bba16a-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260117..20260117-20260306_205929-f0bba16a-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260117..20260117-20260306_205929-f0bba16a-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260118..20260118-20260306_210650-27d6b9da-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260118..20260118-20260306_210650-27d6b9da-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260118..20260118-20260306_210650-27d6b9da-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260119..20260119-20260306_211518-5c8343d4-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260119..20260119-20260306_211518-5c8343d4-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260119..20260119-20260306_211518-5c8343d4-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260121..20260121-20260306_212904-d1cb9802-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260121..20260121-20260306_212904-d1cb9802-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260121..20260121-20260306_212904-d1cb9802-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260122..20260122-20260306_215930-e6276eaf-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260122..20260122-20260306_215930-e6276eaf-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260122..20260122-20260306_215930-e6276eaf-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260123..20260123-20260306_222317-04333db5-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260123..20260123-20260306_222317-04333db5-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260123..20260123-20260306_222317-04333db5-t1__FULLSCAN_MAJOR"
+      },
+      {
+        "reference_count": 2,
+        "sample_references": [
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260124..20260124-20260306_224433-eb46ae1e-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json"
+          },
+          {
+            "raw_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260124..20260124-20260306_224433-eb46ae1e-t1__FULLSCAN_MAJOR/state_selection/object_keys_selected.tsv",
+            "state_file": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_queue.jsonl"
+          }
+        ],
+        "unit_path": "/home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260124..20260124-20260306_224433-eb46ae1e-t1__FULLSCAN_MAJOR"
+      }
+    ],
+    "state_files_with_refs": 250
+  },
+  "state_surfaces": {
+    "bighunt_index": {
+      "latest_created_ts_utc": "2026-04-04T03:40:46Z",
+      "latest_updated_ts_utc": "2026-04-04T03:46:55Z",
+      "path": "/home/deploy/quantlab-backend/tools/phase5_state/bighunt_index.json",
+      "record_count": 1252,
+      "status_counts": {
+        "DONE": 415,
+        "FAILED": 1,
+        "PENDING": 0,
+        "RUNNING": 0
+      }
+    },
+    "candidate_review_v2": {
+      "age_hours": 5.196,
+      "class_counts": {
+        "INSUFFICIENT_EVIDENCE": 1,
+        "NO_SIGNAL": 4,
+        "OBSERVE_ONLY": 13,
+        "UNRUNNABLE": 67,
+        "UNSEEN": 55,
+        "WEAK": 3
+      },
+      "generated_ts_utc": "2026-04-04T03:46:55Z",
+      "path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review_v2.json",
+      "record_count": 143,
+      "top_candidate": {
+        "class_priority": "2",
+        "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584",
+        "review_class": "INSUFFICIENT_EVIDENCE",
+        "score": "83.268980"
+      }
+    },
+    "candidate_strategy_contract_v0": {
+      "age_hours": 451.488,
+      "generated_ts_utc": "2026-03-16T13:29:26Z",
+      "items_count": 566,
+      "path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_contract_v0.json",
+      "source_candidate_review_tsv": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review_v2.tsv",
+      "source_row_count": 566
+    },
+    "candidate_strategy_runtime_binding_v0": {
+      "age_hours": 451.487,
+      "generated_ts_utc": "2026-03-16T13:29:29Z",
+      "items_count": 566,
+      "path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
+      "source_candidate_strategy_contract_json": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_contract_v0.json",
+      "source_row_count": 566
+    },
+    "compacted_state": {
+      "bucket": "quantlab-compact",
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/s3_compact_tool.py",
+        "get",
+        "quantlab-compact",
+        "compacted/_state.json",
+        "/home/deploy/quantlab-backend/tools/system_audit_output/compacted_state_snapshot.json"
+      ],
+      "days_count": 19,
+      "exit_code": 0,
+      "key": "compacted/_state.json",
+      "last_compacted_date": "20260403",
+      "partitions_count": 9432,
+      "snapshot_path": "/home/deploy/quantlab-backend/tools/system_audit_output/compacted_state_snapshot.json",
+      "status": "OK",
+      "tool_path": "/tmp/s3_compact_tool.py",
+      "updated_at": "2026-04-04T03:36:04.401365Z"
+    },
+    "promotion_index": {
+      "mtime_utc": "2026-04-04T03:46:55.658184Z",
+      "path": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_index.json",
+      "promote_pack_count": 143,
+      "promote_strong_pack_count": 41,
+      "record_count": 844
+    },
+    "shadow_refresh": {
+      "age_hours": 5.196,
+      "failed_step": "",
+      "generated_ts_utc": "2026-04-04T03:46:55Z",
+      "path": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_derived_surface_refresh_v0.json",
+      "skip_candidate_review": true,
+      "status_counts": {
+        "OK": 10,
+        "SKIPPED": 1
+      },
+      "sync_ok": true
+    },
+    "shadow_watchlist": {
+      "age_hours": 5.196,
+      "generated_ts_utc": "2026-04-04T03:46:55Z",
+      "items_count": 3,
+      "path": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_watchlist_v0.json",
+      "source": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review_v2.tsv",
+      "source_binding_artifact_json": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_runtime_binding_v0.json"
+    }
+  },
+  "status": "OK",
+  "stop_reasons": [],
+  "truth_sources": {
+    "active_paths": {
+      "active_service_path": {
+        "entrypoints": [
+          "services/replayd/routes/stream.js",
+          "services/strategyd/routes/live.routes.js",
+          "core/scheduler/run_daily_prod.js"
+        ],
+        "note": "Service and ML lanes remain in-repo but are not the default hypothesis->shadow execution path.",
+        "status": "PRESENT_BUT_NOT_DEFAULT_CRITICAL_PATH"
+      },
+      "active_tool_path": {
+        "entrypoint": "tools/phase5_nightly_orchestrator_v0.py",
+        "note": "Current default operator-facing path for phase5 -> phase6 -> shadow refresh."
+      },
+      "current_critical_path": [
+        "s3://quantlab-compact/compacted/_state.json",
+        "tools/phase5_big_hunt_scheduler_v1.py",
+        "pack/state_selection/object_keys_selected.tsv",
+        "tools/phase5_big_hunt_v0.py or tools/run-multi-hypothesis.js",
+        "tools/phase6_state/promotion_index.json",
+        "tools/phase6_candidate_export_v0.py -> tools/phase6_state/candidate_index.json",
+        "tools/phase6_candidate_review_v2.py -> tools/phase6_state/candidate_review_v2.tsv",
+        "tools/shadow_candidate_bridge_v0.py -> tools/shadow_state/shadow_watchlist_v0.json",
+        "tools/run-shadow-observation-batch-v0.py -> tools/shadow_state/shadow_observation_history_v0.jsonl",
+        "tools/refresh-shadow-derived-surfaces-v0.py -> tools/shadow_state/shadow_execution_pack_summary_v0.json",
+        "tools/run-shadow-watchlist-v0.js",
+        "tools/run-soft-live.js",
+        "core/strategy/live/LiveStrategyRunner.js"
+      ],
+      "not_in_current_critical_path": [
+        {
+          "path": "tools/run-bound-shadow-launch-v0.py",
+          "reason": "One-shot bound launch helper, not the global shadow subset path."
+        },
+        {
+          "path": "tools/run-momentum-continuous-shadow-session-v1.py",
+          "reason": "Family-specific continuous session lane."
+        },
+        {
+          "path": "services/strategyd/scripts/runTwin.js",
+          "reason": "Replay parity/validation helper."
+        },
+        {
+          "path": "services/strategyd/scripts/runTriad.js",
+          "reason": "Replay parity/validation helper."
+        },
+        {
+          "path": "core/scheduler/run_daily_prod.js",
+          "reason": "Parallel ML production scheduler lane."
+        }
+      ]
+    },
+    "canonical_registry_age_hours": 451.49,
+    "canonical_registry_error": null,
+    "canonical_registry_generated_ts_utc": "2026-03-16T13:29:19Z",
+    "canonical_registry_path": "/home/deploy/quantlab-backend/tools/system_state/canonical_truth_registry_v0.json",
+    "sources": [
+      {
+        "authoritative": "s3://quantlab-compact/compacted/_state.json",
+        "concept": "compacted_state",
+        "confidence": "HIGH",
+        "local_snapshot": "/home/deploy/quantlab-backend/tools/system_audit_output/compacted_state_snapshot.json"
+      },
+      {
+        "authoritative": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review_v2.json",
+        "concept": "candidate_review",
+        "confidence": "HIGH"
+      },
+      {
+        "authoritative": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_index.json",
+        "concept": "promotion_index",
+        "confidence": "MEDIUM"
+      },
+      {
+        "authoritative": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_watchlist_v0.json",
+        "concept": "active_shadow_subset",
+        "confidence": "HIGH"
+      },
+      {
+        "authoritative": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_derived_surface_refresh_v0.json",
+        "concept": "shadow_refresh_status",
+        "confidence": "HIGH"
+      },
+      {
+        "authoritative": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
+        "concept": "runtime_binding",
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "candidate_review_generated_ts_utc": "2026-04-04T03:46:55Z",
+      "code": "STALE_RUNTIME_BINDING",
+      "note": "Shadow watchlist refresh is newer than runtime binding; binding artifact may lag current candidate review.",
+      "runtime_binding_age_hours": 451.487,
+      "runtime_binding_generated_ts_utc": "2026-03-16T13:29:29Z",
+      "severity": "WARN"
+    },
+    {
+      "candidate_contract_age_hours": 451.488,
+      "candidate_contract_generated_ts_utc": "2026-03-16T13:29:26Z",
+      "candidate_review_generated_ts_utc": "2026-04-04T03:46:55Z",
+      "code": "STALE_CANDIDATE_CONTRACT",
+      "severity": "WARN"
+    },
+    {
+      "code": "WATCHLIST_BINDING_EPOCH_MISMATCH",
+      "runtime_binding_generated_ts_utc": "2026-03-16T13:29:29Z",
+      "severity": "WARN",
+      "watchlist_generated_ts_utc": "2026-04-04T03:46:55Z"
+    }
+  ]
+}

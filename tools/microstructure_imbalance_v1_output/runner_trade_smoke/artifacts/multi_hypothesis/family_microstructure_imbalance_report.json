@@ -1,0 +1,60 @@
+{
+  "family_id": "microstructure_imbalance_v1",
+  "status": "ok",
+  "exchange": "binance",
+  "symbol": "adausdt",
+  "stream": "trade",
+  "window": "20260127..20260127",
+  "params": {
+    "delta_ms_list": [
+      100
+    ],
+    "h_ms_list": [
+      100
+    ],
+    "pressure_threshold_list": [
+      0.1
+    ],
+    "min_support": 200,
+    "min_edge_bps": 0.2,
+    "min_t_stat": 2.0,
+    "tolerance_ms": 0
+  },
+  "inputs": {
+    "parquet_relpaths": [
+      "data/curated/exchange=binance/stream=trade/symbol=adausdt/date=20260127/data.parquet"
+    ],
+    "day_status_counts": {
+      "ok": 1
+    }
+  },
+  "mechanism": {
+    "trade": "signed short-window aggressive volume pressure followed by signed forward return",
+    "bbo": "top-of-book size imbalance pressure followed by signed forward mid return"
+  },
+  "result": {
+    "rows_produced": 1,
+    "selected_cell": {
+      "exchange": "binance",
+      "symbol": "adausdt",
+      "date": "20260127",
+      "stream": "trade",
+      "feature": "signed_trade_volume_imbalance",
+      "delta_ms": 100,
+      "h_ms": 100,
+      "pressure_threshold": 0.1,
+      "event_count": 109670,
+      "mean_abs_pressure": 0.977684364892258,
+      "mean_signed_fwd_return_bps": -0.789122058320454,
+      "t_stat": -144.02288123277935,
+      "label": "ANTI_EDGE"
+    },
+    "label_counts": {
+      "ANTI_EDGE": 1
+    },
+    "pass_signal": false
+  },
+  "files": {
+    "label_report_relpath": "/home/deploy/quantlab-backend/tools/microstructure_imbalance_v1_output/runner_trade_smoke/artifacts/multi_hypothesis/family_microstructure_imbalance_label_report.json"
+  }
+}

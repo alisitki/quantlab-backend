@@ -7,6 +7,7 @@
   - `volatility_clustering_v1`
   - `spread_reversion_v1`
   - `momentum_v1`
+  - `microstructure_imbalance_v1`
   - `volume_vol_link_v1`
   - `jump_reversion_v1`
 - input:
@@ -21,5 +22,6 @@
   - VolatilityClustering-v1: selected cell must satisfy `corr > 0`, `t_stat >= 2`, `sample_count >= 200`
   - SpreadReversion-v1: selected cell must satisfy `mean_product < 0`, `t_stat <= -2`, `event_count >= 200`
   - Momentum-v1: selected cell must satisfy `mean_product > 0`, `t_stat >= 2`, `event_count >= 200`
+  - MicrostructureImbalance-v1: selected cell must satisfy `label == DIRECTIONAL`, `mean_signed_fwd_return_bps > 0`, `t_stat >= 2`, `event_count >= 200`
   - VolumeVolLink-v1: selected cell must satisfy `corr > 0`, `t_stat >= 2`, `sample_count >= 200`
   - JumpReversion-v1: selected cell must satisfy `mean_signed_reversal > 0`, `t_stat >= 2`, `jump_count >= 200`

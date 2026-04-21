@@ -1,0 +1,33 @@
+{
+  "generated_ts_utc": "2026-04-10T07:22:49Z",
+  "latest_by_pack_id": {
+    "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2": {
+      "last_execution_summary": {
+        "equity": 10000.0,
+        "fills_count": 0,
+        "max_position_value": 0.0,
+        "positions": {},
+        "positions_count": 0,
+        "snapshot_present": true,
+        "total_realized_pnl": 0.0,
+        "total_unrealized_pnl": 0.0
+      },
+      "last_live_run_id": "6d3af82a-ec37-4615-b6da-64dca6382a6d",
+      "last_observed_at": "2026-04-10T07:22:49Z",
+      "last_processed_event_count": 8801,
+      "last_stop_reason": "STREAM_END",
+      "last_verify_soft_live_pass": true,
+      "observation_count": 1,
+      "selected_pack_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2"
+    }
+  },
+  "observation_keys": [
+    "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2|6d3af82a-ec37-4615-b6da-64dca6382a6d"
+  ],
+  "pack_count": 1,
+  "pack_ids": [
+    "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2"
+  ],
+  "record_count": 1,
+  "schema_version": "shadow_observation_index_v0"
+}

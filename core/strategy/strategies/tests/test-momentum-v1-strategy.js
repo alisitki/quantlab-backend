@@ -54,6 +54,15 @@ function makeConfigWithOverrides(overrides = {}) {
   };
 }
 
+function makeNormalizedConfig(overrides = {}) {
+  return makeConfigWithOverrides({
+    target_quote_notional: 10.275,
+    qty_round_decimals: 8,
+    min_order_qty: 0.00000001,
+    ...(overrides || {}),
+  });
+}
+
 
 function makeContext({ currentSize = 0 } = {}) {
   const orders = [];
@@ -179,7 +188,7 @@ test('MomentumV1Strategy derives deterministic confidence buckets and thresholds
         },
       }),
       expectedRatio: 1.5,
-      expectedThreshold: 10,
+      expectedThreshold: 15,
     },
     {
       name: 'MEDIUM',
@@ -190,7 +199,7 @@ test('MomentumV1Strategy derives deterministic confidence buckets and thresholds
         },
       }),
       expectedRatio: 6,
-      expectedThreshold: 7.5,
+      expectedThreshold: 15,
     },
     {
       name: 'HIGH',
@@ -201,7 +210,7 @@ test('MomentumV1Strategy derives deterministic confidence buckets and thresholds
         },
       }),
       expectedRatio: 20,
-      expectedThreshold: 5,
+      expectedThreshold: 15,
     },
   ];
 
@@ -246,15 +255,15 @@ test('MomentumV1Strategy does not open on weak LOW-confidence signal below thres
   assert.equal(ctx.orders.length, 0);
   const state = strategy.getState();
   assert.equal(state.confidence_bucket, 'LOW');
-  assert.equal(state.required_abs_past_return_bps, 10);
+  assert.equal(state.required_abs_past_return_bps, 15);
   assert.equal(state.last_signal.signal_direction, 'LONG');
-  assert.equal(state.last_signal.required_abs_past_return_bps, 10);
+  assert.equal(state.last_signal.required_abs_past_return_bps, 15);
   assert.equal(state.last_signal.min_edge_passed, false);
   assert.equal(state.last_action.action, 'STAY_FLAT');
   assert.equal(state.last_action.min_edge_passed, false);
 });
 
-test('MomentumV1Strategy opens on strong HIGH-confidence signal above reduced threshold', async () => {
+test('MomentumV1Strategy blocks high-confidence signal below full fee-floor threshold', async () => {
   const strategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
     config: makeConfigWithOverrides({
       selected_cell: {
@@ -280,12 +289,47 @@ test('MomentumV1Strategy opens on strong HIGH-confidence signal above reduced th
     price: 100.06,
   }, ctx);
 
+  assert.equal(ctx.orders.length, 0);
+  const state = strategy.getState();
+  assert.equal(state.confidence_bucket, 'HIGH');
+  assert.equal(state.required_abs_past_return_bps, 15);
+  assert.equal(state.last_signal.required_abs_past_return_bps, 15);
+  assert.equal(state.last_signal.min_edge_passed, false);
+  assert.equal(state.last_action.action, 'STAY_FLAT');
+});
+
+test('MomentumV1Strategy opens on strong HIGH-confidence signal above full fee-floor threshold', async () => {
+  const strategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
+    config: makeConfigWithOverrides({
+      selected_cell: {
+        event_count: 5000,
+        t_stat: 40.0,
+      },
+    }),
+    autoAdapt: true,
+  });
+  const ctx = makeContext();
+  await strategy.onInit?.(ctx);
+
+  await strategy.onEvent({
+    ts_event: 1_700_000_000_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 100,
+  }, ctx);
+  await strategy.onEvent({
+    ts_event: 1_700_000_005_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 100.16,
+  }, ctx);
+
   assert.equal(ctx.orders.length, 1);
   assert.equal(ctx.orders[0].signal_action, 'LONG_OPEN');
   const state = strategy.getState();
   assert.equal(state.confidence_bucket, 'HIGH');
-  assert.equal(state.required_abs_past_return_bps, 5);
-  assert.equal(state.last_signal.required_abs_past_return_bps, 5);
+  assert.equal(state.required_abs_past_return_bps, 15);
+  assert.equal(state.last_signal.required_abs_past_return_bps, 15);
   assert.equal(state.last_signal.min_edge_passed, true);
   assert.equal(state.last_action.action, 'LONG_OPEN');
 });
@@ -326,7 +370,7 @@ test('MomentumV1Strategy closes long on neutral signal without active commit hor
   assert.equal(state.last_action.action, 'LONG_CLOSE');
 });
 
-test('MomentumV1Strategy blocks weak opposite reversal signals below confidence-adjusted threshold', async () => {
+test('MomentumV1Strategy blocks weak opposite reversal signals below full fee-floor threshold', async () => {
   const strategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
     config: makeConfigWithOverrides({
       selected_cell: {
@@ -355,9 +399,9 @@ test('MomentumV1Strategy blocks weak opposite reversal signals below confidence-
   assert.equal(ctx.orders.length, 0);
   const state = strategy.getState();
   assert.equal(state.confidence_bucket, 'MEDIUM');
-  assert.equal(state.required_abs_past_return_bps, 7.5);
+  assert.equal(state.required_abs_past_return_bps, 15);
   assert.equal(state.last_signal.signal_direction, 'SHORT');
-  assert.equal(state.last_signal.required_abs_past_return_bps, 7.5);
+  assert.equal(state.last_signal.required_abs_past_return_bps, 15);
   assert.equal(state.last_signal.min_edge_passed, false);
   assert.equal(state.last_action.action, 'HOLD_LONG');
 });
@@ -575,6 +619,152 @@ test('MomentumV1Strategy clears stale commit horizon after external flatten', as
   const state = strategy.getState();
   assert.equal(state.last_action.action, 'SHORT_OPEN');
   assert.equal(state.commit_until_ts_event, '1700000006500000000');
+});
+
+test('MomentumV1Strategy derives normalized qty from target quote notional instead of fixed orderQty', async () => {
+  const strategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
+    config: makeNormalizedConfig({
+      symbols: ['bnbusdt'],
+      selected_cell: {
+        exchange: 'binance',
+        stream: 'trade',
+        symbol: 'bnbusdt',
+      },
+      orderQty: 7,
+    }),
+    autoAdapt: true,
+  });
+  const ctx = makeContext();
+  await strategy.onInit?.(ctx);
+
+  await strategy.onEvent({
+    ts_event: 1_700_000_000_000_000_000n,
+    symbol: 'BNBUSDT',
+    stream: 'trade',
+    price: 675.78,
+  }, ctx);
+  await strategy.onEvent({
+    ts_event: 1_700_000_005_000_000_000n,
+    symbol: 'BNBUSDT',
+    stream: 'trade',
+    price: 676.90,
+  }, ctx);
+
+  assert.equal(ctx.orders.length, 1);
+  assert.equal(ctx.orders[0].signal_action, 'LONG_OPEN');
+  assert.equal(ctx.orders[0].qty, 0.01517949);
+  const state = strategy.getState();
+  assert.equal(state.sizing_mode, 'TARGET_QUOTE_NOTIONAL');
+});
+
+test('MomentumV1Strategy normalized sizing produces larger qty for lower-priced symbols', async () => {
+  const highPriceStrategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
+    config: makeNormalizedConfig({
+      symbols: ['bnbusdt'],
+      selected_cell: {
+        exchange: 'binance',
+        stream: 'trade',
+        symbol: 'bnbusdt',
+      },
+    }),
+    autoAdapt: true,
+  });
+  const lowPriceStrategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
+    config: makeNormalizedConfig({
+      symbols: ['adausdt'],
+      selected_cell: {
+        exchange: 'binance',
+        stream: 'trade',
+        symbol: 'adausdt',
+      },
+    }),
+    autoAdapt: true,
+  });
+  const highCtx = makeContext();
+  const lowCtx = makeContext();
+  await highPriceStrategy.onInit?.(highCtx);
+  await lowPriceStrategy.onInit?.(lowCtx);
+
+  await highPriceStrategy.onEvent({
+    ts_event: 1_700_000_000_000_000_000n,
+    symbol: 'BNBUSDT',
+    stream: 'trade',
+    price: 675.78,
+  }, highCtx);
+  await highPriceStrategy.onEvent({
+    ts_event: 1_700_000_005_000_000_000n,
+    symbol: 'BNBUSDT',
+    stream: 'trade',
+    price: 676.90,
+  }, highCtx);
+
+  await lowPriceStrategy.onEvent({
+    ts_event: 1_700_000_000_000_000_000n,
+    symbol: 'ADAUSDT',
+    stream: 'trade',
+    price: 0.2915,
+  }, lowCtx);
+  await lowPriceStrategy.onEvent({
+    ts_event: 1_700_000_005_000_000_000n,
+    symbol: 'ADAUSDT',
+    stream: 'trade',
+    price: 0.2925,
+  }, lowCtx);
+
+  assert.equal(highCtx.orders.length, 1);
+  assert.equal(lowCtx.orders.length, 1);
+  assert.ok(lowCtx.orders[0].qty > highCtx.orders[0].qty);
+  assert.equal(lowCtx.orders[0].qty, 35.12820512);
+});
+
+test('MomentumV1Strategy keeps close and reversal semantics under normalized sizing', async () => {
+  const strategy = await StrategyLoader.loadFromFile(STRATEGY_PATH, {
+    config: makeNormalizedConfig(),
+    autoAdapt: true,
+  });
+  const ctx = makeContext({ currentSize: 0.1 });
+  await strategy.onInit?.(ctx);
+
+  await strategy.onEvent({
+    ts_event: 1_700_000_000_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 100,
+  }, ctx);
+  await strategy.onEvent({
+    ts_event: 1_700_000_005_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 100,
+  }, ctx);
+
+  assert.equal(ctx.orders.length, 1);
+  assert.deepEqual(ctx.orders[0], {
+    symbol: 'BTCUSDT',
+    side: 'SELL',
+    qty: 0.1,
+    action: 'EXIT_LONG',
+    position_effect: 'CLOSE',
+    signal_action: 'LONG_CLOSE',
+  });
+
+  ctx.setSize(0.1);
+  await strategy.onEvent({
+    ts_event: 1_700_000_006_000_000_000n,
+    symbol: 'BTCUSDT',
+    stream: 'trade',
+    price: 99,
+  }, ctx);
+
+  assert.equal(ctx.orders.length, 2);
+  assert.deepEqual(ctx.orders[1], {
+    symbol: 'BTCUSDT',
+    side: 'SELL',
+    qty: 0.20378787,
+    action: 'EXIT_LONG',
+    position_effect: 'REVERSE',
+    signal_action: 'LONG_TO_SHORT_REVERSAL',
+  });
 });
 
 

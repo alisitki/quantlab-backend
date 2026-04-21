@@ -1,0 +1,13 @@
+{
+  "family_id": "spread_reversion_v1",
+  "status": "unsupported_stream",
+  "exchange": "binance",
+  "symbol": "adausdt",
+  "stream": "trade",
+  "window": "20260127..20260127",
+  "result": {
+    "rows_produced": 0,
+    "selected_cell": null,
+    "pass_signal": false
+  }
+}

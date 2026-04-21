@@ -118,6 +118,20 @@ CLASSIFICATION = {
             "primary-runtime path expectation."
         ),
     },
+    "microstructure_imbalance_v1": {
+        "role": PRIMARY_DIRECTIONAL,
+        "rationale": (
+            "Microstructure-imbalance-v1 measures whether signed short-window trade pressure or top-book "
+            "size imbalance is followed by signed short-horizon return (`mean_signed_fwd_return_bps`, `t_stat`)."
+        ),
+        "strategy_translation_eligibility": "PRIMARY_DIRECTIONAL_SPEC_READY_RUNTIME_NOT_BOUND",
+        "runtime_binding_eligibility": "NO_RUNTIME_BINDING_FOR_FAMILY",
+        "paper_execution_eligibility": "PRIMARY_DIRECTIONAL_BUT_NOT_IMPLEMENTED",
+        "next_path": (
+            "Keep in Phase5/6 discovery until repeated gross-positive evidence exists, then add a family-specific "
+            "runtime contract rather than reusing momentum/reversal semantics."
+        ),
+    },
     "volume_vol_link_v1": {
         "role": CONTEXT_GUARD,
         "rationale": (
@@ -158,6 +172,10 @@ HYPOTHESIS_SOURCE_PATHS = {
     "volatility_clustering_v1": ["tools/hypotheses/volatility_clustering_v1.py"],
     "spread_reversion_v1": ["tools/hypotheses/spread_reversion_v1.py"],
     "momentum_v1": ["tools/hypotheses/momentum_v1.py"],
+    "microstructure_imbalance_v1": [
+        "tools/hypotheses/microstructure_imbalance_v1.py",
+        "tools/hypotheses/microstructure_imbalance_v1.json",
+    ],
     "volume_vol_link_v1": ["tools/hypotheses/volume_vol_link_v1.py"],
     "jump_reversion_v1": ["tools/hypotheses/jump_reversion_v1.py"],
 }
@@ -415,7 +433,7 @@ def build_payload(
         "current_multi_hypothesis_family_ids": family_ids,
         "repo_extra_hypothesis_ids": extra_repo_family_ids,
         "repo_reality_note": (
-            "Current repo reality contains eight family ids in tools/hypotheses/README.md; "
+            f"Current repo reality contains {len(family_ids)} family ids in tools/hypotheses/README.md; "
             "latency_leadlag_v1 exists in repo code but is outside the current multi-hypothesis contract and candidate pack surface."
         ),
         "role_bucket_definitions": ROLE_BUCKET_DEFINITIONS,

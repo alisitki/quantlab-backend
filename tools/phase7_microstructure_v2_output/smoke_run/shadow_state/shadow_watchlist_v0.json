@@ -1,0 +1,200 @@
+{
+  "schema_version": "shadow_watchlist_v0",
+  "generated_ts_utc": "2026-04-10T07:22:49Z",
+  "source": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_review_v2.tsv",
+  "source_binding_artifact_json": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_runtime_binding_v0.json",
+  "source_candidate_index_json": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_index.json",
+  "source_promotion_index_json": "/home/deploy/quantlab-backend/tools/phase6_state/promotion_index.json",
+  "governance": {
+    "surface_role": "ACTIVE_SHADOW_SUBSET",
+    "authoritative_scope": "Current global shadow observation/live-paper subset.",
+    "authoritative_source_ref": "tools/system_state/canonical_truth_registry_v0.json",
+    "produced_by": [
+      "tools/shadow_candidate_bridge_v0.py"
+    ],
+    "consumed_by": [
+      "tools/run-shadow-observation-batch-v0.py",
+      "tools/run-shadow-watchlist-v0.js",
+      "tools/shadow_operator_snapshot_v0.py"
+    ],
+    "not_authoritative_for": [
+      "candidate strategy runtime binding",
+      "one-shot bound launch selection",
+      "continuous session state"
+    ],
+    "notes": [
+      "Ranks packs for observation/live-paper coverage.",
+      "This surface may omit family_id; use runtime binding or registry for family/runtime truth."
+    ]
+  },
+  "selection_policy": {
+    "top_n": 3,
+    "authoritative_review_fields": [
+      "review_class",
+      "class_priority"
+    ],
+    "binding_priority_order": [
+      "BOUND_DIRECTIONAL_PRIORITY",
+      "BOUND_OBSERVE_ONLY",
+      "UNBOUND_CANDIDATE"
+    ],
+    "tier_priority": [
+      "PROMOTE_STRONG",
+      "PROMOTE"
+    ],
+    "sort": [
+      "review_class_priority",
+      "binding_priority",
+      "decision_tier_priority",
+      "score_desc",
+      "source_review_rank_asc",
+      "pack_path_asc"
+    ],
+    "diversity_slots": [
+      "bybit/bbo",
+      "binance/bbo",
+      "*/trade"
+    ]
+  },
+  "items": [
+    {
+      "rank": 1,
+      "selection_slot": "*/trade",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260306_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR",
+      "decision_tier": "PROMOTE_STRONG",
+      "score": "83.268980",
+      "source_review_rank": "1",
+      "review_class": "INSUFFICIENT_EVIDENCE",
+      "class_priority": "2",
+      "exchange": "binance",
+      "stream": "trade",
+      "symbols": [
+        "btcusdt"
+      ],
+      "binding_priority_bucket": "BOUND_DIRECTIONAL_PRIORITY",
+      "binding_status": "BOUND_SHADOW_RUNNABLE",
+      "binding_family_id": "momentum_v1",
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "binding_strategy_id": "candidate_strategy::momentum_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584::btcusdt",
+      "binding_reason": "",
+      "context_flags": "MARK=PASS;FUNDING=PASS;OI=PASS",
+      "watch_status": "ACTIVE",
+      "observed_before": false,
+      "observation_count": 0,
+      "last_observed_at": "",
+      "last_verify_soft_live_pass": "unknown",
+      "last_stop_reason": "",
+      "last_processed_event_count": "unknown",
+      "last_observation_age_hours": "unknown",
+      "observation_recency_bucket": "NEVER_OBSERVED",
+      "observation_last_outcome_short": "NO_HISTORY",
+      "observation_attention_flag": "false",
+      "observation_status": "NEW",
+      "next_action_hint": "READY_TO_OBSERVE",
+      "reobserve_status": "NOT_OBSERVED",
+      "recent_observation_trail": "",
+      "last_pnl_state": "UNKNOWN",
+      "pnl_interpretation": "UNKNOWN",
+      "pnl_attention_flag": "false",
+      "latest_realized_sign": "UNKNOWN",
+      "latest_unrealized_sign": "UNKNOWN",
+      "notes": ""
+    },
+    {
+      "rank": 2,
+      "selection_slot": "*/trade",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260319..20260319-20260320_030426-3d38af39-t1__FULLSCAN_MAJOR__454d24ef9317cf38da2d2f4cb772feada78677886b487f243fff6c8b413f0fa9",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260320_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260319..20260319-20260320_030426-3d38af39-t1__FULLSCAN_MAJOR",
+      "decision_tier": "PROMOTE",
+      "score": "58.950093",
+      "source_review_rank": "2",
+      "review_class": "UNSEEN",
+      "class_priority": "3",
+      "exchange": "binance",
+      "stream": "trade",
+      "symbols": [
+        "adausdt",
+        "avaxusdt",
+        "bnbusdt"
+      ],
+      "binding_priority_bucket": "BOUND_DIRECTIONAL_PRIORITY",
+      "binding_status": "BOUND_SHADOW_RUNNABLE",
+      "binding_family_id": "momentum_v1",
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "binding_strategy_id": "candidate_strategy::momentum_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260319..20260319-20260320_030426-3d38af39-t1__FULLSCAN_MAJOR__454d24ef9317cf38da2d2f4cb772feada78677886b487f243fff6c8b413f0fa9::bnbusdt",
+      "binding_reason": "",
+      "context_flags": "MARK=WARN;FUNDING=PASS;OI=PASS",
+      "watch_status": "ACTIVE",
+      "observed_before": false,
+      "observation_count": 0,
+      "last_observed_at": "",
+      "last_verify_soft_live_pass": "unknown",
+      "last_stop_reason": "",
+      "last_processed_event_count": "unknown",
+      "last_observation_age_hours": "unknown",
+      "observation_recency_bucket": "NEVER_OBSERVED",
+      "observation_last_outcome_short": "NO_HISTORY",
+      "observation_attention_flag": "false",
+      "observation_status": "NEW",
+      "next_action_hint": "READY_TO_OBSERVE",
+      "reobserve_status": "NOT_OBSERVED",
+      "recent_observation_trail": "",
+      "last_pnl_state": "UNKNOWN",
+      "pnl_interpretation": "UNKNOWN",
+      "pnl_attention_flag": "false",
+      "latest_realized_sign": "UNKNOWN",
+      "latest_unrealized_sign": "UNKNOWN",
+      "notes": ""
+    },
+    {
+      "rank": 3,
+      "selection_slot": "overall_fill",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260320..20260320-20260321_030929-15e9bc29-t1__FULLSCAN_MAJOR__1170d59992ab4feabbd9b8e024379e30335f6dbc512953641847489a8adce808",
+      "pack_path": "/home/deploy/quantlab-evidence-archive/20260321_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260320..20260320-20260321_030929-15e9bc29-t1__FULLSCAN_MAJOR",
+      "decision_tier": "PROMOTE",
+      "score": "58.947507",
+      "source_review_rank": "3",
+      "review_class": "UNSEEN",
+      "class_priority": "3",
+      "exchange": "binance",
+      "stream": "trade",
+      "symbols": [
+        "adausdt",
+        "avaxusdt",
+        "bnbusdt",
+        "linkusdt",
+        "ltcusdt",
+        "solusdt"
+      ],
+      "binding_priority_bucket": "BOUND_DIRECTIONAL_PRIORITY",
+      "binding_status": "BOUND_SHADOW_RUNNABLE",
+      "binding_family_id": "momentum_v1",
+      "binding_mode": "PAPER_DIRECTIONAL_V1",
+      "binding_strategy_id": "candidate_strategy::momentum_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260320..20260320-20260321_030929-15e9bc29-t1__FULLSCAN_MAJOR__1170d59992ab4feabbd9b8e024379e30335f6dbc512953641847489a8adce808::bnbusdt",
+      "binding_reason": "",
+      "context_flags": "MARK=WARN;FUNDING=PASS;OI=PASS",
+      "watch_status": "ACTIVE",
+      "observed_before": false,
+      "observation_count": 0,
+      "last_observed_at": "",
+      "last_verify_soft_live_pass": "unknown",
+      "last_stop_reason": "",
+      "last_processed_event_count": "unknown",
+      "last_observation_age_hours": "unknown",
+      "observation_recency_bucket": "NEVER_OBSERVED",
+      "observation_last_outcome_short": "NO_HISTORY",
+      "observation_attention_flag": "false",
+      "observation_status": "NEW",
+      "next_action_hint": "READY_TO_OBSERVE",
+      "reobserve_status": "NOT_OBSERVED",
+      "recent_observation_trail": "",
+      "last_pnl_state": "UNKNOWN",
+      "pnl_interpretation": "UNKNOWN",
+      "pnl_attention_flag": "false",
+      "latest_realized_sign": "UNKNOWN",
+      "latest_unrealized_sign": "UNKNOWN",
+      "notes": ""
+    }
+  ]
+}

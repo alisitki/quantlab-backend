@@ -21,6 +21,7 @@ class RunMultiHypothesisGlueContractTests(unittest.TestCase):
                 "family_b_simple_momentum",
                 "return_reversal_v1",
                 "momentum_v1",
+                "microstructure_imbalance_v1",
                 "volatility_clustering_v1",
                 "spread_reversion_v1",
                 "volume_vol_link_v1",
@@ -45,12 +46,12 @@ class RunMultiHypothesisGlueContractTests(unittest.TestCase):
         self.assertIn('const SKIPPED_HASH_PLACEHOLDER = "-";', text)
         self.assertIsNone(re.search(r'const compareBasis = "exchange,', text))
 
-        for header_name in ("RR_HEADER", "MOM_HEADER", "VC_HEADER", "SR_HEADER", "VVL_HEADER", "JR_HEADER"):
+        for header_name in ("RR_HEADER", "MOM_HEADER", "MI_HEADER", "VC_HEADER", "SR_HEADER", "VVL_HEADER", "JR_HEADER"):
             self.assertIn(f"compareBasisFromHeader({header_name})", text)
 
         self.assertIn('status.startsWith("SKIPPED_")', text)
-        self.assertGreaterEqual(text.count("let primaryHash = SKIPPED_HASH_PLACEHOLDER;"), 6)
-        self.assertGreaterEqual(text.count("let replayHash = SKIPPED_HASH_PLACEHOLDER;"), 6)
+        self.assertGreaterEqual(text.count("let primaryHash = SKIPPED_HASH_PLACEHOLDER;"), 7)
+        self.assertGreaterEqual(text.count("let replayHash = SKIPPED_HASH_PLACEHOLDER;"), 7)
 
 
 if __name__ == "__main__":

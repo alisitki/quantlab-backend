@@ -1,0 +1,17 @@
+{
+  "schema_version": "shadow_execution_outcome_review_v0",
+  "generated_ts_utc": "2026-04-10T07:22:49Z",
+  "source_rollup_snapshot": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_rollup_snapshot_v0.json",
+  "rollup_snapshot_generated_ts_utc": "2026-04-10T07:22:49Z",
+  "selected_count": 1,
+  "items": [
+    {
+      "selected_pack_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2",
+      "last_observed_at": "2026-04-10T07:22:49Z",
+      "outcome_class": "STABLE_FLAT",
+      "latest_vs_recent_consistency": "CONSISTENT",
+      "outcome_attention_flag": "false",
+      "outcome_review_short": "latest and recent outcomes both lean flat"
+    }
+  ]
+}

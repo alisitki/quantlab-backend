@@ -1,8 +1,8 @@
 {
   "schema_version": "shadow_execution_review_queue_v0",
-  "generated_ts_utc": "2026-03-17T03:43:48Z",
+  "generated_ts_utc": "2026-04-21T03:35:15Z",
   "source_operator_snapshot": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_operator_snapshot_v0.json",
-  "operator_snapshot_generated_ts_utc": "2026-03-17T03:43:48Z",
+  "operator_snapshot_generated_ts_utc": "2026-04-21T03:35:15Z",
   "selected_count": 3,
   "items": [
     {
@@ -18,7 +18,7 @@
     {
       "review_rank": 2,
       "source_rank": 2,
-      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260319..20260319-20260320_030426-3d38af39-t1__FULLSCAN_MAJOR__454d24ef9317cf38da2d2f4cb772feada78677886b487f243fff6c8b413f0fa9",
       "trend_class": "NO_HISTORY",
       "trend_direction": "UNKNOWN",
       "trend_attention_flag": "false",
@@ -28,7 +28,7 @@
     {
       "review_rank": 3,
       "source_rank": 3,
-      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260311..20260311-20260312_031855-3d7d91e3-t1__FULLSCAN_MAJOR__0fe810c645a6a50eb85b94740698acd0af4478f1c442ed3fd0c0c083b18169b3",
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260320..20260320-20260321_030929-15e9bc29-t1__FULLSCAN_MAJOR__1170d59992ab4feabbd9b8e024379e30335f6dbc512953641847489a8adce808",
       "trend_class": "NO_HISTORY",
       "trend_direction": "UNKNOWN",
       "trend_attention_flag": "false",

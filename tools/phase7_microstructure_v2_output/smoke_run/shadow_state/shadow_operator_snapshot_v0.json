@@ -1,0 +1,91 @@
+{
+  "schema_version": "shadow_operator_snapshot_v0",
+  "generated_ts_utc": "2026-04-10T07:22:49Z",
+  "source_watchlist": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_watchlist_v0.json",
+  "watchlist_generated_ts_utc": "2026-04-10T07:22:49Z",
+  "selected_count": 3,
+  "items": [
+    {
+      "rank": 1,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260108..20260108-20260306_184349-5fa7ecc7-t1__FULLSCAN_MAJOR__96d23b6476b1b9c5a90003f0e78a0ee8569ab92b8c0eca58352c953e9c5a0584",
+      "decision_tier": "PROMOTE_STRONG",
+      "score": "83.268980",
+      "exchange": "binance",
+      "stream": "trade",
+      "symbols": [
+        "btcusdt"
+      ],
+      "observation_status": "NEW",
+      "next_action_hint": "READY_TO_OBSERVE",
+      "reobserve_status": "NOT_OBSERVED",
+      "observation_last_outcome_short": "NO_HISTORY",
+      "pnl_interpretation": "UNKNOWN",
+      "pnl_attention_flag": "false",
+      "latest_realized_sign": "UNKNOWN",
+      "latest_unrealized_sign": "UNKNOWN",
+      "outcome_class": "UNKNOWN",
+      "latest_vs_recent_consistency": "UNKNOWN",
+      "outcome_attention_flag": "false",
+      "outcome_review_short": "",
+      "recent_observation_trail": "",
+      "combined_status_short": "NEW/UNKNOWN"
+    },
+    {
+      "rank": 2,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260319..20260319-20260320_030426-3d38af39-t1__FULLSCAN_MAJOR__454d24ef9317cf38da2d2f4cb772feada78677886b487f243fff6c8b413f0fa9",
+      "decision_tier": "PROMOTE",
+      "score": "58.950093",
+      "exchange": "binance",
+      "stream": "trade",
+      "symbols": [
+        "adausdt",
+        "avaxusdt",
+        "bnbusdt"
+      ],
+      "observation_status": "NEW",
+      "next_action_hint": "READY_TO_OBSERVE",
+      "reobserve_status": "NOT_OBSERVED",
+      "observation_last_outcome_short": "NO_HISTORY",
+      "pnl_interpretation": "UNKNOWN",
+      "pnl_attention_flag": "false",
+      "latest_realized_sign": "UNKNOWN",
+      "latest_unrealized_sign": "UNKNOWN",
+      "outcome_class": "UNKNOWN",
+      "latest_vs_recent_consistency": "UNKNOWN",
+      "outcome_attention_flag": "false",
+      "outcome_review_short": "",
+      "recent_observation_trail": "",
+      "combined_status_short": "NEW/UNKNOWN"
+    },
+    {
+      "rank": 3,
+      "pack_id": "multi-hypothesis-phase5-bighunt-binance-trade-20260320..20260320-20260321_030929-15e9bc29-t1__FULLSCAN_MAJOR__1170d59992ab4feabbd9b8e024379e30335f6dbc512953641847489a8adce808",
+      "decision_tier": "PROMOTE",
+      "score": "58.947507",
+      "exchange": "binance",
+      "stream": "trade",
+      "symbols": [
+        "adausdt",
+        "avaxusdt",
+        "bnbusdt",
+        "linkusdt",
+        "ltcusdt",
+        "solusdt"
+      ],
+      "observation_status": "NEW",
+      "next_action_hint": "READY_TO_OBSERVE",
+      "reobserve_status": "NOT_OBSERVED",
+      "observation_last_outcome_short": "NO_HISTORY",
+      "pnl_interpretation": "UNKNOWN",
+      "pnl_attention_flag": "false",
+      "latest_realized_sign": "UNKNOWN",
+      "latest_unrealized_sign": "UNKNOWN",
+      "outcome_class": "UNKNOWN",
+      "latest_vs_recent_consistency": "UNKNOWN",
+      "outcome_attention_flag": "false",
+      "outcome_review_short": "",
+      "recent_observation_trail": "",
+      "combined_status_short": "NEW/UNKNOWN"
+    }
+  ]
+}

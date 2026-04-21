@@ -51,7 +51,15 @@ def make_pack(
             write_json(report_dir / f"family_{suffix}_report.json", report)
 
 
-def supported_report(*, family_id: str, exchange: str, stream: str, symbol: str, pass_signal: bool = True) -> dict:
+def supported_report(
+    *,
+    family_id: str,
+    exchange: str,
+    stream: str,
+    symbol: str,
+    pass_signal: bool = True,
+    include_pass_signal: bool = False,
+) -> dict:
     report = {
         "family_id": family_id,
         "status": "ok",
@@ -79,6 +87,8 @@ def supported_report(*, family_id: str, exchange: str, stream: str, symbol: str,
                 "t_stat": 4.0 if pass_signal else -4.0,
             }
         )
+        report["result"]["pass_signal"] = pass_signal
+    elif include_pass_signal:
         report["result"]["pass_signal"] = pass_signal
     return report
 
@@ -272,15 +282,15 @@ class CandidateStrategyContractV0Tests(unittest.TestCase):
                 reports_by_symbol={
                     "bnbusdt": [
                         supported_report(
-                            family_id="spread_reversion_v1",
-                            exchange="bybit",
-                            stream="bbo",
+                            family_id="volume_vol_link_v1",
+                            exchange="binance",
+                            stream="trade",
                             symbol="bnbusdt",
                         ),
                         supported_report(
-                            family_id="jump_reversion_v1",
-                            exchange="bybit",
-                            stream="bbo",
+                            family_id="volatility_clustering_v1",
+                            exchange="binance",
+                            stream="trade",
                             symbol="bnbusdt",
                         ),
                     ]
@@ -297,6 +307,92 @@ class CandidateStrategyContractV0Tests(unittest.TestCase):
             item = payload["items"][0]
             self.assertEqual(item["translation_status"], "NOT_TRANSLATABLE_YET")
             self.assertEqual(item["reject_reason"], "MULTIPLE_SUPPORTED_FAMILY_REPORTS")
+
+    def test_runtime_priority_resolves_multi_supported_pack_when_global_preference_missing(self):
+        with tempfile.TemporaryDirectory(prefix="candidate_strategy_runtime_priority_") as td:
+            root = Path(td)
+            pack = root / "pack_runtime_priority"
+            make_pack(
+                pack,
+                symbols=["btcusdt"],
+                reports_by_symbol={
+                    "btcusdt": [
+                        supported_report(
+                            family_id="return_reversal_v1",
+                            exchange="binance",
+                            stream="trade",
+                            symbol="btcusdt",
+                            include_pass_signal=True,
+                            pass_signal=True,
+                        ),
+                        supported_report(
+                            family_id="volatility_clustering_v1",
+                            exchange="binance",
+                            stream="trade",
+                            symbol="btcusdt",
+                        ),
+                    ]
+                },
+            )
+            candidate_review_tsv = root / "candidate_review.tsv"
+            out_json = root / "candidate_strategy_contract.json"
+            write_candidate_review_tsv(candidate_review_tsv, [make_row(1, "pack_runtime_priority", pack)])
+
+            res = self._run("--candidate-review-tsv", str(candidate_review_tsv), "--out-json", str(out_json))
+
+            self.assertEqual(res.returncode, 0, msg=res.stderr)
+            payload = json.loads(out_json.read_text(encoding="utf-8"))
+            item = payload["items"][0]
+            self.assertEqual(item["translation_status"], "TRANSLATABLE")
+            self.assertEqual(item["selected_family_id"], "return_reversal_v1")
+            self.assertEqual(item["strategy_spec"]["family_id"], "return_reversal_v1")
+
+    def test_microstructure_imbalance_has_runtime_priority_over_legacy_momentum(self):
+        with tempfile.TemporaryDirectory(prefix="candidate_strategy_microstructure_priority_") as td:
+            root = Path(td)
+            pack = root / "pack_microstructure_priority"
+            make_pack(
+                pack,
+                symbols=["btcusdt"],
+                reports_by_symbol={
+                    "btcusdt": [
+                        supported_report(
+                            family_id="momentum_v1",
+                            exchange="binance",
+                            stream="trade",
+                            symbol="btcusdt",
+                            pass_signal=True,
+                        ),
+                        supported_report(
+                            family_id="microstructure_imbalance_v1",
+                            exchange="binance",
+                            stream="trade",
+                            symbol="btcusdt",
+                            include_pass_signal=True,
+                            pass_signal=True,
+                        ),
+                    ]
+                },
+            )
+            candidate_review_tsv = root / "candidate_review.tsv"
+            out_json = root / "candidate_strategy_contract.json"
+            write_candidate_review_tsv(candidate_review_tsv, [make_row(1, "pack_microstructure_priority", pack)])
+
+            res = self._run(
+                "--candidate-review-tsv",
+                str(candidate_review_tsv),
+                "--family-selection-json",
+                str(root / "missing_family_selection.json"),
+                "--out-json",
+                str(out_json),
+            )
+
+            self.assertEqual(res.returncode, 0, msg=res.stderr)
+            payload = json.loads(out_json.read_text(encoding="utf-8"))
+            item = payload["items"][0]
+            self.assertEqual(item["translation_status"], "TRANSLATABLE")
+            self.assertEqual(item["selected_family_id"], "microstructure_imbalance_v1")
+            self.assertEqual(item["strategy_spec"]["family_id"], "microstructure_imbalance_v1")
 
     def test_selected_primary_family_can_resolve_multi_supported_pack(self):
         with tempfile.TemporaryDirectory(prefix="candidate_strategy_preferred_family_") as td:
@@ -343,6 +439,38 @@ class CandidateStrategyContractV0Tests(unittest.TestCase):
             self.assertEqual(item["translation_status"], "TRANSLATABLE")
             self.assertEqual(item["strategy_spec"]["family_id"], "momentum_v1")
             self.assertEqual(item["strategy_spec"]["stream"], "trade")
+
+    def test_non_momentum_report_with_explicit_false_pass_signal_is_excluded(self):
+        with tempfile.TemporaryDirectory(prefix="candidate_strategy_nonmomentum_no_pass_") as td:
+            root = Path(td)
+            pack = root / "pack_nonmomentum_no_pass"
+            make_pack(
+                pack,
+                symbols=["btcusdt"],
+                reports_by_symbol={
+                    "btcusdt": [
+                        supported_report(
+                            family_id="return_reversal_v1",
+                            exchange="binance",
+                            stream="trade",
+                            symbol="btcusdt",
+                            include_pass_signal=True,
+                            pass_signal=False,
+                        )
+                    ]
+                },
+            )
+            candidate_review_tsv = root / "candidate_review.tsv"
+            out_json = root / "candidate_strategy_contract.json"
+            write_candidate_review_tsv(candidate_review_tsv, [make_row(1, "pack_nonmomentum_no_pass", pack)])
+
+            res = self._run("--candidate-review-tsv", str(candidate_review_tsv), "--out-json", str(out_json))
+
+            self.assertEqual(res.returncode, 0, msg=res.stderr)
+            payload = json.loads(out_json.read_text(encoding="utf-8"))
+            item = payload["items"][0]
+            self.assertEqual(item["translation_status"], "UNSUPPORTED_FAMILY")
+            self.assertEqual(item["reject_reason"], "NO_SUPPORTED_FAMILY_REPORT")
 
     def test_momentum_report_without_pass_signal_stays_unsupported(self):
         with tempfile.TemporaryDirectory(prefix="candidate_strategy_momentum_nopass_") as td:

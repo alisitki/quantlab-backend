@@ -147,6 +147,7 @@ def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
         fill_price = parse_float_or_none(raw_event.get("fill_price"))
         fill_fee = parse_float_or_none(raw_event.get("fill_fee"))
         fill_value = parse_float_or_none(raw_event.get("fill_value"))
+        trade_context = normalize_trade_context(raw_event.get("trade_context"))
         if event_type == "FILL" and (fill_price is None or fill_price <= 0):
             continue
         if event_type != "FILL":
@@ -154,20 +155,21 @@ def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
             fill_fee = None
             fill_value = None
         event_seq = parse_int(raw_event.get("event_seq", index))
-        normalized.append(
-            {
-                "event_seq": event_seq if event_seq > 0 else index,
-                "event_type": event_type,
-                "ts_event": ts_event,
-                "symbol": symbol,
-                "side": side,
-                "qty": qty,
-                "fill_price": fill_price,
-                "fill_fee": fill_fee if fill_fee is not None and fill_fee >= 0 else None,
-                "fill_value": fill_value if fill_value is not None and fill_value > 0 else None,
-                "reason": str(raw_event.get("reason", "")).strip(),
-            }
-        )
+        row = {
+            "event_seq": event_seq if event_seq > 0 else index,
+            "event_type": event_type,
+            "ts_event": ts_event,
+            "symbol": symbol,
+            "side": side,
+            "qty": qty,
+            "fill_price": fill_price,
+            "fill_fee": fill_fee if fill_fee is not None and fill_fee >= 0 else None,
+            "fill_value": fill_value if fill_value is not None and fill_value > 0 else None,
+            "reason": str(raw_event.get("reason", "")).strip(),
+        }
+        if trade_context is not None:
+            row["trade_context"] = trade_context
+        normalized.append(row)
     return sorted(
         normalized,
         key=lambda event: (
@@ -596,6 +598,160 @@ def family_directionality_status(family_id: str) -> str:
     return "NO_FAMILY_CONTEXT"
 
 
+def normalize_selected_cell_snapshot(value: Any) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        return None
+    try:
+        delta_ms = int(value.get("delta_ms"))
+        h_ms = int(value.get("h_ms"))
+        pressure_threshold = float(value.get("pressure_threshold"))
+    except (TypeError, ValueError):
+        return None
+    symbol = str(value.get("symbol", "")).strip().upper()
+    exchange = str(value.get("exchange", "")).strip().lower()
+    if delta_ms <= 0 or h_ms <= 0 or pressure_threshold <= 0 or not symbol or not exchange:
+        return None
+    return {
+        "delta_ms": delta_ms,
+        "h_ms": h_ms,
+        "pressure_threshold": pressure_threshold,
+        "symbol": symbol,
+        "exchange": exchange,
+    }
+
+
+def normalize_optional_text(value: Any, *, upper: bool = False, lower: bool = False) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if upper:
+        return text.upper()
+    if lower:
+        return text.lower()
+    return text
+
+
+def normalize_trade_context_snapshot(value: Any) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        return None
+    normalized: dict[str, Any] = {
+        "schema_version": str(value.get("schema_version") or "microstructure_trade_context_v0"),
+        "trade_sequence_id": None,
+        "entry_timestamp": normalize_optional_text(value.get("entry_timestamp")),
+        "entry_pressure": parse_float_or_none(value.get("entry_pressure")),
+        "entry_abs_pressure": parse_float_or_none(value.get("entry_abs_pressure")),
+        "entry_threshold": parse_float_or_none(value.get("entry_threshold")),
+        "exit_threshold": parse_float_or_none(value.get("exit_threshold")),
+        "entry_side": normalize_optional_text(value.get("entry_side"), upper=True),
+        "entry_signal_reason": normalize_optional_text(value.get("entry_signal_reason")),
+        "entry_selected_cell": normalize_selected_cell_snapshot(value.get("entry_selected_cell")),
+        "prior_position_side": normalize_optional_text(value.get("prior_position_side"), upper=True),
+        "was_reversal_trade": bool(value.get("was_reversal_trade")),
+        "exit_timestamp": normalize_optional_text(value.get("exit_timestamp")),
+        "exit_pressure": parse_float_or_none(value.get("exit_pressure")),
+        "exit_abs_pressure": parse_float_or_none(value.get("exit_abs_pressure")),
+        "exit_reason": normalize_optional_text(value.get("exit_reason")),
+        "hold_duration_ms": None,
+        "max_abs_pressure_seen_during_trade": parse_float_or_none(value.get("max_abs_pressure_seen_during_trade")),
+        "min_abs_pressure_seen_during_trade": parse_float_or_none(value.get("min_abs_pressure_seen_during_trade")),
+        "pressure_decay_at_exit": parse_float_or_none(value.get("pressure_decay_at_exit")),
+        "observation_count_during_trade": None,
+    }
+    trade_sequence_id = parse_int(value.get("trade_sequence_id"))
+    if trade_sequence_id > 0:
+        normalized["trade_sequence_id"] = trade_sequence_id
+    hold_duration_ms = parse_int(value.get("hold_duration_ms"))
+    if hold_duration_ms > 0 or value.get("hold_duration_ms") == 0:
+        normalized["hold_duration_ms"] = hold_duration_ms
+    observation_count = parse_int(value.get("observation_count_during_trade"))
+    if observation_count > 0 or value.get("observation_count_during_trade") == 0:
+        normalized["observation_count_during_trade"] = observation_count
+    return normalized
+
+
+def normalize_trade_context(value: Any) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        return None
+    opening_trade = normalize_trade_context_snapshot(value.get("opening_trade"))
+    closing_trade = normalize_trade_context_snapshot(value.get("closing_trade"))
+    if opening_trade is None and closing_trade is None:
+        return None
+    normalized = {
+        "schema_version": str(value.get("schema_version") or "microstructure_trade_context_v0"),
+    }
+    if opening_trade is not None:
+        normalized["opening_trade"] = opening_trade
+    if closing_trade is not None:
+        normalized["closing_trade"] = closing_trade
+    return normalized
+
+
+def parse_ts_event_ns_or_none(value: Any) -> int | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        return int(text)
+    except (TypeError, ValueError):
+        return None
+
+
+def apply_opening_trade_context(episode: dict[str, Any], opening_context: dict[str, Any] | None) -> None:
+    if not episode or not isinstance(opening_context, dict):
+        return
+    episode["trade_context_schema_version"] = str(opening_context.get("schema_version") or "microstructure_trade_context_v0")
+    episode["trade_sequence_id"] = opening_context.get("trade_sequence_id")
+    episode["entry_timestamp"] = opening_context.get("entry_timestamp") or episode.get("opened_ts_event")
+    episode["entry_pressure"] = opening_context.get("entry_pressure")
+    episode["entry_abs_pressure"] = opening_context.get("entry_abs_pressure")
+    episode["entry_threshold"] = opening_context.get("entry_threshold")
+    episode["exit_threshold"] = opening_context.get("exit_threshold")
+    episode["entry_side"] = opening_context.get("entry_side") or episode.get("direction")
+    episode["entry_signal_reason"] = opening_context.get("entry_signal_reason")
+    entry_selected_cell = opening_context.get("entry_selected_cell")
+    if isinstance(entry_selected_cell, dict):
+        episode["entry_selected_cell"] = entry_selected_cell
+    episode["prior_position_side"] = opening_context.get("prior_position_side")
+    episode["was_reversal_trade"] = bool(opening_context.get("was_reversal_trade"))
+    episode["max_abs_pressure_seen_during_trade"] = opening_context.get("max_abs_pressure_seen_during_trade")
+    episode["min_abs_pressure_seen_during_trade"] = opening_context.get("min_abs_pressure_seen_during_trade")
+    episode["observation_count_during_trade"] = opening_context.get("observation_count_during_trade")
+
+
+def apply_closing_trade_context(episode: dict[str, Any], closing_context: dict[str, Any] | None) -> None:
+    if not episode or not isinstance(closing_context, dict):
+        return
+    episode["trade_context_schema_version"] = str(
+        closing_context.get("schema_version") or episode.get("trade_context_schema_version") or "microstructure_trade_context_v0"
+    )
+    if closing_context.get("trade_sequence_id") is not None:
+        episode["trade_sequence_id"] = closing_context.get("trade_sequence_id")
+    episode["entry_timestamp"] = closing_context.get("entry_timestamp") or episode.get("entry_timestamp") or episode.get("opened_ts_event")
+    episode["entry_pressure"] = closing_context.get("entry_pressure")
+    episode["entry_abs_pressure"] = closing_context.get("entry_abs_pressure")
+    episode["entry_threshold"] = closing_context.get("entry_threshold")
+    episode["exit_threshold"] = closing_context.get("exit_threshold")
+    episode["entry_side"] = closing_context.get("entry_side") or episode.get("entry_side") or episode.get("direction")
+    episode["entry_signal_reason"] = closing_context.get("entry_signal_reason")
+    entry_selected_cell = closing_context.get("entry_selected_cell")
+    if isinstance(entry_selected_cell, dict):
+        episode["entry_selected_cell"] = entry_selected_cell
+    if episode.get("prior_position_side") is None:
+        episode["prior_position_side"] = closing_context.get("prior_position_side")
+    episode["was_reversal_trade"] = bool(closing_context.get("was_reversal_trade"))
+    episode["exit_timestamp"] = closing_context.get("exit_timestamp") or episode.get("closed_ts_event")
+    episode["exit_pressure"] = closing_context.get("exit_pressure")
+    episode["exit_abs_pressure"] = closing_context.get("exit_abs_pressure")
+    episode["exit_reason"] = closing_context.get("exit_reason")
+    episode["hold_duration_ms"] = closing_context.get("hold_duration_ms")
+    episode["max_abs_pressure_seen_during_trade"] = closing_context.get("max_abs_pressure_seen_during_trade")
+    episode["min_abs_pressure_seen_during_trade"] = closing_context.get("min_abs_pressure_seen_during_trade")
+    episode["pressure_decay_at_exit"] = closing_context.get("pressure_decay_at_exit")
+    episode["observation_count_during_trade"] = closing_context.get("observation_count_during_trade")
+
+
 def open_episode(
     observation_key: str,
     next_index: int,
@@ -607,9 +763,10 @@ def open_episode(
     fill_price: float,
     position_qty: float,
     fee_portion: float | None,
+    opening_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     fee_complete = fee_portion is not None
-    return {
+    episode = {
         "episode_id": f"{observation_key}|episode|{next_index}",
         "direction": direction,
         "status": "OPEN",
@@ -627,7 +784,12 @@ def open_episode(
         "realized_pnl_quote_net": None,
         "fee_quote": fee_portion if fee_complete else None,
         "_fee_complete": fee_complete,
+        "entry_timestamp": ts_event,
+        "exit_timestamp": None,
+        "hold_duration_ms": None,
     }
+    apply_opening_trade_context(episode, opening_context)
+    return episode
 
 
 def add_fee(target: dict[str, Any], fee_portion: float | None) -> None:
@@ -654,6 +816,18 @@ def finalize_episode(episode: dict[str, Any]) -> dict[str, Any]:
         episode["realized_pnl_quote_net"] = (parse_float_or_none(episode.get("realized_pnl_quote_gross")) or 0.0) - (
             fee_quote or 0.0
         )
+    entry_timestamp = str(episode.get("entry_timestamp") or episode.get("opened_ts_event") or "").strip() or None
+    exit_timestamp = str(episode.get("exit_timestamp") or episode.get("closed_ts_event") or "").strip() or None
+    episode["entry_timestamp"] = entry_timestamp
+    episode["exit_timestamp"] = exit_timestamp
+    if episode.get("hold_duration_ms") is None and entry_timestamp and exit_timestamp:
+        entry_ts_ns = parse_ts_event_ns_or_none(entry_timestamp)
+        exit_ts_ns = parse_ts_event_ns_or_none(exit_timestamp)
+        if entry_ts_ns is not None and exit_ts_ns is not None and exit_ts_ns >= entry_ts_ns:
+            episode["hold_duration_ms"] = (exit_ts_ns - entry_ts_ns) // 1_000_000
+    episode["gross_pnl"] = parse_float_or_none(episode.get("realized_pnl_quote_gross")) or 0.0
+    episode["fee_paid"] = episode.get("fee_quote")
+    episode["net_pnl"] = episode.get("realized_pnl_quote_net")
     return episode
 
 
@@ -680,6 +854,9 @@ def replay_fill_events(observation_key: str, fill_events: list[dict[str, Any]], 
         fill_side = str(fill["side"])
         event_seq = int(fill["event_seq"])
         ts_event = str(fill["ts_event"])
+        trade_context = fill.get("trade_context") if isinstance(fill.get("trade_context"), dict) else None
+        opening_context = trade_context.get("opening_trade") if isinstance(trade_context, dict) else None
+        closing_context = trade_context.get("closing_trade") if isinstance(trade_context, dict) else None
         signed_qty = qty if fill_side == "BUY" else -qty
         old_size = size
         old_direction = direction_from_size(old_size)
@@ -727,6 +904,7 @@ def replay_fill_events(observation_key: str, fill_events: list[dict[str, Any]], 
                 fill_price=fill_price,
                 position_qty=abs(size),
                 fee_portion=fill_fee,
+                opening_context=opening_context,
             )
             next_episode_index += 1
             continue
@@ -816,6 +994,7 @@ def replay_fill_events(observation_key: str, fill_events: list[dict[str, Any]], 
                 active_episode["closed_ts_event"] = ts_event
                 active_episode["closed_event_seq"] = event_seq
                 active_episode["exit_price"] = fill_price
+                apply_closing_trade_context(active_episode, closing_context)
                 episodes.append(finalize_episode(active_episode))
                 active_episode = None
             avg_entry_price = None
@@ -844,6 +1023,7 @@ def replay_fill_events(observation_key: str, fill_events: list[dict[str, Any]], 
             active_episode["closed_ts_event"] = ts_event
             active_episode["closed_event_seq"] = event_seq
             active_episode["exit_price"] = fill_price
+            apply_closing_trade_context(active_episode, closing_context)
             episodes.append(finalize_episode(active_episode))
             active_episode = None
         avg_entry_price = fill_price
@@ -858,6 +1038,7 @@ def replay_fill_events(observation_key: str, fill_events: list[dict[str, Any]], 
             fill_price=fill_price,
             position_qty=abs(size),
             fee_portion=opening_fee_portion,
+            opening_context=opening_context,
         )
         next_episode_index += 1
 

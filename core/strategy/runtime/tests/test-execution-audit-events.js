@@ -81,7 +81,33 @@ test('StrategyRuntime audit persists minimal decision and fill metadata', { conc
         context.placeOrder({
           symbol: 'bnbusdt',
           side: 'buy',
-          qty: 1
+          qty: 1,
+          trade_context: {
+            schema_version: 'microstructure_trade_context_v0',
+            opening_trade: {
+              schema_version: 'microstructure_trade_context_v0',
+              trade_sequence_id: 1,
+              entry_timestamp: '1700000000000000000',
+              entry_pressure: 0.42,
+              entry_abs_pressure: 0.42,
+              entry_threshold: 0.2,
+              exit_threshold: 0.1,
+              entry_side: 'LONG',
+              entry_signal_reason: 'LONG_ENTRY',
+              entry_selected_cell: {
+                delta_ms: 100,
+                h_ms: 500,
+                pressure_threshold: 0.2,
+                symbol: 'BNBUSDT',
+                exchange: 'bybit'
+              },
+              prior_position_side: 'FLAT',
+              was_reversal_trade: false,
+              max_abs_pressure_seen_during_trade: 0.42,
+              min_abs_pressure_seen_during_trade: 0.42,
+              observation_count_during_trade: 1
+            }
+          }
         });
       }
     },
@@ -123,9 +149,12 @@ test('StrategyRuntime audit persists minimal decision and fill metadata', { conc
   assert.equal(relevant[0].metadata.side, 'BUY');
   assert.equal(relevant[0].metadata.qty, 1);
   assert.equal(relevant[0].metadata.ts_event, '1700000000000000000');
+  assert.equal(relevant[0].metadata.trade_context.opening_trade.entry_pressure, 0.42);
+  assert.equal(relevant[0].metadata.trade_context.opening_trade.trade_sequence_id, 1);
   assert.equal(relevant[1].metadata.fill_price, 612.5);
   assert.equal(relevant[1].metadata.fill_fee, 0.245);
   assert.equal(relevant[1].metadata.fill_value, 612.5);
+  assert.equal(relevant[1].metadata.trade_context.opening_trade.entry_side, 'LONG');
 });
 
 

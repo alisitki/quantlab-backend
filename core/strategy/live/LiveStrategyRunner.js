@@ -51,6 +51,8 @@ export class LiveStrategyRunner {
   #archiveInfo;
   /** @type {LiveWSConsumer|null} */
   #consumer = null;
+  /** @type {LiveWSConsumer[]} */
+  #auxConsumers = [];
   /** @type {LiveEventSequencer} */
   #sequencer = new LiveEventSequencer();
   /** @type {Object|null} */
@@ -135,6 +137,22 @@ export class LiveStrategyRunner {
       }));
     }
     this.#consumer = new LiveWSConsumer({ exchange, symbols });
+    const auxiliaryFeeds = Array.isArray(strategyConfig?.auxiliary_feeds)
+      ? strategyConfig.auxiliary_feeds
+      : [];
+    this.#auxConsumers = auxiliaryFeeds
+      .filter((feed) => feed && typeof feed === 'object')
+      .map((feed) => {
+        const feedExchange = String(feed.exchange || '').trim();
+        const feedSymbols = Array.isArray(feed.symbols)
+          ? feed.symbols.map((value) => String(value || '').trim().toUpperCase()).filter(Boolean)
+          : [];
+        if (!feedExchange || feedSymbols.length === 0) {
+          return null;
+        }
+        return new LiveWSConsumer({ exchange: feedExchange, symbols: feedSymbols });
+      })
+      .filter(Boolean);
     this.#guardManager = PromotionGuardManager.fromEnv(guardConfig || {});
     this.#budgetManager = RunBudgetManager.fromEnv(budgetConfig || {});
     this.#killSwitchManager = getKillSwitchManager();
@@ -258,6 +276,13 @@ export class LiveStrategyRunner {
       this.#stopReason = reason;
     }
     if (this.#consumer) this.#consumer.stop();
+    for (const consumer of this.#auxConsumers) {
+      try {
+        consumer.stop();
+      } catch {
+        // Ignore auxiliary feed stop errors during shutdown.
+      }
+    }
     observerRegistry.updateRun(this.#liveRunId, {
       status: RUN_STATUS.STOPPED,
       stop_reason: this.#stopReason
@@ -352,7 +377,12 @@ export class LiveStrategyRunner {
       let source = eventStream;
       if (!source) {
         this.#consumer.start();
-        source = this.#consumer.events();
+        const sources = [this.#consumer.events()];
+        for (const consumer of this.#auxConsumers) {
+          consumer.start();
+          sources.push(consumer.events());
+        }
+        source = sources.length === 1 ? sources[0] : this.#mergeStreams(sources);
       }
       const wrapped = this.#wrapStream(this.#sequencer.sequence(source));
       await this.#runtime.processStream(wrapped);
@@ -482,6 +512,26 @@ export class LiveStrategyRunner {
       }
 
       yield event;
+    }
+  }
+
+  async *#mergeStreams(sources) {
+    const iterators = sources.map((source) => source[Symbol.asyncIterator]());
+    const pending = new Map();
+    const nextFor = (index) => iterators[index].next().then((result) => ({ index, result }));
+
+    for (let index = 0; index < iterators.length; index += 1) {
+      pending.set(index, nextFor(index));
+    }
+
+    while (pending.size > 0) {
+      const { index, result } = await Promise.race(pending.values());
+      pending.delete(index);
+      if (result.done) {
+        continue;
+      }
+      pending.set(index, nextFor(index));
+      yield result.value;
     }
   }
 

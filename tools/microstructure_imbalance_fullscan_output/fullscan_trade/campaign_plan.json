@@ -1,0 +1,139 @@
+{
+  "bbo_resource_decision": {
+    "decision": "SKIPPED_RESOURCE_SAFETY",
+    "eligible_pair_count": 25,
+    "estimated_row_count": 106617255,
+    "estimated_total_size_bytes": 2499750738,
+    "reason": "full-window bbo estimate 2499750738 bytes / 106617255 rows exceeds slim resource threshold 1000000000 bytes"
+  },
+  "days": [
+    "20260324",
+    "20260325",
+    "20260326",
+    "20260327",
+    "20260328"
+  ],
+  "end": "20260328",
+  "fixed_grid": {
+    "delta_ms_list": [
+      100,
+      250,
+      500
+    ],
+    "h_ms_list": [
+      100,
+      250,
+      500
+    ],
+    "pressure_threshold_list": [
+      0.05,
+      0.1,
+      0.2
+    ]
+  },
+  "generated_ts_utc": "2026-04-06T07:29:45Z",
+  "max_parallel": 3,
+  "max_wall_sec": 10800,
+  "other_families_enabled_for_comparison": true,
+  "per_run_timeout_sec": 1800,
+  "runner": "tools/run-multi-hypothesis.js",
+  "schema_version": "microstructure_imbalance_fullscan_plan_v0",
+  "selected_partition_count": 110,
+  "selected_total_rows": 20170282,
+  "selected_total_size_bytes": 946389947,
+  "start": "20260324",
+  "state_json": "/home/deploy/quantlab-backend/tools/microstructure_imbalance_fullscan_output/compacted_state_snapshot.json",
+  "stream": "trade",
+  "target_pair_count": 22,
+  "target_pairs": [
+    {
+      "exchange": "binance",
+      "symbol": "adausdt"
+    },
+    {
+      "exchange": "binance",
+      "symbol": "avaxusdt"
+    },
+    {
+      "exchange": "binance",
+      "symbol": "bnbusdt"
+    },
+    {
+      "exchange": "binance",
+      "symbol": "linkusdt"
+    },
+    {
+      "exchange": "binance",
+      "symbol": "ltcusdt"
+    },
+    {
+      "exchange": "binance",
+      "symbol": "solusdt"
+    },
+    {
+      "exchange": "binance",
+      "symbol": "xrpusdt"
+    },
+    {
+      "exchange": "bybit",
+      "symbol": "adausdt"
+    },
+    {
+      "exchange": "bybit",
+      "symbol": "avaxusdt"
+    },
+    {
+      "exchange": "bybit",
+      "symbol": "bnbusdt"
+    },
+    {
+      "exchange": "bybit",
+      "symbol": "linkusdt"
+    },
+    {
+      "exchange": "bybit",
+      "symbol": "ltcusdt"
+    },
+    {
+      "exchange": "bybit",
+      "symbol": "solusdt"
+    },
+    {
+      "exchange": "bybit",
+      "symbol": "xrpusdt"
+    },
+    {
+      "exchange": "okx",
+      "symbol": "adausdt"
+    },
+    {
+      "exchange": "okx",
+      "symbol": "avaxusdt"
+    },
+    {
+      "exchange": "okx",
+      "symbol": "bnbusdt"
+    },
+    {
+      "exchange": "okx",
+      "symbol": "linkusdt"
+    },
+    {
+      "exchange": "okx",
+      "symbol": "ltcusdt"
+    },
+    {
+      "exchange": "okx",
+      "symbol": "maticusdt"
+    },
+    {
+      "exchange": "okx",
+      "symbol": "solusdt"
+    },
+    {
+      "exchange": "okx",
+      "symbol": "xrpusdt"
+    }
+  ],
+  "window_days": 5
+}

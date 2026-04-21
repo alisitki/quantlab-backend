@@ -1,0 +1,17 @@
+{
+  "family_id": "family_a_patternscanner",
+  "source": "tools/run-multi-day-discovery.js",
+  "result": {
+    "patternsScanned": 0,
+    "edgeCandidatesGenerated": 0,
+    "edgeCandidatesRegistered": 0,
+    "edgesCount": 0,
+    "edgesSaved": false
+  },
+  "diagnosticNotes": [
+    "artifact_created_for_diag: data/test/adausdt_20260204.parquet + data/test/adausdt_20260204_meta.json (pre-existing)",
+    "no_patterns: patterns_scanned=0 (scanner.minSupport=30 scanner.returnThreshold=0.0005)",
+    "note: threshold/config may be restrictive"
+  ],
+  "raw_report_relpath": "runs/multi-day-discovery/2026-04-06T07-16-16-990Z_binance_trade_adausdt_20260127_20260127_acceptance_perm-on/discovery-report-2026-04-06T07-16-16-990Z.json"
+}

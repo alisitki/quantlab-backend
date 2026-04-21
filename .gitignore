@@ -63,3 +63,17 @@ evidence/*.sha_verify.txt
 evidence/
 tools/phase5_state/
 tools/shadow_state/
+
+# QuantLab task-local shadow audit spools / transient validation runs.
+# Keep final JSON/Markdown outputs explicit; ignore high-volume per-event part files.
+/tools/**/audit/**/date=*/part-*.jsonl
+/tools/phase7_microstructure_turnover_output/full_linkusdt/
+/tools/phase7_microstructure_turnover_output/smoke_linkusdt/
+/tools/phase7_microstructure_entryfilter_output/full_linkusdt/
+/tools/phase7_microstructure_entryfilter_output/smoke_linkusdt/
+/tools/phase7_microstructure_hysteresis_output/full_linkusdt/
+/tools/phase7_microstructure_hysteresis_output/smoke_linkusdt/
+/tools/phase7_microstructure_feeaware_output/full_linkusdt/
+/tools/phase7_microstructure_feeaware_output/smoke_linkusdt/
+/tools/phase7_microstructure_observability_output/smoke_linkusdt/
+/tools/phase7_microstructure_observability_output/full_linkusdt_rerun/

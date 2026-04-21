@@ -1,0 +1,2 @@
+exchange	symbol	date	stream	delta_ms	h_ms	sample_count	mean_activity	mean_rv_fwd	corr	t_stat
+binance	adausdt	20260127	trade	100	100	12682	2.225201072386059	3.235554920396225	0.388261305382553	47.442236231982754

@@ -21,6 +21,14 @@ NOT_TRANSLATABLE_YET = "NOT_TRANSLATABLE_YET"
 INSUFFICIENT_CONTRACT = "INSUFFICIENT_CONTRACT"
 UNSUPPORTED_FAMILY = "UNSUPPORTED_FAMILY"
 REQUIRED_REVIEW_COLUMNS = {"rank", "decision_tier", "pack_id", "pack_path"}
+DEFAULT_FAMILY_PRIORITY = (
+    "return_reversal_v1",
+    "microstructure_imbalance_v1",
+    "jump_reversion_v1",
+    "family_b_simple_momentum",
+    "momentum_v1",
+    "spread_reversion_v1",
+)
 
 
 class CandidateStrategyContractError(RuntimeError):
@@ -143,12 +151,13 @@ def selected_symbols_from_plan(plan: dict[str, Any]) -> list[str]:
 
 def report_passes_family_contract(obj: dict[str, Any]) -> bool:
     family_id = str(obj.get("family_id", "")).strip()
-    if family_id != "momentum_v1":
-        return True
     result_obj = obj.get("result")
     if not isinstance(result_obj, dict):
         return False
-    if result_obj.get("pass_signal") is not True:
+    pass_signal = result_obj.get("pass_signal")
+    if pass_signal is not None and pass_signal is not True:
+        return False
+    if family_id == "momentum_v1" and pass_signal is not True:
         return False
     return True
 
@@ -199,6 +208,19 @@ def resolve_supported_report(
             return matching_supported[0], "", ""
         if len(matching_supported) > 1:
             return None, NOT_TRANSLATABLE_YET, "MULTIPLE_SELECTED_FAMILY_REPORTS"
+
+    ranked_supported: dict[int, list[tuple[Path, dict[str, Any]]]] = {}
+    for path, obj in supported:
+        family_id = str(obj.get("family_id") or "").strip()
+        try:
+            rank = DEFAULT_FAMILY_PRIORITY.index(family_id)
+        except ValueError:
+            continue
+        ranked_supported.setdefault(rank, []).append((path, obj))
+    if ranked_supported:
+        best_rank = min(ranked_supported)
+        if len(ranked_supported[best_rank]) == 1:
+            return ranked_supported[best_rank][0], "", ""
     return None, NOT_TRANSLATABLE_YET, "MULTIPLE_SUPPORTED_FAMILY_REPORTS"
 
 

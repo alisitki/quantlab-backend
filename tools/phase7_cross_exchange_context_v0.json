@@ -1,0 +1,1721 @@
+{
+  "schema_version": "phase7_cross_exchange_context_v0",
+  "generated_ts_utc": "2026-04-10T05:18:28Z",
+  "authoritative_sources": {
+    "trade_attribution_v2_json": "/home/deploy/quantlab-backend/tools/phase7_trade_attribution_v2.json",
+    "trade_attribution_v2_report": "/home/deploy/quantlab-backend/tools/phase7_trade_attribution_output/phase7_trade_attribution_report_v2.md",
+    "context_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_observability_output/full_linkusdt_rerun/shadow_state/shadow_execution_events_v1.jsonl",
+    "economic_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_observability_output/full_linkusdt_rerun/shadow_state/shadow_futures_paper_ledger_v1.json",
+    "batch_result_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_observability_output/full_linkusdt_rerun/shadow_observation_batch_result_v0.json",
+    "summary_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_observability_output/full_linkusdt_rerun/batch_out/rank01_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020/summary.json",
+    "inventory_json": "/tmp/compacted__state.json"
+  },
+  "subset_definitions": {
+    "good_rule": "minimum subset by descending gross_pnl producing >50% of total gross pnl",
+    "bad_rule": "all trades with gross_pnl < 0",
+    "good_count": 206,
+    "bad_count": 658,
+    "full_count": 2723
+  },
+  "coverage": {
+    "total_trades": 2723,
+    "good_trades_analyzed": 206,
+    "bad_trades_analyzed": 658,
+    "rows_with_any_same_symbol_context": 2723,
+    "rows_with_all_three_trade_venues_500ms": 1363,
+    "rows_with_all_three_bbo_venues_500ms": 1663,
+    "rows_with_any_btc_context": 2723,
+    "rows_with_full_btc_venue_coverage_500ms": 2587,
+    "same_symbol_trade_venue_sources": {
+      "bybit": [
+        {
+          "partition_key": "bybit/trade/linkusdt/20260409",
+          "status": "success",
+          "day_quality_post": "GOOD",
+          "rows": 180467,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=bybit/stream=trade/symbol=linkusdt/date=20260409/data.parquet",
+          "source": "s3",
+          "path": "/tmp/phase7_cross_exchange_context_vm7yf48z/exchange=bybit/stream=trade/symbol=linkusdt/date=20260409/data.parquet"
+        }
+      ],
+      "binance": [
+        {
+          "partition_key": "binance/trade/linkusdt/20260409",
+          "status": "success",
+          "day_quality_post": "GOOD",
+          "rows": 103122,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=binance/stream=trade/symbol=linkusdt/date=20260409/data.parquet",
+          "source": "s3",
+          "path": "/tmp/phase7_cross_exchange_context_vm7yf48z/exchange=binance/stream=trade/symbol=linkusdt/date=20260409/data.parquet"
+        }
+      ],
+      "okx": [
+        {
+          "partition_key": "okx/trade/linkusdt/20260409",
+          "status": "success",
+          "day_quality_post": "GOOD",
+          "rows": 173411,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=okx/stream=trade/symbol=linkusdt/date=20260409/data.parquet",
+          "source": "s3",
+          "path": "/tmp/phase7_cross_exchange_context_vm7yf48z/exchange=okx/stream=trade/symbol=linkusdt/date=20260409/data.parquet"
+        }
+      ]
+    },
+    "same_symbol_bbo_venue_sources": {
+      "bybit": [
+        {
+          "partition_key": "bybit/bbo/linkusdt/20260409",
+          "status": "success",
+          "day_quality_post": "GOOD",
+          "rows": 87208,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=bybit/stream=bbo/symbol=linkusdt/date=20260409/data.parquet",
+          "source": "s3",
+          "path": "/tmp/phase7_cross_exchange_context_vm7yf48z/exchange=bybit/stream=bbo/symbol=linkusdt/date=20260409/data.parquet"
+        }
+      ],
+      "binance": [
+        {
+          "partition_key": "binance/bbo/linkusdt/20260409",
+          "status": "success",
+          "day_quality_post": "GOOD",
+          "rows": 2389762,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=binance/stream=bbo/symbol=linkusdt/date=20260409/data.parquet",
+          "source": "s3",
+          "path": "/tmp/phase7_cross_exchange_context_vm7yf48z/exchange=binance/stream=bbo/symbol=linkusdt/date=20260409/data.parquet"
+        }
+      ],
+      "okx": [
+        {
+          "partition_key": "okx/bbo/linkusdt/20260409",
+          "status": "success",
+          "day_quality_post": "GOOD",
+          "rows": 462552,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=okx/stream=bbo/symbol=linkusdt/date=20260409/data.parquet",
+          "source": "s3",
+          "path": "/tmp/phase7_cross_exchange_context_vm7yf48z/exchange=okx/stream=bbo/symbol=linkusdt/date=20260409/data.parquet"
+        }
+      ]
+    },
+    "btc_bbo_venue_sources": {
+      "bybit": [
+        {
+          "partition_key": "bybit/bbo/btcusdt/20260409",
+          "status": "success",
+          "day_quality_post": "GOOD",
+          "rows": 317805,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=bybit/stream=bbo/symbol=btcusdt/date=20260409/data.parquet",
+          "source": "s3",
+          "path": "/tmp/phase7_cross_exchange_context_vm7yf48z/exchange=bybit/stream=bbo/symbol=btcusdt/date=20260409/data.parquet"
+        }
+      ],
+      "okx": [
+        {
+          "partition_key": "okx/bbo/btcusdt/20260409",
+          "status": "success",
+          "day_quality_post": "GOOD",
+          "rows": 664000,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=okx/stream=bbo/symbol=btcusdt/date=20260409/data.parquet",
+          "source": "s3",
+          "path": "/tmp/phase7_cross_exchange_context_vm7yf48z/exchange=okx/stream=bbo/symbol=btcusdt/date=20260409/data.parquet"
+        }
+      ]
+    },
+    "btc_trade_sources": {
+      "bybit": [
+        {
+          "partition_key": "bybit/trade/btcusdt/20260409",
+          "status": "quarantine",
+          "day_quality_post": "GOOD",
+          "rows": 0,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=bybit/stream=trade/symbol=btcusdt/date=20260409/data.parquet",
+          "source": "skipped_btc_trade_unavailable_or_non_authoritative",
+          "path": null
+        }
+      ],
+      "binance": [
+        {
+          "partition_key": "binance/trade/btcusdt/20260409",
+          "status": "quarantine",
+          "day_quality_post": "GOOD",
+          "rows": 0,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=binance/stream=trade/symbol=btcusdt/date=20260409/data.parquet",
+          "source": "skipped_btc_trade_unavailable_or_non_authoritative",
+          "path": null
+        }
+      ],
+      "okx": [
+        {
+          "partition_key": "okx/trade/btcusdt/20260409",
+          "status": "quarantine",
+          "day_quality_post": "GOOD",
+          "rows": 0,
+          "bucket": "quantlab-compact",
+          "data_key": "exchange=okx/stream=trade/symbol=btcusdt/date=20260409/data.parquet",
+          "source": "skipped_btc_trade_unavailable_or_non_authoritative",
+          "path": null
+        }
+      ]
+    }
+  },
+  "feature_comparison": {
+    "link_trade_alignment_count_100ms": {
+      "0": {
+        "count": 4,
+        "avg_gross_pnl": -0.00175,
+        "avg_net_pnl": -0.0087799,
+        "total_gross_pnl": -0.007,
+        "total_net_pnl": -0.0351196,
+        "good_trade_count": 0,
+        "bad_trade_count": 4,
+        "share_of_good_subset": 0.0,
+        "share_of_bad_subset": 0.006079027356,
+        "good_vs_bad_share_lift": 0.0
+      },
+      "1": {
+        "count": 1492,
+        "avg_gross_pnl": 0.000616621984,
+        "avg_net_pnl": -0.00644390992,
+        "total_gross_pnl": 0.92,
+        "total_net_pnl": -9.6143136,
+        "good_trade_count": 80,
+        "bad_trade_count": 541,
+        "share_of_good_subset": 0.388349514563,
+        "share_of_bad_subset": 0.822188449848,
+        "good_vs_bad_share_lift": 0.472336378156
+      },
+      "2": {
+        "count": 789,
+        "avg_gross_pnl": 0.001602027883,
+        "avg_net_pnl": -0.005470467934,
+        "total_gross_pnl": 1.264,
+        "total_net_pnl": -4.3161992,
+        "good_trade_count": 63,
+        "bad_trade_count": 88,
+        "share_of_good_subset": 0.305825242718,
+        "share_of_bad_subset": 0.133738601824,
+        "good_vs_bad_share_lift": 2.28673874669
+      },
+      "3": {
+        "count": 438,
+        "avg_gross_pnl": 0.002226027397,
+        "avg_net_pnl": -0.004848225571,
+        "total_gross_pnl": 0.975,
+        "total_net_pnl": -2.1235228,
+        "good_trade_count": 63,
+        "bad_trade_count": 25,
+        "share_of_good_subset": 0.305825242718,
+        "share_of_bad_subset": 0.037993920973,
+        "good_vs_bad_share_lift": 8.04932038835
+      }
+    },
+    "link_trade_divergence_bucket_100ms": {
+      "UNKNOWN": {
+        "count": 1242,
+        "avg_gross_pnl": 0.000666666667,
+        "avg_net_pnl": -0.006393197424,
+        "total_gross_pnl": 0.828,
+        "total_net_pnl": -7.9403512,
+        "good_trade_count": 62,
+        "bad_trade_count": 431,
+        "share_of_good_subset": 0.300970873786,
+        "share_of_bad_subset": 0.655015197568,
+        "good_vs_bad_share_lift": 0.459486856036
+      },
+      "high": {
+        "count": 493,
+        "avg_gross_pnl": 0.000995943205,
+        "avg_net_pnl": -0.00607189858,
+        "total_gross_pnl": 0.491,
+        "total_net_pnl": -2.993446,
+        "good_trade_count": 42,
+        "bad_trade_count": 149,
+        "share_of_good_subset": 0.203883495146,
+        "share_of_bad_subset": 0.226443768997,
+        "good_vs_bad_share_lift": 0.900371408093
+      },
+      "low": {
+        "count": 494,
+        "avg_gross_pnl": 0.001973684211,
+        "avg_net_pnl": -0.005098562753,
+        "total_gross_pnl": 0.975,
+        "total_net_pnl": -2.51869,
+        "good_trade_count": 59,
+        "bad_trade_count": 40,
+        "share_of_good_subset": 0.28640776699,
+        "share_of_bad_subset": 0.060790273556,
+        "good_vs_bad_share_lift": 4.71140776699
+      },
+      "medium": {
+        "count": 494,
+        "avg_gross_pnl": 0.001736842105,
+        "avg_net_pnl": -0.005337384615,
+        "total_gross_pnl": 0.858,
+        "total_net_pnl": -2.636668,
+        "good_trade_count": 43,
+        "bad_trade_count": 38,
+        "share_of_good_subset": 0.208737864078,
+        "share_of_bad_subset": 0.057750759878,
+        "good_vs_bad_share_lift": 3.614460909555
+      }
+    },
+    "link_trade_venue_agreement_flag_100ms": {
+      "False": {
+        "count": 1566,
+        "avg_gross_pnl": 0.000653256705,
+        "avg_net_pnl": -0.00640800894,
+        "total_gross_pnl": 1.023,
+        "total_net_pnl": -10.034942,
+        "good_trade_count": 86,
+        "bad_trade_count": 558,
+        "share_of_good_subset": 0.417475728155,
+        "share_of_bad_subset": 0.848024316109,
+        "good_vs_bad_share_lift": 0.492292166893
+      },
+      "True": {
+        "count": 1157,
+        "avg_gross_pnl": 0.001840103717,
+        "avg_net_pnl": -0.005232682109,
+        "total_gross_pnl": 2.129,
+        "total_net_pnl": -6.0542132,
+        "good_trade_count": 120,
+        "bad_trade_count": 100,
+        "share_of_good_subset": 0.582524271845,
+        "share_of_bad_subset": 0.151975683891,
+        "good_vs_bad_share_lift": 3.833009708738
+      }
+    },
+    "link_bbo_alignment_count_100ms": {
+      "0": {
+        "count": 754,
+        "avg_gross_pnl": 0.000161803714,
+        "avg_net_pnl": -0.00690031618,
+        "total_gross_pnl": 0.122,
+        "total_net_pnl": -5.2028384,
+        "good_trade_count": 26,
+        "bad_trade_count": 388,
+        "share_of_good_subset": 0.126213592233,
+        "share_of_bad_subset": 0.589665653495,
+        "good_vs_bad_share_lift": 0.214042638375
+      },
+      "1": {
+        "count": 1004,
+        "avg_gross_pnl": 0.00139940239,
+        "avg_net_pnl": -0.005670421116,
+        "total_gross_pnl": 1.405,
+        "total_net_pnl": -5.6931028,
+        "good_trade_count": 94,
+        "bad_trade_count": 205,
+        "share_of_good_subset": 0.456310679612,
+        "share_of_bad_subset": 0.311550151976,
+        "good_vs_bad_share_lift": 1.464645986266
+      },
+      "2": {
+        "count": 769,
+        "avg_gross_pnl": 0.001738621586,
+        "avg_net_pnl": -0.005322607542,
+        "total_gross_pnl": 1.337,
+        "total_net_pnl": -4.0930852,
+        "good_trade_count": 71,
+        "bad_trade_count": 58,
+        "share_of_good_subset": 0.344660194175,
+        "share_of_bad_subset": 0.088145896657,
+        "good_vs_bad_share_lift": 3.910110478741
+      },
+      "3": {
+        "count": 196,
+        "avg_gross_pnl": 0.001469387755,
+        "avg_net_pnl": -0.005612902041,
+        "total_gross_pnl": 0.288,
+        "total_net_pnl": -1.1001288,
+        "good_trade_count": 15,
+        "bad_trade_count": 7,
+        "share_of_good_subset": 0.072815533981,
+        "share_of_bad_subset": 0.010638297872,
+        "good_vs_bad_share_lift": 6.844660194175
+      }
+    },
+    "link_bbo_divergence_bucket_100ms": {
+      "UNKNOWN": {
+        "count": 924,
+        "avg_gross_pnl": 0.00091017316,
+        "avg_net_pnl": -0.006147512121,
+        "total_gross_pnl": 0.841,
+        "total_net_pnl": -5.6803012,
+        "good_trade_count": 57,
+        "bad_trade_count": 290,
+        "share_of_good_subset": 0.276699029126,
+        "share_of_bad_subset": 0.440729483283,
+        "good_vs_bad_share_lift": 0.627820555742
+      },
+      "high": {
+        "count": 600,
+        "avg_gross_pnl": 0.00137,
+        "avg_net_pnl": -0.005708976,
+        "total_gross_pnl": 0.822,
+        "total_net_pnl": -3.4253856,
+        "good_trade_count": 56,
+        "bad_trade_count": 125,
+        "share_of_good_subset": 0.271844660194,
+        "share_of_bad_subset": 0.189969604863,
+        "good_vs_bad_share_lift": 1.430990291262
+      },
+      "low": {
+        "count": 600,
+        "avg_gross_pnl": 0.001118333333,
+        "avg_net_pnl": -0.005944479333,
+        "total_gross_pnl": 0.671,
+        "total_net_pnl": -3.5666876,
+        "good_trade_count": 36,
+        "bad_trade_count": 123,
+        "share_of_good_subset": 0.174757281553,
+        "share_of_bad_subset": 0.186930091185,
+        "good_vs_bad_share_lift": 0.934880416765
+      },
+      "medium": {
+        "count": 599,
+        "avg_gross_pnl": 0.001365609349,
+        "avg_net_pnl": -0.005704141569,
+        "total_gross_pnl": 0.818,
+        "total_net_pnl": -3.4167808,
+        "good_trade_count": 57,
+        "bad_trade_count": 120,
+        "share_of_good_subset": 0.276699029126,
+        "share_of_bad_subset": 0.182370820669,
+        "good_vs_bad_share_lift": 1.517233009709
+      }
+    },
+    "link_bbo_venue_agreement_flag_100ms": {
+      "False": {
+        "count": 1885,
+        "avg_gross_pnl": 0.000914058355,
+        "avg_net_pnl": -0.006153069284,
+        "total_gross_pnl": 1.723,
+        "total_net_pnl": -11.5985356,
+        "good_trade_count": 129,
+        "bad_trade_count": 609,
+        "share_of_good_subset": 0.626213592233,
+        "share_of_bad_subset": 0.925531914894,
+        "good_vs_bad_share_lift": 0.676598593907
+      },
+      "True": {
+        "count": 838,
+        "avg_gross_pnl": 0.001705250597,
+        "avg_net_pnl": -0.005358734606,
+        "total_gross_pnl": 1.429,
+        "total_net_pnl": -4.4906196,
+        "good_trade_count": 77,
+        "bad_trade_count": 49,
+        "share_of_good_subset": 0.373786407767,
+        "share_of_bad_subset": 0.074468085106,
+        "good_vs_bad_share_lift": 5.019417475728
+      }
+    },
+    "btc_bbo_return_relation_100ms": {
+      "disagreement": {
+        "count": 6,
+        "avg_gross_pnl": 0.000333333333,
+        "avg_net_pnl": -0.006780133333,
+        "total_gross_pnl": 0.002,
+        "total_net_pnl": -0.0406808,
+        "good_trade_count": 1,
+        "bad_trade_count": 2,
+        "share_of_good_subset": 0.004854368932,
+        "share_of_bad_subset": 0.003039513678,
+        "good_vs_bad_share_lift": 1.597087378641
+      },
+      "flat": {
+        "count": 2613,
+        "avg_gross_pnl": 0.001167240719,
+        "avg_net_pnl": -0.005899947646,
+        "total_gross_pnl": 3.05,
+        "total_net_pnl": -15.4165632,
+        "good_trade_count": 199,
+        "bad_trade_count": 624,
+        "share_of_good_subset": 0.966019417476,
+        "share_of_bad_subset": 0.948328267477,
+        "good_vs_bad_share_lift": 1.018655090864
+      },
+      "no_coverage": {
+        "count": 100,
+        "avg_gross_pnl": 0.00093,
+        "avg_net_pnl": -0.006106972,
+        "total_gross_pnl": 0.093,
+        "total_net_pnl": -0.6106972,
+        "good_trade_count": 6,
+        "bad_trade_count": 32,
+        "share_of_good_subset": 0.029126213592,
+        "share_of_bad_subset": 0.048632218845,
+        "good_vs_bad_share_lift": 0.59890776699
+      },
+      "supportive": {
+        "count": 4,
+        "avg_gross_pnl": 0.00175,
+        "avg_net_pnl": -0.0053035,
+        "total_gross_pnl": 0.007,
+        "total_net_pnl": -0.021214,
+        "good_trade_count": 0,
+        "bad_trade_count": 0,
+        "share_of_good_subset": 0.0,
+        "share_of_bad_subset": 0.0,
+        "good_vs_bad_share_lift": null
+      }
+    },
+    "btc_bbo_pressure_relation_100ms": {
+      "disagreement": {
+        "count": 942,
+        "avg_gross_pnl": 0.000581740977,
+        "avg_net_pnl": -0.006487757113,
+        "total_gross_pnl": 0.548,
+        "total_net_pnl": -6.1114672,
+        "good_trade_count": 46,
+        "bad_trade_count": 391,
+        "share_of_good_subset": 0.223300970874,
+        "share_of_bad_subset": 0.594224924012,
+        "good_vs_bad_share_lift": 0.375785265563
+      },
+      "flat": {
+        "count": 61,
+        "avg_gross_pnl": 0.000786885246,
+        "avg_net_pnl": -0.006302268852,
+        "total_gross_pnl": 0.048,
+        "total_net_pnl": -0.3844384,
+        "good_trade_count": 4,
+        "bad_trade_count": 18,
+        "share_of_good_subset": 0.019417475728,
+        "share_of_bad_subset": 0.0273556231,
+        "good_vs_bad_share_lift": 0.709816612729
+      },
+      "no_coverage": {
+        "count": 100,
+        "avg_gross_pnl": 0.00093,
+        "avg_net_pnl": -0.006106972,
+        "total_gross_pnl": 0.093,
+        "total_net_pnl": -0.6106972,
+        "good_trade_count": 6,
+        "bad_trade_count": 32,
+        "share_of_good_subset": 0.029126213592,
+        "share_of_bad_subset": 0.048632218845,
+        "good_vs_bad_share_lift": 0.59890776699
+      },
+      "supportive": {
+        "count": 1620,
+        "avg_gross_pnl": 0.00152037037,
+        "avg_net_pnl": -0.005544785432,
+        "total_gross_pnl": 2.463,
+        "total_net_pnl": -8.9825524,
+        "good_trade_count": 150,
+        "bad_trade_count": 217,
+        "share_of_good_subset": 0.728155339806,
+        "share_of_bad_subset": 0.329787234043,
+        "good_vs_bad_share_lift": 2.207954901347
+      }
+    },
+    "btc_bbo_activity_bucket_100ms": {
+      "high": {
+        "count": 27,
+        "avg_gross_pnl": 0.000777777778,
+        "avg_net_pnl": -0.006298266667,
+        "total_gross_pnl": 0.021,
+        "total_net_pnl": -0.1700532,
+        "good_trade_count": 2,
+        "bad_trade_count": 7,
+        "share_of_good_subset": 0.009708737864,
+        "share_of_bad_subset": 0.010638297872,
+        "good_vs_bad_share_lift": 0.912621359223
+      },
+      "low": {
+        "count": 2596,
+        "avg_gross_pnl": 0.001170261941,
+        "avg_net_pnl": -0.005896920185,
+        "total_gross_pnl": 3.038,
+        "total_net_pnl": -15.3084048,
+        "good_trade_count": 198,
+        "bad_trade_count": 619,
+        "share_of_good_subset": 0.961165048544,
+        "share_of_bad_subset": 0.940729483283,
+        "good_vs_bad_share_lift": 1.021723104914
+      },
+      "no_coverage": {
+        "count": 100,
+        "avg_gross_pnl": 0.00093,
+        "avg_net_pnl": -0.006106972,
+        "total_gross_pnl": 0.093,
+        "total_net_pnl": -0.6106972,
+        "good_trade_count": 6,
+        "bad_trade_count": 32,
+        "share_of_good_subset": 0.029126213592,
+        "share_of_bad_subset": 0.048632218845,
+        "good_vs_bad_share_lift": 0.59890776699
+      }
+    },
+    "link_trade_alignment_count_250ms": {
+      "0": {
+        "count": 68,
+        "avg_gross_pnl": -0.0,
+        "avg_net_pnl": -0.0070804,
+        "total_gross_pnl": -0.0,
+        "total_net_pnl": -0.4814672,
+        "good_trade_count": 4,
+        "bad_trade_count": 36,
+        "share_of_good_subset": 0.019417475728,
+        "share_of_bad_subset": 0.054711246201,
+        "good_vs_bad_share_lift": 0.354908306365
+      },
+      "1": {
+        "count": 1161,
+        "avg_gross_pnl": 0.000574504737,
+        "avg_net_pnl": -0.00648605168,
+        "total_gross_pnl": 0.667,
+        "total_net_pnl": -7.530306,
+        "good_trade_count": 58,
+        "bad_trade_count": 455,
+        "share_of_good_subset": 0.281553398058,
+        "share_of_bad_subset": 0.691489361702,
+        "good_vs_bad_share_lift": 0.4071695295
+      },
+      "2": {
+        "count": 893,
+        "avg_gross_pnl": 0.001402015677,
+        "avg_net_pnl": -0.005665403807,
+        "total_gross_pnl": 1.252,
+        "total_net_pnl": -5.0592056,
+        "good_trade_count": 70,
+        "bad_trade_count": 130,
+        "share_of_good_subset": 0.339805825243,
+        "share_of_bad_subset": 0.197568389058,
+        "good_vs_bad_share_lift": 1.719940253921
+      },
+      "3": {
+        "count": 601,
+        "avg_gross_pnl": 0.002051580699,
+        "avg_net_pnl": -0.005021924126,
+        "total_gross_pnl": 1.233,
+        "total_net_pnl": -3.0181764,
+        "good_trade_count": 74,
+        "bad_trade_count": 37,
+        "share_of_good_subset": 0.359223300971,
+        "share_of_bad_subset": 0.05623100304,
+        "good_vs_bad_share_lift": 6.388349514563
+      }
+    },
+    "link_trade_divergence_bucket_250ms": {
+      "UNKNOWN": {
+        "count": 737,
+        "avg_gross_pnl": 0.000578018996,
+        "avg_net_pnl": -0.006477381818,
+        "total_gross_pnl": 0.426,
+        "total_net_pnl": -4.7738304,
+        "good_trade_count": 32,
+        "bad_trade_count": 281,
+        "share_of_good_subset": 0.155339805825,
+        "share_of_bad_subset": 0.427051671733,
+        "good_vs_bad_share_lift": 0.363749438552
+      },
+      "high": {
+        "count": 662,
+        "avg_gross_pnl": 0.000886706949,
+        "avg_net_pnl": -0.006185308157,
+        "total_gross_pnl": 0.587,
+        "total_net_pnl": -4.094674,
+        "good_trade_count": 49,
+        "bad_trade_count": 221,
+        "share_of_good_subset": 0.23786407767,
+        "share_of_bad_subset": 0.335866261398,
+        "good_vs_bad_share_lift": 0.708210692791
+      },
+      "low": {
+        "count": 666,
+        "avg_gross_pnl": 0.001744744745,
+        "avg_net_pnl": -0.005325018619,
+        "total_gross_pnl": 1.162,
+        "total_net_pnl": -3.5464624,
+        "good_trade_count": 68,
+        "bad_trade_count": 66,
+        "share_of_good_subset": 0.330097087379,
+        "share_of_bad_subset": 0.100303951368,
+        "good_vs_bad_share_lift": 3.290967931745
+      },
+      "medium": {
+        "count": 658,
+        "avg_gross_pnl": 0.001484802432,
+        "avg_net_pnl": -0.005583872948,
+        "total_gross_pnl": 0.977,
+        "total_net_pnl": -3.6741884,
+        "good_trade_count": 57,
+        "bad_trade_count": 90,
+        "share_of_good_subset": 0.276699029126,
+        "share_of_bad_subset": 0.136778115502,
+        "good_vs_bad_share_lift": 2.022977346278
+      }
+    },
+    "link_trade_venue_agreement_flag_250ms": {
+      "False": {
+        "count": 1429,
+        "avg_gross_pnl": 0.000712386284,
+        "avg_net_pnl": -0.006350848425,
+        "total_gross_pnl": 1.018,
+        "total_net_pnl": -9.0753624,
+        "good_trade_count": 84,
+        "bad_trade_count": 522,
+        "share_of_good_subset": 0.407766990291,
+        "share_of_bad_subset": 0.793313069909,
+        "good_vs_bad_share_lift": 0.514005133356
+      },
+      "True": {
+        "count": 1294,
+        "avg_gross_pnl": 0.001649149923,
+        "avg_net_pnl": -0.005420241731,
+        "total_gross_pnl": 2.134,
+        "total_net_pnl": -7.0137928,
+        "good_trade_count": 122,
+        "bad_trade_count": 136,
+        "share_of_good_subset": 0.592233009709,
+        "share_of_bad_subset": 0.206686930091,
+        "good_vs_bad_share_lift": 2.865362649914
+      }
+    },
+    "link_bbo_alignment_count_250ms": {
+      "0": {
+        "count": 636,
+        "avg_gross_pnl": 0.000132075472,
+        "avg_net_pnl": -0.006931550943,
+        "total_gross_pnl": 0.084,
+        "total_net_pnl": -4.4084664,
+        "good_trade_count": 27,
+        "bad_trade_count": 346,
+        "share_of_good_subset": 0.131067961165,
+        "share_of_bad_subset": 0.525835866261,
+        "good_vs_bad_share_lift": 0.249256411695
+      },
+      "1": {
+        "count": 815,
+        "avg_gross_pnl": 0.00117791411,
+        "avg_net_pnl": -0.005894948712,
+        "total_gross_pnl": 0.96,
+        "total_net_pnl": -4.8043832,
+        "good_trade_count": 64,
+        "bad_trade_count": 197,
+        "share_of_good_subset": 0.31067961165,
+        "share_of_bad_subset": 0.299392097264,
+        "good_vs_bad_share_lift": 1.03770144399
+      },
+      "2": {
+        "count": 888,
+        "avg_gross_pnl": 0.001690315315,
+        "avg_net_pnl": -0.005369209459,
+        "total_gross_pnl": 1.501,
+        "total_net_pnl": -4.767858,
+        "good_trade_count": 79,
+        "bad_trade_count": 88,
+        "share_of_good_subset": 0.383495145631,
+        "share_of_bad_subset": 0.133738601824,
+        "good_vs_bad_share_lift": 2.867497793469
+      },
+      "3": {
+        "count": 384,
+        "avg_gross_pnl": 0.001580729167,
+        "avg_net_pnl": -0.005490748958,
+        "total_gross_pnl": 0.607,
+        "total_net_pnl": -2.1084476,
+        "good_trade_count": 36,
+        "bad_trade_count": 27,
+        "share_of_good_subset": 0.174757281553,
+        "share_of_bad_subset": 0.04103343465,
+        "good_vs_bad_share_lift": 4.258899676375
+      }
+    },
+    "link_bbo_divergence_bucket_250ms": {
+      "UNKNOWN": {
+        "count": 269,
+        "avg_gross_pnl": 0.000784386617,
+        "avg_net_pnl": -0.006260709294,
+        "total_gross_pnl": 0.211,
+        "total_net_pnl": -1.6841308,
+        "good_trade_count": 12,
+        "bad_trade_count": 88,
+        "share_of_good_subset": 0.058252427184,
+        "share_of_bad_subset": 0.133738601824,
+        "good_vs_bad_share_lift": 0.435569285084
+      },
+      "high": {
+        "count": 818,
+        "avg_gross_pnl": 0.001233496333,
+        "avg_net_pnl": -0.005842013203,
+        "total_gross_pnl": 1.009,
+        "total_net_pnl": -4.7787668,
+        "good_trade_count": 68,
+        "bad_trade_count": 186,
+        "share_of_good_subset": 0.330097087379,
+        "share_of_bad_subset": 0.282674772036,
+        "good_vs_bad_share_lift": 1.16776281449
+      },
+      "low": {
+        "count": 818,
+        "avg_gross_pnl": 0.001062347188,
+        "avg_net_pnl": -0.005999689487,
+        "total_gross_pnl": 0.869,
+        "total_net_pnl": -4.907746,
+        "good_trade_count": 58,
+        "bad_trade_count": 196,
+        "share_of_good_subset": 0.281553398058,
+        "share_of_bad_subset": 0.297872340426,
+        "good_vs_bad_share_lift": 0.945214979196
+      },
+      "medium": {
+        "count": 818,
+        "avg_gross_pnl": 0.001299511002,
+        "avg_net_pnl": -0.005768351589,
+        "total_gross_pnl": 1.063,
+        "total_net_pnl": -4.7185116,
+        "good_trade_count": 68,
+        "bad_trade_count": 188,
+        "share_of_good_subset": 0.330097087379,
+        "share_of_bad_subset": 0.285714285714,
+        "good_vs_bad_share_lift": 1.155339805825
+      }
+    },
+    "link_bbo_venue_agreement_flag_250ms": {
+      "False": {
+        "count": 1694,
+        "avg_gross_pnl": 0.000838252656,
+        "avg_net_pnl": -0.006230953955,
+        "total_gross_pnl": 1.42,
+        "total_net_pnl": -10.555236,
+        "good_trade_count": 110,
+        "bad_trade_count": 581,
+        "share_of_good_subset": 0.533980582524,
+        "share_of_bad_subset": 0.882978723404,
+        "good_vs_bad_share_lift": 0.604749093461
+      },
+      "True": {
+        "count": 1029,
+        "avg_gross_pnl": 0.001683187561,
+        "avg_net_pnl": -0.005377958406,
+        "total_gross_pnl": 1.732,
+        "total_net_pnl": -5.5339192,
+        "good_trade_count": 96,
+        "bad_trade_count": 77,
+        "share_of_good_subset": 0.466019417476,
+        "share_of_bad_subset": 0.117021276596,
+        "good_vs_bad_share_lift": 3.982347749338
+      }
+    },
+    "btc_bbo_return_relation_250ms": {
+      "disagreement": {
+        "count": 303,
+        "avg_gross_pnl": 0.000798679868,
+        "avg_net_pnl": -0.006289206601,
+        "total_gross_pnl": 0.242,
+        "total_net_pnl": -1.9056296,
+        "good_trade_count": 24,
+        "bad_trade_count": 116,
+        "share_of_good_subset": 0.116504854369,
+        "share_of_bad_subset": 0.176291793313,
+        "good_vs_bad_share_lift": 0.660863742886
+      },
+      "flat": {
+        "count": 1785,
+        "avg_gross_pnl": 0.001058823529,
+        "avg_net_pnl": -0.006002416134,
+        "total_gross_pnl": 1.89,
+        "total_net_pnl": -10.7143128,
+        "good_trade_count": 130,
+        "bad_trade_count": 488,
+        "share_of_good_subset": 0.631067961165,
+        "share_of_bad_subset": 0.741641337386,
+        "good_vs_bad_share_lift": 0.850907209932
+      },
+      "no_coverage": {
+        "count": 4,
+        "avg_gross_pnl": 0.0,
+        "avg_net_pnl": -0.0070112,
+        "total_gross_pnl": 0.0,
+        "total_net_pnl": -0.0280448,
+        "good_trade_count": 0,
+        "bad_trade_count": 2,
+        "share_of_good_subset": 0.0,
+        "share_of_bad_subset": 0.003039513678,
+        "good_vs_bad_share_lift": 0.0
+      },
+      "supportive": {
+        "count": 631,
+        "avg_gross_pnl": 0.001616481775,
+        "avg_net_pnl": -0.005453515055,
+        "total_gross_pnl": 1.02,
+        "total_net_pnl": -3.441168,
+        "good_trade_count": 52,
+        "bad_trade_count": 52,
+        "share_of_good_subset": 0.252427184466,
+        "share_of_bad_subset": 0.079027355623,
+        "good_vs_bad_share_lift": 3.194174757282
+      }
+    },
+    "btc_bbo_pressure_relation_250ms": {
+      "disagreement": {
+        "count": 1034,
+        "avg_gross_pnl": 0.000615087041,
+        "avg_net_pnl": -0.006456417795,
+        "total_gross_pnl": 0.636,
+        "total_net_pnl": -6.675936,
+        "good_trade_count": 57,
+        "bad_trade_count": 415,
+        "share_of_good_subset": 0.276699029126,
+        "share_of_bad_subset": 0.630699088146,
+        "good_vs_bad_share_lift": 0.438717978711
+      },
+      "flat": {
+        "count": 58,
+        "avg_gross_pnl": 0.001051724138,
+        "avg_net_pnl": -0.006013455172,
+        "total_gross_pnl": 0.061,
+        "total_net_pnl": -0.3487804,
+        "good_trade_count": 3,
+        "bad_trade_count": 15,
+        "share_of_good_subset": 0.014563106796,
+        "share_of_bad_subset": 0.022796352584,
+        "good_vs_bad_share_lift": 0.638834951456
+      },
+      "no_coverage": {
+        "count": 4,
+        "avg_gross_pnl": 0.0,
+        "avg_net_pnl": -0.0070112,
+        "total_gross_pnl": 0.0,
+        "total_net_pnl": -0.0280448,
+        "good_trade_count": 0,
+        "bad_trade_count": 2,
+        "share_of_good_subset": 0.0,
+        "share_of_bad_subset": 0.003039513678,
+        "good_vs_bad_share_lift": 0.0
+      },
+      "supportive": {
+        "count": 1627,
+        "avg_gross_pnl": 0.001508912108,
+        "avg_net_pnl": -0.005554022127,
+        "total_gross_pnl": 2.455,
+        "total_net_pnl": -9.036394,
+        "good_trade_count": 146,
+        "bad_trade_count": 226,
+        "share_of_good_subset": 0.708737864078,
+        "share_of_bad_subset": 0.343465045593,
+        "good_vs_bad_share_lift": 2.06349342727
+      }
+    },
+    "btc_bbo_activity_bucket_250ms": {
+      "high": {
+        "count": 851,
+        "avg_gross_pnl": 0.00123266745,
+        "avg_net_pnl": -0.005848851234,
+        "total_gross_pnl": 1.049,
+        "total_net_pnl": -4.9773724,
+        "good_trade_count": 77,
+        "bad_trade_count": 191,
+        "share_of_good_subset": 0.373786407767,
+        "share_of_bad_subset": 0.290273556231,
+        "good_vs_bad_share_lift": 1.287703959742
+      },
+      "low": {
+        "count": 1868,
+        "avg_gross_pnl": 0.001125802998,
+        "avg_net_pnl": -0.005933478587,
+        "total_gross_pnl": 2.103,
+        "total_net_pnl": -11.083738,
+        "good_trade_count": 129,
+        "bad_trade_count": 465,
+        "share_of_good_subset": 0.626213592233,
+        "share_of_bad_subset": 0.706686930091,
+        "good_vs_bad_share_lift": 0.886125900407
+      },
+      "no_coverage": {
+        "count": 4,
+        "avg_gross_pnl": 0.0,
+        "avg_net_pnl": -0.0070112,
+        "total_gross_pnl": 0.0,
+        "total_net_pnl": -0.0280448,
+        "good_trade_count": 0,
+        "bad_trade_count": 2,
+        "share_of_good_subset": 0.0,
+        "share_of_bad_subset": 0.003039513678,
+        "good_vs_bad_share_lift": 0.0
+      }
+    },
+    "link_trade_alignment_count_500ms": {
+      "0": {
+        "count": 178,
+        "avg_gross_pnl": 0.000623595506,
+        "avg_net_pnl": -0.006456806742,
+        "total_gross_pnl": 0.111,
+        "total_net_pnl": -1.1493116,
+        "good_trade_count": 13,
+        "bad_trade_count": 74,
+        "share_of_good_subset": 0.063106796117,
+        "share_of_bad_subset": 0.112462006079,
+        "good_vs_bad_share_lift": 0.561138808712
+      },
+      "1": {
+        "count": 926,
+        "avg_gross_pnl": 0.000615550756,
+        "avg_net_pnl": -0.006444644492,
+        "total_gross_pnl": 0.57,
+        "total_net_pnl": -5.9677408,
+        "good_trade_count": 53,
+        "bad_trade_count": 368,
+        "share_of_good_subset": 0.257281553398,
+        "share_of_bad_subset": 0.559270516717,
+        "good_vs_bad_share_lift": 0.46003060363
+      },
+      "2": {
+        "count": 959,
+        "avg_gross_pnl": 0.001186652763,
+        "avg_net_pnl": -0.005880566423,
+        "total_gross_pnl": 1.138,
+        "total_net_pnl": -5.6394632,
+        "good_trade_count": 59,
+        "bad_trade_count": 168,
+        "share_of_good_subset": 0.28640776699,
+        "share_of_bad_subset": 0.255319148936,
+        "good_vs_bad_share_lift": 1.121763754045
+      },
+      "3": {
+        "count": 660,
+        "avg_gross_pnl": 0.00201969697,
+        "avg_net_pnl": -0.005049453939,
+        "total_gross_pnl": 1.333,
+        "total_net_pnl": -3.3326396,
+        "good_trade_count": 81,
+        "bad_trade_count": 48,
+        "share_of_good_subset": 0.393203883495,
+        "share_of_bad_subset": 0.072948328267,
+        "good_vs_bad_share_lift": 5.390169902913
+      }
+    },
+    "link_trade_divergence_bucket_500ms": {
+      "UNKNOWN": {
+        "count": 393,
+        "avg_gross_pnl": 0.000506361323,
+        "avg_net_pnl": -0.006544080407,
+        "total_gross_pnl": 0.199,
+        "total_net_pnl": -2.5718236,
+        "good_trade_count": 15,
+        "bad_trade_count": 156,
+        "share_of_good_subset": 0.072815533981,
+        "share_of_bad_subset": 0.237082066869,
+        "good_vs_bad_share_lift": 0.3071321882
+      },
+      "high": {
+        "count": 777,
+        "avg_gross_pnl": 0.000908622909,
+        "avg_net_pnl": -0.006160376834,
+        "total_gross_pnl": 0.706,
+        "total_net_pnl": -4.7866128,
+        "good_trade_count": 54,
+        "bad_trade_count": 249,
+        "share_of_good_subset": 0.26213592233,
+        "share_of_bad_subset": 0.378419452888,
+        "good_vs_bad_share_lift": 0.692712597965
+      },
+      "low": {
+        "count": 787,
+        "avg_gross_pnl": 0.00156797967,
+        "avg_net_pnl": -0.005493363151,
+        "total_gross_pnl": 1.234,
+        "total_net_pnl": -4.3232768,
+        "good_trade_count": 70,
+        "bad_trade_count": 93,
+        "share_of_good_subset": 0.339805825243,
+        "share_of_bad_subset": 0.141337386018,
+        "good_vs_bad_share_lift": 2.404217559244
+      },
+      "medium": {
+        "count": 766,
+        "avg_gross_pnl": 0.001322454308,
+        "avg_net_pnl": -0.005753840731,
+        "total_gross_pnl": 1.013,
+        "total_net_pnl": -4.407442,
+        "good_trade_count": 67,
+        "bad_trade_count": 160,
+        "share_of_good_subset": 0.325242718447,
+        "share_of_bad_subset": 0.243161094225,
+        "good_vs_bad_share_lift": 1.337560679612
+      }
+    },
+    "link_trade_venue_agreement_flag_500ms": {
+      "False": {
+        "count": 1489,
+        "avg_gross_pnl": 0.000785090665,
+        "avg_net_pnl": -0.006282270786,
+        "total_gross_pnl": 1.169,
+        "total_net_pnl": -9.3543012,
+        "good_trade_count": 95,
+        "bad_trade_count": 513,
+        "share_of_good_subset": 0.461165048544,
+        "share_of_bad_subset": 0.779635258359,
+        "good_vs_bad_share_lift": 0.591513843941
+      },
+      "True": {
+        "count": 1234,
+        "avg_gross_pnl": 0.001606969206,
+        "avg_net_pnl": -0.005457742301,
+        "total_gross_pnl": 1.983,
+        "total_net_pnl": -6.734854,
+        "good_trade_count": 111,
+        "bad_trade_count": 145,
+        "share_of_good_subset": 0.538834951456,
+        "share_of_bad_subset": 0.220364741641,
+        "good_vs_bad_share_lift": 2.445195848678
+      }
+    },
+    "link_bbo_alignment_count_500ms": {
+      "0": {
+        "count": 639,
+        "avg_gross_pnl": 0.000286384977,
+        "avg_net_pnl": -0.006782025039,
+        "total_gross_pnl": 0.183,
+        "total_net_pnl": -4.333714,
+        "good_trade_count": 33,
+        "bad_trade_count": 321,
+        "share_of_good_subset": 0.160194174757,
+        "share_of_bad_subset": 0.487841945289,
+        "good_vs_bad_share_lift": 0.328373105889
+      },
+      "1": {
+        "count": 750,
+        "avg_gross_pnl": 0.001150666667,
+        "avg_net_pnl": -0.0059204688,
+        "total_gross_pnl": 0.863,
+        "total_net_pnl": -4.4403516,
+        "good_trade_count": 57,
+        "bad_trade_count": 195,
+        "share_of_good_subset": 0.276699029126,
+        "share_of_bad_subset": 0.296352583587,
+        "good_vs_bad_share_lift": 0.933681852128
+      },
+      "2": {
+        "count": 842,
+        "avg_gross_pnl": 0.001618764846,
+        "avg_net_pnl": -0.005440497387,
+        "total_gross_pnl": 1.363,
+        "total_net_pnl": -4.5808988,
+        "good_trade_count": 81,
+        "bad_trade_count": 102,
+        "share_of_good_subset": 0.393203883495,
+        "share_of_bad_subset": 0.155015197568,
+        "good_vs_bad_share_lift": 2.536550542547
+      },
+      "3": {
+        "count": 492,
+        "avg_gross_pnl": 0.001510162602,
+        "avg_net_pnl": -0.005557298374,
+        "total_gross_pnl": 0.743,
+        "total_net_pnl": -2.7341908,
+        "good_trade_count": 35,
+        "bad_trade_count": 40,
+        "share_of_good_subset": 0.169902912621,
+        "share_of_bad_subset": 0.060790273556,
+        "good_vs_bad_share_lift": 2.794902912621
+      }
+    },
+    "link_bbo_divergence_bucket_500ms": {
+      "UNKNOWN": {
+        "count": 65,
+        "avg_gross_pnl": 0.000984615385,
+        "avg_net_pnl": -0.006048738462,
+        "total_gross_pnl": 0.064,
+        "total_net_pnl": -0.393168,
+        "good_trade_count": 4,
+        "bad_trade_count": 21,
+        "share_of_good_subset": 0.019417475728,
+        "share_of_bad_subset": 0.031914893617,
+        "good_vs_bad_share_lift": 0.608414239482
+      },
+      "high": {
+        "count": 886,
+        "avg_gross_pnl": 0.001161399549,
+        "avg_net_pnl": -0.005908209029,
+        "total_gross_pnl": 1.029,
+        "total_net_pnl": -5.2346732,
+        "good_trade_count": 64,
+        "bad_trade_count": 202,
+        "share_of_good_subset": 0.31067961165,
+        "share_of_bad_subset": 0.306990881459,
+        "good_vs_bad_share_lift": 1.012015764683
+      },
+      "low": {
+        "count": 886,
+        "avg_gross_pnl": 0.001124153499,
+        "avg_net_pnl": -0.005937718284,
+        "total_gross_pnl": 0.996,
+        "total_net_pnl": -5.2608184,
+        "good_trade_count": 72,
+        "bad_trade_count": 226,
+        "share_of_good_subset": 0.349514563107,
+        "share_of_bad_subset": 0.343465045593,
+        "good_vs_bad_share_lift": 1.01761319701
+      },
+      "medium": {
+        "count": 886,
+        "avg_gross_pnl": 0.001199774266,
+        "avg_net_pnl": -0.00586963386,
+        "total_gross_pnl": 1.063,
+        "total_net_pnl": -5.2004956,
+        "good_trade_count": 66,
+        "bad_trade_count": 209,
+        "share_of_good_subset": 0.320388349515,
+        "share_of_bad_subset": 0.317629179331,
+        "good_vs_bad_share_lift": 1.008686765457
+      }
+    },
+    "link_bbo_venue_agreement_flag_500ms": {
+      "False": {
+        "count": 1767,
+        "avg_gross_pnl": 0.000912846633,
+        "avg_net_pnl": -0.006157758234,
+        "total_gross_pnl": 1.613,
+        "total_net_pnl": -10.8807588,
+        "good_trade_count": 125,
+        "bad_trade_count": 578,
+        "share_of_good_subset": 0.606796116505,
+        "share_of_bad_subset": 0.878419452888,
+        "good_vs_bad_share_lift": 0.690781738166
+      },
+      "True": {
+        "count": 956,
+        "avg_gross_pnl": 0.001609832636,
+        "avg_net_pnl": -0.005448113389,
+        "total_gross_pnl": 1.539,
+        "total_net_pnl": -5.2083964,
+        "good_trade_count": 81,
+        "bad_trade_count": 80,
+        "share_of_good_subset": 0.393203883495,
+        "share_of_bad_subset": 0.121580547112,
+        "good_vs_bad_share_lift": 3.234101941748
+      }
+    },
+    "btc_bbo_return_relation_500ms": {
+      "disagreement": {
+        "count": 569,
+        "avg_gross_pnl": 0.000775043937,
+        "avg_net_pnl": -0.006307424253,
+        "total_gross_pnl": 0.441,
+        "total_net_pnl": -3.5889244,
+        "good_trade_count": 50,
+        "bad_trade_count": 229,
+        "share_of_good_subset": 0.242718446602,
+        "share_of_bad_subset": 0.348024316109,
+        "good_vs_bad_share_lift": 0.697418069275
+      },
+      "flat": {
+        "count": 1211,
+        "avg_gross_pnl": 0.001024772915,
+        "avg_net_pnl": -0.006030783485,
+        "total_gross_pnl": 1.241,
+        "total_net_pnl": -7.3032788,
+        "good_trade_count": 77,
+        "bad_trade_count": 334,
+        "share_of_good_subset": 0.373786407767,
+        "share_of_bad_subset": 0.507598784195,
+        "good_vs_bad_share_lift": 0.736381605721
+      },
+      "supportive": {
+        "count": 943,
+        "avg_gross_pnl": 0.001558854719,
+        "avg_net_pnl": -0.005511083775,
+        "total_gross_pnl": 1.47,
+        "total_net_pnl": -5.196952,
+        "good_trade_count": 79,
+        "bad_trade_count": 95,
+        "share_of_good_subset": 0.383495145631,
+        "share_of_bad_subset": 0.144376899696,
+        "good_vs_bad_share_lift": 2.656208482371
+      }
+    },
+    "btc_bbo_pressure_relation_500ms": {
+      "disagreement": {
+        "count": 1120,
+        "avg_gross_pnl": 0.000722321429,
+        "avg_net_pnl": -0.006349216786,
+        "total_gross_pnl": 0.809,
+        "total_net_pnl": -7.1111228,
+        "good_trade_count": 67,
+        "bad_trade_count": 416,
+        "share_of_good_subset": 0.325242718447,
+        "share_of_bad_subset": 0.632218844985,
+        "good_vs_bad_share_lift": 0.514446415235
+      },
+      "flat": {
+        "count": 72,
+        "avg_gross_pnl": 0.000916666667,
+        "avg_net_pnl": -0.006168277778,
+        "total_gross_pnl": 0.066,
+        "total_net_pnl": -0.444116,
+        "good_trade_count": 5,
+        "bad_trade_count": 18,
+        "share_of_good_subset": 0.02427184466,
+        "share_of_bad_subset": 0.0273556231,
+        "good_vs_bad_share_lift": 0.887270765912
+      },
+      "supportive": {
+        "count": 1531,
+        "avg_gross_pnl": 0.001487263227,
+        "avg_net_pnl": -0.005574079948,
+        "total_gross_pnl": 2.277,
+        "total_net_pnl": -8.5339164,
+        "good_trade_count": 134,
+        "bad_trade_count": 224,
+        "share_of_good_subset": 0.650485436893,
+        "share_of_bad_subset": 0.340425531915,
+        "good_vs_bad_share_lift": 1.910800970874
+      }
+    },
+    "btc_bbo_activity_bucket_500ms": {
+      "high": {
+        "count": 1078,
+        "avg_gross_pnl": 0.001262523191,
+        "avg_net_pnl": -0.005828997032,
+        "total_gross_pnl": 1.361,
+        "total_net_pnl": -6.2836588,
+        "good_trade_count": 98,
+        "bad_trade_count": 249,
+        "share_of_good_subset": 0.47572815534,
+        "share_of_bad_subset": 0.378419452888,
+        "good_vs_bad_share_lift": 1.257145085195
+      },
+      "low": {
+        "count": 1645,
+        "avg_gross_pnl": 0.001088753799,
+        "avg_net_pnl": -0.005960788085,
+        "total_gross_pnl": 1.791,
+        "total_net_pnl": -9.8054964,
+        "good_trade_count": 108,
+        "bad_trade_count": 409,
+        "share_of_good_subset": 0.52427184466,
+        "share_of_bad_subset": 0.621580547112,
+        "good_vs_bad_share_lift": 0.84344956916
+      }
+    }
+  },
+  "candidate_rules": [
+    {
+      "rule": "link_trade_alignment_count_100ms == 3 AND link_trade_divergence_bucket_100ms == low",
+      "trade_count": 168,
+      "trade_ratio": 0.061696658098,
+      "gross_pnl_total": 0.432,
+      "net_pnl_total": -0.7555128,
+      "avg_gross_pnl_per_trade": 0.002571428571,
+      "avg_net_pnl_per_trade": -0.0044971,
+      "good_trade_count": 29,
+      "bad_trade_count": 9,
+      "good_share": 0.140776699029,
+      "bad_share": 0.01367781155,
+      "good_vs_bad_share_lift": 10.292340884574
+    },
+    {
+      "rule": "link_trade_alignment_count_250ms == 3 AND link_trade_divergence_bucket_250ms == low AND btc_bbo_return_relation_250ms == supportive",
+      "trade_count": 106,
+      "trade_ratio": 0.038927653324,
+      "gross_pnl_total": 0.249,
+      "net_pnl_total": -0.4998172,
+      "avg_gross_pnl_per_trade": 0.002349056604,
+      "avg_net_pnl_per_trade": -0.004715256604,
+      "good_trade_count": 14,
+      "bad_trade_count": 4,
+      "good_share": 0.067961165049,
+      "bad_share": 0.006079027356,
+      "good_vs_bad_share_lift": 11.179611650485
+    },
+    {
+      "rule": "link_trade_alignment_count_250ms == 3 AND link_trade_divergence_bucket_250ms == low",
+      "trade_count": 272,
+      "trade_ratio": 0.099889827396,
+      "gross_pnl_total": 0.638,
+      "net_pnl_total": -1.285384,
+      "avg_gross_pnl_per_trade": 0.002345588235,
+      "avg_net_pnl_per_trade": -0.004725676471,
+      "good_trade_count": 43,
+      "bad_trade_count": 14,
+      "good_share": 0.208737864078,
+      "bad_share": 0.021276595745,
+      "good_vs_bad_share_lift": 9.81067961165
+    },
+    {
+      "rule": "link_trade_alignment_count_100ms == 3",
+      "trade_count": 438,
+      "trade_ratio": 0.160852001469,
+      "gross_pnl_total": 0.975,
+      "net_pnl_total": -2.1235228,
+      "avg_gross_pnl_per_trade": 0.002226027397,
+      "avg_net_pnl_per_trade": -0.004848225571,
+      "good_trade_count": 63,
+      "bad_trade_count": 25,
+      "good_share": 0.305825242718,
+      "bad_share": 0.037993920973,
+      "good_vs_bad_share_lift": 8.04932038835
+    },
+    {
+      "rule": "link_trade_alignment_count_100ms == 3 AND btc_bbo_pressure_relation_100ms == supportive",
+      "trade_count": 311,
+      "trade_ratio": 0.114212265883,
+      "gross_pnl_total": 0.684,
+      "net_pnl_total": -1.514968,
+      "avg_gross_pnl_per_trade": 0.002199356913,
+      "avg_net_pnl_per_trade": -0.004871279743,
+      "good_trade_count": 45,
+      "bad_trade_count": 13,
+      "good_share": 0.218446601942,
+      "bad_share": 0.019756838906,
+      "good_vs_bad_share_lift": 11.056758775205
+    },
+    {
+      "rule": "link_trade_alignment_count_500ms == 3 AND link_trade_divergence_bucket_500ms == low AND btc_bbo_return_relation_500ms == supportive",
+      "trade_count": 196,
+      "trade_ratio": 0.071979434447,
+      "gross_pnl_total": 0.417,
+      "net_pnl_total": -0.9675676,
+      "avg_gross_pnl_per_trade": 0.00212755102,
+      "avg_net_pnl_per_trade": -0.004936569388,
+      "good_trade_count": 24,
+      "bad_trade_count": 7,
+      "good_share": 0.116504854369,
+      "bad_share": 0.010638297872,
+      "good_vs_bad_share_lift": 10.95145631068
+    },
+    {
+      "rule": "link_trade_alignment_count_250ms == 3 AND btc_bbo_pressure_relation_250ms == supportive",
+      "trade_count": 439,
+      "trade_ratio": 0.161219243481,
+      "gross_pnl_total": 0.924,
+      "net_pnl_total": -2.1787384,
+      "avg_gross_pnl_per_trade": 0.002104783599,
+      "avg_net_pnl_per_trade": -0.004962957631,
+      "good_trade_count": 56,
+      "bad_trade_count": 17,
+      "good_share": 0.271844660194,
+      "bad_share": 0.025835866261,
+      "good_vs_bad_share_lift": 10.521987435751
+    },
+    {
+      "rule": "link_trade_alignment_count_500ms == 3 AND link_trade_divergence_bucket_500ms == low",
+      "trade_count": 343,
+      "trade_ratio": 0.125964010283,
+      "gross_pnl_total": 0.721,
+      "net_pnl_total": -1.7027028,
+      "avg_gross_pnl_per_trade": 0.002102040816,
+      "avg_net_pnl_per_trade": -0.004964148105,
+      "good_trade_count": 46,
+      "bad_trade_count": 21,
+      "good_share": 0.223300970874,
+      "bad_share": 0.031914893617,
+      "good_vs_bad_share_lift": 6.996763754045
+    },
+    {
+      "rule": "link_trade_alignment_count_500ms == 3 AND btc_bbo_return_relation_500ms == supportive",
+      "trade_count": 353,
+      "trade_ratio": 0.129636430408,
+      "gross_pnl_total": 0.731,
+      "net_pnl_total": -1.7646748,
+      "avg_gross_pnl_per_trade": 0.00207082153,
+      "avg_net_pnl_per_trade": -0.004999078754,
+      "good_trade_count": 43,
+      "bad_trade_count": 19,
+      "good_share": 0.208737864078,
+      "bad_share": 0.028875379939,
+      "good_vs_bad_share_lift": 7.228921819111
+    },
+    {
+      "rule": "link_trade_alignment_count_250ms == 3",
+      "trade_count": 601,
+      "trade_ratio": 0.220712449504,
+      "gross_pnl_total": 1.233,
+      "net_pnl_total": -3.0181764,
+      "avg_gross_pnl_per_trade": 0.002051580699,
+      "avg_net_pnl_per_trade": -0.005021924126,
+      "good_trade_count": 74,
+      "bad_trade_count": 37,
+      "good_share": 0.359223300971,
+      "bad_share": 0.05623100304,
+      "good_vs_bad_share_lift": 6.388349514563
+    },
+    {
+      "rule": "link_trade_alignment_count_500ms == 3 AND btc_bbo_pressure_relation_500ms == supportive",
+      "trade_count": 461,
+      "trade_ratio": 0.169298567756,
+      "gross_pnl_total": 0.932,
+      "net_pnl_total": -2.324352,
+      "avg_gross_pnl_per_trade": 0.002021691974,
+      "avg_net_pnl_per_trade": -0.005041978308,
+      "good_trade_count": 55,
+      "bad_trade_count": 25,
+      "good_share": 0.266990291262,
+      "bad_share": 0.037993920973,
+      "good_vs_bad_share_lift": 7.027184466019
+    },
+    {
+      "rule": "link_trade_alignment_count_500ms == 3",
+      "trade_count": 660,
+      "trade_ratio": 0.242379728241,
+      "gross_pnl_total": 1.333,
+      "net_pnl_total": -3.3326396,
+      "avg_gross_pnl_per_trade": 0.00201969697,
+      "avg_net_pnl_per_trade": -0.005049453939,
+      "good_trade_count": 81,
+      "bad_trade_count": 48,
+      "good_share": 0.393203883495,
+      "bad_share": 0.072948328267,
+      "good_vs_bad_share_lift": 5.390169902913
+    },
+    {
+      "rule": "link_trade_alignment_count_250ms == 3 AND btc_bbo_return_relation_250ms == supportive",
+      "trade_count": 222,
+      "trade_ratio": 0.081527726772,
+      "gross_pnl_total": 0.442,
+      "net_pnl_total": -1.12782,
+      "avg_gross_pnl_per_trade": 0.001990990991,
+      "avg_net_pnl_per_trade": -0.00508027027,
+      "good_trade_count": 20,
+      "bad_trade_count": 9,
+      "good_share": 0.097087378641,
+      "bad_share": 0.01367781155,
+      "good_vs_bad_share_lift": 7.098166127292
+    },
+    {
+      "rule": "link_trade_alignment_count_100ms >= 2",
+      "trade_count": 1227,
+      "trade_ratio": 0.450605949321,
+      "gross_pnl_total": 2.239,
+      "net_pnl_total": -6.439722,
+      "avg_gross_pnl_per_trade": 0.001824775876,
+      "avg_net_pnl_per_trade": -0.005248347188,
+      "good_trade_count": 126,
+      "bad_trade_count": 113,
+      "good_share": 0.611650485437,
+      "bad_share": 0.171732522796,
+      "good_vs_bad_share_lift": 3.561646189535
+    },
+    {
+      "rule": "btc_bbo_return_relation_100ms == supportive",
+      "trade_count": 4,
+      "trade_ratio": 0.00146896805,
+      "gross_pnl_total": 0.007,
+      "net_pnl_total": -0.021214,
+      "avg_gross_pnl_per_trade": 0.00175,
+      "avg_net_pnl_per_trade": -0.0053035,
+      "good_trade_count": 0,
+      "bad_trade_count": 0,
+      "good_share": 0.0,
+      "bad_share": 0.0,
+      "good_vs_bad_share_lift": null
+    },
+    {
+      "rule": "link_bbo_alignment_count_100ms >= 2",
+      "trade_count": 965,
+      "trade_ratio": 0.354388542049,
+      "gross_pnl_total": 1.625,
+      "net_pnl_total": -5.193214,
+      "avg_gross_pnl_per_trade": 0.001683937824,
+      "avg_net_pnl_per_trade": -0.005381568912,
+      "good_trade_count": 86,
+      "bad_trade_count": 65,
+      "good_share": 0.417475728155,
+      "bad_share": 0.098784194529,
+      "good_vs_bad_share_lift": 4.226138909634
+    },
+    {
+      "rule": "link_bbo_alignment_count_250ms >= 2",
+      "trade_count": 1272,
+      "trade_ratio": 0.467131839882,
+      "gross_pnl_total": 2.108,
+      "net_pnl_total": -6.8763056,
+      "avg_gross_pnl_per_trade": 0.001657232704,
+      "avg_net_pnl_per_trade": -0.005405900629,
+      "good_trade_count": 115,
+      "bad_trade_count": 115,
+      "good_share": 0.558252427184,
+      "bad_share": 0.174772036474,
+      "good_vs_bad_share_lift": 3.194174757282
+    },
+    {
+      "rule": "link_trade_alignment_count_250ms >= 2",
+      "trade_count": 1494,
+      "trade_ratio": 0.548659566654,
+      "gross_pnl_total": 2.485,
+      "net_pnl_total": -8.077382,
+      "avg_gross_pnl_per_trade": 0.001663319946,
+      "avg_net_pnl_per_trade": -0.005406547523,
+      "good_trade_count": 144,
+      "bad_trade_count": 167,
+      "good_share": 0.699029126214,
+      "bad_share": 0.253799392097,
+      "good_vs_bad_share_lift": 2.754258473345
+    },
+    {
+      "rule": "btc_bbo_return_relation_250ms == supportive",
+      "trade_count": 631,
+      "trade_ratio": 0.231729709879,
+      "gross_pnl_total": 1.02,
+      "net_pnl_total": -3.441168,
+      "avg_gross_pnl_per_trade": 0.001616481775,
+      "avg_net_pnl_per_trade": -0.005453515055,
+      "good_trade_count": 52,
+      "bad_trade_count": 52,
+      "good_share": 0.252427184466,
+      "bad_share": 0.079027355623,
+      "good_vs_bad_share_lift": 3.194174757282
+    },
+    {
+      "rule": "link_bbo_alignment_count_500ms >= 2",
+      "trade_count": 1334,
+      "trade_ratio": 0.489900844657,
+      "gross_pnl_total": 2.106,
+      "net_pnl_total": -7.3150896,
+      "avg_gross_pnl_per_trade": 0.001578710645,
+      "avg_net_pnl_per_trade": -0.005483575412,
+      "good_trade_count": 116,
+      "bad_trade_count": 142,
+      "good_share": 0.563106796117,
+      "bad_share": 0.215805471125,
+      "good_vs_bad_share_lift": 2.609325858061
+    },
+    {
+      "rule": "btc_bbo_return_relation_500ms == supportive",
+      "trade_count": 943,
+      "trade_ratio": 0.346309217775,
+      "gross_pnl_total": 1.47,
+      "net_pnl_total": -5.196952,
+      "avg_gross_pnl_per_trade": 0.001558854719,
+      "avg_net_pnl_per_trade": -0.005511083775,
+      "good_trade_count": 79,
+      "bad_trade_count": 95,
+      "good_share": 0.383495145631,
+      "bad_share": 0.144376899696,
+      "good_vs_bad_share_lift": 2.656208482371
+    },
+    {
+      "rule": "link_trade_alignment_count_500ms >= 2",
+      "trade_count": 1619,
+      "trade_ratio": 0.594564818215,
+      "gross_pnl_total": 2.471,
+      "net_pnl_total": -8.9721028,
+      "avg_gross_pnl_per_trade": 0.001526250772,
+      "avg_net_pnl_per_trade": -0.005541755899,
+      "good_trade_count": 140,
+      "bad_trade_count": 216,
+      "good_share": 0.679611650485,
+      "bad_share": 0.328267477204,
+      "good_vs_bad_share_lift": 2.070298453794
+    },
+    {
+      "rule": "btc_bbo_pressure_relation_100ms == supportive",
+      "trade_count": 1620,
+      "trade_ratio": 0.594932060228,
+      "gross_pnl_total": 2.463,
+      "net_pnl_total": -8.9825524,
+      "avg_gross_pnl_per_trade": 0.00152037037,
+      "avg_net_pnl_per_trade": -0.005544785432,
+      "good_trade_count": 150,
+      "bad_trade_count": 217,
+      "good_share": 0.728155339806,
+      "bad_share": 0.329787234043,
+      "good_vs_bad_share_lift": 2.207954901347
+    },
+    {
+      "rule": "btc_bbo_pressure_relation_250ms == supportive",
+      "trade_count": 1627,
+      "trade_ratio": 0.597502754315,
+      "gross_pnl_total": 2.455,
+      "net_pnl_total": -9.036394,
+      "avg_gross_pnl_per_trade": 0.001508912108,
+      "avg_net_pnl_per_trade": -0.005554022127,
+      "good_trade_count": 146,
+      "bad_trade_count": 226,
+      "good_share": 0.708737864078,
+      "bad_share": 0.343465045593,
+      "good_vs_bad_share_lift": 2.06349342727
+    }
+  ],
+  "best_patterns": {
+    "same_symbol_best_rule": {
+      "rule": "link_trade_alignment_count_100ms == 3 AND link_trade_divergence_bucket_100ms == low",
+      "trade_count": 168,
+      "trade_ratio": 0.061696658098,
+      "gross_pnl_total": 0.432,
+      "net_pnl_total": -0.7555128,
+      "avg_gross_pnl_per_trade": 0.002571428571,
+      "avg_net_pnl_per_trade": -0.0044971,
+      "good_trade_count": 29,
+      "bad_trade_count": 9,
+      "good_share": 0.140776699029,
+      "bad_share": 0.01367781155,
+      "good_vs_bad_share_lift": 10.292340884574
+    },
+    "btc_best_rule": {
+      "rule": "btc_bbo_return_relation_100ms == supportive",
+      "trade_count": 4,
+      "trade_ratio": 0.00146896805,
+      "gross_pnl_total": 0.007,
+      "net_pnl_total": -0.021214,
+      "avg_gross_pnl_per_trade": 0.00175,
+      "avg_net_pnl_per_trade": -0.0053035,
+      "good_trade_count": 0,
+      "bad_trade_count": 0,
+      "good_share": 0.0,
+      "bad_share": 0.0,
+      "good_vs_bad_share_lift": null
+    },
+    "combined_best_rule": {
+      "rule": "link_trade_alignment_count_250ms == 3 AND link_trade_divergence_bucket_250ms == low AND btc_bbo_return_relation_250ms == supportive",
+      "trade_count": 106,
+      "trade_ratio": 0.038927653324,
+      "gross_pnl_total": 0.249,
+      "net_pnl_total": -0.4998172,
+      "avg_gross_pnl_per_trade": 0.002349056604,
+      "avg_net_pnl_per_trade": -0.004715256604,
+      "good_trade_count": 14,
+      "bad_trade_count": 4,
+      "good_share": 0.067961165049,
+      "bad_share": 0.006079027356,
+      "good_vs_bad_share_lift": 11.179611650485
+    },
+    "weakest_rule": {
+      "rule": "btc_bbo_return_relation_100ms == disagreement",
+      "trade_count": 6,
+      "trade_ratio": 0.002203452075,
+      "gross_pnl_total": 0.002,
+      "net_pnl_total": -0.0406808,
+      "avg_gross_pnl_per_trade": 0.000333333333,
+      "avg_net_pnl_per_trade": -0.006780133333,
+      "good_trade_count": 1,
+      "bad_trade_count": 2,
+      "good_share": 0.004854368932,
+      "bad_share": 0.003039513678,
+      "good_vs_bad_share_lift": 1.597087378641
+    }
+  },
+  "final_decision": {
+    "context_decision": "NARROW_CONTEXT_SIGNAL",
+    "final_next_step": "RESHAPE_REQUIRED",
+    "reason": "external context improves trade quality, but coverage and/or net profile remain too weak for a clean confirmation layer",
+    "best_rule": {
+      "rule": "link_trade_alignment_count_100ms == 3 AND link_trade_divergence_bucket_100ms == low",
+      "trade_count": 168,
+      "trade_ratio": 0.061696658098,
+      "gross_pnl_total": 0.432,
+      "net_pnl_total": -0.7555128,
+      "avg_gross_pnl_per_trade": 0.002571428571,
+      "avg_net_pnl_per_trade": -0.0044971,
+      "good_trade_count": 29,
+      "bad_trade_count": 9,
+      "good_share": 0.140776699029,
+      "bad_share": 0.01367781155,
+      "good_vs_bad_share_lift": 10.292340884574
+    }
+  }
+}

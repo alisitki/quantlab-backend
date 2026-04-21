@@ -1,0 +1,221 @@
+{
+  "final_recommendation": "NEITHER_ADVANCE",
+  "generated_ts_utc": "2026-04-05T05:30:33Z",
+  "governance": {
+    "authoritative_inputs": [
+      {
+        "concept": "runtime_binding",
+        "file_generated_ts_utc": "2026-04-04T09:11:03Z",
+        "path": "/home/deploy/quantlab-backend/tools/phase6_state/candidate_strategy_runtime_binding_v0.json"
+      }
+    ],
+    "notes": [
+      "This sprint only evaluates the two continuation candidates from the medium-frequency lane.",
+      "Global ranking, promotion state, and shadow watchlist remain unchanged.",
+      "Execution uses isolated task-local watchlists and task-local shadow state directories only."
+    ],
+    "task_local_inputs": [
+      {
+        "concept": "phase7_medium_shadow_result",
+        "generated_ts_utc": "2026-04-04T23:52:34Z",
+        "path": "/home/deploy/quantlab-backend/tools/phase7_medium_shadow_result_v0.json"
+      },
+      {
+        "concept": "phase7_medium_shadow_report",
+        "path": "/home/deploy/quantlab-backend/tools/phase7_medium_shadow_validation_output/phase7_medium_shadow_report_v0.md"
+      }
+    ]
+  },
+  "pairwise_comparison": {
+    "both_survive": false,
+    "comparison_notes": [
+      "stronger=avaxusdt weaker=linkusdt based on verdict tier, risk rejects, fills, decisions, processed events, churn, and prior rank"
+    ],
+    "final_recommendation": "NEITHER_ADVANCE",
+    "only_one_survives": false,
+    "stop_condition": "",
+    "stronger_candidate": {
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4::avaxusdt",
+      "symbol": "avaxusdt",
+      "verdict": "DROP"
+    },
+    "surviving_symbols": [],
+    "weaker_candidate": {
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536::linkusdt",
+      "symbol": "linkusdt",
+      "verdict": "DROP"
+    }
+  },
+  "results": [
+    {
+      "artifacts": {
+        "audit_base_dir": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/audit",
+        "batch_out_dir": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/batch_out",
+        "batch_result_json_path": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_observation_batch_result_v0.json",
+        "command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/run-shadow-observation-batch-v0.py --watchlist /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/input_watchlist.json --max-items 1 --strategy core/strategy/strategies/ReturnReversalV1Strategy.js --strategy-config-json {\"binding_mode\": \"PAPER_DIRECTIONAL_V1\", \"exchange\": \"binance\", \"family_id\": \"return_reversal_v1\", \"orderQty\": 1, \"params\": {\"delta_ms_list\": [100, 250, 500], \"h_ms_list\": [100, 250, 500]}, \"selected_cell\": {\"date\": \"20260228\", \"delta_ms\": 100, \"event_count\": 130349, \"exchange\": \"binance\", \"h_ms\": 100, \"mean_product\": -7.577657784823822, \"stream\": \"trade\", \"symbol\": \"linkusdt\", \"t_stat\": -31.95845913240708}, \"source_decision_tier\": \"PROMOTE\", \"source_family_report_path\": \"/home/deploy/quantlab-evidence-archive/20260307_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR/runs/linkusdt/artifacts/multi_hypothesis/family_return_reversal_report.json\", \"source_pack_id\": \"multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536\", \"source_pack_path\": null, \"source_review_class\": null, \"source_review_class_priority\": null, \"source_review_rank\": null, \"source_review_score\": null, \"stream\": \"trade\", \"symbols\": [\"linkusdt\"], \"window\": \"20260228..20260228\"} --summary-json-path /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/summary_runtime.json --history-jsonl /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_observation_history_v0.jsonl --index-json /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_observation_index_v0.json --phase6-state-dir /home/deploy/quantlab-backend/tools/phase6_state --shadow-state-dir /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state --refresh-result-json /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_derived_surface_refresh_v0.json --execution-ledger-jsonl /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_execution_ledger_v0.jsonl --execution-pack-summary-json /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_execution_pack_summary_v0.json --audit-base-dir /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/audit --out-dir /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/batch_out --result-json /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_observation_batch_result_v0.json --per-run-timeout-sec 660 --run-max-duration-sec 600 --heartbeat-ms 5000",
+        "effective_run_semantics": "ISOLATED_PAPER_DIRECTIONAL_CONTINUATION_SHADOW",
+        "execution_events_jsonl": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_execution_events_v1.jsonl",
+        "execution_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_execution_ledger_v0.jsonl",
+        "execution_pack_summary_json": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_execution_pack_summary_v0.json",
+        "exit_code": 0,
+        "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_futures_paper_ledger_v1.json",
+        "refresh_result_json_path": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_derived_surface_refresh_v0.json",
+        "shadow_state_dir": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state",
+        "summary_json_path": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/batch_out/rank16_multi_hypothesis_phase5_bighunt_binance_trade_20260228_20260228_20260307_232959_/summary.json",
+        "timed_out": false,
+        "top_stderr_log": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/batch_command_stderr.log",
+        "top_stdout_log": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/batch_command_stdout.log",
+        "trade_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/shadow_state/shadow_trade_ledger_v1.jsonl",
+        "watchlist_path": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/01_linkusdt/input_watchlist.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "weaker_than_peer_or_no_signal",
+      "exchange": "binance",
+      "family_id": "return_reversal_v1",
+      "metrics": {
+        "bounded_churn": true,
+        "cost_slippage_proxy": {
+          "available": true,
+          "cost_accounting_status": "NO_FILL_ACTIVITY",
+          "effective_fee_rate": null,
+          "estimated_exit_fee_quote": 0.0,
+          "fee_support_status": "NO_FILL_ACTIVITY",
+          "funding_cost_quote": 0.0,
+          "mark_to_market_pnl_quote_net_paid_fees": 0.0,
+          "note": "",
+          "paper_run_status": "NO_FILL_ACTIVITY",
+          "profitability_status": "NO_FILL_ACTIVITY",
+          "total_fee_quote": 0.0
+        },
+        "decision_count": 0,
+        "equity": 10000.0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "fills_count_snapshot": 0,
+        "heartbeat_count": 119,
+        "heartbeat_seen": true,
+        "open_count": 0,
+        "pnl_interpretation": "FLAT_NO_FILLS",
+        "positions_count": 0,
+        "processed_event_count": 7131,
+        "refresh_sync_ok": true,
+        "reversal_count": null,
+        "risk_reject_count": 0,
+        "run_duration_sec": 600.04,
+        "stop_reason": "STREAM_END",
+        "total_realized_pnl": 0.0,
+        "total_unrealized_pnl": 0.0,
+        "trade_transitions": 0,
+        "trade_transitions_per_1k_events": 0.0,
+        "verify_soft_live_pass": true
+      },
+      "rank": 16,
+      "status": "OK",
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536::linkusdt",
+      "symbol": "linkusdt",
+      "verdict": "DROP",
+      "verdict_reason": "decision_count == 0 and fill_count == 0"
+    },
+    {
+      "artifacts": {
+        "audit_base_dir": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/audit",
+        "batch_out_dir": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/batch_out",
+        "batch_result_json_path": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_observation_batch_result_v0.json",
+        "command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/run-shadow-observation-batch-v0.py --watchlist /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/input_watchlist.json --max-items 1 --strategy core/strategy/strategies/ReturnReversalV1Strategy.js --strategy-config-json {\"binding_mode\": \"PAPER_DIRECTIONAL_V1\", \"exchange\": \"binance\", \"family_id\": \"return_reversal_v1\", \"orderQty\": 1, \"params\": {\"delta_ms_list\": [100, 250, 500], \"h_ms_list\": [100, 250, 500]}, \"selected_cell\": {\"date\": \"20260307\", \"delta_ms\": 500, \"event_count\": 136925, \"exchange\": \"binance\", \"h_ms\": 500, \"mean_product\": -0.518791505610956, \"stream\": \"trade\", \"symbol\": \"avaxusdt\", \"t_stat\": -44.585720747546375}, \"source_decision_tier\": \"PROMOTE\", \"source_family_report_path\": \"/home/deploy/quantlab-evidence-archive/20260308_slim/multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR/runs/avaxusdt/artifacts/multi_hypothesis/family_return_reversal_report.json\", \"source_pack_id\": \"multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4\", \"source_pack_path\": null, \"source_review_class\": null, \"source_review_class_priority\": null, \"source_review_rank\": null, \"source_review_score\": null, \"stream\": \"trade\", \"symbols\": [\"avaxusdt\"], \"window\": \"20260307..20260307\"} --summary-json-path /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/summary_runtime.json --history-jsonl /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_observation_history_v0.jsonl --index-json /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_observation_index_v0.json --phase6-state-dir /home/deploy/quantlab-backend/tools/phase6_state --shadow-state-dir /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state --refresh-result-json /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_derived_surface_refresh_v0.json --execution-ledger-jsonl /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_execution_ledger_v0.jsonl --execution-pack-summary-json /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_execution_pack_summary_v0.json --audit-base-dir /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/audit --out-dir /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/batch_out --result-json /home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_observation_batch_result_v0.json --per-run-timeout-sec 660 --run-max-duration-sec 600 --heartbeat-ms 5000",
+        "effective_run_semantics": "ISOLATED_PAPER_DIRECTIONAL_CONTINUATION_SHADOW",
+        "execution_events_jsonl": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_execution_events_v1.jsonl",
+        "execution_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_execution_ledger_v0.jsonl",
+        "execution_pack_summary_json": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_execution_pack_summary_v0.json",
+        "exit_code": 0,
+        "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_futures_paper_ledger_v1.json",
+        "refresh_result_json_path": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_derived_surface_refresh_v0.json",
+        "shadow_state_dir": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state",
+        "summary_json_path": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/batch_out/rank24_multi_hypothesis_phase5_bighunt_binance_trade_20260307_20260307_20260308_174547_/summary.json",
+        "timed_out": false,
+        "top_stderr_log": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/batch_command_stderr.log",
+        "top_stdout_log": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/batch_command_stdout.log",
+        "trade_ledger_jsonl": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/shadow_state/shadow_trade_ledger_v1.jsonl",
+        "watchlist_path": "/home/deploy/quantlab-backend/tools/phase7_continuation_validation_output/smoke_run_v1/runs/02_avaxusdt/input_watchlist.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "no_signal_or_churn",
+      "exchange": "binance",
+      "family_id": "return_reversal_v1",
+      "metrics": {
+        "bounded_churn": true,
+        "cost_slippage_proxy": {
+          "available": true,
+          "cost_accounting_status": "NO_FILL_ACTIVITY",
+          "effective_fee_rate": null,
+          "estimated_exit_fee_quote": 0.0,
+          "fee_support_status": "NO_FILL_ACTIVITY",
+          "funding_cost_quote": 0.0,
+          "mark_to_market_pnl_quote_net_paid_fees": 0.0,
+          "note": "",
+          "paper_run_status": "NO_FILL_ACTIVITY",
+          "profitability_status": "NO_FILL_ACTIVITY",
+          "total_fee_quote": 0.0
+        },
+        "decision_count": 0,
+        "equity": 10000.0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "fills_count_snapshot": 0,
+        "heartbeat_count": 119,
+        "heartbeat_seen": true,
+        "open_count": 0,
+        "pnl_interpretation": "FLAT_NO_FILLS",
+        "positions_count": 0,
+        "processed_event_count": 7412,
+        "refresh_sync_ok": true,
+        "reversal_count": null,
+        "risk_reject_count": 0,
+        "run_duration_sec": 600.094,
+        "stop_reason": "STREAM_END",
+        "total_realized_pnl": 0.0,
+        "total_unrealized_pnl": 0.0,
+        "trade_transitions": 0,
+        "trade_transitions_per_1k_events": 0.0,
+        "verify_soft_live_pass": true
+      },
+      "rank": 24,
+      "status": "OK",
+      "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4::avaxusdt",
+      "symbol": "avaxusdt",
+      "verdict": "DROP",
+      "verdict_reason": "decision_count == 0 and fill_count == 0"
+    }
+  ],
+  "run_policy": {
+    "dry_run": false,
+    "extreme_churn_max_trade_transitions_per_1k_events": 2.5,
+    "heartbeat_ms": 5000,
+    "max_parallel": 2,
+    "per_run_timeout_sec": 660,
+    "progress_interval_sec": 60,
+    "run_max_duration_sec": 600,
+    "run_posture": "paper_directional",
+    "run_semantics": "ISOLATED_PAPER_DIRECTIONAL_CONTINUATION_SHADOW",
+    "subprocess_timeout_sec": 720,
+    "target_strategy_ids": [
+      "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536::linkusdt",
+      "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4::avaxusdt"
+    ],
+    "target_symbols": [
+      "linkusdt",
+      "avaxusdt"
+    ]
+  },
+  "schema_version": "phase7_continuation_validation_result_v1",
+  "summary": {
+    "final_recommendation": "NEITHER_ADVANCE",
+    "lane_result": "NEGATIVE_LANE",
+    "target_count": 2,
+    "verdict_counts": {
+      "DROP": 2,
+      "INVALID_RUN": 0,
+      "KEEP_ADVANCING": 0,
+      "WEAK_CONTINUE": 0
+    }
+  }
+}

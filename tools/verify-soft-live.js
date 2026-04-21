@@ -8,6 +8,15 @@ const dotenv = require('dotenv');
 
 dotenv.config({ path: new URL('../core/.env', import.meta.url).pathname });
 
+const DEFAULT_SUMMARY_JSON = '/tmp/quantlab-soft-live.json';
+
+function summaryJsonPath() {
+  const explicit = String(
+    process.env.SOFT_LIVE_SUMMARY_JSON || process.env.SHADOW_BATCH_SUMMARY_JSON || DEFAULT_SUMMARY_JSON
+  ).trim();
+  return explicit || DEFAULT_SUMMARY_JSON;
+}
+
 function fail(msg) {
   console.error(`FAIL: ${msg}`);
   process.exit(1);
@@ -52,10 +61,11 @@ async function readAudit(runId) {
 
 async function main() {
   let meta;
+  const summaryPath = summaryJsonPath();
   try {
-    meta = JSON.parse(await readFile('/tmp/quantlab-soft-live.json', 'utf-8'));
+    meta = JSON.parse(await readFile(summaryPath, 'utf-8'));
   } catch {
-    fail('Missing /tmp/quantlab-soft-live.json (run-soft-live not completed)');
+    fail(`Missing ${summaryPath} (run-soft-live not completed)`);
   }
 
   const runId = meta.live_run_id;

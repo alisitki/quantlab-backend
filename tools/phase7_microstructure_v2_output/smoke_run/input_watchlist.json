@@ -1,0 +1,29 @@
+{
+  "generated_ts_utc": "2026-04-10T07:17:47Z",
+  "governance": {
+    "authoritative_scope": "Single-strategy linkusdt V2 smoke only.",
+    "not_authoritative_for": [
+      "global shadow watchlist",
+      "ranking",
+      "promotion"
+    ],
+    "surface_role": "TASK_LOCAL_MICROSTRUCTURE_V2_SMOKE"
+  },
+  "items": [
+    {
+      "decision_tier": "PHASE7_MICROSTRUCTURE_V2_CORE",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v2",
+      "pack_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2",
+      "pack_path": "",
+      "rank": 1,
+      "selection_slot": "bybit/trade/linkusdt",
+      "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2",
+      "symbols": [
+        "linkusdt"
+      ]
+    }
+  ],
+  "schema_version": "phase7_microstructure_v2_watchlist_v0",
+  "selected_count": 1
+}

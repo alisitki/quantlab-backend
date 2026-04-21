@@ -1,0 +1,200 @@
+{
+  "generated_ts_utc": "2026-04-06T08:38:12Z",
+  "governance": {
+    "not_authoritative_for": [
+      "global shadow watchlist",
+      "ranking",
+      "promotion",
+      "runtime binding"
+    ],
+    "notes": [
+      "No shadow execution was launched because runtime semantics are incompatible with microstructure_imbalance_v1."
+    ],
+    "scope": "task_local_preflight_only"
+  },
+  "items": [
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "pack_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+      "rank": 1,
+      "selected_cell": {
+        "delta_ms": 100,
+        "event_count": 638846,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.8139515752445161,
+        "pressure_threshold": 0.2,
+        "t_stat": 129.41468382493628
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+      "symbols": [
+        "linkusdt"
+      ]
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "pack_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d250__h500__pt020",
+      "rank": 2,
+      "selected_cell": {
+        "delta_ms": 250,
+        "event_count": 635818,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.805815361788354,
+        "pressure_threshold": 0.2,
+        "t_stat": 126.96428025891421
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d250__h500__pt020",
+      "symbols": [
+        "linkusdt"
+      ]
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "pack_id": "microstructure_imbalance_v1__bybit__solusdt__trade__d100__h500__pt020",
+      "rank": 3,
+      "selected_cell": {
+        "delta_ms": 100,
+        "event_count": 2880004,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.5182218696989184,
+        "pressure_threshold": 0.2,
+        "t_stat": 117.48625231404911
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__solusdt__trade__d100__h500__pt020",
+      "symbols": [
+        "solusdt"
+      ]
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "pack_id": "microstructure_imbalance_v1__bybit__solusdt__trade__d250__h500__pt020",
+      "rank": 4,
+      "selected_cell": {
+        "delta_ms": 250,
+        "event_count": 2857423,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.5088614448389591,
+        "pressure_threshold": 0.2,
+        "t_stat": 117.69208871546384
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__solusdt__trade__d250__h500__pt020",
+      "symbols": [
+        "solusdt"
+      ]
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "pack_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d100__h500__pt020",
+      "rank": 5,
+      "selected_cell": {
+        "delta_ms": 100,
+        "event_count": 598663,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.5767903742637637,
+        "pressure_threshold": 0.2,
+        "t_stat": 96.14768139909256
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d100__h500__pt020",
+      "symbols": [
+        "avaxusdt"
+      ]
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "pack_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d100__h250__pt020",
+      "rank": 6,
+      "selected_cell": {
+        "delta_ms": 100,
+        "event_count": 1866554,
+        "h_ms": 250,
+        "mean_signed_fwd_return_bps": 0.4232347884557247,
+        "pressure_threshold": 0.2,
+        "t_stat": 125.25270490738393
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d100__h250__pt020",
+      "symbols": [
+        "xrpusdt"
+      ]
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "pack_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d250__h500__pt020",
+      "rank": 7,
+      "selected_cell": {
+        "delta_ms": 250,
+        "event_count": 594565,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.5603652283119662,
+        "pressure_threshold": 0.2,
+        "t_stat": 93.73768483065142
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d250__h500__pt020",
+      "symbols": [
+        "avaxusdt"
+      ]
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "pack_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d250__h500__pt020",
+      "rank": 8,
+      "selected_cell": {
+        "delta_ms": 250,
+        "event_count": 1855874,
+        "h_ms": 500,
+        "mean_signed_fwd_return_bps": 0.45210671053594426,
+        "pressure_threshold": 0.2,
+        "t_stat": 113.66459263239095
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d250__h500__pt020",
+      "symbols": [
+        "xrpusdt"
+      ]
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "pack_id": "microstructure_imbalance_v1__bybit__adausdt__trade__d250__h250__pt020",
+      "rank": 9,
+      "selected_cell": {
+        "delta_ms": 250,
+        "event_count": 412903,
+        "h_ms": 250,
+        "mean_signed_fwd_return_bps": 0.40335953665591323,
+        "pressure_threshold": 0.2,
+        "t_stat": 47.058168362825796
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__adausdt__trade__d250__h250__pt020",
+      "symbols": [
+        "adausdt"
+      ]
+    },
+    {
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "pack_id": "microstructure_imbalance_v1__bybit__adausdt__trade__d500__h250__pt020",
+      "rank": 10,
+      "selected_cell": {
+        "delta_ms": 500,
+        "event_count": 411092,
+        "h_ms": 250,
+        "mean_signed_fwd_return_bps": 0.3992083437218413,
+        "pressure_threshold": 0.2,
+        "t_stat": 47.17452797564085
+      },
+      "strategy_id": "microstructure_imbalance_v1__bybit__adausdt__trade__d500__h250__pt020",
+      "symbols": [
+        "adausdt"
+      ]
+    }
+  ],
+  "schema_version": "phase7_microstructure_shadow_watchlist_preflight_v0",
+  "selected_count": 10,
+  "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json"
+}

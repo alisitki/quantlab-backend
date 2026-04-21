@@ -170,6 +170,71 @@ class ShadowExecutionEventsV1Tests(unittest.TestCase):
             self.assertEqual(load_jsonl(out_jsonl), [])
             self.assertIn("history_count=1", res.stdout)
 
+    def test_trade_context_is_preserved_when_present(self):
+        with tempfile.TemporaryDirectory(prefix="shadow_exec_events_trade_context_") as td:
+            root = Path(td)
+            history = root / "history.jsonl"
+            out_jsonl = root / "events.jsonl"
+            write_jsonl(
+                history,
+                [
+                    make_history_entry(
+                        observation_key="pack_ctx|run_1",
+                        observed_at="2026-03-08T12:05:00Z",
+                        pack_id="pack_ctx",
+                        live_run_id="run_1",
+                        execution_events=[
+                            {
+                                "event_seq": 1,
+                                "event_type": "FILL",
+                                "ts_event": "1700000002",
+                                "symbol": "LINKUSDT",
+                                "side": "BUY",
+                                "qty": 1,
+                                "fill_price": 20.5,
+                                "fill_fee": 0.0082,
+                                "fill_value": 20.5,
+                                "reason": "",
+                                "trade_context": {
+                                    "schema_version": "microstructure_trade_context_v0",
+                                    "opening_trade": {
+                                        "schema_version": "microstructure_trade_context_v0",
+                                        "trade_sequence_id": 7,
+                                        "entry_timestamp": "1700000002",
+                                        "entry_pressure": 0.31,
+                                        "entry_abs_pressure": 0.31,
+                                        "entry_threshold": 0.2,
+                                        "exit_threshold": 0.1,
+                                        "entry_side": "LONG",
+                                        "entry_signal_reason": "LONG_ENTRY",
+                                        "entry_selected_cell": {
+                                            "delta_ms": 100,
+                                            "h_ms": 500,
+                                            "pressure_threshold": 0.2,
+                                            "symbol": "LINKUSDT",
+                                            "exchange": "bybit",
+                                        },
+                                        "prior_position_side": "FLAT",
+                                        "was_reversal_trade": False,
+                                        "max_abs_pressure_seen_during_trade": 0.31,
+                                        "min_abs_pressure_seen_during_trade": 0.31,
+                                        "observation_count_during_trade": 1,
+                                    }
+                                },
+                            }
+                        ],
+                    )
+                ],
+            )
+
+            res = self._run("--history-jsonl", str(history), "--out-jsonl", str(out_jsonl))
+            self.assertEqual(res.returncode, 0, msg=res.stderr)
+            rows = load_jsonl(out_jsonl)
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["trade_context"]["opening_trade"]["trade_sequence_id"], 7)
+            self.assertEqual(rows[0]["trade_context"]["opening_trade"]["entry_side"], "LONG")
+            self.assertEqual(rows[0]["trade_context"]["opening_trade"]["entry_selected_cell"]["symbol"], "LINKUSDT")
+
     def test_schema_mismatch_fails_fast(self):
         with tempfile.TemporaryDirectory(prefix="shadow_exec_events_bad_") as td:
             root = Path(td)

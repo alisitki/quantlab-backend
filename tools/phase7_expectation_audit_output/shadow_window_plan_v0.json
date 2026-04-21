@@ -1,0 +1,106 @@
+{
+  "frequency_groups": {
+    "HIGH_FREQUENCY": {
+      "judgment_rule": "Only after >=2h minimum, with >=6h preferred, and still no signal/decision activity.",
+      "recommended_shadow_window_hours": 6
+    },
+    "LOW_FREQUENCY": {
+      "judgment_rule": "Need >=24h minimum and preferably 48-72h before treating inactivity as evidence.",
+      "recommended_shadow_window_hours": 48
+    },
+    "MEDIUM_FREQUENCY": {
+      "judgment_rule": "Need >=6h minimum and preferably >=12h before treating inactivity as evidence.",
+      "recommended_shadow_window_hours": 12
+    },
+    "UNKNOWN_FREQUENCY": {
+      "judgment_rule": "Treat as unknown; default to long observation until better expectation instrumentation exists.",
+      "recommended_shadow_window_hours": 48
+    }
+  },
+  "generated_ts_utc": "2026-04-04T11:07:07Z",
+  "group_membership": {
+    "HIGH_FREQUENCY": [],
+    "LOW_FREQUENCY": [
+      {
+        "exchange": "binance",
+        "mow_hours_min": 24,
+        "mow_hours_target": 72,
+        "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f::adausdt",
+        "symbol": "adausdt"
+      },
+      {
+        "exchange": "binance",
+        "mow_hours_min": 24,
+        "mow_hours_target": 72,
+        "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260213..20260213-20260307_192450-53422719-t1__FULLSCAN_MAJOR__995c8ea3ef2c1772c0b95cc3a745ab8d3052d0fe0677cb33d8e26ccdffbae0f8::bnbusdt",
+        "symbol": "bnbusdt"
+      },
+      {
+        "exchange": "binance",
+        "mow_hours_min": 24,
+        "mow_hours_target": 72,
+        "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260216..20260216-20260307_201204-1f153e95-t1__FULLSCAN_MAJOR__6d4b6f0376dabaceab37c854d41dfb3738dacb226d737895cef5d02e36364e29::solusdt",
+        "symbol": "solusdt"
+      }
+    ],
+    "MEDIUM_FREQUENCY": [
+      {
+        "exchange": "binance",
+        "mow_hours_min": 6,
+        "mow_hours_target": 12,
+        "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4::avaxusdt",
+        "symbol": "avaxusdt"
+      },
+      {
+        "exchange": "binance",
+        "mow_hours_min": 6,
+        "mow_hours_target": 12,
+        "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260222..20260222-20260307_214855-2259d678-t1__FULLSCAN_MAJOR__f6f77334020eed5b4805edea864954eb2db900003b09fe7e815c828f34c772cd::ethusdt",
+        "symbol": "ethusdt"
+      },
+      {
+        "exchange": "binance",
+        "mow_hours_min": 6,
+        "mow_hours_target": 12,
+        "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536::linkusdt",
+        "symbol": "linkusdt"
+      },
+      {
+        "exchange": "binance",
+        "mow_hours_min": 6,
+        "mow_hours_target": 12,
+        "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260226-20260307_225643-cd573a6d-t1__FULLSCAN_MAJOR__4883ede73a477b82a880fee75595629f405790e7309dd022b34a1ab79dc01bc7::xrpusdt",
+        "symbol": "xrpusdt"
+      }
+    ],
+    "UNKNOWN_FREQUENCY": [
+      {
+        "exchange": "binance",
+        "mow_hours_min": 24,
+        "mow_hours_target": 48,
+        "strategy_id": "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f::ltcusdt",
+        "symbol": "ltcusdt"
+      }
+    ]
+  },
+  "multi_day_strategy_ids": [
+    "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f::adausdt",
+    "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260315..20260315-20260316_033947-5f146473-t1__FULLSCAN_MAJOR__357bdcfe592e51612b202bec750fa061fede1d7b7c0c4a5a96334114d1237c7f::ltcusdt",
+    "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260216..20260216-20260307_201204-1f153e95-t1__FULLSCAN_MAJOR__6d4b6f0376dabaceab37c854d41dfb3738dacb226d737895cef5d02e36364e29::solusdt",
+    "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260213..20260213-20260307_192450-53422719-t1__FULLSCAN_MAJOR__995c8ea3ef2c1772c0b95cc3a745ab8d3052d0fe0677cb33d8e26ccdffbae0f8::bnbusdt"
+  ],
+  "multi_hour_strategy_ids": [
+    "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260226-20260307_225643-cd573a6d-t1__FULLSCAN_MAJOR__4883ede73a477b82a880fee75595629f405790e7309dd022b34a1ab79dc01bc7::xrpusdt",
+    "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260228-20260307_232959-34a76040-t1__FULLSCAN_MAJOR__87b8d5ed17555a079876a4479f8f07a1a7b6617cf67e5c94d480e5f7ff7da536::linkusdt",
+    "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260222..20260222-20260307_214855-2259d678-t1__FULLSCAN_MAJOR__f6f77334020eed5b4805edea864954eb2db900003b09fe7e815c828f34c772cd::ethusdt",
+    "candidate_strategy::return_reversal_v1::multi-hypothesis-phase5-bighunt-binance-trade-20260307..20260307-20260308_174547-d26db6d0-t1__FULLSCAN_MAJOR__74f4dab401f94d366444210fa407701cb2add52e7b6b8e4c3cc4b34456e039b4::avaxusdt"
+  ],
+  "notes": [
+    "The Phase7 smoke run is valid as infra and instrumentation evidence only.",
+    "It is not long enough to support a tradability fail verdict for any shortlisted strategy.",
+    "Frequency bands are intentionally broad and conservative because direct order-frequency evidence is still sparse."
+  ],
+  "principle": "Do not issue a tradability verdict before the strategy has cleared its minimum observation window.",
+  "schema_version": "phase7_shadow_window_plan_v0",
+  "short_run_judgeable_strategy_ids": []
+}

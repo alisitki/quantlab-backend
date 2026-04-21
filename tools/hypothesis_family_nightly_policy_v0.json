@@ -1,0 +1,98 @@
+{
+  "cost_aware_prefilter": {
+    "implementation_scope": "Nightly scheduler/export/bridge policy; this audit only writes the policy artifact and does not mutate runtime behavior.",
+    "rationale": "Prevents repeat false-edge loops where fill-backed activity survives but gross edge is non-positive before fees/funding.",
+    "rule": "After Phase5, candidates with derivable gross_pnl <= 0 should not advance into Phase6 candidate generation.",
+    "status": "POLICY_DEFINED_NOT_APPLIED_BY_THIS_SCRIPT",
+    "unknown_gross_handling": "If gross pnl is not derivable from existing artifacts, mark UNKNOWN/needs-review; do not delete or silently fail the candidate."
+  },
+  "generated_ts_utc": "2026-04-06T06:52:48Z",
+  "nightly_mode_definitions": {
+    "FULL_NIGHTLY": "normal scheduled generation and Phase6/7 bridge eligibility",
+    "ON_DEMAND": "manual/operator-triggered only",
+    "PAUSED": "no scheduled generation; family retained in repo for explicit reactivation",
+    "REDUCED_NIGHTLY": "capped/control-lane generation only; no broad candidate expansion until evidence improves"
+  },
+  "pipeline_impact_summary": {
+    "candidate_family_attribution_reduction_share_if_reduced_modes_are_capped": 1.0,
+    "candidate_family_attributions_by_nightly_mode": {
+      "REDUCED_NIGHTLY": 199
+    },
+    "candidate_family_attributions_eligible_for_reduction": 199,
+    "candidate_family_attributions_total": 199,
+    "candidate_pack_rows_affected_by_non_full_policy": 142,
+    "candidate_pack_rows_all_selected_families_non_full": 142,
+    "candidate_pack_rows_mixed_full_and_reduced": 0,
+    "candidate_review_pack_rows_with_family": 142,
+    "interpretation": "This is a policy impact estimate, not a deletion count. Non-full modes mean capped handling, not family removal."
+  },
+  "policy_principles": [
+    "No family is deleted by this policy.",
+    "Context families retain diagnostic/context capability but should not spam directional candidate queues.",
+    "Profitability-failed trading families move to reduced nightly until a new economic edge is demonstrated.",
+    "No family is unrestricted full-nightly under the current evidence; trading discovery continues through reduced control lanes."
+  ],
+  "policy_table": [
+    {
+      "evidence": {
+        "bound_shadow_runnable_count": 289,
+        "candidate_review_pack_count": 75,
+        "failed_profitability_count": 0,
+        "phase7_extended_validation_count": 0,
+        "phase7_medium_shadow_count": 0,
+        "profitability_tested_count": 0,
+        "strong_promotions_count": 4
+      },
+      "family_id": "momentum_v1",
+      "nightly_mode": "REDUCED_NIGHTLY",
+      "reason": "No current profitability PASS in Phase7 artifacts; prior tightening/OOS weakness requires controlled nightly instead of full-volume generation.",
+      "role": "TRADING",
+      "status": "WEAK"
+    },
+    {
+      "evidence": {
+        "bound_shadow_runnable_count": 135,
+        "candidate_review_pack_count": 59,
+        "failed_profitability_count": 2,
+        "phase7_extended_validation_count": 2,
+        "phase7_medium_shadow_count": 4,
+        "profitability_tested_count": 2,
+        "strong_promotions_count": 1
+      },
+      "family_id": "return_reversal_v1",
+      "nightly_mode": "REDUCED_NIGHTLY",
+      "reason": "Profitability-tested subset failed economic edge: gross pnl was non-positive before fees.",
+      "role": "TRADING",
+      "status": "FAILED"
+    },
+    {
+      "evidence": {
+        "bound_shadow_runnable_count": 94,
+        "candidate_review_pack_count": 65,
+        "failed_profitability_count": 0,
+        "phase7_extended_validation_count": 0,
+        "phase7_medium_shadow_count": 0,
+        "profitability_tested_count": 0,
+        "strong_promotions_count": 37
+      },
+      "family_id": "spread_reversion_v1",
+      "nightly_mode": "REDUCED_NIGHTLY",
+      "reason": "Context/guard behavior is useful but should not produce directional candidate spam.",
+      "role": "CONTEXT",
+      "status": "ACTIVE"
+    }
+  ],
+  "safety_check": {
+    "active_full_nightly_trading_families": [],
+    "active_full_nightly_trading_family_count": 0,
+    "controlled_trading_discovery_families": [
+      "momentum_v1"
+    ],
+    "controlled_trading_discovery_family_count": 1,
+    "deleted_families": [],
+    "diagnostic_or_context_capability_preserved": true,
+    "no_family_deleted": true,
+    "passes_controlled_discovery_guard": true
+  },
+  "schema_version": "hypothesis_family_nightly_policy_v0"
+}

@@ -1,0 +1,89 @@
+{
+  "artifacts": {
+    "batch_out_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_out",
+    "batch_result_json_path": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_observation_batch_result_v0.json",
+    "command": "/usr/bin/python3 /home/deploy/quantlab-backend/tools/run-shadow-observation-batch-v0.py --watchlist /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/input_watchlist.json --max-items 1 --strategy core/strategy/strategies/MicrostructureImbalanceV2Strategy.js --strategy-config-json {\"auxiliary_feeds\": [{\"exchange\": \"binance\", \"symbols\": [\"linkusdt\"]}, {\"exchange\": \"okx\", \"symbols\": [\"linkusdt\"]}], \"binding_mode\": \"PAPER_DIRECTIONAL_V1\", \"exchange\": \"bybit\", \"family_id\": \"microstructure_imbalance_v2\", \"orderQty\": 1, \"params\": {\"btc_support\": {\"exchanges\": [\"bybit\", \"okx\"], \"mode\": \"DISABLED\", \"window_ms\": 100}, \"confirmation\": {\"max_divergence_score\": 0.35, \"min_available_count\": 2, \"required_alignment_count\": 2, \"venues\": [\"binance\", \"okx\"], \"window_ms\": 100}, \"delta_ms_list\": [100], \"exit_pressure_threshold\": 0.1, \"h_ms_list\": [500], \"pressure_threshold_list\": [0.2], \"tolerance_ms\": 0}, \"selected_cell\": {\"delta_ms\": 100, \"event_count\": 638846, \"exchange\": \"bybit\", \"h_ms\": 500, \"mean_signed_fwd_return_bps\": 0.8139515752445161, \"pressure_threshold\": 0.2, \"stream\": \"trade\", \"symbol\": \"linkusdt\", \"t_stat\": 129.41468382493628}, \"source_decision_tier\": \"PHASE7_MICROSTRUCTURE_V2_CORE\", \"source_family_report_path\": \"\", \"source_pack_id\": \"microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2\", \"stream\": \"trade\", \"symbols\": [\"linkusdt\"], \"window\": \"live\"} --summary-json-path /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/summary_runtime.json --history-jsonl /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_observation_history_v0.jsonl --index-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_observation_index_v0.json --phase6-state-dir /home/deploy/quantlab-backend/tools/phase6_state --shadow-state-dir /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state --refresh-result-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_derived_surface_refresh_v0.json --execution-ledger-jsonl /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_ledger_v0.jsonl --execution-pack-summary-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_pack_summary_v0.json --audit-base-dir /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/audit --out-dir /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_out --result-json /home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_observation_batch_result_v0.json --per-run-timeout-sec 420 --run-max-duration-sec 300 --heartbeat-ms 5000",
+    "execution_events_jsonl": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_execution_events_v1.jsonl",
+    "exit_code": 0,
+    "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state/shadow_futures_paper_ledger_v1.json",
+    "shadow_state_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/shadow_state",
+    "summary_json_path": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_out/rank01_microstructure_imbalance_v1_bybit_linkusdt_trade_d100_h500_pt020_v2/summary.json",
+    "timed_out": false,
+    "top_stderr_log": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_command_stderr.log",
+    "top_stdout_log": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/batch_command_stdout.log",
+    "watchlist_path": "/home/deploy/quantlab-backend/tools/phase7_microstructure_v2_output/smoke_run/input_watchlist.json"
+  },
+  "authoritative_sources": {
+    "batch_tool": "/home/deploy/quantlab-backend/tools/run-shadow-observation-batch-v0.py",
+    "source_result_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_result_v1.json",
+    "strategy_file": "/home/deploy/quantlab-backend/core/strategy/strategies/MicrostructureImbalanceV2Strategy.js"
+  },
+  "exchange": "bybit",
+  "family_id": "microstructure_imbalance_v2",
+  "generated_ts_utc": "2026-04-10T07:22:49Z",
+  "metrics": {
+    "context_fields_populated": false,
+    "decision_count": 0,
+    "fill_count": 0,
+    "heartbeat_count": 59,
+    "matched_event_rows": 0,
+    "opening_trade_context_rows_with_v2_fields": 0,
+    "processed_event_count": 8801,
+    "risk_reject_count": 0,
+    "run_duration_sec": 300.05,
+    "stop_reason": "STREAM_END",
+    "verify_soft_live_pass": true
+  },
+  "runtime_strategy_config_excerpt": {
+    "auxiliary_feeds": [
+      {
+        "exchange": "binance",
+        "symbols": [
+          "linkusdt"
+        ]
+      },
+      {
+        "exchange": "okx",
+        "symbols": [
+          "linkusdt"
+        ]
+      }
+    ],
+    "btc_support": {
+      "exchanges": [
+        "bybit",
+        "okx"
+      ],
+      "mode": "DISABLED",
+      "window_ms": 100
+    },
+    "confirmation": {
+      "max_divergence_score": 0.35,
+      "min_available_count": 2,
+      "required_alignment_count": 2,
+      "venues": [
+        "binance",
+        "okx"
+      ],
+      "window_ms": 100
+    },
+    "selected_cell": {
+      "delta_ms": 100,
+      "event_count": 638846,
+      "exchange": "bybit",
+      "h_ms": 500,
+      "mean_signed_fwd_return_bps": 0.8139515752445161,
+      "pressure_threshold": 0.2,
+      "stream": "trade",
+      "symbol": "linkusdt",
+      "t_stat": 129.41468382493628
+    }
+  },
+  "runtime_strategy_file": "core/strategy/strategies/MicrostructureImbalanceV2Strategy.js",
+  "schema_version": "phase7_microstructure_v2_smoke_result_v0",
+  "smoke_gate_pass": true,
+  "source_strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+  "status": "SMOKE_PASS",
+  "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__v2",
+  "symbol": "linkusdt"
+}

@@ -1,0 +1,1 @@
+[Runner] no_patterns: patterns_scanned=0 (scanner.minSupport=30 scanner.returnThreshold=0.0005)

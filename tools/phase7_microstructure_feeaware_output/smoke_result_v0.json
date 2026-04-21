@@ -1,0 +1,72 @@
+{
+  "after": {
+    "close_count": 1,
+    "cost_accounting_status": "NET_FEE_BACKED_MARK_TO_MARKET_FUNDING_AWARE",
+    "decision_count": 46,
+    "fee_per_fill": 0.00677884347826087,
+    "fill_count": 46,
+    "funding_cost": 0.0,
+    "gross_pnl": 0.054000000000002046,
+    "gross_pnl_per_1k_events": 0.04699738903394434,
+    "gross_pnl_per_fill": 0.0011739130434783053,
+    "net_pnl": -0.25782679999999797,
+    "open_count": 2,
+    "processed_event_count": 1149,
+    "profitability_status": "NET_MARK_TO_MARKET_AFTER_FEES_FUNDING_AND_EXIT_ESTIMATE",
+    "reversal_count": 43,
+    "reversal_per_1k_events": 37.42384682332463,
+    "run_duration_sec": 601.221,
+    "stop_reason": "STREAM_END",
+    "total_fee": 0.3118268,
+    "turnover": 779.5669999999999,
+    "verify_soft_live_pass": true
+  },
+  "baseline": {
+    "close_count": 21,
+    "decision_count": 3207,
+    "fee_per_fill": 0.007210566884939199,
+    "fill_count": 3207,
+    "gross_pnl": 4.054000000000025,
+    "gross_pnl_per_1k_events": 0.050306504851959706,
+    "gross_pnl_per_fill": 0.001264109759900226,
+    "net_pnl": -19.070287999999984,
+    "open_count": 22,
+    "processed_event_count": 80586,
+    "reversal_count": 3164,
+    "reversal_per_1k_events": 39.26240289876654,
+    "total_fee": 23.12428800000001
+  },
+  "comparison": {
+    "fee_reduction_ratio": 0.9865151826512454,
+    "fill_reduction_ratio": 0.9856563766760212,
+    "gross_per_fill_change_ratio": -0.0713519658522689,
+    "gross_preserved_ratio": 0.013320177602368454,
+    "net_improvement_quote": 18.812461199999987
+  },
+  "exchange": "bybit",
+  "family_id": "microstructure_imbalance_v1",
+  "generated_ts_utc": "2026-04-09T05:06:38Z",
+  "lever": {
+    "entry_threshold": 0.2,
+    "exit_threshold": 0.1,
+    "expected_edge_scale": 0.006095348835,
+    "fee_rate": 0.0004,
+    "fee_reference": "dynamic price * orderQty * fee_rate",
+    "implementation": "keep hysteresis, gate flat entries and reversals when abs(pressure) * scale <= estimated entry fee",
+    "selected": "FEE_AWARE_ENTRY_GATING",
+    "signal_math_changed": false
+  },
+  "run_mode": "smoke",
+  "schema_version": "phase7_microstructure_feeaware_v0",
+  "source_paths": {
+    "baseline_hysteresis_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_hysteresis_v0.json",
+    "batch_result_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_feeaware_output/smoke_linkusdt/shadow_observation_batch_result_v0.json",
+    "full_run_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_feeaware_output/smoke_linkusdt",
+    "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_feeaware_output/smoke_linkusdt/shadow_state/shadow_futures_paper_ledger_v1.json",
+    "summary_runtime_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_feeaware_output/smoke_linkusdt/summary_runtime.json"
+  },
+  "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__xt010__fa",
+  "symbol": "linkusdt",
+  "verdict": "SMOKE_PASS",
+  "verdict_reason": "verify_soft_live_pass=true and processed_event_count>0"
+}

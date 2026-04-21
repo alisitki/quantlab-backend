@@ -14,6 +14,71 @@
         "trade"
       ]
     },
+    "return_reversal_v1": {
+      "strategy_config": {
+        "binding_mode": "PAPER_DIRECTIONAL_V1",
+        "orderQty": 1
+      },
+      "strategy_file": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+      "supported_exchanges": [
+        "binance"
+      ],
+      "supported_streams": [
+        "trade"
+      ]
+    },
+    "jump_reversion_v1": {
+      "strategy_config": {
+        "binding_mode": "PAPER_DIRECTIONAL_V1",
+        "orderQty": 1
+      },
+      "strategy_file": "core/strategy/strategies/JumpReversionV1Strategy.js",
+      "supported_exchanges": [
+        "binance"
+      ],
+      "supported_streams": [
+        "trade"
+      ]
+    },
+    "family_b_simple_momentum": {
+      "strategy_config": {
+        "binding_mode": "PAPER_DIRECTIONAL_V1",
+        "orderQty": 1
+      },
+      "strategy_file": "core/strategy/strategies/FamilyBSimpleMomentumStrategy.js",
+      "supported_exchanges": [
+        "binance"
+      ],
+      "supported_streams": [
+        "trade"
+      ]
+    },
+    "microstructure_imbalance_v1": {
+      "strategy_config": {
+        "binding_mode": "PAPER_DIRECTIONAL_V1",
+        "orderQty": 1
+      },
+      "strategy_file": "core/strategy/strategies/MicrostructureImbalanceV1Strategy.js",
+      "supported_exchanges": [
+        "bybit"
+      ],
+      "supported_streams": [
+        "trade"
+      ]
+    },
+    "microstructure_imbalance_v2": {
+      "strategy_config": {
+        "binding_mode": "PAPER_DIRECTIONAL_V1",
+        "orderQty": 1
+      },
+      "strategy_file": "core/strategy/strategies/MicrostructureImbalanceV2Strategy.js",
+      "supported_exchanges": [
+        "bybit"
+      ],
+      "supported_streams": [
+        "trade"
+      ]
+    },
     "spread_reversion_v1": {
       "strategy_config": {
         "binding_mode": "OBSERVE_ONLY"
@@ -28,6 +93,6 @@
       ]
     }
   },
-  "generated_ts_utc": "2026-03-08T00:00:00Z",
+  "generated_ts_utc": "2026-03-17T00:00:00Z",
   "schema_version": "family_shadow_runtime_binding_map_v0"
 }

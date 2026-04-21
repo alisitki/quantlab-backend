@@ -1,0 +1,2 @@
+exchange	symbol	date	stream	jump_thresh_bps	h_ms	jump_count	mean_signed_reversal	t_stat
+binance	adausdt	20260127	trade	5	100	143	2.912331401325258	7.159864709327961

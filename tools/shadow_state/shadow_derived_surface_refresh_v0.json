@@ -1,7 +1,7 @@
 {
   "dry_run": false,
   "failed_step": "",
-  "generated_ts_utc": "2026-03-17T03:43:47Z",
+  "generated_ts_utc": "2026-04-21T03:35:15Z",
   "observation_history": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_observation_history_v0.jsonl",
   "observation_index": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_observation_index_v0.json",
   "schema_version": "shadow_derived_surface_refresh_v0",

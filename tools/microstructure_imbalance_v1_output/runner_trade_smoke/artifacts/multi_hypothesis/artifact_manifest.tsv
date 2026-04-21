@@ -1,0 +1,5 @@
+expected_relpath	resolved_relpath	status
+artifacts/multi_hypothesis/determinism_compare.tsv	artifacts/multi_hypothesis/determinism_compare.tsv	OK
+artifacts/multi_hypothesis/artifact_manifest.tsv	artifacts/multi_hypothesis/artifact_manifest.tsv	OK
+artifacts/multi_hypothesis/label_report.txt	artifacts/multi_hypothesis/label_report.txt	OK
+artifacts/multi_hypothesis/integrity_check.txt	artifacts/multi_hypothesis/integrity_check.txt	OK

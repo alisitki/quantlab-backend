@@ -1,0 +1,37 @@
+{
+  "family_id": "jump_reversion_v1",
+  "status": "ok",
+  "exchange": "binance",
+  "symbol": "adausdt",
+  "stream": "trade",
+  "window": "20260127..20260127",
+  "params": {
+    "jump_thresh_bps_list": [
+      5
+    ],
+    "h_ms_list": [
+      100
+    ],
+    "cooldown_ms": 0
+  },
+  "inputs": {
+    "parquet_relpaths": [
+      "data/curated/exchange=binance/stream=trade/symbol=adausdt/date=20260127/data.parquet"
+    ]
+  },
+  "result": {
+    "rows_produced": 1,
+    "selected_cell": {
+      "exchange": "binance",
+      "symbol": "adausdt",
+      "date": "20260127",
+      "stream": "trade",
+      "jump_thresh_bps": 5,
+      "h_ms": 100,
+      "jump_count": 143,
+      "mean_signed_reversal": 2.912331401325258,
+      "t_stat": 7.159864709327961
+    },
+    "pass_signal": false
+  }
+}

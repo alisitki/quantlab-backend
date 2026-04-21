@@ -1,0 +1,10 @@
+window	family_id	exit_code	patterns_scanned	edge_candidates_generated	edges_saved	report_relpath	metric_mean_forward_return	metric_t_stat	signal_support
+20260127..20260127	family_a_patternscanner	0	0	0	false	artifacts/multi_hypothesis/family_A_report.json			
+20260127..20260127	family_b_simple_momentum	0	109363	0	true	artifacts/multi_hypothesis/family_B_report.json	0.0001098718650505821	4.277509179525212	10947
+20260127..20260127	return_reversal_v1	0	1	0	true	artifacts/multi_hypothesis/family_return_reversal_report.json	-1.602281090101911	-41.317981883500003	110217
+20260127..20260127	momentum_v1	0	1	0	false	artifacts/multi_hypothesis/family_momentum_report.json	-1.602281090101911	-41.317981883500003	110217
+20260127..20260127	microstructure_imbalance_v1	0	1	0	false	artifacts/multi_hypothesis/family_microstructure_imbalance_report.json	-0.789122058320454	-144.022881232779355	109670
+20260127..20260127	volatility_clustering_v1	0	1	0	true	artifacts/multi_hypothesis/family_volatility_clustering_report.json	0.468185184717287	59.663215963093407	12682
+20260127..20260127	spread_reversion_v1	0	0	0	false	artifacts/multi_hypothesis/family_spread_reversion_report.json	0.000000000000000	0.000000000000000	0
+20260127..20260127	volume_vol_link_v1	0	1	0	true	artifacts/multi_hypothesis/family_volume_vol_link_report.json	0.388261305382553	47.442236231982754	12682
+20260127..20260127	jump_reversion_v1	0	1	0	false	artifacts/multi_hypothesis/family_jump_reversion_report.json	2.912331401325258	7.159864709327961	143

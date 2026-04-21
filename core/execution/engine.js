@@ -12,8 +12,8 @@
  * - No wall-clock dependency: only ts_event is used
  * 
  * Stream Requirement:
- * - Requires BBO stream with bid_price/ask_price fields
- * - Other stream types (trade, OHLC) will throw error
+ * - Strict mode requires BBO stream with bid_price/ask_price fields
+ * - Non-strict mode can fall back to event.price/event.close as executable price
  */
 
 import { createOrder, resetOrderCounter } from './order.js';
@@ -104,9 +104,8 @@ export class ExecutionEngine {
   /**
    * Process a market event (updates current prices and unrealized PnL)
    * 
-   * v1 STRICT MODE: Only accepts BBO stream events
-   * - Requires bid_price and ask_price fields
-   * - Throws error if fields are missing (prevents silent failures)
+   * Strict mode: requires bid_price and ask_price fields.
+   * Non-strict mode: falls back to event.price / event.close when BBO is absent.
    * 
    * @param {Object} event - Replay event (must be BBO stream)
    * @throws {Error} If requiresBbo=true and event lacks bid_price/ask_price
@@ -126,19 +125,23 @@ export class ExecutionEngine {
     }
     
     if (!hasBbo) {
-      // Non-strict mode fallback (not recommended for v1)
-      return;
-    }
-    
-    // Extract BBO prices
-    this.#currentBid = Number(event.bid_price);
-    this.#currentAsk = Number(event.ask_price);
-    
-    // Validate prices are positive
-    if (this.#currentBid <= 0 || this.#currentAsk <= 0) {
-      throw new Error(
-        `EXECUTION_ERROR: Invalid BBO prices - bid=${this.#currentBid}, ask=${this.#currentAsk}`
-      );
+      const marketPrice = Number(event.price ?? event.close);
+      if (!Number.isFinite(marketPrice) || marketPrice <= 0) {
+        return;
+      }
+      this.#currentBid = marketPrice;
+      this.#currentAsk = marketPrice;
+    } else {
+      // Extract BBO prices
+      this.#currentBid = Number(event.bid_price);
+      this.#currentAsk = Number(event.ask_price);
+
+      // Validate prices are positive
+      if (this.#currentBid <= 0 || this.#currentAsk <= 0) {
+        throw new Error(
+          `EXECUTION_ERROR: Invalid BBO prices - bid=${this.#currentBid}, ask=${this.#currentAsk}`
+        );
+      }
     }
 
     this.#currentSymbol = symbol;
@@ -184,7 +187,7 @@ export class ExecutionEngine {
     
     // Validate we have valid BBO prices
     if (this.#currentBid === null || this.#currentAsk === null) {
-      throw new Error('EXECUTION_ERROR: No valid BBO prices available');
+      throw new Error('EXECUTION_ERROR: No valid executable prices available');
     }
 
     const ts_event = orderIntent.ts_event ?? this.#currentTs;

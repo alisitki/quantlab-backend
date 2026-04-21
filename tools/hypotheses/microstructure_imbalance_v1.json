@@ -1,0 +1,41 @@
+{
+  "family_id": "microstructure_imbalance_v1",
+  "schema_version": "microstructure_imbalance_v1_spec",
+  "role": "PRIMARY_DIRECTIONAL",
+  "supported_streams": ["trade", "bbo"],
+  "default_params": {
+    "delta_ms_list": [100, 250, 500],
+    "h_ms_list": [100, 250, 500],
+    "pressure_threshold_list": [0.1, 0.2],
+    "min_support": 200,
+    "min_edge_bps": 0.2,
+    "min_t_stat": 2.0,
+    "tolerance_ms": 0
+  },
+  "features": {
+    "trade": [
+      {
+        "name": "signed_trade_volume_imbalance",
+        "definition": "rolling sum(side * qty) / rolling sum(qty); side sign comes from compacted trade stream"
+      }
+    ],
+    "bbo": [
+      {
+        "name": "top_book_size_imbalance",
+        "definition": "rolling average((bid_qty - ask_qty) / (bid_qty + ask_qty))"
+      }
+    ]
+  },
+  "label_rules": {
+    "DIRECTIONAL": "event_count >= min_support and mean_signed_fwd_return_bps >= min_edge_bps and t_stat >= min_t_stat",
+    "ANTI_EDGE": "event_count >= min_support and mean_signed_fwd_return_bps <= -min_edge_bps and t_stat <= -min_t_stat",
+    "NO_EDGE": "event_count >= min_support but no directional or anti-edge pass",
+    "INSUFFICIENT_SUPPORT": "event_count < min_support"
+  },
+  "outputs": {
+    "results_tsv": "family_microstructure_imbalance_primary_results.tsv",
+    "summary_tsv": "family_microstructure_imbalance_primary_summary.tsv",
+    "report_json": "family_microstructure_imbalance_report.json",
+    "label_report_json": "family_microstructure_imbalance_label_report.json"
+  }
+}

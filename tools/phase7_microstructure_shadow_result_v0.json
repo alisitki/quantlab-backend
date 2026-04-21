@@ -1,0 +1,355 @@
+{
+  "compatibility_evidence": {
+    "microstructure_shortlist_cell_fields": "mean_signed_fwd_return_bps > 0, pressure_threshold, delta_ms, h_ms",
+    "microstructure_shortlist_family_id": "microstructure_imbalance_v1",
+    "return_reversal_requires_family_id": "return_reversal_v1",
+    "return_reversal_requires_selected_cell": "mean_product < 0 and t_stat <= -2",
+    "why_not_run": "A config shim would have to relabel the family and invert/map fields, causing the runtime to trade price return-reversal rather than microstructure pressure. That would be a false Phase7 validation."
+  },
+  "continuation_candidates": [],
+  "final_decision": "NO_PHASE7_VERDICT",
+  "generated_ts_utc": "2026-04-06T08:38:12Z",
+  "governance": {
+    "bybit_only_validation": true,
+    "global_shadow_watchlist_mutation": false,
+    "new_candidate_generation": false,
+    "promotion_mutation": false,
+    "ranking_mutation": false,
+    "scope": "preflight/runtime compatibility only",
+    "strategy_logic_mutation": false
+  },
+  "lane_result": "INVALID_LANE",
+  "next_step_recommendation": "Implement a minimal MicrostructureImbalanceV1 runtime/binding that consumes trade side/qty pressure, or explicitly approve a non-microstructure proxy run with a different label. Do not treat ReturnReversalV1Strategy output as microstructure Phase7 evidence.",
+  "results": [
+    {
+      "artifacts": {
+        "runtime_strategy_file_checked": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+        "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json",
+        "task_local_watchlist_preflight_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_output/task_local_watchlist_preflight_v0.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "runtime_semantics_incompatible_preflight",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "metrics": {
+        "cost_proxy": "not available; no execution launched",
+        "decision_count": 0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "gross_proxy": "not available; no execution launched",
+        "open_count": 0,
+        "processed_event_count": 0,
+        "reversal_count": null,
+        "run_duration_sec": 0,
+        "stop_reason": "runtime_semantics_incompatible_preflight",
+        "trade_transitions_per_1k_events": null,
+        "verify_soft_live_pass": false
+      },
+      "rank": 1,
+      "status": "INVALID_RUN",
+      "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020",
+      "symbol": "linkusdt",
+      "verdict": "INVALID_RUN",
+      "verdict_reason": "runtime_semantics_incompatible: ReturnReversalV1Strategy requires family_id=return_reversal_v1 and negative mean_product, while microstructure_imbalance_v1 shortlist cells are positive directional pressure cells; running it would validate return-reversal price logic, not microstructure pressure"
+    },
+    {
+      "artifacts": {
+        "runtime_strategy_file_checked": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+        "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json",
+        "task_local_watchlist_preflight_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_output/task_local_watchlist_preflight_v0.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "runtime_semantics_incompatible_preflight",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "metrics": {
+        "cost_proxy": "not available; no execution launched",
+        "decision_count": 0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "gross_proxy": "not available; no execution launched",
+        "open_count": 0,
+        "processed_event_count": 0,
+        "reversal_count": null,
+        "run_duration_sec": 0,
+        "stop_reason": "runtime_semantics_incompatible_preflight",
+        "trade_transitions_per_1k_events": null,
+        "verify_soft_live_pass": false
+      },
+      "rank": 2,
+      "status": "INVALID_RUN",
+      "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d250__h500__pt020",
+      "symbol": "linkusdt",
+      "verdict": "INVALID_RUN",
+      "verdict_reason": "runtime_semantics_incompatible: ReturnReversalV1Strategy requires family_id=return_reversal_v1 and negative mean_product, while microstructure_imbalance_v1 shortlist cells are positive directional pressure cells; running it would validate return-reversal price logic, not microstructure pressure"
+    },
+    {
+      "artifacts": {
+        "runtime_strategy_file_checked": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+        "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json",
+        "task_local_watchlist_preflight_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_output/task_local_watchlist_preflight_v0.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "runtime_semantics_incompatible_preflight",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "metrics": {
+        "cost_proxy": "not available; no execution launched",
+        "decision_count": 0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "gross_proxy": "not available; no execution launched",
+        "open_count": 0,
+        "processed_event_count": 0,
+        "reversal_count": null,
+        "run_duration_sec": 0,
+        "stop_reason": "runtime_semantics_incompatible_preflight",
+        "trade_transitions_per_1k_events": null,
+        "verify_soft_live_pass": false
+      },
+      "rank": 3,
+      "status": "INVALID_RUN",
+      "strategy_id": "microstructure_imbalance_v1__bybit__solusdt__trade__d100__h500__pt020",
+      "symbol": "solusdt",
+      "verdict": "INVALID_RUN",
+      "verdict_reason": "runtime_semantics_incompatible: ReturnReversalV1Strategy requires family_id=return_reversal_v1 and negative mean_product, while microstructure_imbalance_v1 shortlist cells are positive directional pressure cells; running it would validate return-reversal price logic, not microstructure pressure"
+    },
+    {
+      "artifacts": {
+        "runtime_strategy_file_checked": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+        "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json",
+        "task_local_watchlist_preflight_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_output/task_local_watchlist_preflight_v0.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "runtime_semantics_incompatible_preflight",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "metrics": {
+        "cost_proxy": "not available; no execution launched",
+        "decision_count": 0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "gross_proxy": "not available; no execution launched",
+        "open_count": 0,
+        "processed_event_count": 0,
+        "reversal_count": null,
+        "run_duration_sec": 0,
+        "stop_reason": "runtime_semantics_incompatible_preflight",
+        "trade_transitions_per_1k_events": null,
+        "verify_soft_live_pass": false
+      },
+      "rank": 4,
+      "status": "INVALID_RUN",
+      "strategy_id": "microstructure_imbalance_v1__bybit__solusdt__trade__d250__h500__pt020",
+      "symbol": "solusdt",
+      "verdict": "INVALID_RUN",
+      "verdict_reason": "runtime_semantics_incompatible: ReturnReversalV1Strategy requires family_id=return_reversal_v1 and negative mean_product, while microstructure_imbalance_v1 shortlist cells are positive directional pressure cells; running it would validate return-reversal price logic, not microstructure pressure"
+    },
+    {
+      "artifacts": {
+        "runtime_strategy_file_checked": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+        "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json",
+        "task_local_watchlist_preflight_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_output/task_local_watchlist_preflight_v0.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "runtime_semantics_incompatible_preflight",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "metrics": {
+        "cost_proxy": "not available; no execution launched",
+        "decision_count": 0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "gross_proxy": "not available; no execution launched",
+        "open_count": 0,
+        "processed_event_count": 0,
+        "reversal_count": null,
+        "run_duration_sec": 0,
+        "stop_reason": "runtime_semantics_incompatible_preflight",
+        "trade_transitions_per_1k_events": null,
+        "verify_soft_live_pass": false
+      },
+      "rank": 5,
+      "status": "INVALID_RUN",
+      "strategy_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d100__h500__pt020",
+      "symbol": "avaxusdt",
+      "verdict": "INVALID_RUN",
+      "verdict_reason": "runtime_semantics_incompatible: ReturnReversalV1Strategy requires family_id=return_reversal_v1 and negative mean_product, while microstructure_imbalance_v1 shortlist cells are positive directional pressure cells; running it would validate return-reversal price logic, not microstructure pressure"
+    },
+    {
+      "artifacts": {
+        "runtime_strategy_file_checked": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+        "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json",
+        "task_local_watchlist_preflight_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_output/task_local_watchlist_preflight_v0.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "runtime_semantics_incompatible_preflight",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "metrics": {
+        "cost_proxy": "not available; no execution launched",
+        "decision_count": 0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "gross_proxy": "not available; no execution launched",
+        "open_count": 0,
+        "processed_event_count": 0,
+        "reversal_count": null,
+        "run_duration_sec": 0,
+        "stop_reason": "runtime_semantics_incompatible_preflight",
+        "trade_transitions_per_1k_events": null,
+        "verify_soft_live_pass": false
+      },
+      "rank": 6,
+      "status": "INVALID_RUN",
+      "strategy_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d100__h250__pt020",
+      "symbol": "xrpusdt",
+      "verdict": "INVALID_RUN",
+      "verdict_reason": "runtime_semantics_incompatible: ReturnReversalV1Strategy requires family_id=return_reversal_v1 and negative mean_product, while microstructure_imbalance_v1 shortlist cells are positive directional pressure cells; running it would validate return-reversal price logic, not microstructure pressure"
+    },
+    {
+      "artifacts": {
+        "runtime_strategy_file_checked": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+        "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json",
+        "task_local_watchlist_preflight_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_output/task_local_watchlist_preflight_v0.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "runtime_semantics_incompatible_preflight",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "metrics": {
+        "cost_proxy": "not available; no execution launched",
+        "decision_count": 0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "gross_proxy": "not available; no execution launched",
+        "open_count": 0,
+        "processed_event_count": 0,
+        "reversal_count": null,
+        "run_duration_sec": 0,
+        "stop_reason": "runtime_semantics_incompatible_preflight",
+        "trade_transitions_per_1k_events": null,
+        "verify_soft_live_pass": false
+      },
+      "rank": 7,
+      "status": "INVALID_RUN",
+      "strategy_id": "microstructure_imbalance_v1__bybit__avaxusdt__trade__d250__h500__pt020",
+      "symbol": "avaxusdt",
+      "verdict": "INVALID_RUN",
+      "verdict_reason": "runtime_semantics_incompatible: ReturnReversalV1Strategy requires family_id=return_reversal_v1 and negative mean_product, while microstructure_imbalance_v1 shortlist cells are positive directional pressure cells; running it would validate return-reversal price logic, not microstructure pressure"
+    },
+    {
+      "artifacts": {
+        "runtime_strategy_file_checked": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+        "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json",
+        "task_local_watchlist_preflight_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_output/task_local_watchlist_preflight_v0.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "runtime_semantics_incompatible_preflight",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "metrics": {
+        "cost_proxy": "not available; no execution launched",
+        "decision_count": 0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "gross_proxy": "not available; no execution launched",
+        "open_count": 0,
+        "processed_event_count": 0,
+        "reversal_count": null,
+        "run_duration_sec": 0,
+        "stop_reason": "runtime_semantics_incompatible_preflight",
+        "trade_transitions_per_1k_events": null,
+        "verify_soft_live_pass": false
+      },
+      "rank": 8,
+      "status": "INVALID_RUN",
+      "strategy_id": "microstructure_imbalance_v1__bybit__xrpusdt__trade__d250__h500__pt020",
+      "symbol": "xrpusdt",
+      "verdict": "INVALID_RUN",
+      "verdict_reason": "runtime_semantics_incompatible: ReturnReversalV1Strategy requires family_id=return_reversal_v1 and negative mean_product, while microstructure_imbalance_v1 shortlist cells are positive directional pressure cells; running it would validate return-reversal price logic, not microstructure pressure"
+    },
+    {
+      "artifacts": {
+        "runtime_strategy_file_checked": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+        "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json",
+        "task_local_watchlist_preflight_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_output/task_local_watchlist_preflight_v0.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "runtime_semantics_incompatible_preflight",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "metrics": {
+        "cost_proxy": "not available; no execution launched",
+        "decision_count": 0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "gross_proxy": "not available; no execution launched",
+        "open_count": 0,
+        "processed_event_count": 0,
+        "reversal_count": null,
+        "run_duration_sec": 0,
+        "stop_reason": "runtime_semantics_incompatible_preflight",
+        "trade_transitions_per_1k_events": null,
+        "verify_soft_live_pass": false
+      },
+      "rank": 9,
+      "status": "INVALID_RUN",
+      "strategy_id": "microstructure_imbalance_v1__bybit__adausdt__trade__d250__h250__pt020",
+      "symbol": "adausdt",
+      "verdict": "INVALID_RUN",
+      "verdict_reason": "runtime_semantics_incompatible: ReturnReversalV1Strategy requires family_id=return_reversal_v1 and negative mean_product, while microstructure_imbalance_v1 shortlist cells are positive directional pressure cells; running it would validate return-reversal price logic, not microstructure pressure"
+    },
+    {
+      "artifacts": {
+        "runtime_strategy_file_checked": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+        "source_shortlist_json": "/home/deploy/quantlab-backend/tools/microstructure_phase6_shortlist_v0.json",
+        "task_local_watchlist_preflight_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_shadow_output/task_local_watchlist_preflight_v0.json"
+      },
+      "eliminated": true,
+      "elimination_reason": "runtime_semantics_incompatible_preflight",
+      "exchange": "bybit",
+      "family_id": "microstructure_imbalance_v1",
+      "metrics": {
+        "cost_proxy": "not available; no execution launched",
+        "decision_count": 0,
+        "exit_count": 0,
+        "fill_count": 0,
+        "gross_proxy": "not available; no execution launched",
+        "open_count": 0,
+        "processed_event_count": 0,
+        "reversal_count": null,
+        "run_duration_sec": 0,
+        "stop_reason": "runtime_semantics_incompatible_preflight",
+        "trade_transitions_per_1k_events": null,
+        "verify_soft_live_pass": false
+      },
+      "rank": 10,
+      "status": "INVALID_RUN",
+      "strategy_id": "microstructure_imbalance_v1__bybit__adausdt__trade__d500__h250__pt020",
+      "symbol": "adausdt",
+      "verdict": "INVALID_RUN",
+      "verdict_reason": "runtime_semantics_incompatible: ReturnReversalV1Strategy requires family_id=return_reversal_v1 and negative mean_product, while microstructure_imbalance_v1 shortlist cells are positive directional pressure cells; running it would validate return-reversal price logic, not microstructure pressure"
+    }
+  ],
+  "run_policy": {
+    "actual_execution_launched": false,
+    "requested_max_parallel": "2-3",
+    "requested_posture": "PAPER_DIRECTIONAL_V1",
+    "requested_run_max_duration_sec": "21600-43200",
+    "requested_semantics": "ISOLATED",
+    "requested_strategy": "core/strategy/strategies/ReturnReversalV1Strategy.js",
+    "stop_reason": "ReturnReversalV1Strategy is not semantically compatible with microstructure_imbalance_v1 shortlist cells"
+  },
+  "schema_version": "phase7_microstructure_shadow_result_v0",
+  "status": "STOPPED_RUNTIME_INCOMPATIBLE",
+  "summary": {
+    "bybit_only_validation": "not executed; preflight stopped",
+    "fills_produced": 0,
+    "survivor_count": 0,
+    "survivors": [],
+    "top_candidate": null,
+    "total_strategies_requested": 10,
+    "total_strategies_run": 0
+  }
+}

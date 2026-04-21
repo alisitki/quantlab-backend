@@ -1,8 +1,8 @@
 {
   "schema_version": "shadow_execution_rollup_snapshot_v0",
-  "generated_ts_utc": "2026-03-17T03:43:48Z",
+  "generated_ts_utc": "2026-04-21T03:35:15Z",
   "source_pack_summary": "/home/deploy/quantlab-backend/tools/shadow_state/shadow_execution_pack_summary_v0.json",
-  "pack_summary_generated_ts_utc": "2026-03-17T03:43:48Z",
+  "pack_summary_generated_ts_utc": "2026-04-21T03:35:15Z",
   "selected_count": 7,
   "items": [
     {

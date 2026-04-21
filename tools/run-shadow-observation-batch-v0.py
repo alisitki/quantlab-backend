@@ -295,11 +295,13 @@ def build_wrapper_env(args: argparse.Namespace, audit_root: Path) -> dict[str, s
     }
 
 
-def build_verify_env(audit_root: Path) -> dict[str, str]:
+def build_verify_env(audit_root: Path, summary_json_path: Path) -> dict[str, str]:
     return {
         **os.environ,
         "AUDIT_SPOOL_DIR": str(audit_root),
         "RUN_ARCHIVE_ENABLED": "0",
+        "SOFT_LIVE_SUMMARY_JSON": str(summary_json_path.resolve()),
+        "SHADOW_BATCH_SUMMARY_JSON": str(summary_json_path.resolve()),
     }
 
 
@@ -343,10 +345,8 @@ def process_item(args: argparse.Namespace, watchlist_path: Path, item: dict[str,
         return result
 
     summary_json_path = Path(args.summary_json_path).resolve()
-    default_summary_json_path = DEFAULT_SUMMARY_JSON_PATH.resolve()
-    for stale_path in {summary_json_path, default_summary_json_path}:
-        if stale_path.exists():
-            stale_path.unlink()
+    if summary_json_path.exists():
+        summary_json_path.unlink()
     if audit_root.exists():
         shutil.rmtree(audit_root)
 
@@ -369,13 +369,9 @@ def process_item(args: argparse.Namespace, watchlist_path: Path, item: dict[str,
         result["note"] = f"wrapper_exit_{int(wrapper_res['exit_code'])}"
         return result
 
-    if summary_json_path != default_summary_json_path and summary_json_path.exists():
-        default_summary_json_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(summary_json_path, default_summary_json_path)
-
     verify_res = run_command(
         commands["verify"],
-        env=build_verify_env(audit_root),
+        env=build_verify_env(audit_root, summary_json_path),
         cwd=ROOT,
     )
     verify_pass = (not verify_res["timed_out"]) and int(verify_res["exit_code"]) == 0

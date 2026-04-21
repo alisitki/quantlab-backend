@@ -59,7 +59,7 @@ async function main() {
   console.log(`DATASET: ${parquetPath}`);
 
   const replayEngine = new ReplayEngine(parquetPath, metaPath);
-  const executionEngine = new ExecutionEngine({ initialCapital: 10000 });
+  const executionEngine = new ExecutionEngine({ initialCapital: 10000, requiresBbo: false });
   const strategy = new SlowOrderStrategy();
 
   try {

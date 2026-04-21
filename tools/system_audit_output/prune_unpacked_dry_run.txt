@@ -1,0 +1,14 @@
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-bbo-20260105..20260105-20260306_115119-4bc2f481-t1__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260104..20260105-20260305_082717__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260126..20260127-20260305_082727__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_102112-a1512783-t1__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_135701-a1512783-t1__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260127..20260128-20260305_135717-a1512783-t1__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260227-20260305_150914-51538807-t1__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260226..20260227-20260306_061149-e2e1__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260302-20260305_200000-0263d91f-t1__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260228..20260302-20260305_200000-0263d91f-t2__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/multi-hypothesis-phase5-bighunt-binance-trade-20260302..20260303-20260306_094239-d5dbd181-t1__FULLSCAN_MAJOR
+ORPHAN_UNPACKED /home/deploy/quantlab-backend/evidence/state-selection-proof-20260305_071230__FULLSCAN_MAJOR
+deleted_dirs=0
+orphan_dirs=12

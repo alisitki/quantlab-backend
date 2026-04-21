@@ -1,0 +1,58 @@
+{
+  "after": {
+    "cost_accounting_status": "NET_FEE_BACKED_MARK_TO_MARKET_FUNDING_AWARE",
+    "decision_count": 52,
+    "fee_per_fill": 0.007307530769230769,
+    "fill_count": 52,
+    "funding_cost": 0.0,
+    "gross_pnl": 0.04499999999999993,
+    "gross_pnl_per_1k_events": 0.039439088518843056,
+    "gross_pnl_per_fill": 0.000865384615384614,
+    "net_pnl": -0.33499160000000006,
+    "processed_event_count": 1141,
+    "profitability_status": "NET_MARK_TO_MARKET_AFTER_FEES_FUNDING_AND_EXIT_ESTIMATE",
+    "run_duration_sec": 600.641,
+    "stop_reason": "STREAM_END",
+    "total_fee": 0.3799916,
+    "turnover": 949.9790000000005,
+    "verify_soft_live_pass": true
+  },
+  "baseline": {
+    "fee_per_fill": 0.007137480372,
+    "fill_count": 2150,
+    "gross_pnl": 2.621,
+    "gross_pnl_per_1k_events": 0.04926969566,
+    "gross_pnl_per_fill": 0.001219069767,
+    "net_pnl": -12.7245828,
+    "processed_event_count": 53197,
+    "total_fee": 15.3455828
+  },
+  "comparison": {
+    "fee_reduction_ratio": 0.9752377211766763,
+    "fill_reduction_ratio": 0.9758139534883721,
+    "gross_per_fill_change_ratio": -0.29012707983544467,
+    "gross_preserved_ratio": 0.017169019458222027
+  },
+  "exchange": "bybit",
+  "family_id": "microstructure_imbalance_v1",
+  "generated_ts_utc": "2026-04-08T05:03:55Z",
+  "lever": {
+    "implementation": "pressure_threshold override 0.2 -> 0.3",
+    "minimum_hold_floor_present": false,
+    "selected": "ENTRY_FILTER",
+    "signal_math_changed": false
+  },
+  "run_mode": "smoke",
+  "schema_version": "phase7_microstructure_entryfilter_v0",
+  "source_paths": {
+    "baseline_profitability_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_profitability_v0.json",
+    "batch_result_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_entryfilter_output/smoke_linkusdt/shadow_observation_batch_result_v0.json",
+    "full_run_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_entryfilter_output/smoke_linkusdt",
+    "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_entryfilter_output/smoke_linkusdt/shadow_state/shadow_futures_paper_ledger_v1.json",
+    "summary_runtime_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_entryfilter_output/smoke_linkusdt/summary_runtime.json"
+  },
+  "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt030",
+  "symbol": "linkusdt",
+  "verdict": "SMOKE_PASS",
+  "verdict_reason": "verify_soft_live_pass=true and processed_event_count>0"
+}

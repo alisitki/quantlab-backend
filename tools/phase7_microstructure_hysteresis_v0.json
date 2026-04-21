@@ -1,0 +1,70 @@
+{
+  "after": {
+    "close_count": 21,
+    "cost_accounting_status": "NET_FEE_BACKED_MARK_TO_MARKET_FUNDING_AWARE",
+    "decision_count": 3207,
+    "fee_per_fill": 0.007210566884939199,
+    "fill_count": 3207,
+    "funding_cost": 0.0,
+    "gross_pnl": 4.054000000000025,
+    "gross_pnl_per_1k_events": 0.050306504851959706,
+    "gross_pnl_per_fill": 0.001264109759900226,
+    "net_pnl": -19.070287999999984,
+    "open_count": 22,
+    "processed_event_count": 80586,
+    "profitability_status": "NET_MARK_TO_MARKET_AFTER_FEES_FUNDING_AND_EXIT_ESTIMATE",
+    "reversal_count": 3164,
+    "reversal_per_1k_events": 39.26240289876654,
+    "run_duration_sec": 21600.702,
+    "stop_reason": "STREAM_END",
+    "total_fee": 23.12428800000001,
+    "turnover": 57810.71999999982,
+    "verify_soft_live_pass": true
+  },
+  "baseline": {
+    "close_count": 28,
+    "decision_count": 2150,
+    "fee_per_fill": 0.007137480372,
+    "fill_count": 2150,
+    "gross_pnl": 2.621,
+    "gross_pnl_per_1k_events": 0.04926969566,
+    "gross_pnl_per_fill": 0.001219069767,
+    "net_pnl": -12.7245828,
+    "open_count": 29,
+    "processed_event_count": 53197,
+    "reversal_count": 2093,
+    "reversal_per_1k_events": 39.34432392804106,
+    "total_fee": 15.3455828
+  },
+  "comparison": {
+    "fee_reduction_ratio": -0.5069019079549073,
+    "fill_reduction_ratio": -0.4916279069767442,
+    "gross_per_fill_change_ratio": 0.03694619792849494,
+    "gross_preserved_ratio": 1.5467378863029475,
+    "reversal_reduction_ratio": -0.5117056856187291
+  },
+  "exchange": "bybit",
+  "family_id": "microstructure_imbalance_v1",
+  "generated_ts_utc": "2026-04-08T19:21:18Z",
+  "lever": {
+    "entry_threshold": 0.2,
+    "exit_threshold": 0.1,
+    "implementation": "entry threshold 0.2, exit threshold 0.1, reverse only on strong opposite signal",
+    "minimum_hold_floor_present": false,
+    "selected": "HYSTERESIS",
+    "signal_math_changed": false
+  },
+  "run_mode": "full",
+  "schema_version": "phase7_microstructure_hysteresis_v0",
+  "source_paths": {
+    "baseline_profitability_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_profitability_v0.json",
+    "batch_result_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_hysteresis_output/full_linkusdt/shadow_observation_batch_result_v0.json",
+    "full_run_dir": "/home/deploy/quantlab-backend/tools/phase7_microstructure_hysteresis_output/full_linkusdt",
+    "futures_paper_ledger_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_hysteresis_output/full_linkusdt/shadow_state/shadow_futures_paper_ledger_v1.json",
+    "summary_runtime_json": "/home/deploy/quantlab-backend/tools/phase7_microstructure_hysteresis_output/full_linkusdt/summary_runtime.json"
+  },
+  "strategy_id": "microstructure_imbalance_v1__bybit__linkusdt__trade__d100__h500__pt020__xt010",
+  "symbol": "linkusdt",
+  "verdict": "IMPROVED",
+  "verdict_reason": "reversal churn fell and gross pnl per fill improved without collapsing gross edge"
+}

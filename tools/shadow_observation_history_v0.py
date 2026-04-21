@@ -176,6 +176,7 @@ def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
             fill_value = float(raw_event.get("fill_value"))
         except (TypeError, ValueError):
             fill_value = None
+        trade_context = normalize_trade_context(raw_event.get("trade_context"))
         if event_type not in {"DECISION", "RISK_REJECT", "FILL"}:
             continue
         if not ts_event or not symbol or not side or qty <= 0:
@@ -185,20 +186,21 @@ def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
                 continue
         else:
             fill_price = None
-        normalized.append(
-            {
-                "event_seq": event_seq if event_seq > 0 else index,
-                "event_type": event_type,
-                "ts_event": ts_event,
-                "symbol": symbol,
-                "side": side,
-                "qty": qty,
-                "fill_price": fill_price,
-                "fill_fee": fill_fee if event_type == "FILL" and fill_fee is not None and fill_fee >= 0 else None,
-                "fill_value": fill_value if event_type == "FILL" and fill_value is not None and fill_value > 0 else None,
-                "reason": reason,
-            }
-        )
+        row = {
+            "event_seq": event_seq if event_seq > 0 else index,
+            "event_type": event_type,
+            "ts_event": ts_event,
+            "symbol": symbol,
+            "side": side,
+            "qty": qty,
+            "fill_price": fill_price,
+            "fill_fee": fill_fee if event_type == "FILL" and fill_fee is not None and fill_fee >= 0 else None,
+            "fill_value": fill_value if event_type == "FILL" and fill_value is not None and fill_value > 0 else None,
+            "reason": reason,
+        }
+        if trade_context is not None:
+            row["trade_context"] = trade_context
+        normalized.append(row)
     return sorted(
         normalized,
         key=lambda event: (
@@ -207,6 +209,121 @@ def normalize_execution_events(value: Any) -> list[dict[str, Any]]:
             str(event.get("ts_event", "")),
         ),
     )
+
+
+def normalize_selected_cell_snapshot(value: Any) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        return None
+    try:
+        delta_ms = int(value.get("delta_ms"))
+        h_ms = int(value.get("h_ms"))
+        pressure_threshold = float(value.get("pressure_threshold"))
+    except (TypeError, ValueError):
+        return None
+    symbol = str(value.get("symbol", "")).strip().upper()
+    exchange = str(value.get("exchange", "")).strip().lower()
+    if delta_ms <= 0 or h_ms <= 0 or pressure_threshold <= 0 or not symbol or not exchange:
+        return None
+    return {
+        "delta_ms": delta_ms,
+        "h_ms": h_ms,
+        "pressure_threshold": pressure_threshold,
+        "symbol": symbol,
+        "exchange": exchange,
+    }
+
+
+def normalize_optional_text(value: Any, *, upper: bool = False, lower: bool = False) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if upper:
+        return text.upper()
+    if lower:
+        return text.lower()
+    return text
+
+
+def normalize_trade_context_snapshot(value: Any) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        return None
+    normalized: dict[str, Any] = {
+        "schema_version": str(value.get("schema_version") or "microstructure_trade_context_v0"),
+        "trade_sequence_id": None,
+        "entry_timestamp": normalize_optional_text(value.get("entry_timestamp")),
+        "entry_pressure": None,
+        "entry_abs_pressure": None,
+        "entry_threshold": None,
+        "exit_threshold": None,
+        "entry_side": normalize_optional_text(value.get("entry_side"), upper=True),
+        "entry_signal_reason": normalize_optional_text(value.get("entry_signal_reason")),
+        "entry_selected_cell": normalize_selected_cell_snapshot(value.get("entry_selected_cell")),
+        "prior_position_side": normalize_optional_text(value.get("prior_position_side"), upper=True),
+        "was_reversal_trade": bool(value.get("was_reversal_trade")),
+        "exit_timestamp": normalize_optional_text(value.get("exit_timestamp")),
+        "exit_pressure": None,
+        "exit_abs_pressure": None,
+        "exit_reason": normalize_optional_text(value.get("exit_reason")),
+        "hold_duration_ms": None,
+        "max_abs_pressure_seen_during_trade": None,
+        "min_abs_pressure_seen_during_trade": None,
+        "pressure_decay_at_exit": None,
+        "observation_count_during_trade": None,
+    }
+    try:
+        trade_sequence_id = int(value.get("trade_sequence_id"))
+    except (TypeError, ValueError):
+        trade_sequence_id = None
+    if trade_sequence_id is not None and trade_sequence_id > 0:
+        normalized["trade_sequence_id"] = trade_sequence_id
+    for key in (
+        "entry_pressure",
+        "entry_abs_pressure",
+        "entry_threshold",
+        "exit_threshold",
+        "exit_pressure",
+        "exit_abs_pressure",
+        "max_abs_pressure_seen_during_trade",
+        "min_abs_pressure_seen_during_trade",
+        "pressure_decay_at_exit",
+    ):
+        try:
+            numeric = float(value.get(key))
+        except (TypeError, ValueError):
+            numeric = None
+        normalized[key] = numeric
+    try:
+        hold_duration_ms = int(value.get("hold_duration_ms"))
+    except (TypeError, ValueError):
+        hold_duration_ms = None
+    if hold_duration_ms is not None and hold_duration_ms >= 0:
+        normalized["hold_duration_ms"] = hold_duration_ms
+    try:
+        observation_count = int(value.get("observation_count_during_trade"))
+    except (TypeError, ValueError):
+        observation_count = None
+    if observation_count is not None and observation_count >= 0:
+        normalized["observation_count_during_trade"] = observation_count
+    return normalized
+
+
+def normalize_trade_context(value: Any) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        return None
+    opening_trade = normalize_trade_context_snapshot(value.get("opening_trade"))
+    closing_trade = normalize_trade_context_snapshot(value.get("closing_trade"))
+    if opening_trade is None and closing_trade is None:
+        return None
+    normalized = {
+        "schema_version": str(value.get("schema_version") or "microstructure_trade_context_v0"),
+    }
+    if opening_trade is not None:
+        normalized["opening_trade"] = opening_trade
+    if closing_trade is not None:
+        normalized["closing_trade"] = closing_trade
+    return normalized
 
 
 def normalize_funding_events(value: Any) -> list[dict[str, Any]]:

@@ -15,7 +15,10 @@ DEFAULT_BINDING_MAP_JSON = ROOT / "tools" / "phase6_state" / "family_shadow_runt
 DEFAULT_OUT_JSON = ROOT / "tools" / "phase6_state" / "candidate_strategy_runtime_binding_v0.json"
 SCHEMA_VERSION = "candidate_strategy_runtime_binding_v0"
 BINDING_MAP_SCHEMA_VERSION = "family_shadow_runtime_binding_map_v0"
-CANDIDATE_STRATEGY_CONTRACT_SCHEMA_VERSION = "candidate_strategy_contract_v0"
+SUPPORTED_CONTRACT_SCHEMA_VERSIONS = {
+    "candidate_strategy_contract_v0",
+    "directional_expectancy_contract_v0",
+}
 BOUND_SHADOW_RUNNABLE = "BOUND_SHADOW_RUNNABLE"
 UNBOUND_NO_RUNTIME_IMPL = "UNBOUND_NO_RUNTIME_IMPL"
 UNBOUND_CONFIG_GAP = "UNBOUND_CONFIG_GAP"
@@ -62,7 +65,7 @@ def load_json(path: Path, label: str) -> dict[str, Any]:
 
 def load_candidate_strategy_contract(path: Path) -> dict[str, Any]:
     obj = load_json(path, "candidate_strategy_contract_json")
-    if str(obj.get("schema_version") or "").strip() != CANDIDATE_STRATEGY_CONTRACT_SCHEMA_VERSION:
+    if str(obj.get("schema_version") or "").strip() not in SUPPORTED_CONTRACT_SCHEMA_VERSIONS:
         fail(f"candidate_strategy_contract_schema_mismatch:{path}")
     items = obj.get("items")
     if not isinstance(items, list):
@@ -104,15 +107,28 @@ def base_item(source_item: dict[str, Any]) -> dict[str, Any]:
     return {
         "rank": source_item.get("rank"),
         "pack_id": str(source_item.get("pack_id") or "").strip(),
+        "pack_path": str(source_item.get("pack_path") or "").strip() or None,
         "source_pack_id": str(
             source_item.get("source_pack_id")
             or spec_obj.get("source_pack_id")
             or source_item.get("pack_id")
             or ""
         ).strip(),
+        "source_review_rank": source_item.get("source_review_rank", source_item.get("rank")),
+        "source_review_class": str(source_item.get("source_review_class") or "").strip() or None,
+        "source_review_class_priority": source_item.get(
+            "source_review_class_priority",
+            source_item.get("class_priority"),
+        ),
+        "source_review_score": source_item.get("source_review_score", source_item.get("score")),
         "contract_row_id": str(source_item.get("contract_row_id") or "").strip() or None,
         "selected_symbol": selected_symbol or (spec_symbols[0].lower() if len(spec_symbols) == 1 else None),
         "translation_status": str(source_item.get("translation_status") or "").strip(),
+        "decision_tier": str(
+            source_item.get("decision_tier")
+            or spec_obj.get("source_decision_tier")
+            or ""
+        ).strip() or None,
         "strategy_id": str(spec_obj.get("strategy_id") or "").strip() or None,
         "family_id": str(spec_obj.get("family_id") or "").strip() or None,
         "exchange": str(spec_obj.get("exchange") or "").strip() or None,
@@ -151,7 +167,12 @@ def build_runtime_strategy_config(spec: dict[str, Any], static_config: dict[str,
     runtime_config: dict[str, Any] = dict(static_config)
     runtime_config["family_id"] = str(spec.get("family_id") or "").strip()
     runtime_config["source_pack_id"] = str(spec.get("source_pack_id") or "").strip()
+    runtime_config["source_pack_path"] = str(spec.get("source_pack_path") or "").strip() or None
     runtime_config["source_decision_tier"] = str(spec.get("source_decision_tier") or "").strip()
+    runtime_config["source_review_rank"] = spec.get("source_review_rank")
+    runtime_config["source_review_class"] = str(spec.get("source_review_class") or "").strip() or None
+    runtime_config["source_review_class_priority"] = spec.get("source_review_class_priority")
+    runtime_config["source_review_score"] = spec.get("source_review_score")
     runtime_config["exchange"] = str(spec.get("exchange") or "").strip()
     runtime_config["stream"] = str(spec.get("stream") or "").strip()
     runtime_config["symbols"] = normalize_str_list(spec.get("symbols"))
